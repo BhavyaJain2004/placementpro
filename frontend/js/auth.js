@@ -11,7 +11,7 @@ const decodeToken = () => {
 // Redirect to login if not authenticated
 const requireAuth = () => {
   const u = decodeToken();
-  if (!u) { window.location.href = '/frontend/index.html'; return null; }
+  if (!u) { window.location.href = 'index.html'; return null; }
   return u;
 };
 
@@ -19,19 +19,19 @@ const requireAuth = () => {
 const requirePaid = () => {
   const u = requireAuth();
   if (!u) return null;
-  if (!u.isPaid) { window.location.href = '/frontend/dashboard.html'; return null; }
+  if (!u.isPaid) { window.location.href = 'dashboard.html'; return null; }
   return u;
 };
 
 // Redirect if already logged in
 const redirectIfLoggedIn = () => {
   const u = decodeToken();
-  if (u) window.location.href = '/frontend/dashboard.html';
+  if (u) window.location.href = 'dashboard.html';
 };
 
 const logout = () => {
   localStorage.clear();
-  window.location.href = '/frontend/index.html';
+  window.location.href = 'index.html';
 };
 
 // Set navbar user info
