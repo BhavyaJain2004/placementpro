@@ -197,7 +197,7 @@
       });
       localStorage.setItem('pp_token', data.token);
       localStorage.setItem('pp_user', JSON.stringify(data.user));
-      window.location.href = '/frontend/dashboard.html';
+      window.location.href = 'dashboard.html';
     } catch(err) {
       document.getElementById('login-err').textContent = err.message;
       btn.disabled = false; btn.textContent = 'Log in';
@@ -216,7 +216,7 @@
       });
       localStorage.setItem('pp_token', data.token);
       localStorage.setItem('pp_user', JSON.stringify(data.user));
-      window.location.href = '/frontend/dashboard.html';
+      window.location.href = 'dashboard.html';
     } catch(err) {
       document.getElementById('signup-err').textContent = err.message;
       btn.disabled = false; btn.textContent = 'Create account';
