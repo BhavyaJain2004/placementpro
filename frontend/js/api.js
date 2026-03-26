@@ -1,6 +1,6 @@
 // ── CONFIG ── change this after backend deploy
 // const API_BASE = 'http://localhost:5000/api';
-const API_BASE = 'https://placementpro-production-e168.up.railway.app';
+const API_BASE = 'https://placementpro-production-e168.up.railway.app/api';
 
 const getToken = () => localStorage.getItem('pp_token');
 
