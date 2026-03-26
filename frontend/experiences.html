@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Experiences — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="toast"></div>
+
+<nav class="navbar">
+  <div class="nav-logo"><a href="dashboard.html" style="display:flex;align-items:center;gap:8px"><span class="dot"></span> PlacementPro</a></div>
+  <ul class="nav-links">
+    <li><a href="companies.html">Companies</a></li>
+    <li><a href="dsa.html">DSA</a></li>
+    <li><a href="notes.html">Notes</a></li>
+    <li><a href="experiences.html" class="active">Experiences</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-avatar" id="nav-avatar">?</div>
+    <button class="btn btn-ghost" onclick="Auth.logout()">Log out</button>
+  </div>
+</nav>
+
+<div class="container page-body">
+
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Interview Experiences</h1>
+      <p style="color:var(--muted);font-size:0.875rem;margin-top:0.25rem">Real stories from placed seniors — round by round</p>
+    </div>
+    <span class="section-count" id="exp-count">Loading…</span>
+  </div>
+
+  <div class="filter-bar">
+    <input type="text" id="exp-search" placeholder="Search by company or role…" oninput="applyFilters()">
+    <select id="result-filter" onchange="applyFilters()">
+      <option value="">All results</option>
+      <option>Selected</option>
+      <option>Rejected</option>
+      <option>Waitlisted</option>
+    </select>
+    <select id="year-filter" onchange="applyFilters()">
+      <option value="">All years</option>
+      <option>2025</option><option>2024</option><option>2023</option>
+    </select>
+  </div>
+
+  <div class="exp-list" id="exp-list">
+    <div class="exp-card skeleton" style="height:120px"></div>
+    <div class="exp-card skeleton" style="height:120px"></div>
+    <div class="exp-card skeleton" style="height:120px"></div>
+  </div>
+</div>
+
+<!-- EXPERIENCE DETAIL MODAL -->
+<div id="exp-modal" class="modal-overlay">
+  <div class="modal modal-lg">
+    <div class="modal-header" id="exp-modal-header"></div>
+    <div class="modal-body" id="exp-modal-body"></div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  Auth.requirePaid();
+  const u = Auth.decodeToken();
+  if (u) Auth.setNavUser(u.name || u.email);
+
+  let allExp = [];
+
+  const logoHtml = (company, size = 40) => {
+    const domain = company.toLowerCase().replace(/\s+/g,'') + '.com';
+    return `<div class="exp-company-logo" style="width:${size}px;height:${size}px">
+      <img src="https://logo.clearbit.com/${domain}" alt="${company}"
+        onerror="this.parentElement.innerHTML='<span style=\\'font-family:Syne,sans-serif;font-weight:700;color:var(--accent2);font-size:${Math.round(size*0.4)}px\\'>${company.charAt(0)}</span>'">
+    </div>`;
+  };
+
+  async function loadExperiences() {
+    try {
+      allExp = await API.call('/experiences');
+      applyFilters();
+    } catch(e) {
+      document.getElementById('exp-list').innerHTML =
+        `<div class="empty-state"><div class="empty-icon">⚠️</div><p>${e.message}</p></div>`;
+    }
+  }
+
+  function applyFilters() {
+    const q      = document.getElementById('exp-search').value.toLowerCase();
+    const result = document.getElementById('result-filter').value;
+    const year   = document.getElementById('year-filter').value;
+
+    const list = allExp.filter(e => {
+      const qOk = !q || e.company.toLowerCase().includes(q) || (e.role||'').toLowerCase().includes(q);
+      const rOk = !result || e.result === result;
+      const yOk = !year   || String(e.year) === year;
+      return qOk && rOk && yOk;
+    });
+
+    document.getElementById('exp-count').textContent = `${list.length} experiences`;
+    renderList(list);
+  }
+
+  function renderList(list) {
+    const el = document.getElementById('exp-list');
+    if (!list.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>No experiences found</p></div>';
+      return;
+    }
+    el.innerHTML = list.map(e => `
+      <div class="exp-card" onclick="openExp('${e._id}')">
+        <div class="exp-card-header">
+          <div class="exp-card-left">
+            ${logoHtml(e.company)}
+            <div class="exp-meta">
+              <h3>${e.company} — ${e.role||'Software Engineer'}</h3>
+              <div class="exp-meta-sub">
+                <span>${e.author||'Anonymous'}</span>
+                ${e.year ? `<span>·</span><span>${e.year}</span>` : ''}
+                ${e.difficulty ? `<span>·</span><span class="badge badge-${e.difficulty.toLowerCase()}" style="transform:scale(0.85);transform-origin:left">${e.difficulty} process</span>` : ''}
+              </div>
+            </div>
+          </div>
+          <span class="badge badge-${(e.result||'').toLowerCase()}">${e.result||'Unknown'}</span>
+        </div>
+        <p class="exp-preview">${(e.tips||e.rounds?.[0]?.description||'').substring(0,160)}${(e.tips||'').length > 160 ? '…' : ''}</p>
+      </div>`).join('');
+  }
+
+  function openExp(id) {
+    const e = allExp.find(x => x._id === id);
+    if (!e) return;
+
+    document.getElementById('exp-modal-header').innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px">
+        ${logoHtml(e.company, 48)}
+        <div>
+          <h2 style="font-size:1.1rem">${e.company} — ${e.role||'Software Engineer'}</h2>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:4px;flex-wrap:wrap">
+            <span class="badge badge-${(e.result||'').toLowerCase()}">${e.result||'Unknown'}</span>
+            ${e.year  ? `<span style="font-size:0.8rem;color:var(--muted)">${e.year}</span>`  : ''}
+            ${e.author? `<span style="font-size:0.8rem;color:var(--muted)">by ${e.author}</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeExp()">×</button>`;
+
+    const roundsHtml = (e.rounds||[]).length ? `
+      <div class="section-label">Rounds</div>
+      <div class="round-list">
+        ${(e.rounds||[]).map((r,i) => `
+          <div class="round-item">
+            <div class="round-num">${i+1}</div>
+            <div class="round-content">
+              <h4>${r.name||`Round ${i+1}`}</h4>
+              <p>${r.description||''}</p>
+            </div>
+          </div>`).join('')}
+      </div>` : '';
+
+    document.getElementById('exp-modal-body').innerHTML = `
+      ${roundsHtml}
+      ${e.tips ? `
+        <div class="tips-box" style="margin-top:${(e.rounds||[]).length ? '1.5rem' : '0'}">
+          <div class="tips-label">💡 Tips for you</div>
+          <p>${e.tips}</p>
+        </div>` : ''}
+    `;
+
+    document.getElementById('exp-modal').classList.add('open');
+  }
+
+  function closeExp() { document.getElementById('exp-modal').classList.remove('open'); }
+
+  document.getElementById('exp-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeExp();
+  });
+
+  loadExperiences();
+</script>
+</body>
+</html>

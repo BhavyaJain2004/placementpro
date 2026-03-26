@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSA Practice — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="toast"></div>
+
+<nav class="navbar">
+  <div class="nav-logo"><a href="dashboard.html" style="display:flex;align-items:center;gap:8px"><span class="dot"></span> PlacementPro</a></div>
+  <ul class="nav-links">
+    <li><a href="companies.html">Companies</a></li>
+    <li><a href="dsa.html" class="active">DSA</a></li>
+    <li><a href="notes.html">Notes</a></li>
+    <li><a href="experiences.html">Experiences</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-avatar" id="nav-avatar">?</div>
+    <button class="btn btn-ghost" onclick="Auth.logout()">Log out</button>
+  </div>
+</nav>
+
+<div class="container page-body">
+
+  <div class="section-header" style="margin-bottom:1.5rem">
+    <div>
+      <h1 class="section-title">DSA Practice</h1>
+      <p style="color:var(--muted);font-size:0.875rem;margin-top:0.25rem">Topic-wise questions · Java & Python solutions</p>
+    </div>
+    <span class="section-count" id="q-count">Loading…</span>
+  </div>
+
+  <!-- Top filters -->
+  <div class="filter-bar" style="margin-bottom:1.5rem">
+    <input type="text" id="q-search" placeholder="Search questions…" oninput="applyFilters()">
+    <select id="diff-filter" onchange="applyFilters()">
+      <option value="">All difficulty</option>
+      <option>Easy</option>
+      <option>Medium</option>
+      <option>Hard</option>
+    </select>
+    <select id="company-filter" onchange="applyFilters()">
+      <option value="">All companies</option>
+      <option>TCS</option><option>Infosys</option><option>Wipro</option>
+      <option>Amazon</option><option>Google</option><option>Microsoft</option>
+      <option>Flipkart</option><option>Zoho</option><option>Accenture</option>
+      <option>Cognizant</option><option>HCL</option>
+    </select>
+  </div>
+
+  <div class="dsa-layout">
+    <!-- SIDEBAR -->
+    <div class="dsa-sidebar">
+      <div class="sidebar-title">Topics</div>
+      <div id="topic-list">
+        <div class="topic-item active" data-topic="" onclick="setTopic(this, '')">
+          All Topics <span class="topic-count" id="tc-all">0</span>
+        </div>
+        <div class="topic-item" data-topic="Arrays" onclick="setTopic(this, 'Arrays')">Arrays <span class="topic-count" id="tc-arrays">0</span></div>
+        <div class="topic-item" data-topic="Strings" onclick="setTopic(this, 'Strings')">Strings <span class="topic-count" id="tc-strings">0</span></div>
+        <div class="topic-item" data-topic="LinkedList" onclick="setTopic(this, 'LinkedList')">Linked List <span class="topic-count" id="tc-ll">0</span></div>
+        <div class="topic-item" data-topic="Stacks & Queues" onclick="setTopic(this, 'Stacks & Queues')">Stacks & Queues <span class="topic-count" id="tc-sq">0</span></div>
+        <div class="topic-item" data-topic="Trees" onclick="setTopic(this, 'Trees')">Trees <span class="topic-count" id="tc-trees">0</span></div>
+        <div class="topic-item" data-topic="Graphs" onclick="setTopic(this, 'Graphs')">Graphs <span class="topic-count" id="tc-graphs">0</span></div>
+        <div class="topic-item" data-topic="Dynamic Programming" onclick="setTopic(this, 'Dynamic Programming')">Dynamic Programming <span class="topic-count" id="tc-dp">0</span></div>
+        <div class="topic-item" data-topic="Binary Search" onclick="setTopic(this, 'Binary Search')">Binary Search <span class="topic-count" id="tc-bs">0</span></div>
+        <div class="topic-item" data-topic="Sorting" onclick="setTopic(this, 'Sorting')">Sorting <span class="topic-count" id="tc-sort">0</span></div>
+        <div class="topic-item" data-topic="Hashing" onclick="setTopic(this, 'Hashing')">Hashing <span class="topic-count" id="tc-hash">0</span></div>
+        <div class="topic-item" data-topic="Greedy" onclick="setTopic(this, 'Greedy')">Greedy <span class="topic-count" id="tc-greedy">0</span></div>
+        <div class="topic-item" data-topic="Recursion" onclick="setTopic(this, 'Recursion')">Recursion <span class="topic-count" id="tc-rec">0</span></div>
+      </div>
+    </div>
+
+    <!-- QUESTIONS LIST -->
+    <div>
+      <div class="questions-list" id="q-list">
+        <div class="q-row skeleton" style="height:58px"></div>
+        <div class="q-row skeleton" style="height:58px"></div>
+        <div class="q-row skeleton" style="height:58px"></div>
+        <div class="q-row skeleton" style="height:58px"></div>
+        <div class="q-row skeleton" style="height:58px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUESTION MODAL -->
+<div id="q-modal" class="modal-overlay">
+  <div class="modal modal-lg">
+    <div class="modal-header" id="q-modal-header"></div>
+    <div class="modal-body" id="q-modal-body"></div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  Auth.requirePaid();
+  const u = Auth.decodeToken();
+  if (u) Auth.setNavUser(u.name || u.email);
+
+  let allQ = [], activeTopic = '', activeLang = 'java';
+
+  const TOPIC_ID_MAP = {
+    'Arrays':'arrays','Strings':'strings','LinkedList':'ll','Stacks & Queues':'sq',
+    'Trees':'trees','Graphs':'graphs','Dynamic Programming':'dp','Binary Search':'bs',
+    'Sorting':'sort','Hashing':'hash','Greedy':'greedy','Recursion':'rec'
+  };
+
+  async function loadQuestions() {
+    try {
+      allQ = await API.call('/dsa');
+      updateTopicCounts();
+      applyFilters();
+    } catch(e) {
+      document.getElementById('q-list').innerHTML =
+        `<div class="empty-state"><div class="empty-icon">⚠️</div><p>${e.message}</p></div>`;
+    }
+  }
+
+  function updateTopicCounts() {
+    document.getElementById('tc-all').textContent = allQ.length;
+    Object.entries(TOPIC_ID_MAP).forEach(([topic, id]) => {
+      const el = document.getElementById(`tc-${id}`);
+      if (el) el.textContent = allQ.filter(q => q.topic === topic).length;
+    });
+  }
+
+  function setTopic(el, topic) {
+    document.querySelectorAll('.topic-item').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+    activeTopic = topic;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const q    = document.getElementById('q-search').value.toLowerCase();
+    const diff = document.getElementById('diff-filter').value;
+    const co   = document.getElementById('company-filter').value;
+
+    let list = allQ.filter(x => {
+      const topicOk = !activeTopic || x.topic === activeTopic;
+      const diffOk  = !diff  || x.difficulty === diff;
+      const coOk    = !co    || (x.companies||[]).map(c=>c.toLowerCase()).includes(co.toLowerCase());
+      const qOk     = !q     || x.title.toLowerCase().includes(q);
+      return topicOk && diffOk && coOk && qOk;
+    });
+
+    document.getElementById('q-count').textContent = `${list.length} questions`;
+    renderList(list);
+  }
+
+  function renderList(list) {
+    const el = document.getElementById('q-list');
+    if (!list.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>No questions match your filters</p></div>';
+      return;
+    }
+    el.innerHTML = list.map(q => `
+      <div class="q-row" onclick="openQ('${q._id}')">
+        <span class="badge badge-${q.difficulty.toLowerCase()}">${q.difficulty}</span>
+        <span class="q-title">${q.title}</span>
+        <span class="q-topic">${q.topic}</span>
+        <div class="q-companies">
+          ${(q.companies||[]).slice(0,3).map(c=>`<span class="q-company-tag">${c}</span>`).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  async function openQ(id) {
+    activeLang = 'java';
+    // show loading state
+    document.getElementById('q-modal-header').innerHTML = `<div style="display:flex;gap:10px;align-items:center"><div class="skeleton" style="width:200px;height:24px;border-radius:6px"></div></div><button class="modal-close" onclick="closeQ()">×</button>`;
+    document.getElementById('q-modal-body').innerHTML = `<div class="skeleton" style="height:300px;border-radius:12px"></div>`;
+    document.getElementById('q-modal').classList.add('open');
+
+    try {
+      const q = await API.call(`/dsa/${id}`);
+      renderQ(q);
+    } catch(e) {
+      document.getElementById('q-modal-body').innerHTML = `<p style="color:var(--red)">${e.message}</p>`;
+    }
+  }
+
+  function renderQ(q) {
+    document.getElementById('q-modal-header').innerHTML = `
+      <div>
+        <h2 style="font-size:1.1rem;margin-bottom:6px">${q.title}</h2>
+        <div class="q-modal-meta">
+          <span class="badge badge-${q.difficulty.toLowerCase()}">${q.difficulty}</span>
+          <span style="font-size:0.8rem;color:var(--muted)">${q.topic}</span>
+          ${(q.companies||[]).map(c=>`<span class="q-company-tag">${c}</span>`).join('')}
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeQ()">×</button>`;
+
+    const exHtml = (q.examples||[]).map(ex => `
+      <div class="example-block">
+        <div class="ex-label">Example</div>
+        <div><strong>Input:</strong> ${ex.input}</div>
+        <div><strong>Output:</strong> ${ex.output}</div>
+      </div>`).join('');
+
+    document.getElementById('q-modal-body').innerHTML = `
+      <div class="section-label">Problem</div>
+      <p class="q-description">${q.description}</p>
+      ${exHtml}
+
+      ${q.approach ? `
+        <div class="section-label">Approach</div>
+        <p style="font-size:0.875rem;color:var(--muted);line-height:1.7">${q.approach}</p>
+      ` : ''}
+
+      <div class="section-label">Solution</div>
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="btn-java" onclick="switchLang('java', \`${escapeBacktick(q.java_code||'')}\`)">Java</button>
+        <button class="lang-btn" id="btn-python" onclick="switchLang('python', \`${escapeBacktick(q.python_code||'')}\`)">Python</button>
+      </div>
+
+      <div class="code-wrap">
+        <pre class="code-block" id="code-display">${escapeHtml(q.java_code||'// No solution yet')}</pre>
+        <button class="copy-btn" onclick="copyCode()">Copy</button>
+      </div>
+
+      <div class="complexity-row">
+        <div class="complexity-pill">Time: <span>${q.timeComplex||'—'}</span></div>
+        <div class="complexity-pill">Space: <span>${q.spaceComplex||'—'}</span></div>
+      </div>
+
+      ${q.leetcodeUrl ? `
+        <div style="margin-top:1.25rem">
+          <a href="${q.leetcodeUrl}" target="_blank" class="btn btn-outline" style="font-size:0.85rem">
+            Practice on LeetCode ↗
+          </a>
+        </div>
+      ` : ''}
+    `;
+
+    // store code for switching
+    window._qJava   = q.java_code   || '// No Java solution yet';
+    window._qPython = q.python_code || '# No Python solution yet';
+  }
+
+  function switchLang(lang, code) {
+    activeLang = lang;
+    document.getElementById('code-display').textContent = lang === 'java' ? window._qJava : window._qPython;
+    document.getElementById('btn-java').classList.toggle('active', lang === 'java');
+    document.getElementById('btn-python').classList.toggle('active', lang === 'python');
+  }
+
+  function copyCode() {
+    const code = document.getElementById('code-display').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function closeQ() { document.getElementById('q-modal').classList.remove('open'); }
+
+  document.getElementById('q-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeQ();
+  });
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function escapeBacktick(s) {
+    return String(s).replace(/`/g,'\\`').replace(/\$/g,'\\$');
+  }
+
+  loadQuestions();
+</script>
+</body>
+</html>

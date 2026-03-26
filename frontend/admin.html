@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="toast"></div>
+
+<nav class="navbar">
+  <div class="nav-logo"><span class="dot"></span> Admin Panel</div>
+  <div class="nav-right">
+    <span style="font-size:0.8rem;color:var(--muted)" id="admin-name"></span>
+    <button class="btn btn-ghost" onclick="Auth.logout()">Log out</button>
+  </div>
+</nav>
+
+<div class="container page-body">
+
+  <div class="admin-nav">
+    <button class="admin-tab active" onclick="switchSection(this,'companies')">🏢 Companies</button>
+    <button class="admin-tab" onclick="switchSection(this,'dsa')">💻 DSA Questions</button>
+    <button class="admin-tab" onclick="switchSection(this,'notes')">📄 Notes</button>
+    <button class="admin-tab" onclick="switchSection(this,'experiences')">🗣️ Experiences</button>
+    <button class="admin-tab" onclick="switchSection(this,'users')">👥 Users</button>
+  </div>
+
+  <!-- ── COMPANIES ── -->
+  <div id="sec-companies">
+    <div class="admin-form">
+      <h3 id="co-form-title">Add Company</h3>
+      <input type="hidden" id="co-id">
+      <div class="form-row">
+        <div class="input-group"><label>Company name *</label><input class="input-field" id="co-name" placeholder="e.g. TCS"></div>
+        <div class="input-group"><label>Domain (for logo)</label><input class="input-field" id="co-domain" placeholder="e.g. tcs.com"></div>
+      </div>
+      <div class="form-row">
+        <div class="input-group">
+          <label>Type *</label>
+          <select class="input-field" id="co-type"><option>Product</option><option>Service</option><option>Startup</option></select>
+        </div>
+        <div class="input-group"><label>Package</label><input class="input-field" id="co-package" placeholder="e.g. 3.5 - 6 LPA"></div>
+      </div>
+      <div class="form-row">
+        <div class="input-group">
+          <label>Test type</label>
+          <select class="input-field" id="co-testtype"><option>Aptitude</option><option>Coding</option><option>Both</option></select>
+        </div>
+        <div class="input-group"><label>Eligibility</label><input class="input-field" id="co-eligibility" placeholder="e.g. 6.5 CGPA, no backlog"></div>
+      </div>
+      <div class="input-group"><label>Test details</label><textarea class="input-field" id="co-testdetails" placeholder="Describe the test — topics, difficulty, platform, duration…"></textarea></div>
+      <div class="input-group"><label>Hiring process (JSON array)</label>
+        <textarea class="input-field" id="co-process" placeholder='[{"round":"Online Test","description":"90 min aptitude on TCS iON"},{"round":"Technical Interview","description":"DSA + Java basics"}]' style="min-height:110px"></textarea>
+      </div>
+      <div class="input-group"><label>DSA topics to focus (comma separated)</label><input class="input-field" id="co-dsatopics" placeholder="Arrays, DP, Trees"></div>
+      <div class="input-group"><label>Tips from seniors</label><textarea class="input-field" id="co-tips" placeholder="What students should focus on…"></textarea></div>
+      <div class="input-group"><label>Visit year</label><input class="input-field" type="number" id="co-year" placeholder="2024"></div>
+      <div style="display:flex;gap:10px;margin-top:0.5rem">
+        <button class="btn btn-primary" onclick="saveCompany()">Save Company</button>
+        <button class="btn btn-ghost" onclick="resetCoForm()">Clear</button>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:1rem">All Companies</h3>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;overflow-x:auto">
+      <table class="data-table" id="co-table"><thead><tr><th>Company</th><th>Type</th><th>Package</th><th>Test</th><th>Year</th><th></th></tr></thead><tbody id="co-tbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ── DSA ── -->
+  <div id="sec-dsa" style="display:none">
+    <div class="admin-form">
+      <h3 id="dsa-form-title">Add DSA Question</h3>
+      <input type="hidden" id="dsa-id">
+      <div class="form-row">
+        <div class="input-group"><label>Title *</label><input class="input-field" id="dsa-title" placeholder="e.g. Two Sum"></div>
+        <div class="input-group">
+          <label>Difficulty *</label>
+          <select class="input-field" id="dsa-diff"><option>Easy</option><option selected>Medium</option><option>Hard</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="input-group">
+          <label>Topic *</label>
+          <select class="input-field" id="dsa-topic">
+            <option>Arrays</option><option>Strings</option><option>LinkedList</option>
+            <option>Stacks & Queues</option><option>Trees</option><option>Graphs</option>
+            <option>Dynamic Programming</option><option>Binary Search</option>
+            <option>Sorting</option><option>Hashing</option><option>Greedy</option><option>Recursion</option>
+          </select>
+        </div>
+        <div class="input-group"><label>Companies (comma separated)</label><input class="input-field" id="dsa-companies" placeholder="TCS, Amazon, Google"></div>
+      </div>
+      <div class="input-group"><label>Problem description *</label><textarea class="input-field" id="dsa-desc" style="min-height:100px" placeholder="Given an array of integers…"></textarea></div>
+      <div class="input-group"><label>Examples (JSON array)</label>
+        <textarea class="input-field" id="dsa-examples" placeholder='[{"input":"nums = [2,7,11,15], target = 9","output":"[0,1]"}]'></textarea>
+      </div>
+      <div class="input-group"><label>Approach / Explanation</label><textarea class="input-field" id="dsa-approach" placeholder="Explain the logic…"></textarea></div>
+      <div class="input-group"><label>Java solution</label><textarea class="input-field" id="dsa-java" style="font-family:monospace;min-height:140px" placeholder="class Solution { ... }"></textarea></div>
+      <div class="input-group"><label>Python solution</label><textarea class="input-field" id="dsa-python" style="font-family:monospace;min-height:140px" placeholder="class Solution: ..."></textarea></div>
+      <div class="form-row">
+        <div class="input-group"><label>Time complexity</label><input class="input-field" id="dsa-time" placeholder="O(n)"></div>
+        <div class="input-group"><label>Space complexity</label><input class="input-field" id="dsa-space" placeholder="O(1)"></div>
+      </div>
+      <div class="input-group"><label>LeetCode URL</label><input class="input-field" id="dsa-lc" placeholder="https://leetcode.com/problems/..."></div>
+      <div style="display:flex;gap:10px;margin-top:0.5rem">
+        <button class="btn btn-primary" onclick="saveDSA()">Save Question</button>
+        <button class="btn btn-ghost" onclick="resetDSAForm()">Clear</button>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:1rem">All DSA Questions</h3>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;overflow-x:auto">
+      <table class="data-table" id="dsa-table"><thead><tr><th>Title</th><th>Difficulty</th><th>Topic</th><th>Companies</th><th></th></tr></thead><tbody id="dsa-tbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ── NOTES ── -->
+  <div id="sec-notes" style="display:none">
+    <div class="admin-form">
+      <h3>Add Note</h3>
+      <input type="hidden" id="note-id">
+      <div class="form-row">
+        <div class="input-group"><label>Title *</label><input class="input-field" id="note-title" placeholder="e.g. Java OOP Concepts"></div>
+        <div class="input-group">
+          <label>Category *</label>
+          <select class="input-field" id="note-cat"><option>Java</option><option>Python</option><option>DSA</option><option>Aptitude</option></select>
+        </div>
+      </div>
+      <div class="input-group"><label>Short description</label><input class="input-field" id="note-desc" placeholder="What this note covers…"></div>
+      <div class="input-group"><label>Content (HTML supported)</label><textarea class="input-field" id="note-content" style="min-height:200px" placeholder="<h2>Classes</h2><p>A class is...</p>"></textarea></div>
+      <div class="form-row">
+        <div class="input-group"><label>PDF URL (Google Drive / direct link)</label><input class="input-field" id="note-pdf" placeholder="https://drive.google.com/..."></div>
+        <div class="input-group"><label>Tags (comma separated)</label><input class="input-field" id="note-tags" placeholder="OOP, inheritance, polymorphism"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:0.5rem">
+        <button class="btn btn-primary" onclick="saveNote()">Save Note</button>
+        <button class="btn btn-ghost" onclick="resetNoteForm()">Clear</button>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:1rem">All Notes</h3>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;overflow-x:auto">
+      <table class="data-table"><thead><tr><th>Title</th><th>Category</th><th>Tags</th><th></th></tr></thead><tbody id="note-tbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ── EXPERIENCES ── -->
+  <div id="sec-experiences" style="display:none">
+    <div class="admin-form">
+      <h3>Add Experience</h3>
+      <input type="hidden" id="exp-id">
+      <div class="form-row">
+        <div class="input-group"><label>Company *</label><input class="input-field" id="exp-company" placeholder="e.g. TCS"></div>
+        <div class="input-group"><label>Role</label><input class="input-field" id="exp-role" placeholder="e.g. System Engineer"></div>
+      </div>
+      <div class="form-row">
+        <div class="input-group"><label>Author</label><input class="input-field" id="exp-author" placeholder="Student name (optional)"></div>
+        <div class="input-group"><label>Year</label><input class="input-field" type="number" id="exp-year" placeholder="2024"></div>
+      </div>
+      <div class="form-row">
+        <div class="input-group">
+          <label>Result *</label>
+          <select class="input-field" id="exp-result"><option>Selected</option><option>Rejected</option><option>Waitlisted</option></select>
+        </div>
+        <div class="input-group">
+          <label>Overall difficulty</label>
+          <select class="input-field" id="exp-diff"><option>Easy</option><option selected>Medium</option><option>Hard</option></select>
+        </div>
+      </div>
+      <div class="input-group"><label>Rounds (JSON array)</label>
+        <textarea class="input-field" id="exp-rounds" style="min-height:110px" placeholder='[{"name":"Online Test","description":"60 questions in 60 min"},{"name":"HR","description":"Basic HR questions about yourself"}]'></textarea>
+      </div>
+      <div class="input-group"><label>Tips for juniors *</label><textarea class="input-field" id="exp-tips" placeholder="What students should focus on before applying…"></textarea></div>
+      <div style="display:flex;gap:10px;margin-top:0.5rem">
+        <button class="btn btn-primary" onclick="saveExp()">Save Experience</button>
+        <button class="btn btn-ghost" onclick="resetExpForm()">Clear</button>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:1rem">All Experiences</h3>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;overflow-x:auto">
+      <table class="data-table"><thead><tr><th>Company</th><th>Role</th><th>Result</th><th>Year</th><th></th></tr></thead><tbody id="exp-tbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ── USERS ── -->
+  <div id="sec-users" style="display:none">
+    <h3 style="margin-bottom:1rem">Registered Users</h3>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;overflow-x:auto">
+      <table class="data-table"><thead><tr><th>Name</th><th>Email</th><th>Paid</th><th>Joined</th></tr></thead><tbody id="users-tbody"></tbody></table>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  const u = Auth.requireAuth();
+  if (u) {
+    if (!u.isAdmin) { alert('Admin access only'); window.location.href='/dashboard.html'; }
+    document.getElementById('admin-name').textContent = u.email;
+  }
+
+  function switchSection(el, sec) {
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    ['companies','dsa','notes','experiences','users'].forEach(s => {
+      document.getElementById(`sec-${s}`).style.display = s === sec ? 'block' : 'none';
+    });
+    if (sec === 'companies') loadCoTable();
+    if (sec === 'dsa')       loadDSATable();
+    if (sec === 'notes')     loadNoteTable();
+    if (sec === 'experiences') loadExpTable();
+    if (sec === 'users')     loadUsers();
+  }
+
+  // helpers
+  const parseJSON = (id, fallback=[]) => { try { return JSON.parse(document.getElementById(id).value||'[]'); } catch { return fallback; } };
+  const delBtn = (id, fn) => `<button class="btn btn-danger" style="padding:4px 10px;font-size:0.75rem" onclick="${fn}('${id}')">Delete</button>`;
+
+  // ── COMPANIES ──
+  let coList = [];
+  async function loadCoTable() {
+    coList = await API.call('/companies').catch(()=>[]);
+    document.getElementById('co-tbody').innerHTML = coList.map(c => `
+      <tr>
+        <td>${c.name}</td><td>${c.type||'—'}</td><td>${c.package||'—'}</td><td>${c.testType||'—'}</td><td>${c.year||'—'}</td>
+        <td>${delBtn(c._id,'deleteCompany')}</td>
+      </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted)">No companies yet</td></tr>';
+  }
+
+  async function saveCompany() {
+    const id = document.getElementById('co-id').value;
+    const body = {
+      name: document.getElementById('co-name').value,
+      domain: document.getElementById('co-domain').value,
+      type: document.getElementById('co-type').value,
+      package: document.getElementById('co-package').value,
+      testType: document.getElementById('co-testtype').value,
+      eligibility: document.getElementById('co-eligibility').value,
+      testDetails: document.getElementById('co-testdetails').value,
+      process: parseJSON('co-process'),
+      dsaTopics: document.getElementById('co-dsatopics').value.split(',').map(s=>s.trim()).filter(Boolean),
+      tips: document.getElementById('co-tips').value,
+      year: Number(document.getElementById('co-year').value) || undefined
+    };
+    if (!body.name) return toast('Company name is required', 'error');
+    try {
+      const ep   = id ? `/admin/companies/${id}` : '/admin/companies';
+      const meth = id ? 'PUT' : 'POST';
+      await API.call(ep, { method: meth, body: JSON.stringify(body) });
+      toast('Company saved!', 'success');
+      resetCoForm(); loadCoTable();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  async function deleteCompany(id) {
+    if (!confirm('Delete this company?')) return;
+    await API.call(`/admin/companies/${id}`, { method:'DELETE' });
+    toast('Deleted', 'success'); loadCoTable();
+  }
+
+  function resetCoForm() {
+    ['co-id','co-name','co-domain','co-package','co-eligibility','co-testdetails','co-process','co-dsatopics','co-tips','co-year'].forEach(i => document.getElementById(i).value='');
+    document.getElementById('co-form-title').textContent = 'Add Company';
+  }
+
+  // ── DSA ──
+  let dsaList = [];
+  async function loadDSATable() {
+    dsaList = await API.call('/dsa').catch(()=>[]);
+    document.getElementById('dsa-tbody').innerHTML = dsaList.map(q => `
+      <tr>
+        <td>${q.title}</td>
+        <td><span class="badge badge-${q.difficulty.toLowerCase()}">${q.difficulty}</span></td>
+        <td>${q.topic}</td>
+        <td style="font-size:0.78rem">${(q.companies||[]).join(', ')||'—'}</td>
+        <td>${delBtn(q._id,'deleteDSA')}</td>
+      </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No questions yet</td></tr>';
+  }
+
+  async function saveDSA() {
+    const id = document.getElementById('dsa-id').value;
+    const body = {
+      title: document.getElementById('dsa-title').value,
+      difficulty: document.getElementById('dsa-diff').value,
+      topic: document.getElementById('dsa-topic').value,
+      description: document.getElementById('dsa-desc').value,
+      examples: parseJSON('dsa-examples'),
+      approach: document.getElementById('dsa-approach').value,
+      java_code: document.getElementById('dsa-java').value,
+      python_code: document.getElementById('dsa-python').value,
+      timeComplex: document.getElementById('dsa-time').value,
+      spaceComplex: document.getElementById('dsa-space').value,
+      companies: document.getElementById('dsa-companies').value.split(',').map(s=>s.trim()).filter(Boolean),
+      leetcodeUrl: document.getElementById('dsa-lc').value
+    };
+    if (!body.title || !body.description) return toast('Title and description required', 'error');
+    try {
+      const ep = id ? `/admin/dsa/${id}` : '/admin/dsa';
+      await API.call(ep, { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });
+      toast('Question saved!', 'success');
+      resetDSAForm(); loadDSATable();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  async function deleteDSA(id) {
+    if (!confirm('Delete this question?')) return;
+    await API.call(`/admin/dsa/${id}`, { method:'DELETE' });
+    toast('Deleted', 'success'); loadDSATable();
+  }
+
+  function resetDSAForm() {
+    ['dsa-id','dsa-title','dsa-companies','dsa-desc','dsa-examples','dsa-approach','dsa-java','dsa-python','dsa-time','dsa-space','dsa-lc'].forEach(i => document.getElementById(i).value='');
+    document.getElementById('dsa-form-title').textContent = 'Add DSA Question';
+  }
+
+  // ── NOTES ──
+  let noteList = [];
+  async function loadNoteTable() {
+    noteList = await API.call('/notes').catch(()=>[]);
+    document.getElementById('note-tbody').innerHTML = noteList.map(n => `
+      <tr>
+        <td>${n.title}</td><td>${n.category}</td>
+        <td style="font-size:0.78rem">${(n.tags||[]).join(', ')||'—'}</td>
+        <td>${delBtn(n._id,'deleteNote')}</td>
+      </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted)">No notes yet</td></tr>';
+  }
+
+  async function saveNote() {
+    const id = document.getElementById('note-id').value;
+    const body = {
+      title: document.getElementById('note-title').value,
+      category: document.getElementById('note-cat').value,
+      description: document.getElementById('note-desc').value,
+      content: document.getElementById('note-content').value,
+      pdfUrl: document.getElementById('note-pdf').value,
+      tags: document.getElementById('note-tags').value.split(',').map(s=>s.trim()).filter(Boolean)
+    };
+    if (!body.title) return toast('Title required', 'error');
+    try {
+      const ep = id ? `/admin/notes/${id}` : '/admin/notes';
+      await API.call(ep, { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });
+      toast('Note saved!', 'success');
+      resetNoteForm(); loadNoteTable();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  async function deleteNote(id) {
+    if (!confirm('Delete this note?')) return;
+    await API.call(`/admin/notes/${id}`, { method:'DELETE' });
+    toast('Deleted', 'success'); loadNoteTable();
+  }
+
+  function resetNoteForm() {
+    ['note-id','note-title','note-desc','note-content','note-pdf','note-tags'].forEach(i => document.getElementById(i).value='');
+  }
+
+  // ── EXPERIENCES ──
+  async function loadExpTable() {
+    const list = await API.call('/experiences').catch(()=>[]);
+    document.getElementById('exp-tbody').innerHTML = list.map(e => `
+      <tr>
+        <td>${e.company}</td><td>${e.role||'—'}</td>
+        <td><span class="badge badge-${(e.result||'').toLowerCase()}">${e.result||'—'}</span></td>
+        <td>${e.year||'—'}</td>
+        <td>${delBtn(e._id,'deleteExp')}</td>
+      </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No experiences yet</td></tr>';
+  }
+
+  async function saveExp() {
+    const id = document.getElementById('exp-id').value;
+    const body = {
+      company: document.getElementById('exp-company').value,
+      role: document.getElementById('exp-role').value,
+      author: document.getElementById('exp-author').value,
+      year: Number(document.getElementById('exp-year').value) || undefined,
+      result: document.getElementById('exp-result').value,
+      difficulty: document.getElementById('exp-diff').value,
+      rounds: parseJSON('exp-rounds'),
+      tips: document.getElementById('exp-tips').value
+    };
+    if (!body.company) return toast('Company required', 'error');
+    try {
+      const ep = id ? `/admin/experiences/${id}` : '/admin/experiences';
+      await API.call(ep, { method: id ? 'PUT' : 'POST', body: JSON.stringify(body) });
+      toast('Experience saved!', 'success');
+      resetExpForm(); loadExpTable();
+    } catch(e) { toast(e.message, 'error'); }
+  }
+
+  async function deleteExp(id) {
+    if (!confirm('Delete this experience?')) return;
+    await API.call(`/admin/experiences/${id}`, { method:'DELETE' });
+    toast('Deleted', 'success'); loadExpTable();
+  }
+
+  function resetExpForm() {
+    ['exp-id','exp-company','exp-role','exp-author','exp-year','exp-rounds','exp-tips'].forEach(i => document.getElementById(i).value='');
+  }
+
+  // ── USERS ──
+  async function loadUsers() {
+    const users = await API.call('/admin/users').catch(()=>[]);
+    document.getElementById('users-tbody').innerHTML = users.map(u => `
+      <tr>
+        <td>${u.name||'—'}</td><td>${u.email}</td>
+        <td>${u.isPaid ? '<span class="badge badge-selected">Paid</span>' : '<span class="badge badge-rejected">Free</span>'}</td>
+        <td style="font-size:0.8rem;color:var(--muted)">${new Date(u.createdAt).toLocaleDateString()}</td>
+      </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted)">No users</td></tr>';
+  }
+
+  // Load default section
+  loadCoTable();
+</script>
+</body>
+</html>

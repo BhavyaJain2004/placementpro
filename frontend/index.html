@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PlacementPro — Crack Campus Placements</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .stat-row { display:flex; gap:2.5rem; justify-content:center; margin-top:3rem; flex-wrap:wrap; animation: fadeUp 0.6s ease 0.45s both; }
+  .stat-item { text-align:center; }
+  .stat-num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--text); display:block; }
+  .stat-label { font-size:0.78rem; color:var(--muted); }
+  .divider-line { width:1px; height:40px; background:var(--border); }
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">
+    <span class="dot"></span> PlacementPro
+  </div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn btn-ghost" onclick="showAuth('login')">Log in</button>
+    <button class="btn btn-primary" onclick="showAuth('signup')">Get Access</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">🎓 Built for campus placements</div>
+  <h1>Everything you need to<br><span class="highlight">crack placements</span></h1>
+  <p>Company processes, DSA questions with Java & Python solutions, notes, and real interview experiences — all in one place.</p>
+  <div class="hero-cta">
+    <button class="btn btn-primary btn-lg" onclick="showAuth('signup')">Get Access @ ₹99 →</button>
+    <button class="btn btn-outline btn-lg" onclick="showAuth('login')">Already a member</button>
+  </div>
+  <p class="hero-note">One-time payment · Lifetime access · No subscription</p>
+
+  <div class="stat-row">
+    <div class="stat-item">
+      <span class="stat-num">50+</span>
+      <span class="stat-label">Companies</span>
+    </div>
+    <div class="divider-line"></div>
+    <div class="stat-item">
+      <span class="stat-num">150+</span>
+      <span class="stat-label">DSA Questions</span>
+    </div>
+    <div class="divider-line"></div>
+    <div class="stat-item">
+      <span class="stat-num">Java+Python</span>
+      <span class="stat-label">Solutions</span>
+    </div>
+    <div class="divider-line"></div>
+    <div class="stat-item">
+      <span class="stat-num">100+</span>
+      <span class="stat-label">Experiences</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="container" style="padding-bottom:5rem">
+  <div class="features">
+    <div class="feature-item">
+      <span class="feature-icon">🏢</span>
+      <h3>Company Profiles</h3>
+      <p>Full hiring process, test patterns, eligibility, tips — for every company that visits campus.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">💻</span>
+      <h3>DSA Practice</h3>
+      <p>Topic-wise questions with Java and Python solutions. Company tags so you know what to focus on.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">📄</span>
+      <h3>Notes & PDFs</h3>
+      <p>Crisp notes for Java, Python, DSA theory, and aptitude. Cheatsheets you'll actually use.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">🗣️</span>
+      <h3>Interview Experiences</h3>
+      <p>Real stories from seniors who got placed. Round-by-round breakdown and honest tips.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="container" style="padding-bottom:6rem; text-align:center;">
+  <h2 style="font-size:2rem; margin-bottom:0.5rem">Simple, one-time pricing</h2>
+  <p style="color:var(--muted); margin-bottom:3rem">Pay once. Access forever. No renewals.</p>
+  <div style="max-width:380px; margin:0 auto; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-xl); padding:2.5rem; position:relative; overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));"></div>
+    <span style="font-size:0.75rem; color:var(--accent2); font-weight:600; text-transform:uppercase; letter-spacing:0.08em;">Lifetime Access</span>
+    <div style="margin:1.25rem 0 1.75rem;">
+      <span style="font-family:'Syne',sans-serif; font-size:3.5rem; font-weight:800;">₹99</span>
+      <span style="color:var(--faint); text-decoration:line-through; margin-left:10px; font-size:1.1rem">₹499</span>
+    </div>
+    <ul style="list-style:none; text-align:left; margin-bottom:2rem; display:flex; flex-direction:column; gap:0.7rem;">
+      <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted)"><span style="color:var(--green)">✓</span> 50+ Company profiles</li>
+      <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted)"><span style="color:var(--green)">✓</span> 150+ DSA questions (Java + Python)</li>
+      <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted)"><span style="color:var(--green)">✓</span> Topic notes & PDF cheatsheets</li>
+      <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted)"><span style="color:var(--green)">✓</span> Real interview experiences</li>
+      <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted)"><span style="color:var(--green)">✓</span> Lifetime updates</li>
+    </ul>
+    <button class="btn btn-primary btn-lg" style="width:100%" onclick="showAuth('signup')">Get Access Now</button>
+    <p style="font-size:0.75rem; color:var(--faint); margin-top:1rem">Secure payment via Razorpay</p>
+  </div>
+</section>
+
+<!-- AUTH MODAL -->
+<div id="auth-modal" class="modal-overlay">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <div>
+        <div class="nav-logo" style="font-size:1rem"><span class="dot"></span> PlacementPro</div>
+      </div>
+      <button class="modal-close" onclick="closeAuth()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Log in</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Sign up</button>
+      </div>
+
+      <!-- LOGIN -->
+      <form id="login-form" onsubmit="handleLogin(event)" style="display:flex;flex-direction:column;gap:0">
+        <div class="input-group">
+          <label>Email</label>
+          <input class="input-field" type="email" id="l-email" placeholder="you@example.com" required>
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input class="input-field" type="password" id="l-pass" placeholder="Your password" required>
+        </div>
+        <p class="form-error" id="login-err"></p>
+        <button type="submit" class="btn btn-primary" style="margin-top:1rem;width:100%;justify-content:center" id="login-btn">Log in</button>
+      </form>
+
+      <!-- SIGNUP -->
+      <form id="signup-form" style="display:none;flex-direction:column;gap:0" onsubmit="handleSignup(event)">
+        <div class="input-group">
+          <label>Full name</label>
+          <input class="input-field" type="text" id="s-name" placeholder="Your name" required>
+        </div>
+        <div class="input-group">
+          <label>Email</label>
+          <input class="input-field" type="email" id="s-email" placeholder="you@example.com" required>
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input class="input-field" type="password" id="s-pass" placeholder="Min 6 characters" minlength="6" required>
+        </div>
+        <p class="form-error" id="signup-err"></p>
+        <button type="submit" class="btn btn-primary" style="margin-top:1rem;width:100%;justify-content:center" id="signup-btn">Create account</button>
+        <p style="font-size:0.78rem;color:var(--muted);text-align:center;margin-top:1rem">After signup you'll be taken to unlock access for ₹99</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  Auth.redirectIfLoggedIn();
+
+  function showAuth(tab) {
+    document.getElementById('auth-modal').classList.add('open');
+    switchTab(tab);
+  }
+  function closeAuth() { document.getElementById('auth-modal').classList.remove('open'); }
+  function switchTab(tab) {
+    document.getElementById('login-form').style.display  = tab === 'login'  ? 'flex' : 'none';
+    document.getElementById('signup-form').style.display = tab === 'signup' ? 'flex' : 'none';
+    document.getElementById('tab-login').classList.toggle('active',  tab === 'login');
+    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    const btn = document.getElementById('login-btn');
+    btn.disabled = true; btn.textContent = 'Logging in…';
+    document.getElementById('login-err').textContent = '';
+    try {
+      const data = await API.call('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: document.getElementById('l-email').value, password: document.getElementById('l-pass').value })
+      });
+      localStorage.setItem('pp_token', data.token);
+      localStorage.setItem('pp_user', JSON.stringify(data.user));
+      window.location.href = '/frontend/dashboard.html';
+    } catch(err) {
+      document.getElementById('login-err').textContent = err.message;
+      btn.disabled = false; btn.textContent = 'Log in';
+    }
+  }
+
+  async function handleSignup(e) {
+    e.preventDefault();
+    const btn = document.getElementById('signup-btn');
+    btn.disabled = true; btn.textContent = 'Creating account…';
+    document.getElementById('signup-err').textContent = '';
+    try {
+      const data = await API.call('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ name: document.getElementById('s-name').value, email: document.getElementById('s-email').value, password: document.getElementById('s-pass').value })
+      });
+      localStorage.setItem('pp_token', data.token);
+      localStorage.setItem('pp_user', JSON.stringify(data.user));
+      window.location.href = '/frontend/dashboard.html';
+    } catch(err) {
+      document.getElementById('signup-err').textContent = err.message;
+      btn.disabled = false; btn.textContent = 'Create account';
+    }
+  }
+
+  // close modal on outside click
+  document.getElementById('auth-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeAuth();
+  });
+</script>
+</body>
+</html>

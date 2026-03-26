@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Companies — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="toast"></div>
+
+<nav class="navbar">
+  <div class="nav-logo"><a href="dashboard.html" style="display:flex;align-items:center;gap:8px"><span class="dot"></span> PlacementPro</a></div>
+  <ul class="nav-links">
+    <li><a href="companies.html" class="active">Companies</a></li>
+    <li><a href="dsa.html">DSA</a></li>
+    <li><a href="notes.html">Notes</a></li>
+    <li><a href="experiences.html">Experiences</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-avatar" id="nav-avatar">?</div>
+    <button class="btn btn-ghost" onclick="Auth.logout()">Log out</button>
+  </div>
+</nav>
+
+<div class="container page-body">
+
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Companies</h1>
+      <p style="color:var(--muted);font-size:0.875rem;margin-top:0.25rem">Full hiring process, test details and tips</p>
+    </div>
+    <span class="section-count" id="count-label">Loading…</span>
+  </div>
+
+  <div class="filter-bar">
+    <input type="text" id="search-inp" placeholder="Search company…" oninput="filterCards()">
+    <select id="type-filter" onchange="filterCards()">
+      <option value="">All types</option>
+      <option value="Product">Product</option>
+      <option value="Service">Service</option>
+      <option value="Startup">Startup</option>
+    </select>
+    <select id="test-filter" onchange="filterCards()">
+      <option value="">All test types</option>
+      <option value="Aptitude">Aptitude</option>
+      <option value="Coding">Coding</option>
+      <option value="Both">Both</option>
+    </select>
+  </div>
+
+  <div class="companies-grid" id="companies-grid">
+    <!-- skeleton -->
+    <div class="card skeleton" style="height:200px"></div>
+    <div class="card skeleton" style="height:200px"></div>
+    <div class="card skeleton" style="height:200px"></div>
+    <div class="card skeleton" style="height:200px"></div>
+    <div class="card skeleton" style="height:200px"></div>
+    <div class="card skeleton" style="height:200px"></div>
+  </div>
+
+</div>
+
+<!-- COMPANY DETAIL MODAL -->
+<div id="company-modal" class="modal-overlay">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="company-modal-header" id="modal-header-content"></div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body-content"></div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  Auth.requirePaid();
+  const u = Auth.decodeToken();
+  if (u) Auth.setNavUser(u.name || u.email);
+
+  let allCompanies = [];
+
+  const logoUrl = (domain) => domain
+    ? `https://logo.clearbit.com/${domain}`
+    : null;
+
+  const logoHtml = (company) => {
+    const url = logoUrl(company.domain);
+    if (url) {
+      return `<div class="company-logo">
+        <img src="${url}" alt="${company.name}" onerror="this.parentElement.outerHTML='<div class=\\'company-logo-fallback\\'>${company.name.charAt(0)}</div>'">
+      </div>`;
+    }
+    return `<div class="company-logo-fallback">${company.name.charAt(0)}</div>`;
+  };
+
+  const badgeType = (t) => {
+    const map = { Product:'product', Service:'service', Startup:'startup' };
+    return `<span class="badge badge-${map[t]||'product'}">${t||'Company'}</span>`;
+  };
+
+  const renderCard = (c) => `
+    <div class="company-card" onclick="openModal('${c._id}')">
+      <div class="company-card-header">
+        ${logoHtml(c)}
+        <div class="company-card-info">
+          <h3>${c.name}</h3>
+          <div class="company-card-meta">
+            ${badgeType(c.type)}
+            ${c.year ? `<span style="font-size:0.75rem;color:var(--faint)">${c.year}</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="company-card-body">
+        <div class="company-stat-row">
+          <div class="company-stat">
+            <span class="label">Test</span>
+            <span class="value">${c.testType || '—'}</span>
+          </div>
+          <div class="company-stat">
+            <span class="label">Package</span>
+            <span class="value">${c.package || '—'}</span>
+          </div>
+          ${c.eligibility ? `<div class="company-stat"><span class="label">Eligibility</span><span class="value">${c.eligibility}</span></div>` : ''}
+        </div>
+        <div class="company-card-footer">
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            ${(c.dsaTopics||[]).slice(0,3).map(t=>`<span class="q-company-tag">${t}</span>`).join('')}
+          </div>
+          <button class="btn btn-outline" style="padding:5px 14px;font-size:0.78rem">View process →</button>
+        </div>
+      </div>
+    </div>`;
+
+  const renderRounds = (rounds) => {
+    if (!rounds?.length) return '<p style="color:var(--muted);font-size:0.875rem">No rounds info available.</p>';
+    return `<div class="round-list">
+      ${rounds.map((r,i) => `
+        <div class="round-item">
+          <div class="round-num">${i+1}</div>
+          <div class="round-content">
+            <h4>${r.round || `Round ${i+1}`}</h4>
+            <p>${r.description || ''}</p>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  };
+
+  async function loadCompanies() {
+    try {
+      allCompanies = await API.call('/companies');
+      renderGrid(allCompanies);
+    } catch(e) {
+      document.getElementById('companies-grid').innerHTML =
+        `<div class="empty-state"><div class="empty-icon">⚠️</div><p>${e.message}</p></div>`;
+    }
+  }
+
+  function renderGrid(list) {
+    const grid = document.getElementById('companies-grid');
+    document.getElementById('count-label').textContent = `${list.length} companies`;
+    if (!list.length) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🏢</div><p>No companies found</p></div>';
+      return;
+    }
+    grid.innerHTML = list.map(renderCard).join('');
+  }
+
+  function filterCards() {
+    const q    = document.getElementById('search-inp').value.toLowerCase();
+    const type = document.getElementById('type-filter').value;
+    const test = document.getElementById('test-filter').value;
+    const filtered = allCompanies.filter(c => {
+      const nameMatch = c.name.toLowerCase().includes(q);
+      const typeMatch = !type || c.type === type;
+      const testMatch = !test || c.testType === test;
+      return nameMatch && typeMatch && testMatch;
+    });
+    renderGrid(filtered);
+  }
+
+  function openModal(id) {
+    const c = allCompanies.find(x => x._id === id);
+    if (!c) return;
+
+    document.getElementById('modal-header-content').innerHTML = `
+      ${logoHtml(c)}
+      <div>
+        <h2 style="font-size:1.25rem">${c.name}</h2>
+        <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">
+          ${badgeType(c.type)}
+          ${c.package ? `<span class="badge" style="background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2)">${c.package}</span>` : ''}
+          ${c.year ? `<span style="font-size:0.78rem;color:var(--faint)">${c.year}</span>` : ''}
+        </div>
+      </div>`;
+
+    document.getElementById('modal-body-content').innerHTML = `
+      <div class="info-grid">
+        <div class="info-box"><div class="info-label">Test type</div><div class="info-value">${c.testType||'—'}</div></div>
+        <div class="info-box"><div class="info-label">Package</div><div class="info-value">${c.package||'—'}</div></div>
+        <div class="info-box"><div class="info-label">Eligibility</div><div class="info-value">${c.eligibility||'—'}</div></div>
+        <div class="info-box"><div class="info-label">Visit year</div><div class="info-value">${c.year||'—'}</div></div>
+      </div>
+
+      ${c.testDetails ? `
+        <div class="section-label">Test details</div>
+        <p style="font-size:0.875rem;color:var(--muted);line-height:1.7">${c.testDetails}</p>
+      ` : ''}
+
+      <div class="section-label" style="margin-top:1.5rem">Hiring process</div>
+      ${renderRounds(c.process)}
+
+      ${(c.dsaTopics?.length) ? `
+        <div class="section-label" style="margin-top:1.25rem">DSA topics to focus</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${c.dsaTopics.map(t=>`<span class="q-company-tag">${t}</span>`).join('')}
+        </div>
+      ` : ''}
+
+      ${c.tips ? `
+        <div class="tips-box">
+          <div class="tips-label">💡 Tips from seniors</div>
+          <p>${c.tips}</p>
+        </div>
+      ` : ''}
+    `;
+
+    document.getElementById('company-modal').classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('company-modal').classList.remove('open'); }
+
+  document.getElementById('company-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  loadCompanies();
+</script>
+</body>
+</html>

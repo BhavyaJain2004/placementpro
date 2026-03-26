@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notes — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .note-content { font-size:0.9rem; color:var(--muted); line-height:1.8; }
+  .note-content h2 { font-size:1.1rem; color:var(--text); margin:1.5rem 0 0.5rem; }
+  .note-content h3 { font-size:0.95rem; color:var(--accent2); margin:1.25rem 0 0.35rem; }
+  .note-content pre { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:1rem; font-family:monospace; font-size:0.82rem; overflow-x:auto; margin:0.5rem 0; }
+  .note-content ul { padding-left:1.25rem; margin:0.5rem 0; }
+  .note-content li { margin:0.3rem 0; }
+  .note-content strong { color:var(--text); font-weight:500; }
+  .note-content code { background:var(--surface2); padding:1px 6px; border-radius:4px; font-family:monospace; font-size:0.82rem; color:var(--accent2); }
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<nav class="navbar">
+  <div class="nav-logo"><a href="dashboard.html" style="display:flex;align-items:center;gap:8px"><span class="dot"></span> PlacementPro</a></div>
+  <ul class="nav-links">
+    <li><a href="companies.html">Companies</a></li>
+    <li><a href="dsa.html">DSA</a></li>
+    <li><a href="notes.html" class="active">Notes</a></li>
+    <li><a href="experiences.html">Experiences</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-avatar" id="nav-avatar">?</div>
+    <button class="btn btn-ghost" onclick="Auth.logout()">Log out</button>
+  </div>
+</nav>
+
+<div class="container page-body">
+
+  <div class="section-header" style="margin-bottom:0">
+    <div>
+      <h1 class="section-title">Notes & Resources</h1>
+      <p style="color:var(--muted);font-size:0.875rem;margin-top:0.25rem">Java · Python · DSA theory · Aptitude</p>
+    </div>
+  </div>
+
+  <!-- Category tabs -->
+  <div class="notes-tabs-row" style="margin-top:1.75rem">
+    <button class="note-tab active" onclick="setCategory(this,'Java')" data-cat="Java">☕ Java</button>
+    <button class="note-tab" onclick="setCategory(this,'Python')" data-cat="Python">🐍 Python</button>
+    <button class="note-tab" onclick="setCategory(this,'DSA')" data-cat="DSA">🌳 DSA Theory</button>
+    <button class="note-tab" onclick="setCategory(this,'Aptitude')" data-cat="Aptitude">🧮 Aptitude</button>
+  </div>
+
+  <div class="notes-grid" id="notes-grid" style="margin-top:1.75rem">
+    <div class="note-card skeleton" style="height:160px"></div>
+    <div class="note-card skeleton" style="height:160px"></div>
+    <div class="note-card skeleton" style="height:160px"></div>
+    <div class="note-card skeleton" style="height:160px"></div>
+  </div>
+</div>
+
+<!-- NOTE DETAIL MODAL -->
+<div id="note-modal" class="modal-overlay">
+  <div class="modal modal-lg">
+    <div class="modal-header" id="note-modal-header"></div>
+    <div class="modal-body">
+      <div class="note-content" id="note-modal-content"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  Auth.requirePaid();
+  const u = Auth.decodeToken();
+  if (u) Auth.setNavUser(u.name || u.email);
+
+  let allNotes = [], activeCategory = 'Java';
+
+  const CATEGORY_ICONS = { Java:'☕', Python:'🐍', DSA:'🌳', Aptitude:'🧮' };
+  const ICON_BG = { Java:'rgba(251,191,36,0.1)', Python:'rgba(52,211,153,0.1)', DSA:'rgba(124,106,247,0.1)', Aptitude:'rgba(45,212,191,0.1)' };
+  const ICON_COLOR = { Java:'#fbbf24', Python:'#34d399', DSA:'#7c6af7', Aptitude:'#2dd4bf' };
+
+  async function loadNotes() {
+    try {
+      allNotes = await API.call('/notes');
+      renderNotes();
+    } catch(e) {
+      document.getElementById('notes-grid').innerHTML =
+        `<div class="empty-state"><div class="empty-icon">⚠️</div><p>${e.message}</p></div>`;
+    }
+  }
+
+  function setCategory(el, cat) {
+    document.querySelectorAll('.note-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    activeCategory = cat;
+    renderNotes();
+  }
+
+  function renderNotes() {
+    const list = allNotes.filter(n => n.category === activeCategory);
+    const grid = document.getElementById('notes-grid');
+    if (!list.length) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📄</div><p>No notes in this category yet</p></div>';
+      return;
+    }
+    grid.innerHTML = list.map(n => `
+      <div class="note-card" onclick="openNote('${n._id}')">
+        <div class="note-card-icon" style="background:${ICON_BG[n.category]||'rgba(124,106,247,0.1)'}">
+          <span style="color:${ICON_COLOR[n.category]||'#7c6af7'}">${CATEGORY_ICONS[n.category]||'📄'}</span>
+        </div>
+        <h3>${n.title}</h3>
+        <p>${n.description||''}</p>
+        <div class="note-card-footer">
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            ${(n.tags||[]).map(t=>`<span class="q-company-tag">${t}</span>`).join('')}
+          </div>
+          <span style="font-size:0.78rem;color:var(--accent2)">Read →</span>
+        </div>
+      </div>`).join('');
+  }
+
+  function openNote(id) {
+    const n = allNotes.find(x => x._id === id);
+    if (!n) return;
+
+    document.getElementById('note-modal-header').innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="note-card-icon" style="background:${ICON_BG[n.category]||'rgba(124,106,247,0.1)'}">
+          <span style="color:${ICON_COLOR[n.category]||'#7c6af7'}">${CATEGORY_ICONS[n.category]||'📄'}</span>
+        </div>
+        <div>
+          <h2 style="font-size:1.1rem">${n.title}</h2>
+          <span style="font-size:0.8rem;color:var(--muted)">${n.category}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        ${n.pdfUrl ? `<a href="${n.pdfUrl}" target="_blank" class="btn btn-outline" style="font-size:0.8rem">Download PDF ↗</a>` : ''}
+        <button class="modal-close" onclick="closeNote()">×</button>
+      </div>`;
+
+    // render content — supports basic HTML or plain text
+    document.getElementById('note-modal-content').innerHTML = n.content || '<p style="color:var(--muted)">No content available.</p>';
+    document.getElementById('note-modal').classList.add('open');
+  }
+
+  function closeNote() { document.getElementById('note-modal').classList.remove('open'); }
+
+  document.getElementById('note-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeNote();
+  });
+
+  loadNotes();
+</script>
+</body>
+</html>
