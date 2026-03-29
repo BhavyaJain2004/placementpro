@@ -83,6 +83,30 @@
 <body>
 <div id="toast"></div>
 
+  <div id="pending-bar" style="display:none;
+  background:linear-gradient(90deg,rgba(124,106,247,0.15),rgba(124,106,247,0.05),rgba(124,106,247,0.15));
+  border-bottom:1px solid rgba(124,106,247,0.25);
+  padding:0.45rem 0; overflow:hidden;
+">
+  <marquee style="color:rgba(255,255,255,0.75); font-size:0.82rem;">
+    ⏳ Done with payment? &nbsp;•&nbsp; Your account will be activated within 1-2 hours &nbsp;•&nbsp; After that, <strong style="color:#4ade80">logout and login again</strong> — you'll have full access 🚀
+  </marquee>
+</div>
+
+<script>
+  window.addEventListener('load', function() {
+    const token = localStorage.getItem('pp_token');
+    if (token) {
+      try {
+        const user = JSON.parse(atob(token.split('.')[1]));
+        if (!user.isPaid) {
+          document.getElementById('pending-bar').style.display = 'block';
+        }
+      } catch(e) {}
+    }
+  });
+</script>
+
 <nav class="navbar">
   <div class="nav-logo">
     <a href="dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit">
