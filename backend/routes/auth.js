@@ -22,52 +22,52 @@ router.post('/register', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Login
-// router.post('/login', async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await User.findOne({ email });
-//     if (!user) return res.status(400).json({ error: 'No account found with this email' });
-//     if (!await bcrypt.compare(password, user.password)) return res.status(400).json({ error: 'Incorrect password' });
-//     res.json({ token: sign(user), user: { name: user.name, email: user.email, isPaid: user.isPaid } });
-//   } catch (e) { res.status(500).json({ error: e.message }); }
-// });
-
+Login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
-
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ message: 'Invalid credentials' });
-
-    const token = jwt.sign(
-      { id: user._id, email: user.email, name: user.name, isPaid: user.isPaid, isAdmin: user.isAdmin },
-      process.env.JWT_SECRET,
-      { expiresIn: '30d' }
-    );
-
-    // Get IP
-    const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
-    const device = req.headers['user-agent']?.substring(0, 100) || 'Unknown';
-
-    // Add new session
-    user.sessions = user.sessions || [];
-    user.sessions.push({ token, ip, device, loginAt: new Date() });
-
-    // MAX 2 DEVICES — remove oldest if more than 2
-    if (user.sessions.length > 2) {
-      user.sessions = user.sessions.slice(-2); // keep only last 2
-    }
-
-    await user.save();
-
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, isPaid: user.isPaid, isAdmin: user.isAdmin }});
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+    if (!user) return res.status(400).json({ error: 'No account found with this email' });
+    if (!await bcrypt.compare(password, user.password)) return res.status(400).json({ error: 'Incorrect password' });
+    res.json({ token: sign(user), user: { name: user.name, email: user.email, isPaid: user.isPaid } });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
+
+// router.post('/login', async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+//     const user = await User.findOne({ email });
+//     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+
+//     const match = await bcrypt.compare(password, user.password);
+//     if (!match) return res.status(400).json({ message: 'Invalid credentials' });
+
+//     const token = jwt.sign(
+//       { id: user._id, email: user.email, name: user.name, isPaid: user.isPaid, isAdmin: user.isAdmin },
+//       process.env.JWT_SECRET,
+//       { expiresIn: '30d' }
+//     );
+
+//     // Get IP
+//     const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+//     const device = req.headers['user-agent']?.substring(0, 100) || 'Unknown';
+
+//     // Add new session
+//     user.sessions = user.sessions || [];
+//     user.sessions.push({ token, ip, device, loginAt: new Date() });
+
+//     // MAX 2 DEVICES — remove oldest if more than 2
+//     if (user.sessions.length > 2) {
+//       user.sessions = user.sessions.slice(-2); // keep only last 2
+//     }
+
+//     await user.save();
+
+//     res.json({ token, user: { id: user._id, name: user.name, email: user.email, isPaid: user.isPaid, isAdmin: user.isAdmin }});
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
 
 // Get current user (refresh token)
 router.get('/me', verifyToken, async (req, res) => {
