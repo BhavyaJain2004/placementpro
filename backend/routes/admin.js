@@ -71,6 +71,49 @@ router.post('/activate', verifyToken, verifyAdmin, async (req, res) => {
   }
 });
 
+// Added New 2 Routes ----------------------------------------------------------------------------------------------------
+
+// GET /api/admin/sessions — dekho kaun kahan se login hai
+router.get('/sessions', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const users = await User.find({ isPaid: true })
+      .select('name email sessions');
+    
+    const logs = users.map(u => ({
+      name: u.name,
+      email: u.email,
+      activeSessions: u.sessions?.length || 0,
+      sessions: u.sessions?.map(s => ({
+        ip: s.ip,
+        device: s.device,
+        loginAt: s.loginAt
+      }))
+    }));
+
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// DELETE /api/admin/kick — kisi ka session forcefully hatao
+router.post('/kick', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    
+    user.sessions = []; // all sessions clear
+    await user.save();
+    
+    res.json({ message: `All sessions cleared for ${email}` });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+------------------------------------------------------------------------------------------------------------------------
+
 // GET /api/admin/pending
 // See all users who registered but not paid yet
 router.get('/pending', verifyToken, verifyAdmin, async (req, res) => {
