@@ -16,6 +16,15 @@ const call = async (endpoint, options = {}) => {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Something went wrong');
+  if (response.status === 401) {
+  const data = await response.json();
+  if (data.message === 'Session expired. Please login again.') {
+    alert('Aapka session expire ho gaya — doosri device pe login hua. Please login again.');
+    localStorage.removeItem('pp_token');
+    window.location.href = 'index.html';
+    return;
+  }
+}
   return data;
 };
 
