@@ -22,7 +22,6 @@ router.post('/register', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-Login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
