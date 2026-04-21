@@ -6,6 +6,12 @@ const userSchema = new mongoose.Schema({
   password:  { type: String, required: true },
   isPaid:    { type: Boolean, default: false },
   isAdmin:   { type: Boolean, default: false },
+  sessions: [{
+  token: String,
+  ip: String,
+  device: String,
+  loginAt: { type: Date, default: Date.now }
+}],
   paymentId: String,
   orderId:   String,
   paidAt:    Date
