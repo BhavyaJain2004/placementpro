@@ -84,4 +84,16 @@ router.get('/pending', verifyToken, verifyAdmin, async (req, res) => {
   }
 });
 
+// Existing users migration — ek baar chalao
+router.get('/migrate-sessions', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const result = await User.updateMany(
+      { sessions: { $exists: false } },
+      { $set: { sessions: [], mobile: '' } }
+    );
+    res.json({ message: 'Done!', updated: result.modifiedCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
