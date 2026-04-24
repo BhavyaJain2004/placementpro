@@ -14,6 +14,20 @@ const call = async (endpoint, options = {}) => {
     },
     ...options
   });
+
+  // Added new part 
+   if (res.status === 401) {
+    const data = await res.json().catch(() => ({}));
+    localStorage.removeItem('pp_token');
+    if (data.message === 'SESSION_EXPIRED') {
+      alert('You were logged out because your account was accessed from another device.');
+    }
+    window.location.href = 'index.html';
+    return;
+  }
+
+  // New Part over
+
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Something went wrong');
   return data;
