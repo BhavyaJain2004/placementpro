@@ -96,4 +96,16 @@ router.get('/migrate-sessions', verifyToken, verifyAdmin, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+// Sab users logout — sessions clear
+router.post('/logout-all', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const result = await User.updateMany(
+      { isAdmin: false },
+      { $set: { sessions: [] } }
+    );
+    res.json({ message: 'All users logged out!', count: result.modifiedCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
