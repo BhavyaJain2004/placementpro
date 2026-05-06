@@ -93,9 +93,10 @@ function makeToken(user) {
 // REGISTER
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, mobile } = req.body;
+    // const { name, email, password, mobile } = req.body;
+    const { name, email, password, mobile, referredBy } = req.body;
 
-    if (!name || !email || !password)
+    if (!name || !email || !password || !mobile)
       return res.status(400).json({ message: 'Name, email and password required' });
     if (password.length < 6)
       return res.status(400).json({ message: 'Password min 6 characters' });
@@ -105,13 +106,21 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Email already registered' });
 
     const hashed = await bcrypt.hash(password, 10);
-    const user   = await User.create({
-      name:     name.trim(),
-      email:    email.toLowerCase().trim(),
-      password: hashed,
-      mobile:   mobile ? mobile.trim() : '',
-      sessions: []
-    });
+    // const user   = await User.create({
+    //   name:     name.trim(),
+    //   email:    email.toLowerCase().trim(),
+    //   password: hashed,
+    //   mobile:   mobile ? mobile.trim() : '',
+    //   sessions: []
+    // });
+    const user = await User.create({
+  name:       name.trim(),
+  email:      email.toLowerCase().trim(),
+  password:   hashed,
+  mobile:     mobile ? mobile.trim() : '',
+  referredBy: referredBy ? referredBy.toUpperCase().trim() : '',
+  sessions:   []
+});
 
     const token = makeToken(user);
     user.sessions = [{
