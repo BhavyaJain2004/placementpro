@@ -108,4 +108,30 @@ router.post('/logout-all', verifyToken, verifyAdmin, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+router.get('/referral-stats', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const stats = await User.aggregate([
+      { $match: { referredBy: { $ne: '' } } },
+      {
+        $group: {
+          _id:   '$referredBy',
+          count: { $sum: 1 },
+          paid:  { $sum: { $cond: ['$isPaid', 1, 0] } },
+          users: {
+            $push: {
+              name:      '$name',
+              email:     '$email',
+              isPaid:    '$isPaid',
+              createdAt: '$createdAt'
+            }
+          }
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+    res.json(stats);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
