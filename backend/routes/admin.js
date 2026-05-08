@@ -134,4 +134,44 @@ router.get('/referral-stats', verifyToken, verifyAdmin, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+const ActivityLog = require('../models/ActivityLog');
+
+// Daily active users
+router.get('/activity', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { date } = req.query; // ?date=2024-01-15
+    const today = date || new Date().toISOString().split('T')[0];
+
+    // Aaj ke unique users
+    const logs = await ActivityLog.find({ date: today })
+      .sort({ loginAt: -1 });
+
+    // Unique users count
+    const uniqueUsers = [...new Set(logs.map(l => l.email))];
+
+    // Last 7 days DAU
+    const last7 = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dayStr = d.toISOString().split('T')[0];
+      const count  = await ActivityLog.distinct('userId', { date: dayStr });
+      last7.push({ date: dayStr, users: count.length });
+    }
+
+    res.json({
+      date:        today,
+      dau:         uniqueUsers.length,
+      last7days:   last7,
+      activeUsers: logs.map(l => ({
+        name:    l.name,
+        email:   l.email,
+        page:    l.page,
+        time:    l.loginAt
+      }))
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
