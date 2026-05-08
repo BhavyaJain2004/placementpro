@@ -42,4 +42,19 @@ const setNavUser = (name) => {
   if (av) av.textContent = name?.charAt(0)?.toUpperCase() || '?';
 };
 
+// Activity ping — page visit log
+(function pingActivity() {
+  const token = localStorage.getItem('pp_token');
+  if (!token) return;
+
+  const page = window.location.pathname.split('/').pop().replace('.html', '') || 'dashboard';
+
+  API.call('/activity/ping', {
+    method: 'POST',
+    body: JSON.stringify({ page })
+  }).catch(() => {});
+})();
+
 window.Auth = { decodeToken, requireAuth, requirePaid, redirectIfLoggedIn, logout, setNavUser };
+
+
