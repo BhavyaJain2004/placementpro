@@ -26,6 +26,7 @@ app.use('/api/dsa',         require('./routes/dsa'));
 app.use('/api/notes',       require('./routes/notes'));
 app.use('/api/experiences', require('./routes/experiences'));
 app.use('/api/admin',       require('./routes/admin'));
+app.use('/api/activity', require('./routes/activity'));
 
 app.get('/', (_req, res) => res.json({ status: 'PlacementPro API running ✅' }));
 
