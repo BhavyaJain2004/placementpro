@@ -174,4 +174,25 @@ router.get('/activity', verifyToken, verifyAdmin, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+const Feedback = require('../models/Feedback');
+
+router.get('/feedback', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const feedbacks = await Feedback.find()
+      .sort({ createdAt: -1 });
+
+    const avgRating = feedbacks.length > 0
+      ? (feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length).toFixed(1)
+      : 0;
+
+    res.json({
+      total:     feedbacks.length,
+      avgRating,
+      feedbacks
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
