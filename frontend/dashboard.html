@@ -494,14 +494,13 @@
   .star { opacity: 0.3; transition: opacity 0.15s; }
   .star.active { opacity: 1; }
 </style>
-
-<script>
+  <script>
   let selectedRating = 0;
-  const ratingLabels = ['', 'Poor 😞', 'Fair 😐', 'Good 🙂', 'Great 😊', 'Excellent 🔥'];
+  const ratingLabels = ['','Poor 😞','Fair 😐','Good 🙂','Great 😊','Excellent 🔥'];
 
   function setRating(n) {
     selectedRating = n;
-    document.querySelectorAll('.star').forEach((s, i) => {
+    document.querySelectorAll('.star').forEach((s,i) => {
       s.classList.toggle('active', i < n);
     });
     document.getElementById('rating-label').textContent = ratingLabels[n];
@@ -509,19 +508,13 @@
 
   function closeFeedback() {
     document.getElementById('feedback-modal').style.display = 'none';
-    // 3 din baad phir dikhao agar submit nahi kiya
     localStorage.setItem('fb_dismissed', Date.now());
   }
 
   async function submitFeedback() {
-    if (!selectedRating) {
-      alert('Please select a rating!');
-      return;
-    }
+    if (!selectedRating) { alert('Please select a rating!'); return; }
     const btn = document.getElementById('fb-btn');
-    btn.disabled = true;
-    btn.textContent = 'Submitting...';
-
+    btn.disabled = true; btn.textContent = 'Submitting...';
     try {
       await API.call('/feedback/submit', {
         method: 'POST',
@@ -535,40 +528,30 @@
       localStorage.setItem('fb_given', 'true');
       toast('Thank you for your feedback! 🙏', 'success');
     } catch(e) {
-      btn.disabled = false;
-      btn.textContent = 'Submit Feedback ✓';
+      btn.disabled = false; btn.textContent = 'Submit Feedback ✓';
     }
   }
 
-  // Show feedback popup logic
   async function checkFeedback() {
     try {
-      // Pehle local check
       if (localStorage.getItem('fb_given') === 'true') return;
-
-      // Dismissed 3 din pehle? Tab dikhao
       const dismissed = localStorage.getItem('fb_dismissed');
       if (dismissed && Date.now() - dismissed < 3 * 24 * 60 * 60 * 1000) return;
-
-      // Server se check karo
       const data = await API.call('/feedback/check');
-      if (data.given) {
-        localStorage.setItem('fb_given', 'true');
-        return;
+      if (data.given) { localStorage.setItem('fb_given', 'true'); return; }
+      // Sirf paid users ko dikhao
+      if (user && user.isPaid) {
+        setTimeout(() => {
+          document.getElementById('feedback-modal').style.display = 'flex';
+        }, 1000);
       }
-
-      // Sirf paid users ko dikhao — 5 sec baad
-      setTimeout(() => {
-        document.getElementById('feedback-modal').style.display = 'flex';
-      }, 1000);
-
     } catch(e) {}
   }
 
-  // Sirf paid users ke liye chalao
-  if (user && user.isPaid) {
-    checkFeedback();
-  }
+  // Run karo
+  checkFeedback();
 </script>
+
+
 </body>
 </html>
