@@ -23,19 +23,21 @@ const sessionSchema = new mongoose.Schema({
 });
 
 const userSchema = new mongoose.Schema({
-  name:      { type: String, required: true, trim: true },
-  email:     { type: String, required: true, unique: true, lowercase: true, trim: true },
-  mobile:    { type: String, default: '' },
-  referredBy: { type: String, default: '', trim: true },
-  password:  { type: String, required: true },
-  isPaid:    { type: Boolean, default: false },
-  isAdmin:   { type: Boolean, default: false },
-  paymentId: { type: String },
-  orderId:   { type: String },
-  paidAt:    { type: Date },
-  sessions:  { type: [sessionSchema], default: [] }
+  name:          { type: String, required: true, trim: true },
+  email:         { type: String, required: true, unique: true, lowercase: true, trim: true },
+  mobile:        { type: String, default: '' },
+  referredBy:    { type: String, default: '', trim: true },
+  password:      { type: String, required: true },
+  isPaid:        { type: Boolean, default: false },
+  isAdmin:       { type: Boolean, default: false },
+  paymentId:     { type: String },
+  orderId:       { type: String },
+  paidAt:        { type: Date },
+  sessions:      { type: [sessionSchema], default: [] },
+  feedbackGiven: { type: Boolean, default: false }
 }, { timestamps: true });
 
-feedbackGiven: { type: Boolean, default: false },
+
+
 
 module.exports = mongoose.model('User', userSchema);
