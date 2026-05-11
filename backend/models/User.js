@@ -36,4 +36,6 @@ const userSchema = new mongoose.Schema({
   sessions:  { type: [sessionSchema], default: [] }
 }, { timestamps: true });
 
+feedbackGiven: { type: Boolean, default: false },
+
 module.exports = mongoose.model('User', userSchema);
