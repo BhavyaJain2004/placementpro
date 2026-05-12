@@ -66,6 +66,7 @@ const bcrypt  = require('bcryptjs');
 const jwt     = require('jsonwebtoken');
 const User    = require('../models/User');
 const { verifyToken } = require('../middleware/auth');
+const LoginLog = require('../models/LoginLog');
 
 function getIP(req) {
   return (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
@@ -171,7 +172,7 @@ router.post('/login', async (req, res) => {
       device:  getDevice(req),
       loginAt: new Date()
     }];
-    const LoginLog = require('../models/LoginLog');
+    
 await LoginLog.create({
   userId: user._id,
   name:   user.name,
