@@ -195,4 +195,66 @@ router.get('/feedback', verifyToken, verifyAdmin, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+const LoginLog = require('../models/LoginLog');
+
+// Suspicious accounts — ek account se 3+ alag IPs
+router.get('/suspicious', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    // Last 7 days ke login logs
+    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    const logs = await LoginLog.aggregate([
+      { $match: { loginAt: { $gte: since } } },
+      {
+        $group: {
+          _id:     '$email',
+          name:    { $first: '$name' },
+          ips:     { $addToSet: '$ip' },
+          devices: { $addToSet: '$device' },
+          count:   { $sum: 1 },
+          logins:  {
+            $push: {
+              ip:      '$ip',
+              device:  '$device',
+              loginAt: '$loginAt'
+            }
+          }
+        }
+      },
+      {
+        $addFields: {
+          uniqueIPs: { $size: '$ips' }
+        }
+      },
+      // 2+ alag IPs = suspicious
+      { $match: { uniqueIPs: { $gte: 2 } } },
+      { $sort: { uniqueIPs: -1 } }
+    ]);
+
+    res.json({
+      total: logs.length,
+      accounts: logs.map(l => ({
+        email:     l._id,
+        name:      l.name,
+        uniqueIPs: l.uniqueIPs,
+        ips:       l.ips,
+        logins:    l.logins.slice(-10) // last 10 logins
+      }))
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Ek specific account ki full login history
+router.get('/login-history/:email', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const logs = await LoginLog.find({ email: req.params.email })
+      .sort({ loginAt: -1 })
+      .limit(20);
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
