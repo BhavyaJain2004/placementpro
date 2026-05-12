@@ -171,6 +171,14 @@ router.post('/login', async (req, res) => {
       device:  getDevice(req),
       loginAt: new Date()
     }];
+    const LoginLog = require('../models/LoginLog');
+await LoginLog.create({
+  userId: user._id,
+  name:   user.name,
+  email:  user.email,
+  ip:     getIP(req),
+  device: getDevice(req)
+});
     await user.save();
 
     res.json({
