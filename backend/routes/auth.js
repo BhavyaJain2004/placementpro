@@ -148,6 +148,55 @@ router.post('/register', async (req, res) => {
 });
 
 // LOGIN
+// router.post('/login', async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     if (!email || !password)
+//       return res.status(400).json({ message: 'Email and password required' });
+
+//     const user = await User.findOne({ email: email.toLowerCase().trim() });
+//     if (!user)
+//       return res.status(400).json({ message: 'Invalid credentials' });
+
+//     const match = await bcrypt.compare(password, user.password);
+//     if (!match)
+//       return res.status(400).json({ message: 'Invalid credentials' });
+
+//     const token = makeToken(user);
+
+//     // SINGLE DEVICE — purane sab sessions delete, sirf naya rakho
+//     user.sessions = [{
+//       token,
+//       ip:      getIP(req),
+//       device:  getDevice(req),
+//       loginAt: new Date()
+//     }];
+    
+// await LoginLog.create({
+//   userId: user._id,
+//   name:   user.name,
+//   email:  user.email,
+//   ip:     getIP(req),
+//   device: getDevice(req)
+// });
+//     await user.save();
+
+//     res.json({
+//       token,
+//       user: {
+//         id:      user._id,
+//         name:    user.name,
+//         email:   user.email,
+//         isPaid:  user.isPaid,
+//         isAdmin: user.isAdmin
+//       }
+//     });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -165,22 +214,27 @@ router.post('/login', async (req, res) => {
 
     const token = makeToken(user);
 
-    // SINGLE DEVICE — purane sab sessions delete, sirf naya rakho
+    // SINGLE DEVICE
     user.sessions = [{
       token,
       ip:      getIP(req),
       device:  getDevice(req),
       loginAt: new Date()
     }];
-    
-await LoginLog.create({
-  userId: user._id,
-  name:   user.name,
-  email:  user.email,
-  ip:     getIP(req),
-  device: getDevice(req)
-});
     await user.save();
+
+    // LoginLog — save ke baad, alag try-catch mein
+    try {
+      await LoginLog.create({
+        userId: user._id,
+        name:   user.name,
+        email:  user.email,
+        ip:     getIP(req),
+        device: getDevice(req)
+      });
+    } catch(logErr) {
+      console.log('LoginLog error:', logErr.message);
+    }
 
     res.json({
       token,
@@ -196,7 +250,6 @@ await LoginLog.create({
     res.status(500).json({ message: err.message });
   }
 });
-
 // GET ME — existing users ka session yahan auto fix hoga
 router.get('/me', verifyToken, async (req, res) => {
   try {
