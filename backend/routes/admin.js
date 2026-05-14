@@ -200,7 +200,6 @@ const LoginLog = require('../models/LoginLog');
 // Suspicious accounts — ek account se 3+ alag IPs
 router.get('/suspicious', verifyToken, verifyAdmin, async (req, res) => {
   try {
-    // Last 7 days ke login logs
     const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
     const logs = await LoginLog.aggregate([
@@ -223,22 +222,34 @@ router.get('/suspicious', verifyToken, verifyAdmin, async (req, res) => {
       },
       {
         $addFields: {
-          uniqueIPs: { $size: '$ips' }
+          uniqueIPs:     { $size: '$ips' },
+          uniqueDevices: { $size: '$devices' }
         }
       },
-      // 2+ alag IPs = suspicious
-      { $match: { uniqueIPs: { $gte: 2 } } },
-      { $sort: { uniqueIPs: -1 } }
+      // 2+ alag devices ya 2+ alag IPs = suspicious
+      {
+        $match: {
+          $or: [
+            { uniqueDevices: { $gte: 1 } },
+            { uniqueIPs:     { $gte: 1 } },
+            { count:         { $gte: 1 } }
+          ]
+        }
+      },
+      { $sort: { uniqueDevices: -1 } }
     ]);
 
     res.json({
       total: logs.length,
       accounts: logs.map(l => ({
-        email:     l._id,
-        name:      l.name,
-        uniqueIPs: l.uniqueIPs,
-        ips:       l.ips,
-        logins:    l.logins.slice(-10) // last 10 logins
+        email:         l._id,
+        name:          l.name,
+        uniqueIPs:     l.uniqueIPs,
+        uniqueDevices: l.uniqueDevices,
+        ips:           l.ips,
+        devices:       l.devices,
+        totalLogins:   l.count,
+        recentLogins:  l.logins.slice(-5)
       }))
     });
   } catch (err) {
