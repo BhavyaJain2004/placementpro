@@ -268,4 +268,37 @@ router.get('/login-history/:email', verifyToken, verifyAdmin, async (req, res) =
     res.status(500).json({ message: err.message });
   }
 });
+
+const Test        = require('../models/Test');
+const TestAttempt = require('../models/TestAttempt');
+
+// Activate test access for a user
+router.post('/activate-tests', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOneAndUpdate(
+      { email: email.toLowerCase().trim() },
+      { hasTestAccess: true },
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ message: `Test access activated for ${user.name}` });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Test stats
+router.get('/test-stats', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const totalAttempts  = await TestAttempt.countDocuments();
+    const totalUnlocked  = await User.countDocuments({ hasTestAccess: true });
+    const recentAttempts = await TestAttempt.find()
+      .sort({ completedAt: -1 }).limit(20)
+      .select('email testTitle score percentage timeTaken completedAt');
+    res.json({ totalAttempts, totalUnlocked, recentAttempts });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
