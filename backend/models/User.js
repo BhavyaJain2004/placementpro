@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema({
   orderId:       { type: String },
   paidAt:        { type: Date },
   sessions:      { type: [sessionSchema], default: [] },
+  hasTestAccess: { type: Boolean, default: false },
   feedbackGiven: { type: Boolean, default: false }
 }, { timestamps: true });
 
