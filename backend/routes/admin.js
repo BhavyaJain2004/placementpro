@@ -316,4 +316,17 @@ router.post('/seed-tests', verifyToken, verifyAdmin, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// Fix existing users — hasTestAccess field add karo
+router.get('/migrate-test-access', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const result = await User.updateMany(
+      { hasTestAccess: { $exists: false } },
+      { $set: { hasTestAccess: false } }
+    );
+    res.json({ message: 'Done!', updated: result.modifiedCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
