@@ -4,6 +4,8 @@ const DSAQuestion = require('../models/DSAQuestion');
 const { Note, Experience } = require('../models/Content');
 const User        = require('../models/User');
 const { verifyToken, verifyAdmin } = require('../middleware/auth');
+const Test        = require('../models/Test');
+const TestAttempt = require('../models/TestAttempt');
 
 const guard = [verifyToken, verifyAdmin];
 
@@ -269,8 +271,7 @@ router.get('/login-history/:email', verifyToken, verifyAdmin, async (req, res) =
   }
 });
 
-const Test        = require('../models/Test');
-const TestAttempt = require('../models/TestAttempt');
+
 
 // Activate test access for a user
 router.post('/activate-tests', verifyToken, verifyAdmin, async (req, res) => {
