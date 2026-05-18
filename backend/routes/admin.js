@@ -307,10 +307,11 @@ router.get('/test-stats', verifyToken, verifyAdmin, async (req, res) => {
 router.post('/seed-tests', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const Test = require('../models/Test');
-    const tests = require('../seedTests-data'); // alag data file
-    await Test.deleteMany({});
-    const inserted = await Test.insertMany(tests);
-    res.json({ message: `Inserted ${inserted.length} tests!` });
+    // Seedha seedTests.js run karo
+    const { execSync } = require('child_process');
+    execSync('node /opt/render/project/src/backend/seedTests.js', { stdio: 'inherit' });
+    const count = await Test.countDocuments();
+    res.json({ message: `Done! ${count} tests in DB.` });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
