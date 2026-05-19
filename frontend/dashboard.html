@@ -327,330 +327,301 @@
   dashboard.html mein id="free-section" wala poora div replace karo is se
 -->
 
+<!-- Replace entire id="free-section" div with this -->
+
 <div id="free-section" style="display:none">
 
   <!-- WELCOME -->
-  <div class="welcome-hero">
+  <div class="welcome-hero" style="margin-bottom:1.5rem">
     <h1>Hey <span id="free-name" style="color:var(--accent2)">there</span> 👋</h1>
-    <p>You're registered! Unlock full access to start your placement prep.</p>
+    <p style="color:var(--muted);margin-top:0.25rem">Here's a preview of what's waiting for you inside.</p>
   </div>
 
-  <!-- URGENCY BANNER -->
-  <div style="
-    background:linear-gradient(135deg,rgba(248,113,113,0.1),rgba(251,191,36,0.06));
-    border:1px solid rgba(248,113,113,0.25); border-radius:14px;
-    padding:0.9rem 1.5rem; margin-bottom:1.75rem;
-    display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;
+  <!-- COMPANIES — Full width preview card -->
+  <div class="preview-card" style="
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; overflow:hidden; margin-bottom:1rem;
+    position:relative;
   ">
-    <span style="font-size:1.2rem">🔥</span>
-    <div>
-      <span style="color:#fbbf24;font-weight:700;font-size:0.85rem;">Limited Launch Price</span>
-      <span style="color:rgba(255,255,255,0.5);font-size:0.82rem;margin-left:0.5rem">— ₹99 goes up after first 200 users. <strong style="color:#f87171">147 already joined.</strong></span>
-    </div>
-  </div>
-
-  <!-- PREVIEW SECTIONS -->
-
-  <!-- Companies Preview -->
-  <div style="margin-bottom:1.5rem;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;">
-      <h3 style="font-family:'Syne',sans-serif;font-size:1rem;color:var(--text);display:flex;align-items:center;gap:0.5rem;">
-        🏢 Company Profiles <span style="font-size:0.72rem;color:var(--muted);font-weight:400;font-family:'DM Sans',sans-serif;">80+ companies</span>
-      </h3>
-      <span style="font-size:0.72rem;color:var(--accent2);font-weight:600;">🔒 Unlock to access all</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.6rem;position:relative;">
-      <!-- Visible cards -->
-      <div style="background:#1e1e30;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.9rem 1rem;">
-        <div style="font-size:1.3rem;margin-bottom:0.35rem;">🏦</div>
-        <div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:2px;">TCS</div>
-        <div style="font-size:0.72rem;color:var(--muted);">NQT · 3 Rounds</div>
-      </div>
-      <div style="background:#1e1e30;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.9rem 1rem;">
-        <div style="font-size:1.3rem;margin-bottom:0.35rem;">💼</div>
-        <div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:2px;">Infosys</div>
-        <div style="font-size:0.72rem;color:var(--muted);">InfyTQ · 4 Rounds</div>
-      </div>
-      <div style="background:#1e1e30;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.9rem 1rem;">
-        <div style="font-size:1.3rem;margin-bottom:0.35rem;">🌐</div>
-        <div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:2px;">Wipro</div>
-        <div style="font-size:0.72rem;color:var(--muted);">WILP · 3 Rounds</div>
-      </div>
-      <!-- Blurred locked cards -->
-      <div style="background:#1e1e30;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.9rem 1rem;filter:blur(4px);user-select:none;pointer-events:none;">
-        <div style="font-size:1.3rem;margin-bottom:0.35rem;">🚀</div>
-        <div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:2px;">Amazon</div>
-        <div style="font-size:0.72rem;color:var(--muted);">SDE · 5 Rounds</div>
-      </div>
-      <div style="background:#1e1e30;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.9rem 1rem;filter:blur(4px);user-select:none;pointer-events:none;">
-        <div style="font-size:1.3rem;margin-bottom:0.35rem;">💡</div>
-        <div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:2px;">Accenture</div>
-        <div style="font-size:0.72rem;color:var(--muted);">ASE · 3 Rounds</div>
-      </div>
-      <div style="background:#1e1e30;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.9rem 1rem;filter:blur(4px);user-select:none;pointer-events:none;">
-        <div style="font-size:1.3rem;margin-bottom:0.35rem;">🔷</div>
-        <div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:2px;">Cognizant</div>
-        <div style="font-size:0.72rem;color:var(--muted);">GenC · 4 Rounds</div>
-      </div>
-      <!-- Fade overlay -->
-      <div style="
-        position:absolute; right:0; top:0; bottom:0; width:60%;
-        background:linear-gradient(to right, transparent, rgba(8,8,16,0.97));
-        display:flex; align-items:center; justify-content:flex-end;
-        padding-right:1rem; border-radius:0 12px 12px 0;
-        pointer-events:none;
-      ">
-        <div style="text-align:center;">
-          <div style="font-size:1.5rem;margin-bottom:0.25rem;">🔒</div>
-          <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);font-weight:600;">+77 more companies</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- DSA Preview -->
-  <div style="margin-bottom:1.5rem;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;">
-      <h3 style="font-family:'Syne',sans-serif;font-size:1rem;color:var(--text);display:flex;align-items:center;gap:0.5rem;">
-        💻 DSA Questions <span style="font-size:0.72rem;color:var(--muted);font-weight:400;font-family:'DM Sans',sans-serif;">150+ questions</span>
-      </h3>
-      <span style="font-size:0.72rem;color:var(--accent2);font-weight:600;">🔒 Locked</span>
-    </div>
-    <div style="background:#1e1e30;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;">
-      <!-- Visible row -->
-      <div style="padding:0.85rem 1.1rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:0.75rem;">
-          <span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(52,211,153,0.12);color:#34d399;">Easy</span>
-          <span style="font-size:0.88rem;color:var(--text);font-weight:500;">Two Sum</span>
-        </div>
-        <span style="font-size:0.72rem;color:var(--muted);">Arrays · TCS, Amazon</span>
-      </div>
-      <div style="padding:0.85rem 1.1rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:0.75rem;">
-          <span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(251,191,36,0.12);color:#fbbf24;">Medium</span>
-          <span style="font-size:0.88rem;color:var(--text);font-weight:500;">Maximum Subarray</span>
-        </div>
-        <span style="font-size:0.72rem;color:var(--muted);">Arrays · Infosys</span>
-      </div>
-      <!-- Blurred rows -->
-      <div style="filter:blur(3px);user-select:none;pointer-events:none;">
-        <div style="padding:0.85rem 1.1rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;align-items:center;gap:0.75rem;">
-            <span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(248,113,113,0.12);color:#f87171;">Hard</span>
-            <span style="font-size:0.88rem;color:var(--text);font-weight:500;">Trapping Rain Water</span>
-          </div>
-          <span style="font-size:0.72rem;color:var(--muted);">Arrays · Amazon</span>
-        </div>
-        <div style="padding:0.85rem 1.1rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;align-items:center;gap:0.75rem;">
-            <span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(251,191,36,0.12);color:#fbbf24;">Medium</span>
-            <span style="font-size:0.88rem;color:var(--text);font-weight:500;">LRU Cache</span>
-          </div>
-          <span style="font-size:0.72rem;color:var(--muted);">Linked List · Flipkart</span>
-        </div>
-        <div style="padding:0.85rem 1.1rem;display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;align-items:center;gap:0.75rem;">
-            <span style="font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:99px;background:rgba(248,113,113,0.12);color:#f87171;">Hard</span>
-            <span style="font-size:0.88rem;color:var(--text);font-weight:500;">Word Ladder</span>
-          </div>
-          <span style="font-size:0.72rem;color:var(--muted);">Graphs · Amazon</span>
-        </div>
-      </div>
-      <!-- Bottom lock bar -->
-      <div style="
-        padding:0.75rem 1.1rem;
-        background:rgba(124,106,247,0.06);
-        border-top:1px solid rgba(124,106,247,0.15);
-        text-align:center; font-size:0.78rem; color:rgba(255,255,255,0.4);
-      ">
-        🔒 Unlock to access all 150+ questions with Java + Python solutions
-      </div>
-    </div>
-  </div>
-
-  <!-- Notes Preview -->
-  <div style="margin-bottom:1.5rem;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;">
-      <h3 style="font-family:'Syne',sans-serif;font-size:1rem;color:var(--text);display:flex;align-items:center;gap:0.5rem;">
-        📄 Notes & Cheatsheets <span style="font-size:0.72rem;color:var(--muted);font-weight:400;font-family:'DM Sans',sans-serif;">14 topics</span>
-      </h3>
-      <span style="font-size:0.72rem;color:var(--accent2);font-weight:600;">🔒 Locked</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.6rem;position:relative;">
-      <div style="background:#1e1e30;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;display:flex;align-items:center;gap:0.75rem;">
-        <span style="font-size:1.4rem;">☕</span>
-        <div>
-          <div style="font-size:0.82rem;font-weight:700;color:var(--text);">Java Notes</div>
-          <div style="font-size:0.7rem;color:var(--muted);">OOP, Collections, Streams</div>
-        </div>
-      </div>
-      <div style="background:#1e1e30;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;display:flex;align-items:center;gap:0.75rem;">
-        <span style="font-size:1.4rem;">🐍</span>
-        <div>
-          <div style="font-size:0.82rem;font-weight:700;color:var(--text);">Python Notes</div>
-          <div style="font-size:0.7rem;color:var(--muted);">Basics, DS, Libraries</div>
-        </div>
-      </div>
-      <div style="background:#1e1e30;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;display:flex;align-items:center;gap:0.75rem;filter:blur(3px);user-select:none;pointer-events:none;">
-        <span style="font-size:1.4rem;">🧮</span>
-        <div>
-          <div style="font-size:0.82rem;font-weight:700;color:var(--text);">DSA Theory</div>
-          <div style="font-size:0.7rem;color:var(--muted);">Complexity, Patterns</div>
-        </div>
-      </div>
-      <div style="background:#1e1e30;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;display:flex;align-items:center;gap:0.75rem;filter:blur(3px);user-select:none;pointer-events:none;">
-        <span style="font-size:1.4rem;">📊</span>
-        <div>
-          <div style="font-size:0.82rem;font-weight:700;color:var(--text);">Aptitude Sheet</div>
-          <div style="font-size:0.7rem;color:var(--muted);">Formulas, Shortcuts</div>
-        </div>
-      </div>
-      <!-- fade -->
-      <div style="
-        position:absolute; right:0; top:0; bottom:0; width:40%;
-        background:linear-gradient(to right, transparent, rgba(8,8,16,0.97));
-        pointer-events:none; border-radius:0 12px 12px 0;
-        display:flex; align-items:center; justify-content:flex-end; padding-right:0.75rem;
-      ">
-        <div style="text-align:center;">
-          <div style="font-size:1.2rem;">🔒</div>
-          <div style="font-size:0.72rem;color:rgba(255,255,255,0.4);font-weight:600;">+12 more</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Mock Tests Preview -->
-  <div style="margin-bottom:2rem;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.85rem;">
-      <h3 style="font-family:'Syne',sans-serif;font-size:1rem;color:var(--text);display:flex;align-items:center;gap:0.5rem;">
-        🎯 Mock Tests <span style="font-size:0.72rem;color:var(--muted);font-weight:400;font-family:'DM Sans',sans-serif;">50 tests · 500 questions</span>
-      </h3>
-      <span style="font-size:0.72rem;color:#fbbf24;font-weight:600;">Add-on ₹199</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.6rem;">
-      <div style="background:#1e1e30;border:1px solid rgba(124,106,247,0.15);border-radius:12px;padding:1rem;filter:blur(3px);user-select:none;pointer-events:none;">
-        <div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">DSA-01</div>
-        <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">Arrays Basics</div>
-        <div style="display:flex;gap:0.4rem;">
-          <span style="font-size:0.65rem;padding:2px 7px;border-radius:99px;background:rgba(251,191,36,0.12);color:#fbbf24;">Medium</span>
-          <span style="font-size:0.65rem;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.4);">10 Q · 15 min</span>
-        </div>
-      </div>
-      <div style="background:#1e1e30;border:1px solid rgba(251,191,36,0.15);border-radius:12px;padding:1rem;filter:blur(3px);user-select:none;pointer-events:none;">
-        <div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">APT-01</div>
-        <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">Percentages</div>
-        <div style="display:flex;gap:0.4rem;">
-          <span style="font-size:0.65rem;padding:2px 7px;border-radius:99px;background:rgba(251,191,36,0.12);color:#fbbf24;">Medium</span>
-          <span style="font-size:0.65rem;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.4);">10 Q · 15 min</span>
-        </div>
-      </div>
-      <div style="background:#1e1e30;border:1px solid rgba(248,113,113,0.15);border-radius:12px;padding:1rem;filter:blur(3px);user-select:none;pointer-events:none;">
-        <div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.3rem;">CO-01</div>
-        <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">TCS NQT Pattern</div>
-        <div style="display:flex;gap:0.4rem;">
-          <span style="font-size:0.65rem;padding:2px 7px;border-radius:99px;background:rgba(251,191,36,0.12);color:#fbbf24;">Medium</span>
-          <span style="font-size:0.65rem;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.4);">10 Q · 15 min</span>
-        </div>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:0.75rem;font-size:0.78rem;color:rgba(255,255,255,0.35);">
-      🔒 50 tests locked — unlock separately for ₹199
-    </div>
-  </div>
-
-  <!-- MAIN CTA — PAYMENT -->
-  <div style="
-    background:linear-gradient(135deg,rgba(124,106,247,0.12),rgba(6,182,212,0.06));
-    border:1px solid rgba(124,106,247,0.3);
-    border-radius:20px; padding:2rem 2.5rem; text-align:center;
-    position:relative; overflow:hidden; margin-bottom:1rem;
-  ">
-    <div style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:rgba(124,106,247,0.08);pointer-events:none;"></div>
-
-    <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent2);margin-bottom:0.75rem;">
-      🚀 Get Full Access
-    </div>
-    <h2 style="font-family:'Syne',sans-serif;font-size:1.6rem;color:var(--text);margin-bottom:0.4rem;">
-      Everything you need to crack placements
-    </h2>
-    <p style="color:rgba(255,255,255,0.45);font-size:0.85rem;margin-bottom:1.75rem;max-width:400px;margin-left:auto;margin-right:auto;">
-      80+ companies · 150+ DSA questions · Notes · Interview experiences — all unlocked forever.
-    </p>
-
-    <!-- Pricing -->
-    <div style="display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:1.75rem;flex-wrap:wrap;">
-      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.25rem 1.75rem;text-align:center;">
-        <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">Base Platform</div>
-        <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text);line-height:1;">
-          <sup style="font-size:0.9rem;">₹</sup>99
-        </div>
-        <div style="color:rgba(255,255,255,0.35);text-decoration:line-through;font-size:0.8rem;margin-top:2px;">₹499</div>
-        <div style="font-size:0.72rem;color:#34d399;margin-top:6px;">Companies · DSA · Notes</div>
-      </div>
-      <div style="color:rgba(255,255,255,0.2);font-size:1.2rem;">+</div>
-      <div style="background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.25);border-radius:16px;padding:1.25rem 1.75rem;text-align:center;">
-        <div style="font-size:0.72rem;color:var(--accent2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;">Test Series Add-on</div>
-        <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text);line-height:1;">
-          <sup style="font-size:0.9rem;">₹</sup>199
-        </div>
-        <div style="color:rgba(255,255,255,0.35);text-decoration:line-through;font-size:0.8rem;margin-top:2px;">₹499</div>
-        <div style="font-size:0.72rem;color:#7c6af7;margin-top:6px;">50 Tests · 500 Questions</div>
-      </div>
-    </div>
-
-    <!-- Features grid -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.5rem;margin-bottom:1.75rem;max-width:520px;margin-left:auto;margin-right:auto;text-align:left;">
-      <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:0.4rem;"><span style="color:#34d399">✓</span> 80+ Company profiles</div>
-      <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:0.4rem;"><span style="color:#34d399">✓</span> 150+ DSA questions</div>
-      <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:0.4rem;"><span style="color:#34d399">✓</span> Java + Python solutions</div>
-      <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:0.4rem;"><span style="color:#34d399">✓</span> Topic-wise notes</div>
-      <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:0.4rem;"><span style="color:#34d399">✓</span> Interview experiences</div>
-      <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);display:flex;align-items:center;gap:0.4rem;"><span style="color:#34d399">✓</span> Lifetime access</div>
-    </div>
-
-    <!-- HOW IT WORKS -->
-    <div style="
-      background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.06);
-      border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem;
-      display:flex; align-items:center; justify-content:center; gap:1.5rem; flex-wrap:wrap;
+    <div class="preview-card-header" style="
+      padding:1rem 1.5rem; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
     ">
-      <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:rgba(255,255,255,0.6);">
-        <span style="background:rgba(124,106,247,0.2);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:#7c6af7;">1</span>
-        Pay via UPI
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <span style="font-size:1.1rem">🏢</span>
+        <span style="font-weight:700;color:var(--text);font-size:0.95rem;">Company Profiles</span>
+        <span style="font-size:0.72rem;color:var(--muted);background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:99px;">80+ companies</span>
       </div>
-      <span style="color:rgba(255,255,255,0.2);">→</span>
-      <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:rgba(255,255,255,0.6);">
-        <span style="background:rgba(124,106,247,0.2);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:#7c6af7;">2</span>
-        Fill Google Form
-      </div>
-      <span style="color:rgba(255,255,255,0.2);">→</span>
-      <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:rgba(255,255,255,0.6);">
-        <span style="background:rgba(52,211,153,0.2);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:#34d399;">3</span>
-        Active in 1-2 hrs ✅
+      <div style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:rgba(255,255,255,0.35);">
+        <span>🔒</span> Locked
       </div>
     </div>
 
-    <!-- BUTTONS -->
-    <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
-      <button onclick="initPayment()"
-        style="background:var(--accent);color:white;border:none;padding:0.9rem 2rem;border-radius:12px;font-size:0.95rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity 0.2s;"
-        onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-        🚀 Unlock Base — ₹99
-      </button>
-      <button onclick="window.open('https://forms.gle/G5v1TnbUuULuRty4A','_blank')"
-        style="background:rgba(124,106,247,0.15);color:#7c6af7;border:1px solid rgba(124,106,247,0.3);padding:0.9rem 2rem;border-radius:12px;font-size:0.95rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity 0.2s;"
-        onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
-        🎯 Tests Add-on — ₹199
-      </button>
+    <!-- Companies row -->
+    <div style="padding:1.25rem 1.5rem;position:relative;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:0.75rem;min-width:0;">
+
+        <!-- Visible -->
+        <div class="co-pill" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 0.75rem;text-align:center;">
+          <div style="font-size:1.4rem;margin-bottom:0.35rem;">🏦</div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--text);">TCS</div>
+          <div style="font-size:0.65rem;color:var(--muted);margin-top:2px;">NQT · 3 Rounds</div>
+        </div>
+        <div class="co-pill" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 0.75rem;text-align:center;">
+          <div style="font-size:1.4rem;margin-bottom:0.35rem;">💼</div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--text);">Infosys</div>
+          <div style="font-size:0.65rem;color:var(--muted);margin-top:2px;">InfyTQ · 4 Rounds</div>
+        </div>
+        <div class="co-pill" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 0.75rem;text-align:center;">
+          <div style="font-size:1.4rem;margin-bottom:0.35rem;">🌐</div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--text);">Wipro</div>
+          <div style="font-size:0.65rem;color:var(--muted);margin-top:2px;">WILP · 3 Rounds</div>
+        </div>
+
+        <!-- Blurred -->
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 0.75rem;text-align:center;filter:blur(5px);pointer-events:none;user-select:none;">
+          <div style="font-size:1.4rem;margin-bottom:0.35rem;">🚀</div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--text);">Amazon</div>
+          <div style="font-size:0.65rem;color:var(--muted);margin-top:2px;">SDE · 5 Rounds</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 0.75rem;text-align:center;filter:blur(5px);pointer-events:none;user-select:none;">
+          <div style="font-size:1.4rem;margin-bottom:0.35rem;">💡</div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--text);">Accenture</div>
+          <div style="font-size:0.65rem;color:var(--muted);margin-top:2px;">ASE · 3 Rounds</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 0.75rem;text-align:center;filter:blur(5px);pointer-events:none;user-select:none;">
+          <div style="font-size:1.4rem;margin-bottom:0.35rem;">🔷</div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--text);">Cognizant</div>
+          <div style="font-size:0.65rem;color:var(--muted);margin-top:2px;">GenC · 4 Rounds</div>
+        </div>
+      </div>
+
+      <!-- Right fade -->
+      <div style="
+        position:absolute;right:0;top:0;bottom:0;width:35%;
+        background:linear-gradient(to right,transparent,var(--surface));
+        display:flex;align-items:center;justify-content:flex-end;
+        padding-right:1.5rem;pointer-events:none;
+      ">
+        <span style="font-size:0.78rem;color:rgba(255,255,255,0.35);font-weight:600;">+77 more →</span>
+      </div>
     </div>
-    <p style="color:rgba(255,255,255,0.25);font-size:0.72rem;margin-top:0.75rem;">
-      ⚡ Same-day activation · 9 AM – 10 PM · No subscription ever
-    </p>
+  </div>
+
+  <!-- DSA — Full width list card -->
+  <div style="
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; overflow:hidden; margin-bottom:1rem;
+  ">
+    <div style="
+      padding:1rem 1.5rem; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+    ">
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <span style="font-size:1.1rem">💻</span>
+        <span style="font-weight:700;color:var(--text);font-size:0.95rem;">DSA Questions</span>
+        <span style="font-size:0.72rem;color:var(--muted);background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:99px;">150+ questions</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:rgba(255,255,255,0.35);">
+        <span>🔒</span> Locked
+      </div>
+    </div>
+
+    <!-- 2 visible rows -->
+    <div style="padding:0 1.5rem;">
+      <div style="padding:0.9rem 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(52,211,153,0.12);color:#34d399;white-space:nowrap;">Easy</span>
+          <span style="font-size:0.9rem;color:var(--text);font-weight:500;">Two Sum</span>
+        </div>
+        <span style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">Arrays · TCS, Amazon</span>
+      </div>
+      <div style="padding:0.9rem 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(251,191,36,0.12);color:#fbbf24;white-space:nowrap;">Medium</span>
+          <span style="font-size:0.9rem;color:var(--text);font-weight:500;">Maximum Subarray (Kadane's)</span>
+        </div>
+        <span style="font-size:0.72rem;color:var(--muted);white-space:nowrap;">Arrays · Infosys, TCS</span>
+      </div>
+      <div style="padding:0.9rem 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(248,113,113,0.12);color:#f87171;white-space:nowrap;">Hard</span>
+          <span style="font-size:0.9rem;color:rgba(255,255,255,0.4);font-weight:500;filter:blur(3px);user-select:none;">Trapping Rain Water</span>
+        </div>
+        <span style="font-size:0.72rem;color:rgba(255,255,255,0.15);filter:blur(3px);user-select:none;white-space:nowrap;">Arrays · Amazon</span>
+      </div>
+      <div style="padding:0.9rem 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(251,191,36,0.12);color:#fbbf24;white-space:nowrap;">Medium</span>
+          <span style="font-size:0.9rem;color:rgba(255,255,255,0.4);font-weight:500;filter:blur(3px);user-select:none;">LRU Cache Design</span>
+        </div>
+        <span style="font-size:0.72rem;color:rgba(255,255,255,0.15);filter:blur(3px);user-select:none;white-space:nowrap;">Linked List · Flipkart</span>
+      </div>
+      <div style="padding:0.9rem 0;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(248,113,113,0.12);color:#f87171;white-space:nowrap;">Hard</span>
+          <span style="font-size:0.9rem;color:rgba(255,255,255,0.4);font-weight:500;filter:blur(3px);user-select:none;">Word Ladder BFS</span>
+        </div>
+        <span style="font-size:0.72rem;color:rgba(255,255,255,0.15);filter:blur(3px);user-select:none;white-space:nowrap;">Graphs · Amazon</span>
+      </div>
+    </div>
+
+    <div style="
+      padding:0.75rem 1.5rem;
+      background:rgba(124,106,247,0.04);
+      border-top:1px solid rgba(124,106,247,0.1);
+      font-size:0.75rem;color:rgba(255,255,255,0.3);
+      display:flex;align-items:center;gap:0.4rem;
+    ">
+      <span>🔒</span> 150+ questions with Java + Python solutions — unlock to access all
+    </div>
+  </div>
+
+  <!-- NOTES — 2 col grid card -->
+  <div style="
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; overflow:hidden; margin-bottom:1rem;
+  ">
+    <div style="
+      padding:1rem 1.5rem; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+    ">
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <span style="font-size:1.1rem">📄</span>
+        <span style="font-weight:700;color:var(--text);font-size:0.95rem;">Notes & Cheatsheets</span>
+        <span style="font-size:0.72rem;color:var(--muted);background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:99px;">14 topics</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:rgba(255,255,255,0.35);">
+        <span>🔒</span> Locked
+      </div>
+    </div>
+
+    <div style="padding:1.25rem 1.5rem;position:relative;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.65rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.85rem 1rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;">
+          <span style="font-size:1.5rem;">☕</span>
+          <div><div style="font-size:0.82rem;font-weight:700;color:var(--text);">Java Notes</div><div style="font-size:0.68rem;color:var(--muted);">OOP, Collections, Streams</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.85rem 1rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;">
+          <span style="font-size:1.5rem;">🐍</span>
+          <div><div style="font-size:0.82rem;font-weight:700;color:var(--text);">Python Notes</div><div style="font-size:0.68rem;color:var(--muted);">Basics, DS, Libraries</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.85rem 1rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;filter:blur(4px);pointer-events:none;user-select:none;">
+          <span style="font-size:1.5rem;">🧮</span>
+          <div><div style="font-size:0.82rem;font-weight:700;color:var(--text);">DSA Theory</div><div style="font-size:0.68rem;color:var(--muted);">Complexity, Patterns</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.85rem 1rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;filter:blur(4px);pointer-events:none;user-select:none;">
+          <span style="font-size:1.5rem;">📊</span>
+          <div><div style="font-size:0.82rem;font-weight:700;color:var(--text);">Aptitude Sheet</div><div style="font-size:0.68rem;color:var(--muted);">Formulas, Shortcuts</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;padding:0.85rem 1rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;filter:blur(4px);pointer-events:none;user-select:none;">
+          <span style="font-size:1.5rem;">🔧</span>
+          <div><div style="font-size:0.82rem;font-weight:700;color:var(--text);">C++ Notes</div><div style="font-size:0.68rem;color:var(--muted);">STL, Pointers, OOP</div></div>
+        </div>
+        <!-- +more pill -->
+        <div style="display:flex;align-items:center;justify-content:center;padding:0.85rem 1rem;background:rgba(124,106,247,0.06);border:1px dashed rgba(124,106,247,0.2);border-radius:10px;">
+          <span style="font-size:0.78rem;color:rgba(255,255,255,0.3);font-weight:600;">+9 more topics 🔒</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOCK TESTS — minimal teaser -->
+  <div style="
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; overflow:hidden; margin-bottom:1.75rem;
+  ">
+    <div style="
+      padding:1rem 1.5rem; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between;
+    ">
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <span style="font-size:1.1rem">🎯</span>
+        <span style="font-weight:700;color:var(--text);font-size:0.95rem;">Mock Tests</span>
+        <span style="font-size:0.72rem;color:var(--muted);background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:99px;">50 tests · 500 questions</span>
+      </div>
+      <span style="font-size:0.72rem;color:rgba(255,255,255,0.3);">🔒 Separate add-on</span>
+    </div>
+
+    <div style="padding:1.25rem 1.5rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.65rem;position:relative;overflow:hidden;">
+      <div style="border:1px solid rgba(124,106,247,0.15);border-radius:10px;padding:0.85rem 1rem;filter:blur(4px);pointer-events:none;user-select:none;">
+        <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.3rem;">DSA-01</div>
+        <div style="font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Arrays Basics</div>
+        <div style="font-size:0.65rem;color:var(--muted);">10 Q · 15 min</div>
+      </div>
+      <div style="border:1px solid rgba(251,191,36,0.15);border-radius:10px;padding:0.85rem 1rem;filter:blur(4px);pointer-events:none;user-select:none;">
+        <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.3rem;">APT-01</div>
+        <div style="font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Percentages</div>
+        <div style="font-size:0.65rem;color:var(--muted);">10 Q · 15 min</div>
+      </div>
+      <div style="border:1px solid rgba(248,113,113,0.15);border-radius:10px;padding:0.85rem 1rem;filter:blur(4px);pointer-events:none;user-select:none;">
+        <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.3rem;">CO-01</div>
+        <div style="font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">TCS NQT Pattern</div>
+        <div style="font-size:0.65rem;color:var(--muted);">10 Q · 15 min</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;border:1px dashed rgba(255,255,255,0.08);border-radius:10px;padding:0.85rem 1rem;">
+        <span style="font-size:0.75rem;color:rgba(255,255,255,0.25);font-weight:600;text-align:center;">+47 more tests 🔒</span>
+      </div>
+
+      <!-- right fade -->
+      <div style="position:absolute;right:0;top:0;bottom:0;width:20%;background:linear-gradient(to right,transparent,var(--surface));pointer-events:none;"></div>
+    </div>
+  </div>
+
+  <!-- CTA — Clean minimal -->
+  <div style="
+    border:1px solid rgba(124,106,247,0.2);
+    border-radius:16px; overflow:hidden; margin-bottom:2rem;
+  ">
+    <!-- Top bar -->
+    <div style="
+      background:rgba(124,106,247,0.08);
+      padding:1.25rem 1.75rem;
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+    ">
+      <div>
+        <div style="font-size:0.72rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem;">🚀 Unlock Full Access</div>
+        <div style="font-size:1rem;font-weight:700;color:var(--text);font-family:'Syne',sans-serif;">Everything above + lifetime updates</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;">Companies · DSA · Notes · Experiences</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;color:var(--text);line-height:1;"><sup style="font-size:0.8rem;">₹</sup>99</div>
+        <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);text-decoration:line-through;">₹499</div>
+        <div style="font-size:0.68rem;color:#34d399;margin-top:2px;">One-time · Lifetime</div>
+      </div>
+    </div>
+
+    <!-- Steps + Button -->
+    <div style="padding:1.25rem 1.75rem;background:rgba(8,8,16,0.3);">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:rgba(255,255,255,0.5);">
+          <span style="width:20px;height:20px;border-radius:50%;background:rgba(124,106,247,0.25);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:#7c6af7;flex-shrink:0;">1</span>
+          Pay ₹99 via UPI
+        </div>
+        <span style="color:rgba(255,255,255,0.15);font-size:0.8rem;">→</span>
+        <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:rgba(255,255,255,0.5);">
+          <span style="width:20px;height:20px;border-radius:50%;background:rgba(124,106,247,0.25);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:#7c6af7;flex-shrink:0;">2</span>
+          Fill Google Form with screenshot
+        </div>
+        <span style="color:rgba(255,255,255,0.15);font-size:0.8rem;">→</span>
+        <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:rgba(255,255,255,0.5);">
+          <span style="width:20px;height:20px;border-radius:50%;background:rgba(52,211,153,0.2);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:#34d399;flex-shrink:0;">3</span>
+          Access in 1-2 hours ✅
+        </div>
+      </div>
+
+      <button onclick="initPayment()"
+        style="width:100%;background:var(--accent);color:white;border:none;padding:0.85rem;border-radius:10px;font-size:0.95rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity 0.2s;letter-spacing:0.01em;"
+        onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+        🚀 Unlock Full Access — ₹99
+      </button>
+      <p style="text-align:center;font-size:0.72rem;color:rgba(255,255,255,0.2);margin-top:0.6rem;">
+        Same-day activation · 9 AM – 10 PM · No subscription
+      </p>
+    </div>
   </div>
 
 </div>
-
 <!-- CHANGE PASSWORD MODAL -->
 <div id="pwd-modal" class="modal-overlay">
   <div class="modal" style="max-width:400px">
