@@ -331,431 +331,657 @@
   <!-- Replace entire id="free-section" div with this -->
 
 <div id="free-section" style="display:none">
-
 <style>
-.pp-preview-block {
-  background:#12121f;
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:16px;
-  overflow:hidden;
-  margin-bottom:0.85rem;
-}
-.pp-block-hdr {
-  padding:0.9rem 1.4rem;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.pp-block-title {
-  display:flex;
-  align-items:center;
-  gap:0.55rem;
-  font-size:0.88rem;
-  font-weight:700;
-  color:rgba(255,255,255,0.9);
-  font-family:'Syne',sans-serif;
-}
-.pp-pill {
-  font-size:0.65rem;
-  padding:2px 8px;
-  border-radius:99px;
-  background:rgba(255,255,255,0.06);
-  color:rgba(255,255,255,0.35);
-  font-weight:600;
-  letter-spacing:0.03em;
-}
-.pp-lock-tag {
-  display:flex;
-  align-items:center;
-  gap:4px;
-  font-size:0.68rem;
-  color:rgba(255,255,255,0.25);
+#free-section {
+  font-family: 'DM Sans', sans-serif;
 }
 
-/* Company items */
-.co-scroll {
-  display:flex;
-  gap:0.6rem;
-  padding:1.1rem 1.4rem;
-  overflow:hidden;
-  position:relative;
+/* HERO */
+.fs-hero {
+  padding: 2rem 0 1.75rem;
 }
-.co-item {
-  flex-shrink:0;
-  width:120px;
-  padding:0.9rem 0.75rem;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:12px;
-  text-align:center;
-  transition:border-color 0.2s, transform 0.2s;
-  cursor:default;
-  position:relative;
+.fs-hero-greeting {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 0.2rem;
 }
-.co-item.visible:hover {
-  border-color:rgba(124,106,247,0.4);
-  transform:translateY(-2px);
+.fs-hero-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.3rem;
 }
-.co-item.locked {
-  filter:blur(5px);
-  pointer-events:none;
-  user-select:none;
-}
-.co-item .co-emoji { font-size:1.5rem; margin-bottom:0.3rem; }
-.co-item .co-name { font-size:0.8rem; font-weight:700; color:rgba(255,255,255,0.88); }
-.co-item .co-sub  { font-size:0.62rem; color:rgba(255,255,255,0.35); margin-top:2px; }
-.co-fade {
-  position:absolute;
-  right:0; top:0; bottom:0; width:30%;
-  background:linear-gradient(to right,transparent,#12121f);
-  pointer-events:none;
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  padding-right:1.2rem;
+.fs-hero-sub {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.35);
 }
 
-/* DSA rows */
-.dsa-row {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0.8rem 1.4rem;
-  border-bottom:1px solid rgba(255,255,255,0.04);
-  transition:background 0.15s;
+/* SECTION */
+.fs-section {
+  margin-bottom: 2rem;
 }
-.dsa-row:last-child { border-bottom:none; }
-.dsa-row.visible:hover { background:rgba(124,106,247,0.04); }
-.dsa-row.blurred { filter:blur(4px); pointer-events:none; user-select:none; }
-.diff-badge {
-  font-size:0.62rem;
-  font-weight:700;
-  padding:2px 8px;
-  border-radius:99px;
-  white-space:nowrap;
-  flex-shrink:0;
+.fs-section-hdr {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
-.diff-easy   { background:rgba(52,211,153,0.12); color:#34d399; }
-.diff-medium { background:rgba(251,191,36,0.12);  color:#fbbf24; }
-.diff-hard   { background:rgba(248,113,113,0.12); color:#f87171; }
-.dsa-name { font-size:0.88rem; color:rgba(255,255,255,0.82); font-weight:500; }
-.dsa-tag  { font-size:0.7rem; color:rgba(255,255,255,0.25); white-space:nowrap; }
+.fs-section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.88);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.fs-section-count {
+  font-size: 0.7rem;
+  padding: 2px 9px;
+  border-radius: 99px;
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.35);
+  font-weight: 600;
+}
+.fs-lock-label {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.22);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 
-/* Notes items */
-.note-item {
-  display:flex;
-  align-items:center;
-  gap:0.7rem;
-  padding:0.85rem 1rem;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:10px;
-  transition:border-color 0.2s;
+/* COMPANY CARDS */
+.co-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
 }
-.note-item.visible:hover { border-color:rgba(124,106,247,0.35); }
-.note-item.locked { filter:blur(4px); pointer-events:none; user-select:none; }
-.note-icon { font-size:1.3rem; flex-shrink:0; }
-.note-name { font-size:0.8rem; font-weight:700; color:rgba(255,255,255,0.85); }
-.note-sub  { font-size:0.65rem; color:rgba(255,255,255,0.35); margin-top:1px; }
+.co-card {
+  background: #16162a;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 1.25rem 1rem 1rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: default;
+}
+.co-card.unlocked:hover {
+  border-color: rgba(124,106,247,0.5);
+  transform: translateY(-3px);
+}
+.co-card.locked-card {
+  filter: blur(0px);
+}
+.co-card-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.6rem;
+  display: block;
+}
+.co-card-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 0.2rem;
+}
+.co-card-sub {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.35);
+}
 
-/* Lock overlay on hover for co-item.visible */
-.co-item.visible { overflow:hidden; }
-.co-item.visible .lock-over {
-  position:absolute; inset:0;
-  background:rgba(8,8,20,0.75);
-  display:flex; align-items:center; justify-content:center;
-  border-radius:11px;
-  opacity:0;
-  transition:opacity 0.18s;
-  font-size:1.3rem;
+/* LOCK OVERLAY */
+.lock-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 8, 22, 0.82);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(2px);
+  gap: 0.35rem;
 }
-.co-item.visible:hover .lock-over { opacity:1; }
+.co-card:hover .lock-overlay,
+.dsa-card:hover .lock-overlay,
+.note-card:hover .lock-overlay {
+  opacity: 1;
+}
+.lock-overlay-icon {
+  font-size: 1.5rem;
+}
+.lock-overlay-text {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 
-/* CTA block */
-.cta-block {
-  background:#12121f;
-  border:1px solid rgba(124,106,247,0.25);
-  border-radius:16px;
-  overflow:hidden;
-  margin-bottom:1rem;
+/* DSA GRID */
+.dsa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
 }
-.cta-top {
-  padding:1.4rem 1.75rem;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:1rem;
-  border-bottom:1px solid rgba(255,255,255,0.05);
+.dsa-card {
+  background: #16162a;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 1.1rem 1.1rem 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+  cursor: default;
 }
-.cta-btn {
-  display:block;
-  width:100%;
-  padding:0.85rem;
-  background:#7c6af7;
-  color:white;
-  border:none;
-  border-radius:10px;
-  font-size:0.95rem;
-  font-weight:700;
-  font-family:'Syne',sans-serif;
-  cursor:pointer;
-  letter-spacing:0.01em;
-  transition:background 0.15s, transform 0.1s;
+.dsa-card.unlocked:hover {
+  border-color: rgba(124,106,247,0.4);
+  transform: translateY(-2px);
 }
-.cta-btn:hover { background:#6c5ae7; transform:translateY(-1px); }
-.cta-btn:active { transform:scale(0.99); }
+.dsa-card.blurred-card {
+  filter: blur(0px);
+}
+.dsa-card-diff {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  display: inline-block;
+  margin-bottom: 0.55rem;
+}
+.diff-e { background: rgba(52,211,153,0.12); color: #34d399; }
+.diff-m { background: rgba(251,191,36,0.12);  color: #fbbf24; }
+.diff-h { background: rgba(248,113,113,0.12); color: #f87171; }
+.dsa-card-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.35;
+  margin-bottom: 0.4rem;
+}
+.dsa-card-tag {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.28);
+}
+
+/* NOTES GRID */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 0.75rem;
+}
+.note-card {
+  background: #16162a;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 1.1rem 1.1rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+  cursor: default;
+}
+.note-card.unlocked:hover {
+  border-color: rgba(124,106,247,0.4);
+  transform: translateY(-2px);
+}
+.note-emoji { font-size: 1.4rem; flex-shrink: 0; }
+.note-title { font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.85); }
+.note-sub   { font-size: 0.62rem; color: rgba(255,255,255,0.3); margin-top: 2px; }
+
+/* MORE PILL */
+.more-pill {
+  background: rgba(255,255,255,0.02);
+  border: 1px dashed rgba(255,255,255,0.08);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.2);
+  font-weight: 600;
+  min-height: 70px;
+}
+
+/* TESTS ROW */
+.tests-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+  gap: 0.75rem;
+}
+.test-card-preview {
+  background: #16162a;
+  border-radius: 12px;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  filter: blur(3px);
+  pointer-events: none;
+  user-select: none;
+}
+.tcp-id   { font-size: 0.6rem; color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+.tcp-name { font-size: 0.82rem; font-weight: 700; color: rgba(255,255,255,0.75); margin-bottom: 0.35rem; }
+.tcp-sub  { font-size: 0.62rem; color: rgba(255,255,255,0.25); }
+
+/* CTA */
+.fs-cta {
+  background: #16162a;
+  border: 1px solid rgba(124,106,247,0.22);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.fs-cta-top {
+  padding: 1.4rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.fs-cta-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #a89df7;
+  margin-bottom: 0.3rem;
+}
+.fs-cta-heading {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.92);
+  margin-bottom: 0.15rem;
+}
+.fs-cta-desc {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.32);
+}
+.fs-price {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.fs-price sup { font-size: 0.85rem; vertical-align: super; }
+.fs-price-was { font-size: 0.7rem; color: rgba(255,255,255,0.22); text-decoration: line-through; margin-top: 3px; }
+.fs-price-tag { font-size: 0.62rem; color: #34d399; font-weight: 600; margin-top: 4px; }
+.fs-cta-bottom { padding: 1.25rem 1.75rem; }
+.fs-steps {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+  flex-wrap: wrap;
+}
+.fs-step {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.4);
+}
+.fs-step-num {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.fs-step-arrow { color: rgba(255,255,255,0.12); font-size: 0.7rem; }
+.fs-cta-btn {
+  display: block;
+  width: 100%;
+  padding: 0.9rem;
+  background: #7c6af7;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  letter-spacing: 0.01em;
+}
+.fs-cta-btn:hover  { background: #6c5ae7; transform: translateY(-1px); }
+.fs-cta-btn:active { transform: scale(0.99); }
+.fs-cta-note {
+  text-align: center;
+  font-size: 0.67rem;
+  color: rgba(255,255,255,0.16);
+  margin-top: 0.6rem;
+}
 </style>
 
 <!-- HERO -->
-<div style="padding:1.75rem 0 1.25rem">
-  <h1 style="font-family:'Syne',sans-serif;font-size:1.6rem;color:rgba(255,255,255,0.95);margin:0 0 0.3rem;">
-    Hey <span id="free-name" style="color:#a89df7">there</span> 👋
-  </h1>
-  <p style="color:rgba(255,255,255,0.4);font-size:0.88rem;margin:0;">
-    Here's a preview of what's inside — hover to see what's locked.
-  </p>
+<div class="fs-hero">
+  <div class="fs-hero-greeting">Welcome back,</div>
+  <div class="fs-hero-name">Hi, <span id="free-name" style="color:#a89df7">there</span> 👋</div>
+  <div class="fs-hero-sub">Here's a preview of what's locked inside. Hover the cards.</div>
 </div>
 
 <!-- COMPANIES -->
-<div class="pp-preview-block">
-  <div class="pp-block-hdr">
-    <div class="pp-block-title">
-      🏢 Company Profiles
-      <span class="pp-pill">80+ companies</span>
+<div class="fs-section">
+  <div class="fs-section-hdr">
+    <div class="fs-section-title">
+      🏢 Top Company Profiles
+      <span class="fs-section-count">80+ companies</span>
     </div>
-    <div class="pp-lock-tag">🔒 locked</div>
+    <div class="fs-lock-label">🔒 locked</div>
   </div>
-  <div class="co-scroll">
-    <div class="co-item visible">
-      <div class="lock-over">🔒</div>
-      <div class="co-emoji">🏦</div>
-      <div class="co-name">TCS</div>
-      <div class="co-sub">NQT · 3 Rounds</div>
+  <div class="co-grid">
+
+    <div class="co-card unlocked">
+      <span class="co-card-emoji">🏦</span>
+      <div class="co-card-name">TCS</div>
+      <div class="co-card-sub">NQT · 3 Rounds</div>
+      <div class="lock-overlay">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Unlock to view</div>
+      </div>
     </div>
-    <div class="co-item visible">
-      <div class="lock-over">🔒</div>
-      <div class="co-emoji">💼</div>
-      <div class="co-name">Infosys</div>
-      <div class="co-sub">InfyTQ · 4 Rounds</div>
+
+    <div class="co-card unlocked">
+      <span class="co-card-emoji">💼</span>
+      <div class="co-card-name">Infosys</div>
+      <div class="co-card-sub">InfyTQ · 4 Rounds</div>
+      <div class="lock-overlay">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Unlock to view</div>
+      </div>
     </div>
-    <div class="co-item visible">
-      <div class="lock-over">🔒</div>
-      <div class="co-emoji">🌐</div>
-      <div class="co-name">Wipro</div>
-      <div class="co-sub">WILP · 3 Rounds</div>
+
+    <div class="co-card unlocked">
+      <span class="co-card-emoji">🌐</span>
+      <div class="co-card-name">Wipro</div>
+      <div class="co-card-sub">WILP · 3 Rounds</div>
+      <div class="lock-overlay">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Unlock to view</div>
+      </div>
     </div>
-    <div class="co-item locked">
-      <div class="co-emoji">🚀</div>
-      <div class="co-name">Amazon</div>
-      <div class="co-sub">SDE · 5 Rounds</div>
+
+    <div class="co-card unlocked">
+      <span class="co-card-emoji">🚀</span>
+      <div class="co-card-name">Amazon</div>
+      <div class="co-card-sub">SDE · 5 Rounds</div>
+      <div class="lock-overlay">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Unlock to view</div>
+      </div>
     </div>
-    <div class="co-item locked">
-      <div class="co-emoji">💡</div>
-      <div class="co-name">Accenture</div>
-      <div class="co-sub">ASE · 3 Rounds</div>
+
+    <div class="co-card unlocked" style="filter:blur(4px);pointer-events:auto;">
+      <span class="co-card-emoji">💡</span>
+      <div class="co-card-name">Accenture</div>
+      <div class="co-card-sub">ASE · 3 Rounds</div>
+      <div class="lock-overlay" style="opacity:1;backdrop-filter:none;background:rgba(8,8,22,0.7);">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Locked</div>
+      </div>
     </div>
-    <div class="co-item locked">
-      <div class="co-emoji">🔷</div>
-      <div class="co-name">Cognizant</div>
-      <div class="co-sub">GenC · 4 Rounds</div>
+
+    <div class="co-card unlocked" style="filter:blur(4px);pointer-events:auto;">
+      <span class="co-card-emoji">🔷</span>
+      <div class="co-card-name">Cognizant</div>
+      <div class="co-card-sub">GenC · 4 Rounds</div>
+      <div class="lock-overlay" style="opacity:1;backdrop-filter:none;background:rgba(8,8,22,0.7);">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Locked</div>
+      </div>
     </div>
-    <div class="co-item locked">
-      <div class="co-emoji">🎯</div>
-      <div class="co-name">Deloitte</div>
-      <div class="co-sub">Analyst · 3 Rounds</div>
-    </div>
-    <div class="co-item locked">
-      <div class="co-emoji">⚡</div>
-      <div class="co-name">Capgemini</div>
-      <div class="co-sub">SE · 3 Rounds</div>
-    </div>
-    <div class="co-fade">
-      <span style="font-size:0.72rem;color:rgba(255,255,255,0.3);font-weight:600;background:#12121f;padding:4px 10px;border-radius:99px;border:1px solid rgba(255,255,255,0.08);">+72 more</span>
-    </div>
+
+    <div class="more-pill">+74 more companies 🔒</div>
+
   </div>
 </div>
 
 <!-- DSA -->
-<div class="pp-preview-block">
-  <div class="pp-block-hdr">
-    <div class="pp-block-title">
-      💻 DSA Questions
-      <span class="pp-pill">150+ questions</span>
+<div class="fs-section">
+  <div class="fs-section-hdr">
+    <div class="fs-section-title">
+      💻 DSA Challenges
+      <span class="fs-section-count">150+ questions</span>
     </div>
-    <div class="pp-lock-tag">🔒 locked</div>
+    <div class="fs-lock-label">🔒 locked</div>
   </div>
+  <div class="dsa-grid">
 
-  <div class="dsa-row visible">
-    <div style="display:flex;align-items:center;gap:0.65rem;">
-      <span class="diff-badge diff-easy">Easy</span>
-      <span class="dsa-name">Two Sum</span>
+    <div class="dsa-card unlocked">
+      <div class="dsa-card-diff diff-e">Easy</div>
+      <div class="dsa-card-name">Two Sum</div>
+      <div class="dsa-card-tag">Arrays · TCS, Amazon</div>
+      <div class="lock-overlay">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Unlock to solve</div>
+      </div>
     </div>
-    <span class="dsa-tag">Arrays · TCS, Amazon</span>
-  </div>
-  <div class="dsa-row visible">
-    <div style="display:flex;align-items:center;gap:0.65rem;">
-      <span class="diff-badge diff-medium">Medium</span>
-      <span class="dsa-name">Maximum Subarray (Kadane's)</span>
-    </div>
-    <span class="dsa-tag">Arrays · Infosys, TCS</span>
-  </div>
-  <div class="dsa-row visible">
-    <div style="display:flex;align-items:center;gap:0.65rem;">
-      <span class="diff-badge diff-easy">Easy</span>
-      <span class="dsa-name">Valid Parentheses</span>
-    </div>
-    <span class="dsa-tag">Strings · Wipro, Zoho</span>
-  </div>
-  <div class="dsa-row blurred">
-    <div style="display:flex;align-items:center;gap:0.65rem;">
-      <span class="diff-badge diff-hard">Hard</span>
-      <span class="dsa-name">Trapping Rain Water</span>
-    </div>
-    <span class="dsa-tag">Arrays · Amazon</span>
-  </div>
-  <div class="dsa-row blurred">
-    <div style="display:flex;align-items:center;gap:0.65rem;">
-      <span class="diff-badge diff-medium">Medium</span>
-      <span class="dsa-name">LRU Cache Design</span>
-    </div>
-    <span class="dsa-tag">Linked List · Flipkart</span>
-  </div>
-  <div class="dsa-row blurred">
-    <div style="display:flex;align-items:center;gap:0.65rem;">
-      <span class="diff-badge diff-hard">Hard</span>
-      <span class="dsa-name">Word Ladder BFS</span>
-    </div>
-    <span class="dsa-tag">Graphs · Amazon</span>
-  </div>
 
-  <div style="padding:0.65rem 1.4rem;border-top:1px solid rgba(124,106,247,0.08);font-size:0.72rem;color:rgba(255,255,255,0.22);display:flex;align-items:center;gap:0.4rem;">
-    🔒 150+ questions with Java + Python solutions
+    <div class="dsa-card unlocked">
+      <div class="dsa-card-diff diff-m">Medium</div>
+      <div class="dsa-card-name">Maximum Subarray</div>
+      <div class="dsa-card-tag">Arrays · Infosys, TCS</div>
+      <div class="lock-overlay">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Unlock to solve</div>
+      </div>
+    </div>
+
+    <div class="dsa-card unlocked">
+      <div class="dsa-card-diff diff-e">Easy</div>
+      <div class="dsa-card-name">Valid Parentheses</div>
+      <div class="dsa-card-tag">Strings · Wipro, Zoho</div>
+      <div class="lock-overlay">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Unlock to solve</div>
+      </div>
+    </div>
+
+    <div class="dsa-card unlocked">
+      <div class="dsa-card-diff diff-m">Medium</div>
+      <div class="dsa-card-name">Reverse Linked List</div>
+      <div class="dsa-card-tag">Linked List · TCS, Amazon</div>
+      <div class="lock-overlay">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Unlock to solve</div>
+      </div>
+    </div>
+
+    <div class="dsa-card blurred-card" style="filter:blur(4px);pointer-events:auto;">
+      <div class="dsa-card-diff diff-h">Hard</div>
+      <div class="dsa-card-name">Trapping Rain Water</div>
+      <div class="dsa-card-tag">Arrays · Amazon</div>
+      <div class="lock-overlay" style="opacity:1;backdrop-filter:none;background:rgba(8,8,22,0.75);">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Locked</div>
+      </div>
+    </div>
+
+    <div class="dsa-card blurred-card" style="filter:blur(4px);pointer-events:auto;">
+      <div class="dsa-card-diff diff-m">Medium</div>
+      <div class="dsa-card-name">LRU Cache Design</div>
+      <div class="dsa-card-tag">Linked List · Flipkart</div>
+      <div class="lock-overlay" style="opacity:1;backdrop-filter:none;background:rgba(8,8,22,0.75);">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Locked</div>
+      </div>
+    </div>
+
+    <div class="dsa-card blurred-card" style="filter:blur(4px);pointer-events:auto;">
+      <div class="dsa-card-diff diff-h">Hard</div>
+      <div class="dsa-card-name">Word Ladder BFS</div>
+      <div class="dsa-card-tag">Graphs · Amazon</div>
+      <div class="lock-overlay" style="opacity:1;backdrop-filter:none;background:rgba(8,8,22,0.75);">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Locked</div>
+      </div>
+    </div>
+
+    <div class="more-pill">+143 more questions 🔒</div>
+
   </div>
 </div>
 
 <!-- NOTES -->
-<div class="pp-preview-block">
-  <div class="pp-block-hdr">
-    <div class="pp-block-title">
+<div class="fs-section">
+  <div class="fs-section-hdr">
+    <div class="fs-section-title">
       📄 Notes & Cheatsheets
-      <span class="pp-pill">14 topics</span>
+      <span class="fs-section-count">14 topics</span>
     </div>
-    <div class="pp-lock-tag">🔒 locked</div>
+    <div class="fs-lock-label">🔒 locked</div>
   </div>
-  <div style="padding:1.1rem 1.4rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.6rem;">
-    <div class="note-item visible">
-      <span class="note-icon">☕</span>
+  <div class="notes-grid">
+
+    <div class="note-card unlocked">
+      <span class="note-emoji">☕</span>
       <div>
-        <div class="note-name">Java Notes</div>
+        <div class="note-title">Java Notes</div>
         <div class="note-sub">OOP, Collections, Streams</div>
       </div>
+      <div class="lock-overlay">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Unlock to read</div>
+      </div>
     </div>
-    <div class="note-item visible">
-      <span class="note-icon">🐍</span>
+
+    <div class="note-card unlocked">
+      <span class="note-emoji">🐍</span>
       <div>
-        <div class="note-name">Python Notes</div>
+        <div class="note-title">Python Notes</div>
         <div class="note-sub">Basics, DS, Libraries</div>
       </div>
+      <div class="lock-overlay">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Unlock to read</div>
+      </div>
     </div>
-    <div class="note-item locked">
-      <span class="note-icon">🧮</span>
+
+    <div class="note-card unlocked">
+      <span class="note-emoji">🧮</span>
       <div>
-        <div class="note-name">DSA Theory</div>
+        <div class="note-title">DSA Theory</div>
         <div class="note-sub">Complexity, Patterns</div>
       </div>
+      <div class="lock-overlay">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Unlock to read</div>
+      </div>
     </div>
-    <div class="note-item locked">
-      <span class="note-icon">📊</span>
+
+    <div class="note-card unlocked" style="filter:blur(4px);pointer-events:auto;">
+      <span class="note-emoji">📊</span>
       <div>
-        <div class="note-name">Aptitude Sheet</div>
+        <div class="note-title">Aptitude Sheet</div>
         <div class="note-sub">Formulas, Shortcuts</div>
       </div>
-    </div>
-    <div class="note-item locked">
-      <span class="note-icon">🔧</span>
-      <div>
-        <div class="note-name">C++ Notes</div>
-        <div class="note-sub">STL, Pointers, OOP</div>
+      <div class="lock-overlay" style="opacity:1;backdrop-filter:none;background:rgba(8,8,22,0.75);">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Locked</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;justify-content:center;padding:0.85rem;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.07);border-radius:10px;">
-      <span style="font-size:0.72rem;color:rgba(255,255,255,0.22);font-weight:600;">+9 more 🔒</span>
+
+    <div class="note-card unlocked" style="filter:blur(4px);pointer-events:auto;">
+      <span class="note-emoji">🔧</span>
+      <div>
+        <div class="note-title">C++ Notes</div>
+        <div class="note-sub">STL, Pointers, OOP</div>
+      </div>
+      <div class="lock-overlay" style="opacity:1;backdrop-filter:none;background:rgba(8,8,22,0.75);">
+        <div class="lock-overlay-icon">🔒</div>
+        <div class="lock-overlay-text">Locked</div>
+      </div>
     </div>
+
+    <div class="more-pill">+9 more topics 🔒</div>
+
   </div>
 </div>
 
-<!-- MOCK TESTS — teaser only -->
-<div class="pp-preview-block" style="margin-bottom:1.5rem;">
-  <div class="pp-block-hdr">
-    <div class="pp-block-title">
-      🎯 Mock Tests
-      <span class="pp-pill">50 tests · 500 questions</span>
+<!-- MOCK TESTS -->
+<div class="fs-section">
+  <div class="fs-section-hdr">
+    <div class="fs-section-title">
+      🎯 Mock Tests & Assessments
+      <span class="fs-section-count">50 tests · 500 Q</span>
     </div>
-    <div class="pp-lock-tag">separate add-on</div>
+    <div class="fs-lock-label">separate add-on</div>
   </div>
-  <div style="padding:1.1rem 1.4rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.6rem;">
-    <div style="border:1px solid rgba(124,106,247,0.12);border-radius:10px;padding:0.85rem 1rem;filter:blur(4px);pointer-events:none;user-select:none;">
-      <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.3rem;">DSA-01</div>
-      <div style="font-size:0.82rem;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:0.35rem;">Arrays Basics</div>
-      <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);">10 Q · 15 min</div>
+  <div class="tests-row">
+    <div class="test-card-preview" style="border:1px solid rgba(124,106,247,0.12);">
+      <div class="tcp-id">DSA-01</div>
+      <div class="tcp-name">Arrays Basics</div>
+      <div class="tcp-sub">10 Q · 15 min · Medium</div>
     </div>
-    <div style="border:1px solid rgba(251,191,36,0.12);border-radius:10px;padding:0.85rem 1rem;filter:blur(4px);pointer-events:none;user-select:none;">
-      <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.3rem;">APT-01</div>
-      <div style="font-size:0.82rem;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:0.35rem;">Percentages</div>
-      <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);">10 Q · 15 min</div>
+    <div class="test-card-preview" style="border:1px solid rgba(251,191,36,0.12);">
+      <div class="tcp-id">APT-01</div>
+      <div class="tcp-name">Percentages</div>
+      <div class="tcp-sub">10 Q · 15 min · Medium</div>
     </div>
-    <div style="border:1px solid rgba(248,113,113,0.12);border-radius:10px;padding:0.85rem 1rem;filter:blur(4px);pointer-events:none;user-select:none;">
-      <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.3rem;">CO-01</div>
-      <div style="font-size:0.82rem;font-weight:700;color:rgba(255,255,255,0.8);margin-bottom:0.35rem;">TCS NQT Pattern</div>
-      <div style="font-size:0.62rem;color:rgba(255,255,255,0.3);">10 Q · 15 min</div>
+    <div class="test-card-preview" style="border:1px solid rgba(248,113,113,0.12);">
+      <div class="tcp-id">CO-01</div>
+      <div class="tcp-name">TCS NQT Pattern</div>
+      <div class="tcp-sub">10 Q · 15 min · Medium</div>
     </div>
-    <div style="display:flex;align-items:center;justify-content:center;border:1px dashed rgba(255,255,255,0.06);border-radius:10px;padding:0.85rem;">
-      <span style="font-size:0.72rem;color:rgba(255,255,255,0.22);font-weight:600;text-align:center;">+47 more tests 🔒</span>
+    <div class="test-card-preview" style="border:1px solid rgba(6,182,212,0.12);">
+      <div class="tcp-id">FM-10</div>
+      <div class="tcp-name">Full Mock — Final Boss</div>
+      <div class="tcp-sub">10 Q · 20 min · Hard</div>
     </div>
+    <div class="more-pill" style="min-height:80px;">+46 more tests 🔒</div>
   </div>
 </div>
 
 <!-- CTA -->
-<div class="cta-block">
-  <div class="cta-top">
+<div class="fs-cta">
+  <div class="fs-cta-top">
     <div>
-      <div style="font-size:0.68rem;color:#a89df7;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.35rem;">Unlock full access</div>
-      <div style="font-size:1.05rem;font-weight:700;color:rgba(255,255,255,0.92);font-family:'Syne',sans-serif;">Everything above, forever.</div>
-      <div style="font-size:0.78rem;color:rgba(255,255,255,0.35);margin-top:0.2rem;">Companies · DSA · Notes · Experiences</div>
+      <div class="fs-cta-label">🚀 Unlock Full Access</div>
+      <div class="fs-cta-heading">Everything above, forever.</div>
+      <div class="fs-cta-desc">Companies · DSA · Notes · Experiences · Future updates</div>
     </div>
     <div style="text-align:right;flex-shrink:0;">
-      <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:rgba(255,255,255,0.92);line-height:1.1;"><sup style="font-size:0.85rem;vertical-align:super;">₹</sup>99</div>
-      <div style="font-size:0.7rem;color:rgba(255,255,255,0.25);text-decoration:line-through;">₹499</div>
-      <div style="font-size:0.65rem;color:#34d399;margin-top:3px;font-weight:600;">one-time · lifetime</div>
+      <div class="fs-price"><sup>₹</sup>99</div>
+      <div class="fs-price-was">₹499</div>
+      <div class="fs-price-tag">one-time · lifetime</div>
     </div>
   </div>
-
-  <div style="padding:1.25rem 1.75rem;">
-    <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:1.1rem;flex-wrap:wrap;">
-      <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.75rem;color:rgba(255,255,255,0.45);">
-        <span style="width:18px;height:18px;border-radius:50%;background:rgba(124,106,247,0.2);display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#a89df7;flex-shrink:0;">1</span>
+  <div class="fs-cta-bottom">
+    <div class="fs-steps">
+      <div class="fs-step">
+        <span class="fs-step-num" style="background:rgba(124,106,247,0.2);color:#a89df7;">1</span>
         Pay ₹99 via UPI
       </div>
-      <span style="color:rgba(255,255,255,0.12);font-size:0.7rem;">→</span>
-      <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.75rem;color:rgba(255,255,255,0.45);">
-        <span style="width:18px;height:18px;border-radius:50%;background:rgba(124,106,247,0.2);display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#a89df7;flex-shrink:0;">2</span>
+      <span class="fs-step-arrow">→</span>
+      <div class="fs-step">
+        <span class="fs-step-num" style="background:rgba(124,106,247,0.2);color:#a89df7;">2</span>
         Fill Google Form + screenshot
       </div>
-      <span style="color:rgba(255,255,255,0.12);font-size:0.7rem;">→</span>
-      <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.75rem;color:rgba(255,255,255,0.45);">
-        <span style="width:18px;height:18px;border-radius:50%;background:rgba(52,211,153,0.15);display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:800;color:#34d399;flex-shrink:0;">3</span>
+      <span class="fs-step-arrow">→</span>
+      <div class="fs-step">
+        <span class="fs-step-num" style="background:rgba(52,211,153,0.15);color:#34d399;">3</span>
         Access in 1-2 hours ✅
       </div>
     </div>
-
-    <button class="cta-btn" onclick="initPayment()">
+    <button class="fs-cta-btn" onclick="initPayment()">
       🚀 Unlock Full Access — ₹99
     </button>
-    <p style="text-align:center;font-size:0.68rem;color:rgba(255,255,255,0.18);margin-top:0.55rem;">
-      Same-day activation · 9 AM – 10 PM · No subscription
-    </p>
+    <div class="fs-cta-note">Same-day activation · 9 AM – 10 PM · No subscription ever</div>
   </div>
 </div>
 
