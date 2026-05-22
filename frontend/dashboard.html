@@ -1014,16 +1014,39 @@
   document.getElementById('dd-name').textContent  = user.name  || 'Student';
   document.getElementById('dd-email').textContent = user.email || '';
 
-  if (user.isPaid) {
-    document.getElementById('nav-links').style.display = 'flex';
-    document.getElementById('paid-section').style.display = 'block';
-    document.getElementById('sub-badge').style.display = 'flex';
-    document.getElementById('welcome-name').textContent = user.name || 'Student';
-    loadStats();
-  } else {
-    document.getElementById('free-section').style.display = 'block';
-    document.getElementById('free-name').textContent = user.name || 'Student';
+  async function initDashboard() {
+    try {
+      const fresh = await API.call('/auth/me');
+      if (fresh && fresh.token) {
+        localStorage.setItem('pp_token', fresh.token);
+        const u = fresh.user;
+        if (u.isPaid) {
+          document.getElementById('nav-links').style.display  = 'flex';
+          document.getElementById('paid-section').style.display = 'block';
+          document.getElementById('sub-badge').style.display  = 'flex';
+          document.getElementById('welcome-name').textContent = u.name || 'Student';
+          loadStats();
+        } else {
+          document.getElementById('free-section').style.display = 'block';
+          document.getElementById('free-name').textContent = u.name || 'Student';
+        }
+      }
+    } catch(e) {
+      // Fallback — cached token se
+      if (user.isPaid) {
+        document.getElementById('nav-links').style.display  = 'flex';
+        document.getElementById('paid-section').style.display = 'block';
+        document.getElementById('sub-badge').style.display  = 'flex';
+        document.getElementById('welcome-name').textContent = user.name || 'Student';
+        loadStats();
+      } else {
+        document.getElementById('free-section').style.display = 'block';
+        document.getElementById('free-name').textContent = user.name || 'Student';
+      }
+    }
   }
+
+  initDashboard();
 
   async function loadStats() {
     try {
@@ -1064,13 +1087,17 @@
     if (nw.length < 6)        { err.textContent = 'Min 6 characters'; return; }
     if (nw !== conf)           { err.textContent = 'Passwords do not match'; return; }
     try {
-      await API.call('/auth/change-password', { method: 'POST', body: JSON.stringify({ currentPassword: cur, newPassword: nw }) });
+      await API.call('/auth/change-password', {
+        method: 'POST',
+        body: JSON.stringify({ currentPassword: cur, newPassword: nw })
+      });
       toast('Password updated!', 'success');
       closePwdModal();
     } catch(e) { err.textContent = e.message; }
   }
 </script>
-  <!-- FEEDBACK MODAL -->
+
+<!-- FEEDBACK MODAL -->
 <div id="feedback-modal" style="
   display:none; position:fixed; inset:0;
   background:rgba(8,8,16,0.85); z-index:9999;
@@ -1081,28 +1108,18 @@
     border-radius:16px; padding:2rem; max-width:420px; width:100%;
     position:relative;
   ">
-    <!-- Close -->
     <button onclick="closeFeedback()" style="
       position:absolute; top:1rem; right:1rem;
       background:none; border:none; color:rgba(255,255,255,0.4);
       font-size:1.4rem; cursor:pointer; line-height:1;
     ">×</button>
-
     <div style="text-align:center; margin-bottom:1.5rem;">
       <div style="font-size:2rem; margin-bottom:0.5rem;">💬</div>
-      <h3 style="color:#f0f0f8; font-family:'Syne',sans-serif; font-size:1.2rem; margin-bottom:0.35rem;">
-        Quick Feedback
-      </h3>
-      <p style="color:rgba(255,255,255,0.45); font-size:0.82rem;">
-        2 minutes — help us improve PlacementPro for you
-      </p>
+      <h3 style="color:#f0f0f8; font-family:'Syne',sans-serif; font-size:1.2rem; margin-bottom:0.35rem;">Quick Feedback</h3>
+      <p style="color:rgba(255,255,255,0.45); font-size:0.82rem;">2 minutes — help us improve PlacementPro for you</p>
     </div>
-
-    <!-- Star Rating -->
     <div style="margin-bottom:1.25rem;">
-      <p style="color:rgba(255,255,255,0.6); font-size:0.82rem; margin-bottom:0.5rem;">
-        How would you rate PlacementPro?
-      </p>
+      <p style="color:rgba(255,255,255,0.6); font-size:0.82rem; margin-bottom:0.5rem;">How would you rate PlacementPro?</p>
       <div id="stars" style="display:flex; gap:0.5rem; font-size:1.75rem; cursor:pointer;">
         <span onclick="setRating(1)" class="star">⭐</span>
         <span onclick="setRating(2)" class="star">⭐</span>
@@ -1112,45 +1129,18 @@
       </div>
       <p id="rating-label" style="color:#7c6af7; font-size:0.78rem; margin-top:0.35rem; min-height:1rem;"></p>
     </div>
-
-    <!-- Message -->
     <div style="margin-bottom:1rem;">
-      <p style="color:rgba(255,255,255,0.6); font-size:0.82rem; margin-bottom:0.5rem;">
-        What did you like or dislike?
-      </p>
-      <textarea id="fb-message" placeholder="Share your thoughts..." style="
-        width:100%; background:rgba(255,255,255,0.05);
-        border:1px solid rgba(255,255,255,0.1); border-radius:8px;
-        padding:0.75rem; color:#f0f0f8; font-size:0.85rem;
-        font-family:'DM Sans',sans-serif; resize:none; height:80px;
-        box-sizing:border-box;
-      "></textarea>
+      <p style="color:rgba(255,255,255,0.6); font-size:0.82rem; margin-bottom:0.5rem;">What did you like or dislike?</p>
+      <textarea id="fb-message" placeholder="Share your thoughts..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem;color:#f0f0f8;font-size:0.85rem;font-family:'DM Sans',sans-serif;resize:none;height:80px;box-sizing:border-box;"></textarea>
     </div>
-
-    <!-- Want -->
     <div style="margin-bottom:1.5rem;">
-      <p style="color:rgba(255,255,255,0.6); font-size:0.82rem; margin-bottom:0.5rem;">
-        What feature would you love to see next?
-      </p>
-      <textarea id="fb-want" placeholder="eg. Mock tests, more companies, video solutions..." style="
-        width:100%; background:rgba(255,255,255,0.05);
-        border:1px solid rgba(255,255,255,0.1); border-radius:8px;
-        padding:0.75rem; color:#f0f0f8; font-size:0.85rem;
-        font-family:'DM Sans',sans-serif; resize:none; height:70px;
-        box-sizing:border-box;
-      "></textarea>
+      <p style="color:rgba(255,255,255,0.6); font-size:0.82rem; margin-bottom:0.5rem;">What feature would you love to see next?</p>
+      <textarea id="fb-want" placeholder="eg. Mock tests, more companies, video solutions..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem;color:#f0f0f8;font-size:0.85rem;font-family:'DM Sans',sans-serif;resize:none;height:70px;box-sizing:border-box;"></textarea>
     </div>
-
-    <button onclick="submitFeedback()" id="fb-btn" style="
-      width:100%; background:#7c6af7; color:white; border:none;
-      padding:0.85rem; border-radius:10px; cursor:pointer;
-      font-size:0.95rem; font-weight:700; font-family:'Syne',sans-serif;
-    ">
+    <button onclick="submitFeedback()" id="fb-btn" style="width:100%;background:#7c6af7;color:white;border:none;padding:0.85rem;border-radius:10px;cursor:pointer;font-size:0.95rem;font-weight:700;font-family:'Syne',sans-serif;">
       Submit Feedback ✓
     </button>
-    <p style="color:rgba(255,255,255,0.25); font-size:0.72rem; text-align:center; margin-top:0.6rem;">
-      Won't appear again after submitting
-    </p>
+    <p style="color:rgba(255,255,255,0.25);font-size:0.72rem;text-align:center;margin-top:0.6rem;">Won't appear again after submitting</p>
   </div>
 </div>
 
@@ -1158,7 +1148,8 @@
   .star { opacity: 0.3; transition: opacity 0.15s; }
   .star.active { opacity: 1; }
 </style>
-  <script>
+
+<script>
   let selectedRating = 0;
   const ratingLabels = ['','Poor 😞','Fair 😐','Good 🙂','Great 😊','Excellent 🔥'];
 
@@ -1192,7 +1183,8 @@
       localStorage.setItem('fb_given', 'true');
       toast('Thank you for your feedback! 🙏', 'success');
     } catch(e) {
-      btn.disabled = false; btn.textContent = 'Submit Feedback ✓';
+      btn.disabled = false;
+      btn.textContent = 'Submit Feedback ✓';
     }
   }
 
@@ -1203,7 +1195,6 @@
       if (dismissed && Date.now() - dismissed < 3 * 24 * 60 * 60 * 1000) return;
       const data = await API.call('/feedback/check');
       if (data.given) { localStorage.setItem('fb_given', 'true'); return; }
-      // Sirf paid users ko dikhao
       if (user && user.isPaid) {
         setTimeout(() => {
           document.getElementById('feedback-modal').style.display = 'flex';
@@ -1212,9 +1203,11 @@
     } catch(e) {}
   }
 
-  // Run karo
   checkFeedback();
 </script>
+    
+
+ 
 
 
 </body>
