@@ -200,76 +200,7 @@ router.get('/feedback', verifyToken, verifyAdmin, async (req, res) => {
 const LoginLog = require('../models/LoginLog');
 
 // Suspicious accounts — ek account se 3+ alag IPs
-router.get('/suspicious', verifyToken, verifyAdmin, async (req, res) => {
-  try {
-    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-    const logs = await LoginLog.aggregate([
-      { $match: { loginAt: { $gte: since } } },
-      {
-        $group: {
-          _id:     '$email',
-          name:    { $first: '$name' },
-          ips:     { $addToSet: '$ip' },
-          devices: { $addToSet: '$device' },
-          count:   { $sum: 1 },
-          logins:  {
-            $push: {
-              ip:      '$ip',
-              device:  '$device',
-              loginAt: '$loginAt'
-            }
-          }
-        }
-      },
-      {
-        $addFields: {
-          uniqueIPs:     { $size: '$ips' },
-          uniqueDevices: { $size: '$devices' }
-        }
-      },
-      // 2+ alag devices ya 2+ alag IPs = suspicious
-      {
-        $match: {
-          $or: [
-            { uniqueDevices: { $gte: 1 } },
-            { uniqueIPs:     { $gte: 1 } },
-            { count:         { $gte: 1 } }
-          ]
-        }
-      },
-      { $sort: { uniqueDevices: -1 } }
-    ]);
-
-    res.json({
-      total: logs.length,
-      accounts: logs.map(l => ({
-        email:         l._id,
-        name:          l.name,
-        uniqueIPs:     l.uniqueIPs,
-        uniqueDevices: l.uniqueDevices,
-        ips:           l.ips,
-        devices:       l.devices,
-        totalLogins:   l.count,
-        recentLogins:  l.logins.slice(-5)
-      }))
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// Ek specific account ki full login history
-router.get('/login-history/:email', verifyToken, verifyAdmin, async (req, res) => {
-  try {
-    const logs = await LoginLog.find({ email: req.params.email })
-      .sort({ loginAt: -1 })
-      .limit(20);
-    res.json(logs);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
 
 
 
