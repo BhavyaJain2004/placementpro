@@ -253,22 +253,10 @@ router.post('/login', async (req, res) => {
 // GET ME — existing users ka session yahan auto fix hoga
 router.get('/me', verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
-    if (!user)
-      return res.status(404).json({ message: 'User not found' });
+    const user = await User.findById(req.user.id).select('-password -sessions');
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
     const newToken = makeToken(user);
-
-    // Session update karo — existing user hai toh bhi fix ho jayega
-    user.sessions = [{
-      token:   newToken,
-      ip:      getIP(req),
-      device:  getDevice(req),
-      loginAt: user.sessions && user.sessions.length > 0
-               ? user.sessions[0].loginAt
-               : new Date()
-    }];
-    await user.save();
 
     res.json({
       token: newToken,
@@ -284,7 +272,6 @@ router.get('/me', verifyToken, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
 // CHANGE PASSWORD
 router.post('/change-password', verifyToken, async (req, res) => {
   try {
