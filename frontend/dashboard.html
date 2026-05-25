@@ -1014,8 +1014,40 @@
   document.getElementById('dd-name').textContent  = cachedUser.name  || 'Student';
   document.getElementById('dd-email').textContent = cachedUser.email || '';
 
+  // (async function() {
+  //   let u = cachedUser;
+  //   try {
+  //     const fresh = await API.call('/auth/me');
+  //     if (fresh && fresh.user) {
+  //       u = fresh.user;
+  //       if (fresh.token) localStorage.setItem('pp_token', fresh.token);
+  //       localStorage.setItem('pp_user', JSON.stringify(u));
+  //     }
+  //   } catch(e) {}
+
+  //   // Hide pending bar if paid
+  //   if (u.isPaid) {
+  //     document.getElementById('pending-bar').style.display = 'none';
+  //   }
+
+  //   if (u.isPaid) {
+  //     document.getElementById('nav-links').style.display    = 'flex';
+  //     document.getElementById('paid-section').style.display = 'block';
+  //     document.getElementById('sub-badge').style.display    = 'flex';
+  //     document.getElementById('welcome-name').textContent   = u.name || 'Student';
+  //     loadStats();
+  //   } else {
+  //     document.getElementById('free-section').style.display = 'block';
+  //     document.getElementById('free-name').textContent      = u.name || 'Student';
+  //   }
+  // })();
   (async function() {
     let u = cachedUser;
+    
+    // Safety Step: Pehle dono sections ko hidden rakho jab tak validation chal rhi h
+    document.getElementById('paid-section').style.display = 'none';
+    document.getElementById('free-section').style.display = 'none';
+
     try {
       const fresh = await API.call('/auth/me');
       if (fresh && fresh.user) {
@@ -1023,20 +1055,32 @@
         if (fresh.token) localStorage.setItem('pp_token', fresh.token);
         localStorage.setItem('pp_user', JSON.stringify(u));
       }
-    } catch(e) {}
-
-    // Hide pending bar if paid
-    if (u.isPaid) {
-      document.getElementById('pending-bar').style.display = 'none';
+    } catch(e) {
+      console.error("Auth fetch failed, using cached user data", e);
     }
 
-    if (u.isPaid) {
+    // Explicit Conditional Rendering Based on Paid Status
+    if (u && u.isPaid) {
+      // Hide pending payment bars & free sections completely
+      if (document.getElementById('pending-bar')) {
+        document.getElementById('pending-bar').style.display = 'none';
+      }
+      document.getElementById('free-section').style.display = 'none'; // <-- Dynamic Fix
+      
+      // Show paid elements
       document.getElementById('nav-links').style.display    = 'flex';
       document.getElementById('paid-section').style.display = 'block';
       document.getElementById('sub-badge').style.display    = 'flex';
       document.getElementById('welcome-name').textContent   = u.name || 'Student';
+      
       loadStats();
     } else {
+      // Hide paid elements for free users
+      document.getElementById('nav-links').style.display    = 'none';
+      document.getElementById('paid-section').style.display = 'none';
+      document.getElementById('sub-badge').style.display    = 'none';
+      
+      // Show free payment screen
       document.getElementById('free-section').style.display = 'block';
       document.getElementById('free-name').textContent      = u.name || 'Student';
     }
