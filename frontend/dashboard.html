@@ -1007,46 +1007,44 @@
 <script src="js/auth.js"></script>
 <script src="js/payment.js"></script>
 <script>
-  const user = Auth.requireAuth();
-  if (!user) throw new Error();
+  // Pehle token validate karo
+  const cachedUser = Auth.requireAuth();
+  if (!cachedUser) throw new Error();
 
-  Auth.setNavUser(user.name || user.email);
-  document.getElementById('dd-name').textContent  = user.name  || 'Student';
-  document.getElementById('dd-email').textContent = user.email || '';
+  // Navbar me naam set karo cached se
+  Auth.setNavUser(cachedUser.name || cachedUser.email);
+  document.getElementById('dd-name').textContent  = cachedUser.name  || 'Student';
+  document.getElementById('dd-email').textContent = cachedUser.email || '';
 
-  async function initDashboard() {
+  // Ab server se fresh data lo — tab section dikhao
+  (async function() {
+    let u = cachedUser;
+
     try {
       const fresh = await API.call('/auth/me');
-      if (fresh && fresh.token) {
-        localStorage.setItem('pp_token', fresh.token);
-        const u = fresh.user;
-        if (u.isPaid) {
-          document.getElementById('nav-links').style.display  = 'flex';
-          document.getElementById('paid-section').style.display = 'block';
-          document.getElementById('sub-badge').style.display  = 'flex';
-          document.getElementById('welcome-name').textContent = u.name || 'Student';
-          loadStats();
-        } else {
-          document.getElementById('free-section').style.display = 'block';
-          document.getElementById('free-name').textContent = u.name || 'Student';
-        }
+      if (fresh && fresh.user) {
+        u = fresh.user;
+        // Token update karo localStorage mein
+        if (fresh.token) localStorage.setItem('pp_token', fresh.token);
+        // pp_user bhi update karo
+        localStorage.setItem('pp_user', JSON.stringify(u));
       }
     } catch(e) {
-      // Fallback — cached token se
-      if (user.isPaid) {
-        document.getElementById('nav-links').style.display  = 'flex';
-        document.getElementById('paid-section').style.display = 'block';
-        document.getElementById('sub-badge').style.display  = 'flex';
-        document.getElementById('welcome-name').textContent = user.name || 'Student';
-        loadStats();
-      } else {
-        document.getElementById('free-section').style.display = 'block';
-        document.getElementById('free-name').textContent = user.name || 'Student';
-      }
+      // Server se na mile toh cached se kaam chalao
     }
-  }
 
-  initDashboard();
+    // Ab show karo correct section
+    if (u.isPaid) {
+      document.getElementById('nav-links').style.display   = 'flex';
+      document.getElementById('paid-section').style.display = 'block';
+      document.getElementById('sub-badge').style.display   = 'flex';
+      document.getElementById('welcome-name').textContent  = u.name || 'Student';
+      loadStats();
+    } else {
+      document.getElementById('free-section').style.display = 'block';
+      document.getElementById('free-name').textContent = u.name || 'Student';
+    }
+  })();
 
   async function loadStats() {
     try {
@@ -1066,8 +1064,6 @@
     if (!e.target.closest('.profile-wrap'))
       document.getElementById('profile-dropdown').classList.remove('open');
   });
-
-  async function handlePay() { initPayment(); }
 
   function openPwdModal() {
     document.getElementById('profile-dropdown').classList.remove('open');
