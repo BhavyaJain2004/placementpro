@@ -1049,7 +1049,8 @@
     document.getElementById('free-section').style.display = 'none';
 
     try {
-      const fresh = await API.call('/auth/me');
+      // const fresh = await API.call('/auth/me');
+      const fresh = await API.call('/auth/me?t=' + Date.now());
       if (fresh && fresh.user) {
         u = fresh.user;
         if (fresh.token) localStorage.setItem('pp_token', fresh.token);
