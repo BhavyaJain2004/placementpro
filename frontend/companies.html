@@ -238,5 +238,75 @@
 
   loadCompanies();
 </script>
+  <style>
+.mt-banner {
+  position:relative; border-radius:16px;
+  padding:1.4rem 1.75rem; overflow:hidden; cursor:pointer;
+  background:linear-gradient(135deg,#0d0d1f,#130d2e,#0a0d1f);
+  border:1px solid rgba(124,106,247,0.3);
+  transition:transform 0.2s; margin:2rem 0 1rem;
+}
+.mt-banner:hover { transform:translateY(-2px); }
+.mt-banner::after {
+  content:''; position:absolute; top:-50%; left:20%;
+  width:60%; height:200%;
+  background:radial-gradient(ellipse,rgba(124,106,247,0.12) 0%,transparent 70%);
+  animation:mtg 4s ease-in-out infinite alternate; pointer-events:none;
+}
+@keyframes mtg { 0%{opacity:0.5;transform:translateX(-10px)} 100%{opacity:1;transform:translateX(10px)} }
+.mt-inner {
+  position:relative; z-index:2;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:1rem;
+}
+.mt-tag {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:0.65rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.09em; color:#a89df7;
+  background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.22);
+  padding:2px 9px; border-radius:99px; margin-bottom:0.5rem;
+}
+.mt-dot { width:5px;height:5px;border-radius:50%;background:#a89df7;animation:pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.mt-title {
+  font-family:'Syne',sans-serif; font-size:1.2rem; font-weight:800;
+  color:#fff; margin-bottom:0.3rem; line-height:1.25;
+}
+.mt-title span { background:linear-gradient(90deg,#a89df7,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.mt-sub { font-size:0.78rem; color:rgba(255,255,255,0.4); margin-bottom:0.75rem; }
+.mt-pills { display:flex; gap:0.35rem; flex-wrap:wrap; }
+.mt-pill { font-size:0.62rem; font-weight:600; padding:2px 8px; border-radius:99px; border:1px solid rgba(255,255,255,0.08); color:rgba(255,255,255,0.4); }
+.mt-btn {
+  background:linear-gradient(135deg,#7c6af7,#5b4de8); color:white;
+  border:none; padding:0.65rem 1.4rem; border-radius:10px;
+  font-size:0.82rem; font-weight:700; font-family:'Syne',sans-serif;
+  cursor:pointer; transition:all 0.2s; white-space:nowrap;
+  box-shadow:0 4px 16px rgba(124,106,247,0.35);
+}
+.mt-btn:hover { box-shadow:0 6px 24px rgba(124,106,247,0.55); transform:translateY(-1px); }
+.mt-icon { font-size:2.2rem; animation:bounce 3s ease-in-out infinite; flex-shrink:0; filter:drop-shadow(0 0 12px rgba(124,106,247,0.5)); }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+</style>
+
+<div class="mt-banner" onclick="window.location.href='tests.html'">
+  <div class="mt-inner">
+    <div>
+      <div class="mt-tag"><span class="mt-dot"></span> Mock Tests · Add-on</div>
+      <div class="mt-title">Practice with <span>50 Mock Tests</span></div>
+      <div class="mt-sub">DSA · Aptitude · Core CS · Company patterns · Full Mocks — ₹199 one-time</div>
+      <div class="mt-pills">
+        <span class="mt-pill" style="border-color:rgba(124,106,247,0.3);color:#a89df7;">💻 DSA (10)</span>
+        <span class="mt-pill" style="border-color:rgba(251,191,36,0.3);color:#fbbf24;">🧮 Aptitude (10)</span>
+        <span class="mt-pill" style="border-color:rgba(52,211,153,0.3);color:#34d399;">🖥️ Core CS (10)</span>
+        <span class="mt-pill" style="border-color:rgba(248,113,113,0.3);color:#f87171;">🏢 Company (10)</span>
+        <span class="mt-pill" style="border-color:rgba(6,182,212,0.3);color:#06b6d4;">🎯 Full Mock (10)</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0.6rem;flex-shrink:0;">
+      <div class="mt-icon">🎯</div>
+      <button class="mt-btn">Start Practicing →</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
