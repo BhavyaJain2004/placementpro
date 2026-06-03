@@ -189,5 +189,173 @@
 
   loadNotes();
 </script>
+  <!-- 
+  YE POPUP HAR PAGE PE DALO — companies, dsa, notes, experiences, dashboard
+  </body> se bilkul PEHLE paste karo
+  Conditions: sirf paid users, 3 din tak, har 1 hr mein ek baar
+  Cross 10 sec baad aata hai
+-->
+
+<!-- ═══ TEST SERIES LAUNCH POPUP ═══ -->
+<div id="ts-popup" style="
+  display:none; position:fixed; inset:0;
+  background:rgba(8,8,16,0.88); z-index:99999;
+  align-items:center; justify-content:center; padding:1rem;
+">
+  <div style="
+    background:#0f0f1e;
+    border:1px solid rgba(124,106,247,0.4);
+    border-radius:20px; padding:2rem 2rem 1.75rem;
+    max-width:400px; width:100%;
+    position:relative; overflow:hidden;
+    box-shadow: 0 0 60px rgba(124,106,247,0.2), 0 0 120px rgba(124,106,247,0.08);
+    animation: popIn 0.3s ease;
+  ">
+    <!-- Glow bg -->
+    <div style="
+      position:absolute; top:-40px; right:-40px;
+      width:180px; height:180px; border-radius:50%;
+      background:radial-gradient(circle,rgba(124,106,247,0.15),transparent 70%);
+      pointer-events:none;
+    "></div>
+
+    <!-- Close button — hidden for 10 sec -->
+    <button id="ts-close-btn" onclick="closePopup()" style="
+      position:absolute; top:1rem; right:1rem;
+      background:rgba(255,255,255,0.08); border:none;
+      color:rgba(255,255,255,0.5); width:28px; height:28px;
+      border-radius:50%; font-size:1rem; cursor:pointer;
+      display:none; align-items:center; justify-content:center;
+      transition:all 0.2s; line-height:1;
+    ">×</button>
+
+    <!-- Timer ring -->
+    <div id="ts-timer" style="
+      position:absolute; top:0.9rem; right:0.9rem;
+      font-size:0.65rem; color:#a89df7; font-weight:700;
+      background:rgba(124,106,247,0.12); border:1px solid rgba(124,106,247,0.2);
+      padding:2px 8px; border-radius:99px;
+    ">10s</div>
+
+    <!-- Content -->
+    <div style="position:relative;z-index:2;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:0.75rem;animation:popBounce 1s ease">🎯</div>
+      
+      <div style="
+        display:inline-block; font-size:0.65rem; font-weight:700;
+        text-transform:uppercase; letter-spacing:0.1em; color:#a89df7;
+        background:rgba(124,106,247,0.12); border:1px solid rgba(124,106,247,0.25);
+        padding:3px 10px; border-radius:99px; margin-bottom:0.75rem;
+      ">🚀 Just Launched</div>
+
+      <h2 style="
+        font-family:'Syne',sans-serif; font-size:1.35rem; font-weight:800;
+        color:#fff; margin-bottom:0.4rem; line-height:1.3;
+      ">Test Series is Live!</h2>
+      
+      <p style="
+        font-size:0.82rem; color:rgba(255,255,255,0.45);
+        margin-bottom:1.5rem; line-height:1.6;
+      ">
+        50 Mock Tests · 500 Questions — DSA, Aptitude, Core CS & Company patterns.
+        Timed, one attempt each. Just like the real thing.
+      </p>
+
+      <!-- Stats row -->
+      <div style="
+        display:grid; grid-template-columns:repeat(3,1fr);
+        gap:0.5rem; margin-bottom:1.5rem;
+      ">
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:0.6rem 0.4rem;">
+          <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;">50</div>
+          <div style="font-size:0.62rem;color:rgba(255,255,255,0.35);margin-top:1px;">Tests</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:0.6rem 0.4rem;">
+          <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;">500</div>
+          <div style="font-size:0.62rem;color:rgba(255,255,255,0.35);margin-top:1px;">Questions</div>
+        </div>
+        <div style="background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:10px;padding:0.6rem 0.4rem;">
+          <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#a89df7;">₹199</div>
+          <div style="font-size:0.62rem;color:rgba(255,255,255,0.35);margin-top:1px;">One-time</div>
+        </div>
+      </div>
+
+      <button onclick="window.location.href='tests.html'" style="
+        width:100%; background:linear-gradient(135deg,#7c6af7,#5b4de8);
+        color:white; border:none; padding:0.85rem;
+        border-radius:12px; font-size:0.95rem; font-weight:700;
+        font-family:'Syne',sans-serif; cursor:pointer;
+        box-shadow:0 4px 20px rgba(124,106,247,0.4);
+        transition:all 0.2s; margin-bottom:0.6rem;
+      " onmouseover="this.style.boxShadow='0 6px 28px rgba(124,106,247,0.6)'"
+         onmouseout="this.style.boxShadow='0 4px 20px rgba(124,106,247,0.4)'">
+        Check it out →
+      </button>
+
+      <div style="font-size:0.65rem;color:rgba(255,255,255,0.2);">
+        Already unlocked? Go to <a href="tests.html" style="color:#a89df7;text-decoration:none;">tests.html</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes popIn {
+  0%   { opacity:0; transform:scale(0.92) translateY(10px); }
+  100% { opacity:1; transform:scale(1)    translateY(0); }
+}
+@keyframes popBounce {
+  0%,100% { transform:scale(1); }
+  50%     { transform:scale(1.15); }
+}
+</style>
+
+<script>
+(function() {
+  // Sirf paid users ko dikhao
+  try {
+    const token = localStorage.getItem('pp_token');
+    if (!token) return;
+    const u = JSON.parse(atob(token.split('.')[1]));
+    if (!u.isPaid) return;
+  } catch(e) { return; }
+
+  // 3 din ke andar dikhao (launch date se)
+  const LAUNCH_DATE = new Date('2026-06-03').getTime(); // apni launch date dalo
+  const THREE_DAYS  = 3 * 24 * 60 * 60 * 1000;
+  if (Date.now() > LAUNCH_DATE + THREE_DAYS) return;
+
+  // Har 1 hr mein ek baar
+  const lastShown = parseInt(localStorage.getItem('ts_popup_last') || '0');
+  const ONE_HOUR  = 60 * 60 * 1000;
+  if (Date.now() - lastShown < ONE_HOUR) return;
+
+  // 2 sec baad dikhao
+  setTimeout(() => {
+    document.getElementById('ts-popup').style.display = 'flex';
+    localStorage.setItem('ts_popup_last', Date.now().toString());
+
+    // 10 sec ke baad cross dikhao
+    let secs = 10;
+    const timerEl = document.getElementById('ts-timer');
+    const closeBtn = document.getElementById('ts-close-btn');
+
+    const interval = setInterval(() => {
+      secs--;
+      if (timerEl) timerEl.textContent = secs + 's';
+      if (secs <= 0) {
+        clearInterval(interval);
+        if (timerEl) timerEl.style.display = 'none';
+        if (closeBtn) closeBtn.style.display = 'flex';
+      }
+    }, 1000);
+  }, 2000);
+})();
+
+function closePopup() {
+  document.getElementById('ts-popup').style.display = 'none';
+}
+</script>
+<!-- ═══ END LAUNCH POPUP ═══ -->
 </body>
 </html>
