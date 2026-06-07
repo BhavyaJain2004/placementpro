@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Master DSA — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* ── HERO ── */
+.mdsa-hero {
+  text-align:center;
+  padding:4rem 1rem 3rem;
+  position:relative;
+  overflow:hidden;
+}
+.mdsa-hero::before {
+  content:'';
+  position:absolute;
+  top:-100px; left:50%;
+  transform:translateX(-50%);
+  width:600px; height:400px;
+  background:radial-gradient(ellipse,rgba(124,106,247,0.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.mdsa-eyebrow {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:0.7rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.1em; color:#a89df7;
+  background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.25);
+  padding:4px 12px; border-radius:99px; margin-bottom:1.25rem;
+}
+.mdsa-hero h1 {
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2rem,5vw,3.5rem);
+  font-weight:800; color:#fff;
+  line-height:1.1; margin-bottom:1rem;
+}
+.mdsa-hero h1 span {
+  background:linear-gradient(90deg,#a89df7,#06b6d4);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.mdsa-hero p {
+  font-size:1.05rem; color:rgba(255,255,255,0.5);
+  max-width:520px; margin:0 auto 2rem; line-height:1.6;
+}
+.mdsa-hero-btns {
+  display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;
+}
+.btn-primary-glow {
+  background:#7c6af7; color:white; border:none;
+  padding:0.9rem 2rem; border-radius:12px;
+  font-size:1rem; font-weight:700; font-family:'Syne',sans-serif;
+  cursor:pointer; transition:all 0.2s;
+  box-shadow:0 4px 24px rgba(124,106,247,0.4);
+}
+.btn-primary-glow:hover { box-shadow:0 6px 32px rgba(124,106,247,0.6); transform:translateY(-1px); }
+
+/* ── STATS ── */
+.mdsa-stats {
+  display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;
+  margin:2.5rem 0;
+}
+.mdsa-stat {
+  text-align:center;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px; padding:1rem 1.5rem;
+}
+.mdsa-stat-val { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; color:#fff; }
+.mdsa-stat-lbl { font-size:0.72rem; color:rgba(255,255,255,0.4); margin-top:2px; }
+
+/* ── FEATURES GRID ── */
+.features-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:1rem; margin-bottom:4rem;
+}
+.feature-card {
+  background:#12121f; border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px; padding:1.5rem;
+  transition:border-color 0.2s, transform 0.15s;
+}
+.feature-card:hover { border-color:rgba(124,106,247,0.35); transform:translateY(-2px); }
+.feature-icon {
+  width:42px; height:42px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.2rem; margin-bottom:1rem;
+}
+.feature-card h3 { font-size:0.95rem; font-weight:700; color:#fff; margin-bottom:0.4rem; }
+.feature-card p  { font-size:0.8rem; color:rgba(255,255,255,0.45); line-height:1.6; }
+
+/* ── ROADMAP ── */
+.roadmap-section {
+  margin:0 0 4rem;
+  position:relative;
+}
+.roadmap-title {
+  font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800;
+  color:#fff; text-align:center; margin-bottom:0.5rem;
+}
+.roadmap-sub {
+  text-align:center; color:rgba(255,255,255,0.4); font-size:0.88rem;
+  margin-bottom:3rem;
+}
+
+/* Night sky bg for roadmap */
+.roadmap-sky {
+  background:linear-gradient(180deg,#050510 0%,#080818 100%);
+  border-radius:20px; padding:2rem 1.5rem 3rem;
+  position:relative; overflow:hidden;
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+/* Stars */
+.star-bg { position:absolute; inset:0; pointer-events:none; }
+
+/* Curvy road SVG */
+.road-svg { width:100%; overflow:visible; display:block; }
+
+/* Stop nodes */
+.road-stop {
+  position:relative; z-index:2;
+  display:flex; align-items:center; gap:1.25rem;
+  margin-bottom:2.5rem;
+}
+.road-stop:nth-child(even) { flex-direction:row-reverse; }
+.road-stop:last-child { margin-bottom:0; }
+
+.stop-node {
+  width:52px; height:52px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800;
+  flex-shrink:0; position:relative; z-index:3;
+  border:2px solid transparent;
+}
+.stop-node.done    { background:#0f2e1a; border-color:#34d399; color:#34d399; }
+.stop-node.active  { background:#1a0e3a; border-color:#a89df7; color:#a89df7; box-shadow:0 0 20px rgba(124,106,247,0.4); }
+.stop-node.locked  { background:#0e0e1c; border-color:rgba(255,255,255,0.12); color:rgba(255,255,255,0.3); }
+
+.stop-content {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px; padding:1rem 1.25rem; flex:1;
+}
+.stop-content.done   { border-color:rgba(52,211,153,0.2); }
+.stop-content.active { border-color:rgba(124,106,247,0.35); background:rgba(124,106,247,0.05); }
+
+.stop-title { font-size:0.92rem; font-weight:700; color:#fff; margin-bottom:0.3rem; }
+.stop-desc  { font-size:0.75rem; color:rgba(255,255,255,0.4); line-height:1.5; margin-bottom:0.6rem; }
+.stop-tags  { display:flex; gap:0.35rem; flex-wrap:wrap; }
+.stop-tag   {
+  font-size:0.62rem; font-weight:600; padding:2px 7px; border-radius:99px;
+  background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.45);
+}
+.stop-count { font-size:0.65rem; color:rgba(255,255,255,0.3); margin-left:auto; padding-left:0.5rem; }
+
+/* Connector dots between stops */
+.road-connector {
+  text-align:center; color:rgba(255,255,255,0.15);
+  font-size:1.2rem; letter-spacing:3px; margin:-1rem 0 1rem;
+}
+
+/* ── QUESTION PREVIEW ── */
+.q-preview {
+  background:#12121f; border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px; overflow:hidden; margin-bottom:4rem;
+}
+.q-preview-hdr {
+  padding:1rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.q-split {
+  display:grid; grid-template-columns:1fr 1fr;
+}
+.q-left {
+  padding:1.5rem; border-right:1px solid rgba(255,255,255,0.06);
+}
+.q-right {
+  padding:1.5rem;
+  background:#0a0a18;
+}
+.tab-row {
+  display:flex; gap:0.4rem; margin-bottom:1rem;
+}
+.tab {
+  font-size:0.72rem; font-weight:600; padding:4px 12px;
+  border-radius:8px; border:1px solid rgba(255,255,255,0.08);
+  background:transparent; color:rgba(255,255,255,0.4);
+  cursor:pointer; transition:all 0.15s; font-family:'DM Sans',sans-serif;
+}
+.tab.active { background:rgba(124,106,247,0.15); border-color:rgba(124,106,247,0.4); color:#a89df7; }
+.code-area {
+  background:#050510; border:1px solid rgba(255,255,255,0.07);
+  border-radius:10px; padding:1rem; font-family:monospace;
+  font-size:0.78rem; color:#e2e8f0; line-height:1.6;
+  min-height:140px;
+}
+.hint-box {
+  background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.15);
+  border-radius:8px; padding:0.75rem 1rem;
+  font-size:0.78rem; color:rgba(251,191,36,0.8); line-height:1.5;
+  margin-top:0.75rem;
+}
+.run-btn {
+  width:100%; margin-top:0.75rem;
+  background:rgba(52,211,153,0.12); color:#34d399;
+  border:1px solid rgba(52,211,153,0.25); border-radius:8px;
+  padding:0.6rem; font-size:0.82rem; font-weight:700;
+  font-family:'Syne',sans-serif; cursor:pointer; transition:all 0.15s;
+}
+.run-btn:hover { background:rgba(52,211,153,0.2); }
+
+/* ── DAILY PROBLEM ── */
+.daily-strip {
+  background:linear-gradient(135deg,rgba(124,106,247,0.08),rgba(6,182,212,0.04));
+  border:1px solid rgba(124,106,247,0.2); border-radius:16px;
+  padding:1.5rem 2rem; margin-bottom:4rem;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:1rem;
+}
+
+/* ── CTA SECTION ── */
+.cta-section {
+  background:#0a0a1a; border:1px solid rgba(124,106,247,0.25);
+  border-radius:20px; padding:3rem 2rem; text-align:center;
+  position:relative; overflow:hidden; margin-bottom:2rem;
+}
+.cta-section::before {
+  content:''; position:absolute; top:-60px; left:50%;
+  transform:translateX(-50%); width:400px; height:300px;
+  background:radial-gradient(ellipse,rgba(124,106,247,0.1) 0%,transparent 70%);
+  pointer-events:none;
+}
+.price-display {
+  font-family:'Syne',sans-serif; font-size:3rem; font-weight:800; color:#fff;
+  margin:1rem 0 0.25rem;
+}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <a href="index.html" style="display:flex;align-items:center;gap:8px;color:inherit">
+      <span class="dot"></span> PlacementPro
+    </a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="masterdsa.html" class="active">Master DSA</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="login.html" style="font-size:0.85rem;color:var(--muted);text-decoration:none;margin-right:1rem">Login</a>
+    <a href="register.html?plan=masterdsa" class="btn btn-primary" style="padding:0.5rem 1.25rem;font-size:0.85rem">Get Access</a>
+  </div>
+</nav>
+
+<div class="container page-body">
+
+  <!-- HERO -->
+  <div class="mdsa-hero">
+    <div class="mdsa-eyebrow">✦ DSA Complete Package</div>
+    <h1>Go from <span>Zero to Google-level</span><br>DSA in one place</h1>
+    <p>Topic-wise questions, full roadmap, in-browser compiler, hints, tricks, daily problems — everything to crack any placement test.</p>
+    <div class="mdsa-hero-btns">
+      <button class="btn-primary-glow" onclick="window.location.href='register.html?plan=masterdsa'">
+        🚀 Start for ₹150 — Lifetime
+      </button>
+      <button onclick="document.getElementById('roadmap-sec').scrollIntoView({behavior:'smooth'})"
+        style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.12);padding:0.9rem 1.75rem;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;">
+        See roadmap ↓
+      </button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="mdsa-stats">
+    <div class="mdsa-stat"><div class="mdsa-stat-val">200+</div><div class="mdsa-stat-lbl">Questions</div></div>
+    <div class="mdsa-stat"><div class="mdsa-stat-val">12</div><div class="mdsa-stat-lbl">Topics</div></div>
+    <div class="mdsa-stat"><div class="mdsa-stat-val">25+</div><div class="mdsa-stat-lbl">Patterns & Tricks</div></div>
+    <div class="mdsa-stat"><div class="mdsa-stat-val">8</div><div class="mdsa-stat-lbl">Company Sets</div></div>
+    <div class="mdsa-stat"><div class="mdsa-stat-val">Java+Python</div><div class="mdsa-stat-lbl">Compiler</div></div>
+  </div>
+
+  <!-- FEATURES -->
+  <div style="text-align:center;margin-bottom:2rem">
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;color:#fff;margin-bottom:0.4rem">Everything you need</h2>
+    <p style="color:rgba(255,255,255,0.4);font-size:0.88rem">Not just questions — a complete system to master DSA</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(124,106,247,0.12)">🗺️</div>
+      <h3>Structured Roadmap</h3>
+      <p>Step-by-step path from basics to advanced. Follow the sequence, never feel lost. Beginner to placement-ready.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(52,211,153,0.1)">💻</div>
+      <h3>In-browser Compiler</h3>
+      <p>Write and run Java or Python code directly. No setup, no IDE needed. Instant output, instant feedback.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(251,191,36,0.1)">💡</div>
+      <h3>Hints + Full Solutions</h3>
+      <p>Stuck? Get a hint first — don't spoil it. Then see the full solution with line-by-line explanation.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(6,182,212,0.1)">🔥</div>
+      <h3>Topic Tips & Tricks</h3>
+      <p>25+ patterns — Sliding Window, Two Pointer, Monotonic Stack, DP state identification and more.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(248,113,113,0.1)">🏢</div>
+      <h3>Company-wise Sets</h3>
+      <p>TCS 30Q, Amazon 40Q, Infosys 20Q and more. Practice exactly what each company asks.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(124,106,247,0.12)">📅</div>
+      <h3>Daily Problem + Streak</h3>
+      <p>One problem every day. Track your streak, see how many classmates solved it, compete on leaderboard.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(52,211,153,0.1)">🔗</div>
+      <h3>Similar Questions</h3>
+      <p>Every question links to 3-4 similar problems. Build muscle memory for each pattern, not just one-off solutions.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(251,191,36,0.1)">🎥</div>
+      <h3>Curated Video Library</h3>
+      <p>Best YouTube videos for each topic — Striver, NeetCode, Abdul Bari. Handpicked, not a random dump.</p>
+    </div>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="roadmap-section" id="roadmap-sec">
+    <h2 class="roadmap-title">The Roadmap</h2>
+    <p class="roadmap-sub">Follow this sequence. Each step unlocks the next. No confusion, just progress.</p>
+
+    <div class="roadmap-sky">
+      <!-- Stars -->
+      <div class="star-bg">
+        <svg width="100%" height="100%" style="position:absolute;inset:0">
+          <circle cx="5%" cy="8%" r="1" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="12%" cy="15%" r="1.5" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="22%" cy="5%" r="1" fill="rgba(255,255,255,0.7)"/>
+          <circle cx="35%" cy="10%" r="1" fill="rgba(255,255,255,0.5)"/>
+          <circle cx="48%" cy="4%" r="1.5" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="60%" cy="12%" r="1" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="72%" cy="6%" r="1" fill="rgba(255,255,255,0.7)"/>
+          <circle cx="85%" cy="9%" r="1.5" fill="rgba(255,255,255,0.5)"/>
+          <circle cx="92%" cy="3%" r="1" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="18%" cy="92%" r="1" fill="rgba(255,255,255,0.3)"/>
+          <circle cx="40%" cy="88%" r="1.5" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="65%" cy="94%" r="1" fill="rgba(255,255,255,0.3)"/>
+          <circle cx="80%" cy="89%" r="1" fill="rgba(255,255,255,0.5)"/>
+          <!-- Moon -->
+          <circle cx="92%" cy="12%" r="18" fill="#1a1a35"/>
+          <circle cx="96%" cy="8%" r="18" fill="#050510"/>
+        </svg>
+      </div>
+
+      <!-- Road stops -->
+      <div style="position:relative;z-index:2;max-width:580px;margin:0 auto">
+
+        <div class="road-stop">
+          <div class="stop-node done">✓</div>
+          <div class="stop-content done">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div class="stop-title">Arrays & Strings</div>
+              <span class="stop-count">30 Q</span>
+            </div>
+            <div class="stop-desc">The foundation. Master these and 40% of placement tests become easy.</div>
+            <div class="stop-tags">
+              <span class="stop-tag" style="background:rgba(52,211,153,0.1);color:#34d399">Sliding Window</span>
+              <span class="stop-tag" style="background:rgba(52,211,153,0.1);color:#34d399">Two Pointer</span>
+              <span class="stop-tag" style="background:rgba(52,211,153,0.1);color:#34d399">Prefix Sum</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="road-connector">• • •</div>
+
+        <div class="road-stop">
+          <div class="stop-node done">✓</div>
+          <div class="stop-content done">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div class="stop-title">Linked List</div>
+              <span class="stop-count">20 Q</span>
+            </div>
+            <div class="stop-desc">Pointers, reversal, merge. TCS and Infosys love these.</div>
+            <div class="stop-tags">
+              <span class="stop-tag" style="background:rgba(52,211,153,0.1);color:#34d399">Fast-Slow Pointer</span>
+              <span class="stop-tag" style="background:rgba(52,211,153,0.1);color:#34d399">Reversal</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="road-connector">• • •</div>
+
+        <div class="road-stop">
+          <div class="stop-node active">3</div>
+          <div class="stop-content active">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div class="stop-title">Stacks & Queues</div>
+              <span class="stop-count">18 Q</span>
+            </div>
+            <div class="stop-desc">Monotonic stack is a hidden gem. Appears more than you think.</div>
+            <div class="stop-tags">
+              <span class="stop-tag" style="background:rgba(124,106,247,0.12);color:#a89df7">Monotonic Stack</span>
+              <span class="stop-tag" style="background:rgba(124,106,247,0.12);color:#a89df7">BFS with Queue</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="road-connector">• • •</div>
+
+        <div class="road-stop">
+          <div class="stop-node locked">4</div>
+          <div class="stop-content">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div class="stop-title">Trees & BST</div>
+              <span class="stop-count">25 Q</span>
+            </div>
+            <div class="stop-desc">Traversals, height, LCA, path problems. Amazon's favourite topic.</div>
+            <div class="stop-tags">
+              <span class="stop-tag">DFS/BFS</span>
+              <span class="stop-tag">Recursion</span>
+              <span class="stop-tag">Level Order</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="road-connector">• • •</div>
+
+        <div class="road-stop">
+          <div class="stop-node locked">5</div>
+          <div class="stop-content">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div class="stop-title">Binary Search</div>
+              <span class="stop-count">15 Q</span>
+            </div>
+            <div class="stop-desc">Not just sorted arrays — search on answer changes everything.</div>
+            <div class="stop-tags">
+              <span class="stop-tag">On Answer</span>
+              <span class="stop-tag">Rotated Array</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="road-connector">• • •</div>
+
+        <div class="road-stop">
+          <div class="stop-node locked">6</div>
+          <div class="stop-content">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div class="stop-title">Graphs</div>
+              <span class="stop-count">20 Q</span>
+            </div>
+            <div class="stop-desc">BFS, DFS, Dijkstra, Topological Sort. Scary until it clicks.</div>
+            <div class="stop-tags">
+              <span class="stop-tag">Dijkstra</span>
+              <span class="stop-tag">Topo Sort</span>
+              <span class="stop-tag">Union Find</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="road-connector">• • •</div>
+
+        <div class="road-stop">
+          <div class="stop-node locked">7</div>
+          <div class="stop-content">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div class="stop-title">Dynamic Programming</div>
+              <span class="stop-count">30 Q</span>
+            </div>
+            <div class="stop-desc">The boss level. Memoization → Tabulation → Space optimization.</div>
+            <div class="stop-tags">
+              <span class="stop-tag">1D DP</span>
+              <span class="stop-tag">2D DP</span>
+              <span class="stop-tag">LCS/LIS</span>
+              <span class="stop-tag">Knapsack</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="road-connector">• • •</div>
+
+        <!-- Final destination -->
+        <div style="text-align:center;margin-top:1rem">
+          <div style="
+            display:inline-flex; align-items:center; gap:0.75rem;
+            background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.3);
+            border-radius:16px; padding:1rem 2rem;
+          ">
+            <span style="font-size:1.5rem">🏆</span>
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:#fff">Placement Ready</div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4)">TCS · Infosys · Amazon · Google</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- QUESTION PREVIEW -->
+  <div style="text-align:center;margin-bottom:2rem">
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;color:#fff;margin-bottom:0.4rem">How a question looks</h2>
+    <p style="color:rgba(255,255,255,0.4);font-size:0.88rem">Hint tab, solution tab, in-browser compiler — all in one view</p>
+  </div>
+  <div class="q-preview">
+    <div class="q-preview-hdr">
+      <div style="display:flex;align-items:center;gap:0.75rem">
+        <span style="font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(251,191,36,0.12);color:#fbbf24">Medium</span>
+        <span style="font-size:0.92rem;font-weight:700;color:#fff">Two Sum</span>
+        <span style="font-size:0.65rem;color:rgba(255,255,255,0.3)">Arrays · TCS, Amazon</span>
+      </div>
+      <span style="font-size:0.65rem;color:rgba(255,255,255,0.25)">Similar: Three Sum, Four Sum →</span>
+    </div>
+    <div class="q-split">
+      <div class="q-left">
+        <div style="font-size:0.85rem;color:rgba(255,255,255,0.8);line-height:1.65;margin-bottom:1rem">
+          Given an array of integers <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;font-size:0.8rem">nums</code> and an integer <code style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;font-size:0.8rem">target</code>, return indices of two numbers that add up to target.
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:0.75rem;font-size:0.78rem;color:rgba(255,255,255,0.5);margin-bottom:1rem">
+          <span style="color:rgba(255,255,255,0.3)">Input:</span> nums = [2,7,11,15], target = 9<br>
+          <span style="color:#34d399">Output:</span> [0,1]
+        </div>
+        <div class="tab-row">
+          <button class="tab active">Hint</button>
+          <button class="tab">Solution</button>
+          <button class="tab">Approach</button>
+        </div>
+        <div class="hint-box">
+          💡 Use a HashMap to store each number and its index. For each num, check if (target - num) already exists in the map.
+        </div>
+      </div>
+      <div class="q-right">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
+          <div style="display:flex;gap:0.4rem">
+            <button class="tab active" style="font-size:0.68rem;padding:3px 10px">Java</button>
+            <button class="tab" style="font-size:0.68rem;padding:3px 10px">Python</button>
+          </div>
+          <span style="font-size:0.65rem;color:rgba(255,255,255,0.25)">In-browser compiler</span>
+        </div>
+        <div class="code-area">
+<span style="color:#a89df7">class</span> <span style="color:#34d399">Solution</span> {
+  <span style="color:#a89df7">public int</span>[] twoSum(<span style="color:#a89df7">int</span>[] nums, <span style="color:#a89df7">int</span> target) {
+    <span style="color:#fbbf24">// write your solution here</span>
+
+  }
+}</div>
+        <button class="run-btn">▶ Run Code</button>
+        <div style="margin-top:0.75rem;background:rgba(255,255,255,0.03);border-radius:8px;padding:0.6rem 0.75rem;font-size:0.72rem;color:rgba(255,255,255,0.3)">
+          Output will appear here...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAILY PROBLEM STRIP -->
+  <div class="daily-strip">
+    <div>
+      <div style="font-size:0.68rem;color:#a89df7;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.3rem">Today's Daily Problem</div>
+      <div style="font-size:1rem;font-weight:700;color:#fff;margin-bottom:0.25rem">Longest Substring Without Repeating Characters</div>
+      <div style="font-size:0.78rem;color:rgba(255,255,255,0.4)">Strings · Medium · <span style="color:#34d399">134 students solved today</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.75rem">
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#fbbf24">🔥 8</div>
+        <div style="font-size:0.62rem;color:rgba(255,255,255,0.3)">day streak</div>
+      </div>
+      <button onclick="window.location.href='register.html?plan=masterdsa'"
+        style="background:#7c6af7;color:white;border:none;padding:0.65rem 1.5rem;border-radius:10px;font-size:0.85rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer">
+        Solve →
+      </button>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div style="position:relative;z-index:2">
+      <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#a89df7;margin-bottom:0.75rem">One-time · Lifetime access</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;color:#fff;margin-bottom:0.4rem">Start your DSA journey today</h2>
+      <p style="color:rgba(255,255,255,0.4);font-size:0.88rem;margin-bottom:0">Roadmap · 200+ questions · compiler · hints · daily problems · leaderboard</p>
+      <div class="price-display"><sup style="font-size:1.2rem">₹</sup>150</div>
+      <div style="color:rgba(255,255,255,0.25);text-decoration:line-through;font-size:0.88rem;margin-bottom:1.75rem">₹599</div>
+      <button class="btn-primary-glow" onclick="window.location.href='register.html?plan=masterdsa'" style="font-size:1rem;padding:1rem 2.5rem">
+        🚀 Get Lifetime Access — ₹150
+      </button>
+      <div style="margin-top:0.75rem;font-size:0.72rem;color:rgba(255,255,255,0.2)">
+        Pay → Fill form → Activated within 1-2 hours
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
