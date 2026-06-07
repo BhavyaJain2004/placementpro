@@ -258,16 +258,18 @@ router.get('/me', verifyToken, async (req, res) => {
 
     const newToken = makeToken(user);
 
-    res.json({
-      token: newToken,
-      user: {
-        id:      user._id,
-        name:    user.name,
-        email:   user.email,
-        isPaid:  user.isPaid,
-        isAdmin: user.isAdmin
-      }
-    });
+   res.json({
+  token: newToken,
+  user: {
+    id:              user._id,
+    name:            user.name,
+    email:           user.email,
+    isPaid:          user.isPaid,
+    isAdmin:         user.isAdmin,
+    hasTestAccess:   user.hasTestAccess   || false,
+    masterDsaAccess: user.masterDsaAccess || false
+  }
+});
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
