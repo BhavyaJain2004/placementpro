@@ -35,7 +35,8 @@ const userSchema = new mongoose.Schema({
   paidAt:        { type: Date },
   sessions:      { type: [sessionSchema], default: [] },
   hasTestAccess: { type: Boolean, default: false },
-  feedbackGiven: { type: Boolean, default: false }
+  feedbackGiven: { type: Boolean, default: false },
+  masterDsaAccess: { type: Boolean, default: false },
 }, { timestamps: true });
 
 
