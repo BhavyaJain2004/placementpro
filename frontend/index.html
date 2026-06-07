@@ -94,28 +94,63 @@
 </section>
 
 <!-- PRICING -->
+<!-- PRICING -->
 <section id="pricing" class="container" style="padding-bottom:6rem; text-align:center;">
   <h2 style="font-size:2rem; margin-bottom:0.5rem">Simple, one-time pricing</h2>
   <p style="color:var(--muted); margin-bottom:3rem">Pay once. Access forever. No renewals.</p>
-  <div style="max-width:380px; margin:0 auto; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-xl); padding:2.5rem; position:relative; overflow:hidden;">
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));"></div>
-    <span style="font-size:0.75rem; color:var(--accent2); font-weight:600; text-transform:uppercase; letter-spacing:0.08em;">Lifetime Access</span>
-    <div style="margin:1.25rem 0 1.75rem;">
-      <span style="font-family:'Syne',sans-serif; font-size:3.5rem; font-weight:800;">₹99</span>
-      <span style="color:var(--faint); text-decoration:line-through; margin-left:10px; font-size:1.1rem">₹499</span>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;max-width:700px;margin:0 auto;">
+
+    <!-- ₹99 Base Card -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:2rem;position:relative;overflow:hidden;text-align:left;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));"></div>
+      <span style="font-size:0.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Base Platform</span>
+      <div style="margin:1rem 0 1.5rem;">
+        <span style="font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;color:var(--text);">₹99</span>
+        <span style="color:var(--faint);text-decoration:line-through;margin-left:8px;font-size:1rem">₹499</span>
+      </div>
+      <ul style="list-style:none;margin-bottom:1.75rem;display:flex;flex-direction:column;gap:0.6rem;">
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>80+ Company profiles</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>150+ DSA questions (Java + Python)</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>Topic notes & cheatsheets</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>Real interview experiences</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>Lifetime updates</li>
+      </ul>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="showAuth('signup')">Get Base Access</button>
+      <p style="font-size:0.72rem;color:var(--faint);margin-top:0.75rem;text-align:center">One-time · Lifetime · No subscription</p>
     </div>
-    <ul style="list-style:none; text-align:left; margin-bottom:2rem; display:flex; flex-direction:column; gap:0.7rem;">
-      <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted)"><span style="color:var(--green)">✓</span> 50+ Company profiles</li>
-      <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted)"><span style="color:var(--green)">✓</span> 150+ DSA questions (Java + Python)</li>
-      <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted)"><span style="color:var(--green)">✓</span> Topic notes & PDF cheatsheets</li>
-      <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted)"><span style="color:var(--green)">✓</span> Real interview experiences</li>
-      <li style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted)"><span style="color:var(--green)">✓</span> Lifetime updates</li>
-    </ul>
-    <button class="btn btn-primary btn-lg" style="width:100%" onclick="showAuth('signup')">Get Access Now</button>
-    <p style="font-size:0.75rem; color:var(--faint); margin-top:1rem">Secure payment via Razorpay</p>
+
+    <!-- ₹150 Master DSA Card -->
+    <div style="background:#0d0d20;border:1px solid rgba(124,106,247,0.45);border-radius:var(--radius-xl);padding:2rem;position:relative;overflow:hidden;text-align:left;">
+      <!-- Top glow line -->
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#7c6af7,#06b6d4);"></div>
+      <!-- Popular badge -->
+      <div style="position:absolute;top:0;right:0;background:#7c6af7;color:white;font-size:0.62rem;font-weight:700;padding:4px 12px;border-radius:0 0 0 10px;text-transform:uppercase;letter-spacing:0.06em;">Most Popular</div>
+
+      <span style="font-size:0.72rem;color:#a89df7;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Master DSA</span>
+      <div style="margin:1rem 0 1.5rem;">
+        <span style="font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;color:#fff;">₹150</span>
+        <span style="color:rgba(255,255,255,0.2);text-decoration:line-through;margin-left:8px;font-size:1rem">₹599</span>
+      </div>
+      <ul style="list-style:none;margin-bottom:1.75rem;display:flex;flex-direction:column;gap:0.6rem;">
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>Full DSA roadmap — 0 to Google level</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>200+ topic-wise questions</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>In-browser compiler (Java + Python)</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>Hints + full solutions + explanations</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>25+ patterns & tricks</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>Daily problem + leaderboard</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>Curated video library</li>
+      </ul>
+      <button style="width:100%;background:#7c6af7;color:white;border:none;padding:0.85rem;border-radius:10px;font-size:0.95rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity 0.2s;"
+        onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"
+        onclick="window.location.href='masterdsa.html'">
+        🚀 Explore Master DSA — ₹150
+      </button>
+      <p style="font-size:0.72rem;color:rgba(255,255,255,0.2);margin-top:0.75rem;text-align:center">One-time · Lifetime · No subscription</p>
+    </div>
+
   </div>
 </section>
-
 <!-- AUTH MODAL -->
 <div id="auth-modal" class="modal-overlay">
   <div class="modal" style="max-width:420px">
