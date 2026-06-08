@@ -189,6 +189,6 @@ const getUser = () => {
   catch(e) { return null; }
 };
 
-window.Auth = { decodeToken, requireAuth, requirePaid, redirectIfLoggedIn, logout, setNavUser };
+window.Auth = { decodeToken, requireAuth, requirePaid, redirectIfLoggedIn, logout, setNavUser, getUser };
 
 
