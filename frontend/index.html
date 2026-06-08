@@ -116,7 +116,7 @@
         <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>Real interview experiences</li>
         <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>Lifetime updates</li>
       </ul>
-      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="showAuth('signup')">Get Base Access</button>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="showAuth('signup','99')">Get Base Access</button>
       <p style="font-size:0.72rem;color:var(--faint);margin-top:0.75rem;text-align:center">One-time · Lifetime · No subscription</p>
     </div>
 
@@ -143,7 +143,7 @@
       </ul>
       <button style="width:100%;background:#7c6af7;color:white;border:none;padding:0.85rem;border-radius:10px;font-size:0.95rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity 0.2s;"
         onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"
-        onclick="window.location.href='masterdsa.html'">
+        onclick="showAuth('signup','200')">
         🚀 Explore Master DSA — ₹200
       </button>
       <p style="font-size:0.72rem;color:rgba(255,255,255,0.2);margin-top:0.75rem;text-align:center">One-time · Lifetime · No subscription</p>
@@ -187,6 +187,15 @@
           <label>Full name</label>
           <input class="input-field" type="text" id="s-name" placeholder="Your name" required>
         </div>
+        <div id="signup-plan-label" style="
+  background:rgba(124,106,247,0.08);
+  border:1px solid rgba(124,106,247,0.2);
+  border-radius:10px; padding:0.65rem 1rem;
+  font-size:0.82rem; font-weight:600; color:#a89df7;
+  margin-bottom:1rem; text-align:center;
+">✅ Signing up for Base Platform — ₹99</div>
+
+<input type="hidden" id="signup-plan" value="99">
         <div class="input-group">
           <label>Email ( Please Use Personal Mail ID only !!!!! )</label>
           <input class="input-field" type="email" id="s-email" placeholder="you@example.com" required>
@@ -220,10 +229,14 @@
 <script>
   Auth.redirectIfLoggedIn();
 
-  function showAuth(tab) {
-    document.getElementById('auth-modal').classList.add('open');
-    switchTab(tab);
-  }
+  function showAuth(tab, plan = '99') {
+  document.getElementById('auth-modal').classList.add('open');
+  switchTab(tab);
+  // Plan set karo
+  document.getElementById('signup-plan').value = plan;
+  document.getElementById('signup-plan-label').textContent = 
+    plan === '200' ? '🚀 Signing up for Master DSA — ₹200' : '✅ Signing up for Base Platform — ₹99';
+}
   function closeAuth() { document.getElementById('auth-modal').classList.remove('open'); }
   function switchTab(tab) {
     document.getElementById('login-form').style.display  = tab === 'login'  ? 'flex' : 'none';
@@ -261,30 +274,37 @@
   //       method: 'POST',
   //       body: JSON.stringify({ name: document.getElementById('s-name').value, email: document.getElementById('s-email').value, password: document.getElementById('s-pass').value })
   //     });
-  async function handleSignup(e) {
-    e.preventDefault();
-    const btn = document.getElementById('signup-btn');
-    btn.disabled = true; btn.textContent = 'Creating account…';
-    document.getElementById('signup-err').textContent = '';
-    try {
-      const data = await API.call('/auth/register', {
-        method: 'POST',
-        body: JSON.stringify({
-          name:       document.getElementById('s-name').value,
-          email:      document.getElementById('s-email').value,
-          password:   document.getElementById('s-pass').value,
-          mobile:     document.getElementById('reg-mobile').value.trim(),
-          referredBy: document.getElementById('reg-referral').value.trim().toUpperCase()
-        })
-      });
-      localStorage.setItem('pp_token', data.token);
-      localStorage.setItem('pp_user', JSON.stringify(data.user));
+async function handleSignup(e) {
+  e.preventDefault();
+  const btn  = document.getElementById('signup-btn');
+  const plan = document.getElementById('signup-plan').value;
+  btn.disabled = true; btn.textContent = 'Creating account…';
+  document.getElementById('signup-err').textContent = '';
+  try {
+    const data = await API.call('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        name:       document.getElementById('s-name').value,
+        email:      document.getElementById('s-email').value,
+        password:   document.getElementById('s-pass').value,
+        mobile:     document.getElementById('reg-mobile').value.trim(),
+        referredBy: document.getElementById('reg-referral').value.trim().toUpperCase()
+      })
+    });
+    localStorage.setItem('pp_token', data.token);
+    localStorage.setItem('pp_user', JSON.stringify(data.user));
+
+    // Plan ke hisab se redirect
+    if (plan === '200') {
+      window.location.href = 'masterdsa.html';
+    } else {
       window.location.href = 'dashboard.html';
-    } catch(err) {
-      document.getElementById('signup-err').textContent = err.message;
-      btn.disabled = false; btn.textContent = 'Create account';
     }
+  } catch(err) {
+    document.getElementById('signup-err').textContent = err.message;
+    btn.disabled = false; btn.textContent = 'Create account';
   }
+}
 
   // close modal on outside click
   document.getElementById('auth-modal').addEventListener('click', function(e) {
