@@ -26,7 +26,18 @@ const requirePaid = () => {
 // Redirect if already logged in
 const redirectIfLoggedIn = () => {
   const u = decodeToken();
-  if (u) window.location.href = 'dashboard.html';
+  if (!u) return;
+  // masterDsaAccess check karo pp_user se
+  try {
+    const saved = JSON.parse(localStorage.getItem('pp_user'));
+    if (saved && saved.masterDsaAccess) {
+      window.location.href = 'masterdsa-dashboard.html';
+    } else {
+      window.location.href = 'dashboard.html';
+    }
+  } catch(e) {
+    window.location.href = 'dashboard.html';
+  }
 };
 
 const logout = () => {
@@ -173,6 +184,10 @@ const setNavUser = (name) => {
   }, 1000);
 
 })();
+const getUser = () => {
+  try { return JSON.parse(localStorage.getItem('pp_user')); }
+  catch(e) { return null; }
+};
 
 window.Auth = { decodeToken, requireAuth, requirePaid, redirectIfLoggedIn, logout, setNavUser };
 
