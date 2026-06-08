@@ -811,5 +811,22 @@
 </div>
 
 </div>
+  <script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+(async function() {
+  try {
+    const cached = JSON.parse(localStorage.getItem('pp_user'));
+    if (!cached) return;
+    const fresh = await API.call('/auth/me');
+    const u = fresh?.user || cached;
+    if (fresh?.token) localStorage.setItem('pp_token', fresh.token);
+    localStorage.setItem('pp_user', JSON.stringify(u));
+    if (u.masterDsaAccess) {
+      window.location.href = 'masterdsa-dashboard.html';
+    }
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>
