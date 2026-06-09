@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSA Roadmap — Master DSA</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ══ PAGE ══ */
+.roadmap-page {
+  min-height: 100vh;
+  background: #03030e;
+  padding-bottom: 4rem;
+}
+
+/* ══ NAVBAR ══ */
+.profile-wrap { position:relative; }
+.profile-btn  { display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:4px 12px 4px 4px;cursor:pointer; }
+.profile-dropdown { position:absolute;top:calc(100%+8px);right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:200px;box-shadow:0 20px 40px rgba(0,0,0,0.4);display:none;z-index:500; }
+.profile-dropdown.open { display:block; }
+.dropdown-header { padding:1rem 1.25rem 0.75rem;border-bottom:1px solid var(--border); }
+.dropdown-header .d-name { font-size:0.9rem;font-weight:600;color:var(--text); }
+.dropdown-menu { padding:0.5rem; }
+.dropdown-item { display:flex;align-items:center;gap:10px;padding:0.6rem 0.75rem;border-radius:8px;font-size:0.875rem;color:var(--muted);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;text-decoration:none;transition:all 0.15s; }
+.dropdown-item:hover { background:var(--surface2);color:var(--text); }
+.dropdown-item.danger:hover { background:rgba(248,113,113,0.1);color:var(--red); }
+.dropdown-divider { height:1px;background:var(--border);margin:0.3rem 0.5rem; }
+
+/* ══ HERO ══ */
+.rm-hero {
+  text-align: center;
+  padding: 3rem 1rem 1rem;
+  position: relative;
+}
+.rm-hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.09em; color: #a89df7;
+  background: rgba(124,106,247,0.1); border: 1px solid rgba(124,106,247,0.22);
+  padding: 4px 12px; border-radius: 99px; margin-bottom: 1rem;
+}
+.rm-hero h1 {
+  font-family: 'Syne', sans-serif; font-size: clamp(1.75rem,4vw,2.75rem);
+  font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 0.5rem;
+}
+.rm-hero p { font-size: 0.9rem; color: rgba(255,255,255,0.38); margin-bottom: 2rem; }
+
+/* Progress bar */
+.rm-progress-bar-wrap {
+  max-width: 400px; margin: 0 auto 2.5rem;
+  background: rgba(255,255,255,0.06); border-radius: 99px; height: 6px;
+  position: relative; overflow: visible;
+}
+.rm-progress-bar-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, #34d399, #a89df7);
+  transition: width 0.8s ease;
+}
+.rm-progress-label {
+  font-size: 0.72rem; color: rgba(255,255,255,0.35); text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* ══ SKY CANVAS ══ */
+.sky-canvas {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+/* ══ CURVY ROAD SVG ══ */
+.road-svg-wrap {
+  position: absolute;
+  left: 50%; top: 0; bottom: 0;
+  transform: translateX(-50%);
+  width: 100%; pointer-events: none; z-index: 1;
+}
+
+/* ══ STOPS ══ */
+.rm-stops { position: relative; z-index: 2; }
+
+.rm-stop {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 3.5rem;
+  gap: 1.25rem;
+  position: relative;
+}
+/* Alternate left-right */
+.rm-stop:nth-child(odd)  { flex-direction: row;         padding-left: 2rem; }
+.rm-stop:nth-child(even) { flex-direction: row-reverse;  padding-right: 2rem; }
+
+/* Node circle */
+.rm-node {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800;
+  flex-shrink: 0; z-index: 3; position: relative;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+}
+.rm-node.done {
+  background: rgba(52,211,153,0.12);
+  border-color: #34d399; color: #34d399;
+  box-shadow: 0 0 20px rgba(52,211,153,0.2);
+}
+.rm-node.active {
+  background: rgba(124,106,247,0.15);
+  border-color: #a89df7; color: #a89df7;
+  box-shadow: 0 0 28px rgba(124,106,247,0.35);
+  animation: nodePulse 2.5s ease-in-out infinite;
+}
+.rm-node.locked {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.2);
+}
+@keyframes nodePulse {
+  0%,100% { box-shadow: 0 0 28px rgba(124,106,247,0.35); }
+  50%      { box-shadow: 0 0 40px rgba(124,106,247,0.55); }
+}
+
+/* Card */
+.rm-card {
+  flex: 1; background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 18px; padding: 1.1rem 1.35rem;
+  transition: border-color 0.2s, transform 0.15s;
+  max-width: 340px;
+}
+.rm-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.rm-card.done   { border-color: rgba(52,211,153,0.18); background: rgba(52,211,153,0.03); }
+.rm-card.active { border-color: rgba(124,106,247,0.3); background: rgba(124,106,247,0.05); }
+
+.rm-card-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0.3rem;
+}
+.rm-card-title { font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700; color:#fff; }
+.rm-card-count {
+  font-size: 0.62rem; padding: 2px 8px; border-radius: 99px;
+  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.35);
+  white-space: nowrap;
+}
+.rm-card-desc { font-size:0.76rem; color:rgba(255,255,255,0.38); line-height:1.55; margin-bottom:0.7rem; }
+.rm-tags { display:flex; gap:0.3rem; flex-wrap:wrap; margin-bottom:0.7rem; }
+.rm-tag {
+  font-size:0.6rem; font-weight:600; padding:2px 7px; border-radius:99px;
+  background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.38);
+}
+.rm-tag.g { background:rgba(52,211,153,0.1); color:#34d399; }
+.rm-tag.p { background:rgba(124,106,247,0.1); color:#a89df7; }
+
+/* Tiny progress under card */
+.rm-card-prog { height:2px; background:rgba(255,255,255,0.06); border-radius:99px; overflow:hidden; }
+.rm-card-prog-fill { height:100%; border-radius:99px; }
+
+/* ══ FINISH ══ */
+.rm-finish {
+  text-align: center; margin-top: 1rem; position: relative; z-index: 2;
+  padding-bottom: 2rem;
+}
+.rm-finish-inner {
+  display: inline-flex; align-items: center; gap: 1rem;
+  background: rgba(124,106,247,0.08); border: 1px solid rgba(124,106,247,0.25);
+  border-radius: 20px; padding: 1.25rem 2.5rem;
+  box-shadow: 0 0 40px rgba(124,106,247,0.1);
+}
+
+/* ══ STARS ══ */
+.star { position: absolute; border-radius: 50%; background: #fff; pointer-events: none; }
+@keyframes twinkle {
+  0%,100% { opacity: 0.8; transform: scale(1); }
+  50%      { opacity: 0.2; transform: scale(0.6); }
+}
+</style>
+</head>
+<body class="roadmap-page">
+<div id="toast"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar" style="position:sticky;top:0;z-index:100;background:#03030e;border-bottom:1px solid rgba(255,255,255,0.06);">
+  <div class="nav-logo">
+    <a href="masterdsa-dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit">
+      <span class="dot"></span> Master DSA
+    </a>
+  </div>
+  <div style="display:flex;align-items:center;gap:0.4rem;">
+    <a href="masterdsa-dashboard.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px;transition:all 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='none'">🏠 Home</a>
+    <a href="masterdsa-roadmap.html"   style="font-size:0.82rem;color:#a89df7;text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px;background:rgba(124,106,247,0.1);">🗺️ Roadmap</a>
+    <a href="masterdsa-practice.html"  style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px;transition:all 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='none'">📚 Practice</a>
+  </div>
+  <div class="nav-right">
+    <div style="display:flex;align-items:center;gap:5px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:99px;padding:4px 10px;margin-right:0.75rem;">
+      <span>🔥</span>
+      <span style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;color:#fbbf24" id="nav-streak">0</span>
+    </div>
+    <div class="profile-wrap">
+      <button class="profile-btn" onclick="toggleDD()">
+        <div class="nav-avatar" id="nav-avatar">?</div>
+        <span style="font-size:0.85rem;color:var(--muted)" id="nav-name"></span>
+      </button>
+      <div class="profile-dropdown" id="dd">
+        <div class="dropdown-header"><div class="d-name" id="dd-name">—</div></div>
+        <div class="dropdown-menu">
+          <a href="masterdsa-dashboard.html" class="dropdown-item">🏠 Dashboard</a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" onclick="Auth.logout()">Log out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="rm-hero">
+  <div class="rm-hero-tag">✦ Your Learning Path</div>
+  <h1>The DSA Roadmap</h1>
+  <p>Follow this sequence. Every step builds on the last.</p>
+  <div class="rm-progress-bar-wrap">
+    <div class="rm-progress-bar-fill" id="prog-fill" style="width:22%"></div>
+  </div>
+  <div class="rm-progress-label" id="prog-label">69 / 308 questions completed · 22%</div>
+</div>
+
+<!-- SKY + ROAD -->
+<div class="sky-canvas" id="sky-canvas">
+
+  <!-- Stars injected by JS -->
+
+  <!-- Road SVG -->
+  <div class="road-svg-wrap" id="road-svg-wrap"></div>
+
+  <!-- Stops -->
+  <div class="rm-stops" id="rm-stops">
+
+    <!-- 1 -->
+    <div class="rm-stop">
+      <div class="rm-node done">✓</div>
+      <div class="rm-card done">
+        <div class="rm-card-top">
+          <div class="rm-card-title">📐 Arrays & Strings</div>
+          <span class="rm-card-count">40 Q</span>
+        </div>
+        <div class="rm-card-desc">The foundation. 40% of placement tests start here. Master two pointer and sliding window.</div>
+        <div class="rm-tags">
+          <span class="rm-tag g">Sliding Window</span>
+          <span class="rm-tag g">Two Pointer</span>
+          <span class="rm-tag g">Prefix Sum</span>
+          <span class="rm-tag g">Kadane's</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:100%;background:#34d399"></div></div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="rm-stop">
+      <div class="rm-node done">✓</div>
+      <div class="rm-card done">
+        <div class="rm-card-top">
+          <div class="rm-card-title">🔗 Linked List</div>
+          <span class="rm-card-count">22 Q</span>
+        </div>
+        <div class="rm-card-desc">Pointers, reversal, merge, cycle detection. TCS and Infosys ask these every year.</div>
+        <div class="rm-tags">
+          <span class="rm-tag g">Fast-Slow Pointer</span>
+          <span class="rm-tag g">Reversal</span>
+          <span class="rm-tag g">Merge</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:100%;background:#34d399"></div></div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="rm-stop">
+      <div class="rm-node active">3</div>
+      <div class="rm-card active">
+        <div class="rm-card-top">
+          <div class="rm-card-title">📚 Stacks & Queues</div>
+          <span class="rm-card-count">20 Q</span>
+        </div>
+        <div class="rm-card-desc">Monotonic stack is underrated. Appears way more than expected in actual rounds.</div>
+        <div class="rm-tags">
+          <span class="rm-tag p">Monotonic Stack</span>
+          <span class="rm-tag p">BFS Queue</span>
+          <span class="rm-tag p">Next Greater</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:35%;background:#a89df7"></div></div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="rm-stop">
+      <div class="rm-node locked">4</div>
+      <div class="rm-card">
+        <div class="rm-card-top">
+          <div class="rm-card-title">🔄 Recursion & Backtracking</div>
+          <span class="rm-card-count">24 Q</span>
+        </div>
+        <div class="rm-card-desc">The mindset shift. Once recursion clicks, Trees and DP become 10x easier.</div>
+        <div class="rm-tags">
+          <span class="rm-tag">Base Cases</span>
+          <span class="rm-tag">Permutations</span>
+          <span class="rm-tag">Subsets</span>
+          <span class="rm-tag">N-Queens</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:0%;background:#a89df7"></div></div>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="rm-stop">
+      <div class="rm-node locked">5</div>
+      <div class="rm-card">
+        <div class="rm-card-top">
+          <div class="rm-card-title">🌳 Trees & BST</div>
+          <span class="rm-card-count">28 Q</span>
+        </div>
+        <div class="rm-card-desc">Traversals, height, LCA, path problems. Amazon's most favourite topic by a mile.</div>
+        <div class="rm-tags">
+          <span class="rm-tag">DFS / BFS</span>
+          <span class="rm-tag">Level Order</span>
+          <span class="rm-tag">LCA</span>
+          <span class="rm-tag">BST ops</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="rm-stop">
+      <div class="rm-node locked">6</div>
+      <div class="rm-card">
+        <div class="rm-card-top">
+          <div class="rm-card-title">🔍 Searching & Sorting</div>
+          <span class="rm-card-count">20 Q</span>
+        </div>
+        <div class="rm-card-desc">Beyond textbook — merge sort variations, custom comparators, sort + BS combos.</div>
+        <div class="rm-tags">
+          <span class="rm-tag">Merge Sort</span>
+          <span class="rm-tag">Quick Select</span>
+          <span class="rm-tag">Custom Sort</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="rm-stop">
+      <div class="rm-node locked">7</div>
+      <div class="rm-card">
+        <div class="rm-card-top">
+          <div class="rm-card-title">🎯 Binary Search</div>
+          <span class="rm-card-count">18 Q</span>
+        </div>
+        <div class="rm-card-desc">Not just sorted arrays — Binary search on answer is a game changer technique.</div>
+        <div class="rm-tags">
+          <span class="rm-tag">On Answer</span>
+          <span class="rm-tag">Rotated Array</span>
+          <span class="rm-tag">Peak Element</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="rm-stop">
+      <div class="rm-node locked">8</div>
+      <div class="rm-card">
+        <div class="rm-card-top">
+          <div class="rm-card-title">⛰️ Heaps & Priority Queue</div>
+          <span class="rm-card-count">16 Q</span>
+        </div>
+        <div class="rm-card-desc">Top-K problems, median of data streams. More common in interviews than people realise.</div>
+        <div class="rm-tags">
+          <span class="rm-tag">Top K</span>
+          <span class="rm-tag">Min/Max Heap</span>
+          <span class="rm-tag">Kth Largest</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="rm-stop">
+      <div class="rm-node locked">9</div>
+      <div class="rm-card">
+        <div class="rm-card-top">
+          <div class="rm-card-title">🕸️ Graphs</div>
+          <span class="rm-card-count">24 Q</span>
+        </div>
+        <div class="rm-card-desc">BFS, DFS, Dijkstra, Topological Sort. Scary until it clicks — then it's beautiful.</div>
+        <div class="rm-tags">
+          <span class="rm-tag">Dijkstra</span>
+          <span class="rm-tag">Topo Sort</span>
+          <span class="rm-tag">Union Find</span>
+          <span class="rm-tag">Bipartite</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="rm-stop">
+      <div class="rm-node locked">10</div>
+      <div class="rm-card">
+        <div class="rm-card-top">
+          <div class="rm-card-title">💰 Greedy Algorithms</div>
+          <span class="rm-card-count">16 Q</span>
+        </div>
+        <div class="rm-card-desc">When to be greedy — interval scheduling, activity selection, jump game patterns.</div>
+        <div class="rm-tags">
+          <span class="rm-tag">Intervals</span>
+          <span class="rm-tag">Activity Selection</span>
+          <span class="rm-tag">Jump Game</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="rm-stop">
+      <div class="rm-node locked">11</div>
+      <div class="rm-card">
+        <div class="rm-card-top">
+          <div class="rm-card-title">🧩 Dynamic Programming</div>
+          <span class="rm-card-count">36 Q</span>
+        </div>
+        <div class="rm-card-desc">The boss level. Memoization → Tabulation → Space optimization. We go deep.</div>
+        <div class="rm-tags">
+          <span class="rm-tag">1D DP</span>
+          <span class="rm-tag">2D DP</span>
+          <span class="rm-tag">LCS / LIS</span>
+          <span class="rm-tag">Knapsack</span>
+          <span class="rm-tag">DP on Trees</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="rm-stop">
+      <div class="rm-node locked">12</div>
+      <div class="rm-card">
+        <div class="rm-card-top">
+          <div class="rm-card-title">🌲 Tries & Advanced Trees</div>
+          <span class="rm-card-count">14 Q</span>
+        </div>
+        <div class="rm-card-desc">Prefix trees, segment trees, Fenwick trees. Separates good from great candidates.</div>
+        <div class="rm-tags">
+          <span class="rm-tag">Prefix Tree</span>
+          <span class="rm-tag">Segment Tree</span>
+          <span class="rm-tag">Word Search</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- 13 -->
+    <div class="rm-stop">
+      <div class="rm-node locked">13</div>
+      <div class="rm-card">
+        <div class="rm-card-top">
+          <div class="rm-card-title">⚙️ Bit Manipulation</div>
+          <span class="rm-card-count">16 Q</span>
+        </div>
+        <div class="rm-card-desc">XOR tricks, power checks, bitmask DP. Compact but incredibly powerful patterns.</div>
+        <div class="rm-tags">
+          <span class="rm-tag">XOR Tricks</span>
+          <span class="rm-tag">Bitmask DP</span>
+          <span class="rm-tag">Brian Kernighan</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- 14 -->
+    <div class="rm-stop">
+      <div class="rm-node locked">14</div>
+      <div class="rm-card">
+        <div class="rm-card-top">
+          <div class="rm-card-title">🔢 Math & Number Theory</div>
+          <span class="rm-card-count">14 Q</span>
+        </div>
+        <div class="rm-card-desc">GCD, primes, modular arithmetic. Aptitude + coding round overlap — easy extra marks.</div>
+        <div class="rm-tags">
+          <span class="rm-tag">Sieve</span>
+          <span class="rm-tag">Mod Arithmetic</span>
+          <span class="rm-tag">Fast Power</span>
+        </div>
+        <div class="rm-card-prog"><div class="rm-card-prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FINISH -->
+  <div class="rm-finish">
+    <div class="rm-finish-inner">
+      <span style="font-size:2rem">🏆</span>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#fff">Placement Ready</div>
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.38);margin-top:3px">TCS · Infosys · Amazon · Google · Flipkart</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+const cachedUser = Auth.requireAuth();
+if (!cachedUser) throw new Error();
+Auth.setNavUser(cachedUser.name || cachedUser.email);
+document.getElementById('nav-name').textContent   = cachedUser.name || '';
+document.getElementById('dd-name').textContent    = cachedUser.name || '';
+document.getElementById('nav-avatar').textContent = (cachedUser.name||'U').charAt(0).toUpperCase();
+
+// ── STARS ──
+(function generateStars() {
+  const canvas = document.getElementById('sky-canvas');
+  const canvasH = canvas.scrollHeight || 4000;
+  for (let i = 0; i < 180; i++) {
+    const s   = document.createElement('div');
+    const sz  = Math.random() * 2.5 + 0.5;
+    const dur = 2 + Math.random() * 4;
+    const del = Math.random() * 5;
+    s.className = 'star';
+    s.style.cssText = `
+      width:${sz}px; height:${sz}px;
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      opacity:${0.2 + Math.random()*0.7};
+      animation: twinkle ${dur}s ease-in-out ${del}s infinite;
+    `;
+    canvas.insertBefore(s, canvas.firstChild);
+  }
+
+  // Moon
+  const moon = document.createElement('div');
+  moon.style.cssText = `
+    position:absolute; top:2rem; right:2rem; z-index:1; pointer-events:none;
+  `;
+  moon.innerHTML = `
+    <svg width="80" height="80" viewBox="0 0 80 80">
+      <defs>
+        <radialGradient id="moonGrad" cx="40%" cy="35%" r="55%">
+          <stop offset="0%" stop-color="#d4d4f0"/>
+          <stop offset="100%" stop-color="#8080b0"/>
+        </radialGradient>
+        <filter id="moonGlow">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Glow -->
+      <circle cx="40" cy="40" r="38" fill="rgba(180,180,255,0.06)" filter="url(#moonGlow)"/>
+      <!-- Moon body -->
+      <circle cx="40" cy="40" r="28" fill="url(#moonGrad)"/>
+      <!-- Dark shadow to make crescent feel -->
+      <circle cx="50" cy="35" r="22" fill="#03030e"/>
+      <!-- Craters -->
+      <circle cx="28" cy="36" r="4" fill="rgba(100,100,160,0.3)"/>
+      <circle cx="34" cy="48" r="2.5" fill="rgba(100,100,160,0.25)"/>
+      <circle cx="22" cy="46" r="2" fill="rgba(100,100,160,0.2)"/>
+    </svg>
+  `;
+  canvas.insertBefore(moon, canvas.firstChild);
+})();
+
+// ── CURVY ROAD SVG ──
+(function drawRoad() {
+  const stops = document.querySelectorAll('.rm-stop');
+  if (!stops.length) return;
+
+  const wrap  = document.getElementById('road-svg-wrap');
+  const total = stops.length;
+  const svgW  = 800;
+
+  // Collect node center positions relative to sky-canvas
+  const canvas = document.getElementById('sky-canvas');
+  const canvasRect = canvas.getBoundingClientRect();
+
+  let points = [];
+  stops.forEach((stop, i) => {
+    const node = stop.querySelector('.rm-node');
+    const rect = node.getBoundingClientRect();
+    const x = rect.left - canvasRect.left + rect.width/2;
+    const y = rect.top  - canvasRect.top  + rect.height/2 + window.scrollY;
+    points.push({ x, y });
+  });
+
+  if (!points.length) return;
+
+  // Build smooth SVG path through points
+  const svgH = canvas.scrollHeight;
+  let pathD = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    const prev = points[i-1];
+    const curr = points[i];
+    const cpX  = (prev.x + curr.x) / 2;
+    pathD += ` C ${cpX} ${prev.y}, ${cpX} ${curr.y}, ${curr.x} ${curr.y}`;
+  }
+
+  wrap.innerHTML = `
+    <svg width="100%" height="${svgH}px" viewBox="0 0 ${svgW} ${svgH}"
+         xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="roadGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#34d399" stop-opacity="0.8"/>
+          <stop offset="30%"  stop-color="#a89df7" stop-opacity="0.6"/>
+          <stop offset="60%"  stop-color="rgba(124,106,247,0.3)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0.08)"/>
+        </linearGradient>
+      </defs>
+      <!-- Road shadow/glow -->
+      <path d="${pathD}" fill="none"
+        stroke="rgba(124,106,247,0.08)" stroke-width="20"
+        stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Road body -->
+      <path d="${pathD}" fill="none"
+        stroke="url(#roadGrad)" stroke-width="3"
+        stroke-linecap="round" stroke-linejoin="round"
+        stroke-dasharray="8,6"/>
+    </svg>`;
+})();
+
+// ── PROGRESS ──
+(async function loadProgress() {
+  try {
+    const fresh = await API.call('/auth/me');
+    if (fresh?.user && !fresh.user.masterDsaAccess) {
+      window.location.href = 'masterdsa.html';
+    }
+  } catch(e) {}
+})();
+
+function toggleDD() { document.getElementById('dd').classList.toggle('open'); }
+document.addEventListener('click', e => {
+  if (!e.target.closest('.profile-wrap')) document.getElementById('dd').classList.remove('open');
+});
+</script>
+</body>
+</html>
