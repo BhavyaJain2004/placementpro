@@ -274,4 +274,12 @@ router.post('/activate-masterdsa', verifyToken, verifyAdmin, async (req, res) =>
     res.status(500).json({ message: err.message });
   }
 });
+router.post('/seed-masterdsa', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { execSync } = require('child_process');
+    execSync('node /opt/render/project/src/backend/seedMasterDSA.js', { stdio:'inherit' });
+    const count = await require('../models/MasterDSAQuestion').countDocuments();
+    res.json({ message: `Done! ${count} questions` });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
 module.exports = router;
