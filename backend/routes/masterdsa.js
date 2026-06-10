@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const DailySolve = require('../models/DailySolve');
 
 const Q = require('../models/MasterDSAQuestion');
 const User = require('../models/User');
