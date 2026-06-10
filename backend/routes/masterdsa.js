@@ -231,7 +231,7 @@ router.get(
 // Add these routes to backend/routes/masterdsa.js
 // (paste after existing routes, before module.exports)
 
-const DailySolve = require('../models/DailySolve'); // new model below
+
 
 // GET /api/masterdsa/daily — today's problem
 router.get('/daily', verifyToken, verifyMasterDSA, async (req, res) => {
