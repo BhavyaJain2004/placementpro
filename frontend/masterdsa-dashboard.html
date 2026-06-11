@@ -3,736 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Master DSA — PlacementPro</title>
+<title>Master DSA — Dashboard</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
-/* ══ LAYOUT ══ */
-.mdsa-layout {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  min-height: calc(100vh - 60px);
-  gap: 0;
-}
-@media(max-width:768px) {
-  .mdsa-layout { grid-template-columns: 1fr; }
-  .mdsa-sidebar { display: none; }
-}
-
-/* ══ SIDEBAR ══ */
-.mdsa-sidebar {
-  background: #09091a;
-  border-right: 1px solid rgba(255,255,255,0.06);
-  padding: 1.5rem 0;
-  position: sticky;
-  top: 60px;
-  height: calc(100vh - 60px);
-  overflow-y: auto;
-}
-.sidebar-section {
-  padding: 0 0.75rem;
-  margin-bottom: 1.75rem;
-}
-.sidebar-section-label {
-  font-size: 0.62rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.22);
-  padding: 0 0.75rem;
-  margin-bottom: 0.5rem;
-}
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.6rem 0.85rem;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.5);
-  cursor: pointer;
-  transition: all 0.15s;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  font-family: 'DM Sans', sans-serif;
-  text-decoration: none;
-}
-.sidebar-item:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.85); }
-.sidebar-item.active { background: rgba(124,106,247,0.12); color: #a89df7; }
-.sidebar-item-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
-.sidebar-badge {
-  margin-left: auto;
-  font-size: 0.6rem; font-weight: 700;
-  padding: 2px 7px; border-radius: 99px;
-  background: rgba(124,106,247,0.15); color: #a89df7;
-}
-.sidebar-badge.new { background: rgba(52,211,153,0.15); color: #34d399; }
-
-/* Progress ring in sidebar */
-.progress-ring-wrap {
-  padding: 1rem 1.5rem;
-  background: rgba(255,255,255,0.03);
-  border-radius: 12px;
-  margin: 0 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-.progress-ring-svg { flex-shrink: 0; }
-.progress-ring-text { font-size: 0.72rem; color: rgba(255,255,255,0.4); line-height: 1.5; }
-.progress-ring-val  { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:800; color:#fff; }
-
-/* Streak widget in sidebar */
-.streak-widget {
-  margin: 0 0.75rem;
-  background: rgba(251,191,36,0.06);
-  border: 1px solid rgba(251,191,36,0.15);
-  border-radius: 12px;
-  padding: 0.85rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.streak-fire { font-size: 1.5rem; }
-.streak-val  { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; color:#fbbf24; }
-.streak-lbl  { font-size:0.68rem; color:rgba(255,255,255,0.35); }
-
-/* ══ MAIN CONTENT ══ */
-.mdsa-main { padding: 1.75rem 2rem; overflow-y: auto; }
-@media(max-width:768px) { .mdsa-main { padding: 1rem; } }
-
-/* ══ CARDS ══ */
-.dash-card {
-  background: #0e0e1e;
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 16px;
-  padding: 1.4rem 1.5rem;
-  margin-bottom: 1.25rem;
-}
-.dash-card-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* ══ WELCOME BAR ══ */
-.welcome-bar {
-  background: linear-gradient(135deg, #0d0d22, #110d28);
-  border: 1px solid rgba(124,106,247,0.2);
-  border-radius: 18px;
-  padding: 1.5rem 2rem;
-  margin-bottom: 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  position: relative;
-  overflow: hidden;
-}
-.welcome-bar::after {
-  content: '';
-  position: absolute;
-  top: -40px; right: -40px;
-  width: 200px; height: 200px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(124,106,247,0.1), transparent 70%);
-  pointer-events: none;
-}
-.welcome-name {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #fff;
-  margin-bottom: 0.2rem;
-}
-.welcome-sub { font-size: 0.82rem; color: rgba(255,255,255,0.4); }
-
-/* ══ DAILY QUEST CARD ══ */
-.dq-card {
-  background: linear-gradient(135deg, #0d0d22, #0a1220);
-  border: 1px solid rgba(6,182,212,0.25);
-  border-radius: 18px;
-  padding: 1.4rem 1.5rem;
-  margin-bottom: 1.25rem;
-  position: relative;
-  overflow: hidden;
-}
-.dq-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(6,182,212,0.5), transparent);
-}
-.dq-label {
-  font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.1em; color: #06b6d4;
-  display: flex; align-items: center; gap: 6px;
-  margin-bottom: 0.6rem;
-}
-.dq-pulse {
-  width: 6px; height: 6px; border-radius: 50%; background: #06b6d4;
-  animation: pulse 1.5s ease-in-out infinite;
-}
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-.dq-title { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:0.3rem; }
-.dq-meta  { font-size:0.78rem; color:rgba(255,255,255,0.4); margin-bottom:1rem; }
-.dq-attempted {
-  display: flex; align-items: center; gap: 0.5rem;
-  font-size: 0.78rem; color: rgba(255,255,255,0.4);
-  margin-bottom: 1rem;
-}
-.dq-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; }
-.dq-bar-fill { height: 100%; background: #06b6d4; border-radius: 99px; transition: width 0.5s; }
-.dq-btn {
-  background: rgba(6,182,212,0.12); color: #06b6d4;
-  border: 1px solid rgba(6,182,212,0.25); border-radius: 10px;
-  padding: 0.65rem 1.5rem; font-size: 0.85rem; font-weight: 700;
-  font-family: 'Syne', sans-serif; cursor: pointer; transition: all 0.15s;
-}
-.dq-btn:hover { background: rgba(6,182,212,0.2); }
-
-/* ══ STATS GRID ══ */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-}
-.scard {
-  background: #0e0e1e;
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 14px;
-  padding: 1.1rem;
-  text-align: center;
-}
-.scard-val { font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; color:#fff; }
-.scard-lbl { font-size:0.65rem; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.05em; margin-top:3px; }
-
-/* ══ TOPIC GRID ══ */
-.topic-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-}
-.topic-card {
-  background: #0e0e1e;
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 14px;
-  padding: 1.1rem 1.1rem 0.9rem;
-  cursor: pointer;
-  transition: border-color 0.15s, transform 0.15s;
-  position: relative;
-  overflow: hidden;
-}
-.topic-card:hover { border-color: rgba(124,106,247,0.35); transform: translateY(-2px); }
-.topic-card.locked-topic { opacity: 0.5; cursor: default; }
-.topic-card.locked-topic:hover { transform: none; border-color: rgba(255,255,255,0.07); }
-.topic-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
-.topic-icon { font-size: 1.1rem; }
-.topic-status { font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 99px; }
-.topic-status.done    { background: rgba(52,211,153,0.12); color: #34d399; }
-.topic-status.active  { background: rgba(124,106,247,0.12); color: #a89df7; }
-.topic-status.locked  { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.25); }
-.topic-name  { font-size: 0.88rem; font-weight: 700; color: #fff; margin-bottom: 0.2rem; }
-.topic-count { font-size: 0.7rem; color: rgba(255,255,255,0.35); margin-bottom: 0.6rem; }
-.topic-bar   { height: 3px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; }
-.topic-bar-fill { height: 100%; border-radius: 99px; }
-
-/* ══ LEADERBOARD ══ */
-.lb-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.lb-row:last-child { border-bottom: none; }
-.lb-rank {
-  font-family: 'Syne', sans-serif;
-  font-size: 0.82rem; font-weight: 800;
-  width: 24px; text-align: center;
-  flex-shrink: 0;
-}
-.lb-avatar {
-  width: 30px; height: 30px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.72rem; font-weight: 700; flex-shrink: 0;
-}
-.lb-name  { flex: 1; font-size: 0.85rem; color: rgba(255,255,255,0.8); }
-.lb-score { font-size: 0.78rem; color: rgba(255,255,255,0.4); }
-.lb-row.you { background: rgba(124,106,247,0.06); border-radius: 10px; padding: 0.65rem 0.5rem; border: 1px solid rgba(124,106,247,0.15); margin: 2px 0; }
-
-/* ══ PAYWALL BANNER ══ */
-.paywall-banner {
-  background: linear-gradient(135deg, rgba(124,106,247,0.1), rgba(6,182,212,0.05));
-  border: 1px solid rgba(124,106,247,0.25);
-  border-radius: 16px;
-  padding: 1.5rem;
-  text-align: center;
-  margin-bottom: 1.25rem;
-}
-
-/* ══ ROADMAP MINI ══ */
-.roadmap-mini { margin-bottom: 1.25rem; }
-.rm-step {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.6rem 0;
-}
-.rm-dot {
-  width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.65rem; font-weight: 800;
-  flex-shrink: 0;
-  border: 1.5px solid transparent;
-}
-.rm-dot.done   { background: rgba(52,211,153,0.1); border-color: #34d399; color: #34d399; }
-.rm-dot.active { background: rgba(124,106,247,0.12); border-color: #a89df7; color: #a89df7; }
-.rm-dot.lock   { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.2); }
-.rm-line { width: 1.5px; height: 16px; background: rgba(255,255,255,0.08); margin-left: 13px; }
-.rm-label { font-size: 0.82rem; color: rgba(255,255,255,0.6); }
-.rm-label.done-l { color: #34d399; }
-.rm-label.active-l { color: #a89df7; font-weight: 600; }
-
-/* ══ NAVBAR OVERRIDE ══ */
-.mdsa-nav-item {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 0.85rem; color: rgba(255,255,255,0.55);
-  text-decoration: none; padding: 0.4rem 0.75rem;
-  border-radius: 8px; transition: all 0.15s;
-}
-.mdsa-nav-item:hover { color: #fff; background: rgba(255,255,255,0.06); }
-.mdsa-nav-item.active { color: #a89df7; }
-
-/* ══ LOCKED OVERLAY ══ */
-.locked-overlay {
-  position: absolute; inset: 0;
-  background: rgba(8,8,20,0.75);
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 14px;
-  backdrop-filter: blur(1px);
-}
+.mdsa-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px)}
+@media(max-width:768px){.mdsa-layout{grid-template-columns:1fr}.mdsa-sidebar{display:none}}
+.mdsa-sidebar{background:#09091a;border-right:1px solid rgba(255,255,255,0.06);padding:1.5rem 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.sb-section{padding:0 0.75rem;margin-bottom:1.5rem}
+.sb-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.22);padding:0 0.75rem;margin-bottom:0.5rem;display:block}
+.sb-item{display:flex;align-items:center;gap:0.65rem;padding:0.6rem 0.85rem;border-radius:10px;font-size:0.85rem;color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.15s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;text-decoration:none}
+.sb-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.85)}
+.sb-item.active{background:rgba(124,106,247,0.12);color:#a89df7}
+.sb-badge{margin-left:auto;font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(124,106,247,0.15);color:#a89df7}
+.sb-badge.green{background:rgba(52,211,153,0.15);color:#34d399}
+.progress-ring-wrap{padding:1rem 1.5rem;background:rgba(255,255,255,0.03);border-radius:12px;margin:0 0.75rem 1rem;display:flex;align-items:center;gap:0.85rem}
+.streak-widget{margin:0 0.75rem 1.25rem;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.15);border-radius:12px;padding:0.85rem 1rem;display:flex;align-items:center;gap:0.75rem}
+.mdsa-main{padding:1.75rem 2rem;overflow-y:auto}
+@media(max-width:768px){.mdsa-main{padding:1rem}}
+.dash-card{background:#0e0e1e;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:1.4rem 1.5rem;margin-bottom:1.25rem}
+.dash-card-title{font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:1rem}
+.welcome-bar{background:linear-gradient(135deg,#0d0d22,#110d28);border:1px solid rgba(124,106,247,0.2);border-radius:18px;padding:1.5rem 2rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;position:relative;overflow:hidden}
+.welcome-bar::after{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(124,106,247,0.1),transparent 70%);pointer-events:none}
+.dq-card{background:linear-gradient(135deg,#0d0d22,#0a1220);border:1px solid rgba(6,182,212,0.25);border-radius:18px;padding:1.4rem 1.5rem;margin-bottom:1.25rem;position:relative;overflow:hidden}
+.dq-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(6,182,212,0.5),transparent)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.75rem;margin-bottom:1.25rem}
+.scard{background:#0e0e1e;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:1.1rem;text-align:center}
+.scard-val{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff}
+.scard-lbl{font-size:0.65rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.05em;margin-top:3px}
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem}
+.topic-card{background:#0e0e1e;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:1.1rem;cursor:pointer;transition:border-color 0.15s,transform 0.15s}
+.topic-card:hover{border-color:rgba(124,106,247,0.35);transform:translateY(-2px)}
+.lb-row{display:flex;align-items:center;gap:0.75rem;padding:0.65rem 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.lb-row:last-child{border-bottom:none}
+.lb-row.you{background:rgba(124,106,247,0.06);border-radius:10px;padding:0.65rem 0.5rem;border:1px solid rgba(124,106,247,0.15);margin:2px 0}
+.rm-step{display:flex;align-items:center;gap:0.75rem;padding:0.55rem 0}
+.rm-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;flex-shrink:0;border:1.5px solid transparent}
+.rm-dot.done{background:rgba(52,211,153,0.1);border-color:#34d399;color:#34d399}
+.rm-dot.active{background:rgba(124,106,247,0.12);border-color:#a89df7;color:#a89df7}
+.rm-dot.lock{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.08);color:rgba(255,255,255,0.2)}
+.rm-line{width:1.5px;height:14px;background:rgba(255,255,255,0.08);margin-left:13px}
+.paywall-banner{background:linear-gradient(135deg,rgba(124,106,247,0.1),rgba(6,182,212,0.05));border:1px solid rgba(124,106,247,0.25);border-radius:16px;padding:1.5rem;text-align:center;margin-bottom:1.25rem}
+.profile-wrap{position:relative}
+.profile-btn{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:4px 12px 4px 4px;cursor:pointer;transition:border-color 0.2s}
+.profile-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:240px;box-shadow:0 20px 40px rgba(0,0,0,0.4);display:none;z-index:500}
+.profile-dropdown.open{display:block}
+.dropdown-header{padding:1rem 1.25rem 0.75rem;border-bottom:1px solid var(--border)}
+.d-name{font-size:0.95rem;font-weight:600;color:var(--text)}
+.d-email{font-size:0.78rem;color:var(--muted);margin-top:2px}
+.dropdown-menu{padding:0.5rem}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:0.6rem 0.75rem;border-radius:8px;font-size:0.875rem;color:var(--muted);cursor:pointer;transition:all 0.15s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;text-decoration:none}
+.dropdown-item:hover{background:var(--surface2);color:var(--text)}
+.dropdown-item.danger:hover{background:rgba(248,113,113,0.1);color:var(--red)}
+.dropdown-divider{height:1px;background:var(--border);margin:0.4rem 0.5rem}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 </style>
 </head>
 <body>
 <div id="toast"></div>
 
-<!-- ══ NAVBAR ══ -->
 <nav class="navbar" style="position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06);">
   <div class="nav-logo">
-    <a href="dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit">
-      <span class="dot"></span> PlacementPro
-    </a>
+    <a href="masterdsa-dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit"><span class="dot"></span> Master DSA</a>
   </div>
-
-  <!-- Nav links -->
-  <div style="display:flex;align-items:center;gap:0.25rem;">
-    <a href="masterdsa-dashboard.html" class="mdsa-nav-item active">🏠 Home</a>
-    <a href="#" class="mdsa-nav-item" id="nav-daily">⚡ Daily Quest</a>
-    <a href="#" class="mdsa-nav-item" id="nav-roadmap">🗺️ Roadmap</a>
-    <a href="#" class="mdsa-nav-item" id="nav-topics">📚 Topics</a>
-    <a href="#" class="mdsa-nav-item" id="nav-videos">🎥 Videos</a>
-    <a href="#" class="mdsa-nav-item" id="nav-lb">🏆 Leaderboard</a>
+  <div style="display:flex;align-items:center;gap:0.25rem">
+    <a href="masterdsa-dashboard.html" style="font-size:0.82rem;color:#a89df7;text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px;background:rgba(124,106,247,0.1)">🏠 Home</a>
+    <a href="masterdsa-roadmap.html"   style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='none'">🗺️ Roadmap</a>
+    <a href="masterdsa-practice.html"  style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='none'">📚 Practice</a>
   </div>
-
   <div class="nav-right">
-    <!-- Streak pill -->
-    <div style="display:flex;align-items:center;gap:5px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:99px;padding:4px 10px;">
-      <span style="font-size:0.85rem">🔥</span>
-      <span id="nav-streak" style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;color:#fbbf24;">0</span>
+    <div style="display:flex;align-items:center;gap:5px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:99px;padding:4px 10px;margin-right:0.75rem">
+      <span>🔥</span><span id="nav-streak" style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:700;color:#fbbf24">0</span>
     </div>
-    <!-- Profile -->
-    <div class="profile-wrap" style="margin-left:0.75rem;">
-      <button class="profile-btn" onclick="toggleDropdown()">
+    <div class="profile-wrap">
+      <button class="profile-btn" onclick="toggleDD()">
         <div class="nav-avatar" id="nav-avatar">?</div>
-        <span class="pname" id="nav-user-name"></span>
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="color:var(--muted)">
-          <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
+        <span style="font-size:0.85rem;color:var(--muted)" id="nav-name"></span>
       </button>
-      <div class="profile-dropdown" id="profile-dropdown">
+      <div class="profile-dropdown" id="dd">
         <div class="dropdown-header">
           <div class="d-name" id="dd-name">—</div>
           <div class="d-email" id="dd-email">—</div>
         </div>
-        <div style="padding:0.4rem 0.75rem;">
-          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-bottom:4px;">Progress</div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div style="flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
-              <div id="dd-progress-bar" style="height:100%;background:#a89df7;border-radius:99px;width:0%"></div>
+        <div style="padding:0.4rem 0.75rem">
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-bottom:4px">Progress</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden">
+              <div id="dd-prog" style="height:100%;background:#a89df7;border-radius:99px;width:0%"></div>
             </div>
-            <span id="dd-progress-txt" style="font-size:0.68rem;color:rgba(255,255,255,0.4);">0/308</span>
+            <span id="dd-prog-txt" style="font-size:0.68rem;color:rgba(255,255,255,0.4)">0/308</span>
           </div>
         </div>
         <div class="dropdown-menu">
-          <a href="dashboard.html" class="dropdown-item" style="text-decoration:none;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-            Main Dashboard
-          </a>
+          <a href="dashboard.html" class="dropdown-item">🏠 Main Dashboard</a>
           <div class="dropdown-divider"></div>
-          <button class="dropdown-item danger" onclick="Auth.logout()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Log out
-          </button>
+          <button class="dropdown-item danger" onclick="Auth.logout()">Log out</button>
         </div>
       </div>
     </div>
   </div>
 </nav>
 
-<!-- ══ LAYOUT ══ -->
 <div class="mdsa-layout">
 
-  <!-- ══ SIDEBAR ══ -->
+  <!-- SIDEBAR -->
   <div class="mdsa-sidebar">
-
-    <!-- Progress ring -->
-    <div class="progress-ring-wrap" style="margin-bottom:1rem;">
-      <svg class="progress-ring-svg" width="52" height="52" viewBox="0 0 52 52">
+    <div class="progress-ring-wrap">
+      <svg width="52" height="52" viewBox="0 0 52 52">
         <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4"/>
-        <circle id="progress-ring" cx="26" cy="26" r="22" fill="none" stroke="#a89df7" stroke-width="4"
+        <circle id="prog-ring" cx="26" cy="26" r="22" fill="none" stroke="#a89df7" stroke-width="4"
           stroke-linecap="round" stroke-dasharray="138.2" stroke-dashoffset="138.2"
           transform="rotate(-90 26 26)" style="transition:stroke-dashoffset 0.6s ease"/>
       </svg>
       <div>
-        <div class="progress-ring-val" id="sb-solved">0/308</div>
-        <div class="progress-ring-text">Questions<br>solved</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#fff" id="sb-solved">0/308</div>
+        <div style="font-size:0.72rem;color:rgba(255,255,255,0.35)">Questions<br>solved</div>
       </div>
     </div>
-
-    <!-- Streak -->
-    <div class="streak-widget" style="margin-bottom:1.25rem;">
-      <div class="streak-fire">🔥</div>
+    <div class="streak-widget">
+      <span style="font-size:1.5rem">🔥</span>
       <div>
-        <div class="streak-val" id="sb-streak">0</div>
-        <div class="streak-lbl">day streak</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#fbbf24" id="sb-streak">0</div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.35)">day streak</div>
       </div>
     </div>
-
-    <!-- Nav items -->
-    <div class="sidebar-section-label">Navigation</div>
-    <div class="sidebar-section">
-      <a class="sidebar-item active" href="masterdsa-dashboard.html">
-        <span class="sidebar-item-icon">🏠</span> Dashboard
-      </a>
-      <a class="sidebar-item" href="#" id="sb-daily">
-        <span class="sidebar-item-icon">⚡</span> Daily Quest
-        <span class="sidebar-badge new">Today</span>
-      </a>
-      <a class="sidebar-item" href="#" id="sb-roadmap">
-        <span class="sidebar-item-icon">🗺️</span> Roadmap
-      </a>
-      <a class="sidebar-item" href="#" id="sb-topics">
-        <span class="sidebar-item-icon">📚</span> All Topics
-      </a>
-      <a class="sidebar-item" href="#" id="sb-videos">
-        <span class="sidebar-item-icon">🎥</span> Video Library
-      </a>
-      <a class="sidebar-item" href="#" id="sb-lb">
-        <span class="sidebar-item-icon">🏆</span> Leaderboard
-      </a>
+    <span class="sb-label">Navigation</span>
+    <div class="sb-section">
+      <a class="sb-item active" href="masterdsa-dashboard.html"><span>🏠</span> Dashboard</a>
+      <a class="sb-item" href="masterdsa-roadmap.html"><span>🗺️</span> Roadmap</a>
+      <a class="sb-item" href="masterdsa-practice.html"><span>📚</span> All Topics</a>
+      <a class="sb-item" href="#videos"><span>🎥</span> Videos</a>
     </div>
-
-    <div class="sidebar-section-label">Topics</div>
-    <div class="sidebar-section">
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">📐</span> Arrays & Strings <span class="sidebar-badge" style="background:rgba(52,211,153,0.1);color:#34d399">✓</span></a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🔗</span> Linked List <span class="sidebar-badge" style="background:rgba(52,211,153,0.1);color:#34d399">✓</span></a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">📚</span> Stacks & Queues</a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🔄</span> Recursion</a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🌳</span> Trees & BST</a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🔍</span> Binary Search</a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">📊</span> Sorting</a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">⛰️</span> Heaps</a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🕸️</span> Graphs</a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">💰</span> Greedy</a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🧩</span> DP</a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🌲</span> Tries</a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">⚙️</span> Bit Manipulation</a>
-      <a class="sidebar-item" href="#"><span class="sidebar-item-icon">🔢</span> Math</a>
+    <span class="sb-label">Topics</span>
+    <div class="sb-section" id="sb-topics-list">
+      <!-- filled by JS -->
     </div>
-
   </div>
 
-  <!-- ══ MAIN ══ -->
+  <!-- MAIN -->
   <div class="mdsa-main">
 
-    <!-- Welcome bar -->
-    <div class="welcome-bar">
-      <div>
-        <div class="welcome-name">Hey <span id="main-name" style="color:#a89df7">there</span> 👋</div>
-        <div class="welcome-sub" id="main-sub">Loading your progress...</div>
-      </div>
-      <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap">
-        <div style="text-align:center;background:rgba(255,255,255,0.05);border-radius:10px;padding:0.6rem 1rem;">
-          <div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#fff" id="wbar-solved">0</div>
-          <div style="font-size:0.62rem;color:rgba(255,255,255,0.35)">Solved</div>
-        </div>
-        <div style="text-align:center;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.15);border-radius:10px;padding:0.6rem 1rem;">
-          <div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#fbbf24" id="wbar-streak">0🔥</div>
-          <div style="font-size:0.62rem;color:rgba(255,255,255,0.35)">Streak</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PAYWALL — shown if no access -->
+    <!-- Paywall -->
     <div id="paywall-section" style="display:none">
       <div class="paywall-banner">
         <div style="font-size:2rem;margin-bottom:0.75rem">🔐</div>
         <h2 style="font-family:'Syne',sans-serif;font-size:1.3rem;color:#fff;margin-bottom:0.4rem">Unlock Master DSA</h2>
-        <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-bottom:1.25rem;max-width:380px;margin-left:auto;margin-right:auto;">
-          300+ questions · roadmap · compiler · hints · daily problems — ₹200 one-time, lifetime access.
-        </p>
-        <button onclick="window.open('https://forms.gle/G5v1TnbUuULuRty4A','_blank')"
-          style="background:#7c6af7;color:white;border:none;padding:0.85rem 2rem;border-radius:12px;font-size:0.95rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;">
-          🚀 Unlock for ₹200
-        </button>
+        <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-bottom:1.25rem">300+ questions · roadmap · compiler · hints · daily problems — ₹200 one-time</p>
+        <button onclick="window.open('https://forms.gle/G5v1TnbUuULuRty4A','_blank')" style="background:#7c6af7;color:white;border:none;padding:0.85rem 2rem;border-radius:12px;font-size:0.95rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer">🚀 Unlock for ₹200</button>
         <p style="color:rgba(255,255,255,0.2);font-size:0.7rem;margin-top:0.6rem">Pay → Fill form → Activated in 1-2 hrs</p>
       </div>
     </div>
 
-    <!-- CONTENT — shown if has access -->
-    <div id="content-section">
+    <!-- Content -->
+    <div id="content-section" style="display:none">
+
+      <!-- Welcome -->
+      <div class="welcome-bar">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#fff">Hey <span id="main-name" style="color:#a89df7">there</span> 👋</div>
+          <div style="font-size:0.82rem;color:rgba(255,255,255,0.4);margin-top:3px" id="main-sub">Loading...</div>
+        </div>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+          <div style="text-align:center;background:rgba(255,255,255,0.05);border-radius:10px;padding:0.6rem 1rem">
+            <div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#fff" id="wb-solved">0</div>
+            <div style="font-size:0.62rem;color:rgba(255,255,255,0.35)">Solved</div>
+          </div>
+          <div style="text-align:center;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.15);border-radius:10px;padding:0.6rem 1rem">
+            <div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:#fbbf24" id="wb-streak">0🔥</div>
+            <div style="font-size:0.62rem;color:rgba(255,255,255,0.35)">Streak</div>
+          </div>
+        </div>
+      </div>
 
       <!-- Daily Quest -->
-      <div class="dq-card" id="section-daily">
-        <div class="dq-label"><span class="dq-pulse"></span> Daily Quest</div>
-        <div class="dq-title" id="dq-title">Longest Substring Without Repeating Characters</div>
-        <div class="dq-meta" id="dq-meta">Strings · Medium · Topic: Arrays & Strings</div>
-        <div class="dq-attempted">
-          <div class="dq-bar"><div class="dq-bar-fill" id="dq-bar" style="width:68%"></div></div>
-          <span id="dq-count" style="white-space:nowrap;font-size:0.78rem;color:rgba(255,255,255,0.45)">134 solved today</span>
+      <div class="dq-card">
+        <div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#06b6d4;display:flex;align-items:center;gap:6px;margin-bottom:0.6rem">
+          <span style="width:6px;height:6px;border-radius:50%;background:#06b6d4;animation:pulse 1.5s infinite;display:inline-block"></span>
+          Daily Quest
         </div>
-        <button class="dq-btn" onclick="toast('Opening question...','info')">Solve Today\'s Problem →</button>
+        <div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:0.3rem" id="dq-title">Loading...</div>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.4);margin-bottom:1rem" id="dq-meta"></div>
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem">
+          <div style="flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden">
+            <div id="dq-bar" style="height:100%;background:#06b6d4;border-radius:99px;width:0%;transition:width 0.5s"></div>
+          </div>
+          <span id="dq-count" style="font-size:0.78rem;color:rgba(255,255,255,0.45);white-space:nowrap">0 solved today</span>
+        </div>
+        <button id="dq-btn" onclick="solveDaily()" style="background:rgba(6,182,212,0.12);color:#06b6d4;border:1px solid rgba(6,182,212,0.25);border-radius:10px;padding:0.65rem 1.5rem;font-size:0.85rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:all 0.15s">Solve Today's Problem →</button>
       </div>
 
       <!-- Stats -->
       <div class="stats-grid">
-        <div class="scard">
-          <div class="scard-val" id="stat-solved">0</div>
-          <div class="scard-lbl">Solved</div>
-        </div>
-        <div class="scard" style="border-color:rgba(251,191,36,0.15)">
-          <div class="scard-val" style="color:#fbbf24" id="stat-streak">0🔥</div>
-          <div class="scard-lbl">Streak</div>
-        </div>
-        <div class="scard">
-          <div class="scard-val" id="stat-topics">0</div>
-          <div class="scard-lbl">Topics Done</div>
-        </div>
-        <div class="scard" style="border-color:rgba(52,211,153,0.15)">
-          <div class="scard-val" style="color:#34d399" id="stat-rank">#—</div>
-          <div class="scard-lbl">Your Rank</div>
-        </div>
+        <div class="scard"><div class="scard-val" id="st-solved">0</div><div class="scard-lbl">Solved</div></div>
+        <div class="scard" style="border-color:rgba(251,191,36,0.15)"><div class="scard-val" style="color:#fbbf24" id="st-streak">0🔥</div><div class="scard-lbl">Streak</div></div>
+        <div class="scard"><div class="scard-val" id="st-topics">0</div><div class="scard-lbl">Topics</div></div>
+        <div class="scard" style="border-color:rgba(52,211,153,0.15)"><div class="scard-val" style="color:#34d399" id="st-rank">#—</div><div class="scard-lbl">Rank</div></div>
       </div>
 
-      <!-- 2-col grid: Topics + Leaderboard -->
+      <!-- 2 col -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem">
-        <div style="min-width:0">
 
-          <!-- Topics progress -->
-          <div class="dash-card" id="section-topics">
-            <div class="dash-card-title">📚 Your Topics</div>
-            <div class="topic-grid" style="grid-template-columns:1fr 1fr;gap:0.6rem">
-
-              <div class="topic-card">
-                <div class="topic-card-top">
-                  <span class="topic-icon">📐</span>
-                  <span class="topic-status done">Done</span>
-                </div>
-                <div class="topic-name">Arrays</div>
-                <div class="topic-count">40 Q · 40 done</div>
-                <div class="topic-bar"><div class="topic-bar-fill" style="width:100%;background:#34d399"></div></div>
-              </div>
-
-              <div class="topic-card">
-                <div class="topic-card-top">
-                  <span class="topic-icon">🔗</span>
-                  <span class="topic-status done">Done</span>
-                </div>
-                <div class="topic-name">Linked List</div>
-                <div class="topic-count">22 Q · 22 done</div>
-                <div class="topic-bar"><div class="topic-bar-fill" style="width:100%;background:#34d399"></div></div>
-              </div>
-
-              <div class="topic-card">
-                <div class="topic-card-top">
-                  <span class="topic-icon">📚</span>
-                  <span class="topic-status active">Active</span>
-                </div>
-                <div class="topic-name">Stacks & Q</div>
-                <div class="topic-count">20 Q · 7 done</div>
-                <div class="topic-bar"><div class="topic-bar-fill" style="width:35%;background:#a89df7"></div></div>
-              </div>
-
-              <div class="topic-card locked-topic">
-                <div class="topic-card-top">
-                  <span class="topic-icon">🔄</span>
-                  <span class="topic-status locked">🔒</span>
-                </div>
-                <div class="topic-name">Recursion</div>
-                <div class="topic-count">24 Q</div>
-                <div class="topic-bar"><div class="topic-bar-fill" style="width:0%;background:#a89df7"></div></div>
-              </div>
-
-              <div class="topic-card locked-topic">
-                <div class="topic-card-top">
-                  <span class="topic-icon">🌳</span>
-                  <span class="topic-status locked">🔒</span>
-                </div>
-                <div class="topic-name">Trees</div>
-                <div class="topic-count">28 Q</div>
-                <div class="topic-bar"><div class="topic-bar-fill" style="width:0%"></div></div>
-              </div>
-
-              <div class="topic-card locked-topic">
-                <div class="topic-card-top">
-                  <span class="topic-icon">🧩</span>
-                  <span class="topic-status locked">🔒</span>
-                </div>
-                <div class="topic-name">DP</div>
-                <div class="topic-count">36 Q</div>
-                <div class="topic-bar"><div class="topic-bar-fill" style="width:0%"></div></div>
-              </div>
-
-            </div>
-            <div style="text-align:center;margin-top:0.75rem">
-              <button onclick="showSection('topics')" style="font-size:0.78rem;color:#a89df7;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">View all 14 topics →</button>
-            </div>
+        <!-- Topics -->
+        <div class="dash-card" style="min-width:0">
+          <div class="dash-card-title">📚 Topics</div>
+          <div id="topics-preview">
+            <div style="text-align:center;padding:1rem;color:rgba(255,255,255,0.3);font-size:0.82rem">Loading...</div>
+          </div>
+          <div style="text-align:center;margin-top:0.75rem">
+            <a href="masterdsa-practice.html" style="font-size:0.78rem;color:#a89df7;text-decoration:none">View all topics →</a>
           </div>
         </div>
 
-        <div style="min-width:0">
-          <!-- Leaderboard -->
-          <div class="dash-card" id="section-lb">
-            <div class="dash-card-title">🏆 Leaderboard</div>
-            <div class="lb-row">
-              <div class="lb-rank" style="color:#fbbf24">1</div>
-              <div class="lb-avatar" style="background:rgba(251,191,36,0.15);color:#fbbf24">RK</div>
-              <div class="lb-name">Rahul K.</div>
-              <div class="lb-score">142 solved</div>
-            </div>
-            <div class="lb-row">
-              <div class="lb-rank" style="color:rgba(255,255,255,0.4)">2</div>
-              <div class="lb-avatar" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5)">PS</div>
-              <div class="lb-name">Priya S.</div>
-              <div class="lb-score">128 solved</div>
-            </div>
-            <div class="lb-row">
-              <div class="lb-rank" style="color:rgba(248,113,113,0.7)">3</div>
-              <div class="lb-avatar" style="background:rgba(248,113,113,0.1);color:#f87171">AM</div>
-              <div class="lb-name">Aditya M.</div>
-              <div class="lb-score">115 solved</div>
-            </div>
-            <div class="lb-row">
-              <div class="lb-rank" style="color:rgba(255,255,255,0.3)">4</div>
-              <div class="lb-avatar" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.3)">SK</div>
-              <div class="lb-name">Sneha K.</div>
-              <div class="lb-score">98 solved</div>
-            </div>
-            <div class="lb-row">
-              <div class="lb-rank" style="color:rgba(255,255,255,0.3)">5</div>
-              <div class="lb-avatar" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.3)">VR</div>
-              <div class="lb-name">Vikram R.</div>
-              <div class="lb-score">87 solved</div>
-            </div>
-            <div class="lb-row you">
-              <div class="lb-rank" style="color:#a89df7">12</div>
-              <div class="lb-avatar" style="background:rgba(124,106,247,0.15);color:#a89df7" id="lb-you-avatar">?</div>
-              <div class="lb-name" style="color:#a89df7">You</div>
-              <div class="lb-score" style="color:#a89df7" id="lb-you-score">0 solved</div>
-            </div>
+        <!-- Leaderboard -->
+        <div class="dash-card" style="min-width:0">
+          <div class="dash-card-title">🏆 Leaderboard</div>
+          <div id="lb-list">
+            <div style="text-align:center;padding:1rem;color:rgba(255,255,255,0.3);font-size:0.82rem">Loading...</div>
           </div>
+        </div>
 
-          <!-- Roadmap mini -->
-          <div class="dash-card" id="section-roadmap">
-            <div class="dash-card-title">🗺️ Roadmap</div>
-            <div class="roadmap-mini">
-              <div class="rm-step"><div class="rm-dot done">✓</div><span class="rm-label done-l">Arrays & Strings (40 Q)</span></div>
-              <div class="rm-line"></div>
-              <div class="rm-step"><div class="rm-dot done">✓</div><span class="rm-label done-l">Linked List (22 Q)</span></div>
-              <div class="rm-line"></div>
-              <div class="rm-step"><div class="rm-dot active">3</div><span class="rm-label active-l">Stacks & Queues (20 Q) ← You are here</span></div>
-              <div class="rm-line"></div>
-              <div class="rm-step"><div class="rm-dot lock">4</div><span class="rm-label">Recursion (24 Q)</span></div>
-              <div class="rm-line"></div>
-              <div class="rm-step"><div class="rm-dot lock">5</div><span class="rm-label">Trees & BST (28 Q)</span></div>
-              <div class="rm-line"></div>
-              <div class="rm-step"><div class="rm-dot lock">···</div><span class="rm-label">9 more topics</span></div>
-            </div>
-            <div style="text-align:center">
-              <button style="font-size:0.78rem;color:#a89df7;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">View full roadmap →</button>
-            </div>
-          </div>
+      </div>
+
+      <!-- Roadmap mini -->
+      <div class="dash-card">
+        <div class="dash-card-title">🗺️ Roadmap Progress</div>
+        <div id="rm-mini"></div>
+        <div style="text-align:center;margin-top:0.75rem">
+          <a href="masterdsa-roadmap.html" style="font-size:0.78rem;color:#a89df7;text-decoration:none">View full roadmap →</a>
         </div>
       </div>
 
-      <!-- Video Library teaser -->
-      <div class="dash-card" id="section-videos">
+      <!-- Videos -->
+      <div class="dash-card" id="videos">
         <div class="dash-card-title">🎥 Video Library</div>
         <div style="display:flex;flex-direction:column;gap:0.6rem">
-          <div style="display:flex;align-items:center;gap:0.85rem;padding:0.6rem 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+          <a href="https://youtube.com/playlist?list=PLgUwDviBIf0oF6QL8m22w1hIDC1vJ_BHz" target="_blank" style="display:flex;align-items:center;gap:0.85rem;padding:0.6rem 0;border-bottom:1px solid rgba(255,255,255,0.05);text-decoration:none">
             <div style="width:38px;height:38px;border-radius:10px;background:rgba(124,106,247,0.12);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">▶</div>
-            <div style="flex:1">
-              <div style="font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.85)">Sliding Window — complete guide</div>
-              <div style="font-size:0.72rem;color:rgba(255,255,255,0.3)">Striver · Arrays · 28 min</div>
-            </div>
-            <span style="font-size:0.65rem;padding:2px 8px;border-radius:99px;background:rgba(124,106,247,0.1);color:#a89df7">Arrays</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:0.85rem;padding:0.6rem 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <div style="flex:1"><div style="font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.85)">Striver's A2Z DSA Course</div><div style="font-size:0.72rem;color:rgba(255,255,255,0.3)">Striver · Complete Series</div></div>
+            <span style="font-size:0.65rem;padding:2px 8px;border-radius:99px;background:rgba(124,106,247,0.1);color:#a89df7">All Topics</span>
+          </a>
+          <a href="https://www.youtube.com/@NeetCode" target="_blank" style="display:flex;align-items:center;gap:0.85rem;padding:0.6rem 0;border-bottom:1px solid rgba(255,255,255,0.05);text-decoration:none">
             <div style="width:38px;height:38px;border-radius:10px;background:rgba(52,211,153,0.08);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">▶</div>
-            <div style="flex:1">
-              <div style="font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.85)">DP — memoization to tabulation</div>
-              <div style="font-size:0.72rem;color:rgba(255,255,255,0.3)">NeetCode · DP · 45 min</div>
-            </div>
-            <span style="font-size:0.65rem;padding:2px 8px;border-radius:99px;background:rgba(52,211,153,0.1);color:#34d399">DP</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:0.85rem;padding:0.6rem 0">
+            <div style="flex:1"><div style="font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.85)">NeetCode — Pattern-based DSA</div><div style="font-size:0.72rem;color:rgba(255,255,255,0.3)">NeetCode · YouTube</div></div>
+            <span style="font-size:0.65rem;padding:2px 8px;border-radius:99px;background:rgba(52,211,153,0.1);color:#34d399">Patterns</span>
+          </a>
+          <a href="https://www.youtube.com/@Abdul_Bari" target="_blank" style="display:flex;align-items:center;gap:0.85rem;padding:0.6rem 0;text-decoration:none">
             <div style="width:38px;height:38px;border-radius:10px;background:rgba(251,191,36,0.08);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">▶</div>
-            <div style="flex:1">
-              <div style="font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.85)">Graph algorithms — BFS DFS Dijkstra</div>
-              <div style="font-size:0.72rem;color:rgba(255,255,255,0.3)">Abdul Bari · Graphs · 52 min</div>
-            </div>
-            <span style="font-size:0.65rem;padding:2px 8px;border-radius:99px;background:rgba(251,191,36,0.1);color:#fbbf24">Graphs</span>
-          </div>
-        </div>
-        <div style="text-align:center;margin-top:0.75rem">
-          <button style="font-size:0.78rem;color:#a89df7;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">View all videos →</button>
+            <div style="flex:1"><div style="font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.85)">Abdul Bari — Algorithms</div><div style="font-size:0.72rem;color:rgba(255,255,255,0.3)">Abdul Bari · YouTube</div></div>
+            <span style="font-size:0.65rem;padding:2px 8px;border-radius:99px;background:rgba(251,191,36,0.1);color:#fbbf24">Algorithms</span>
+          </a>
         </div>
       </div>
 
     </div><!-- end content-section -->
-
-  </div><!-- end mdsa-main -->
-</div><!-- end mdsa-layout -->
-
-<!-- PROFILE DROPDOWN STYLES -->
-<style>
-.profile-wrap { position: relative; }
-.profile-btn { display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:4px 12px 4px 4px;cursor:pointer;transition:border-color 0.2s; }
-.profile-btn:hover { border-color:var(--border2); }
-.profile-btn .pname { font-size:0.85rem;color:var(--muted); }
-.profile-dropdown { position:absolute;top:calc(100% + 8px);right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:240px;box-shadow:0 20px 40px rgba(0,0,0,0.4);display:none;z-index:500; }
-.profile-dropdown.open { display:block; }
-.dropdown-header { padding:1rem 1.25rem 0.75rem;border-bottom:1px solid var(--border); }
-.dropdown-header .d-name { font-size:0.95rem;font-weight:600;color:var(--text); }
-.dropdown-header .d-email { font-size:0.78rem;color:var(--muted);margin-top:2px; }
-.dropdown-menu { padding:0.5rem; }
-.dropdown-item { display:flex;align-items:center;gap:10px;padding:0.6rem 0.75rem;border-radius:8px;font-size:0.875rem;color:var(--muted);cursor:pointer;transition:all 0.15s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif; }
-.dropdown-item:hover { background:var(--surface2);color:var(--text); }
-.dropdown-item.danger:hover { background:rgba(248,113,113,0.1);color:var(--red); }
-.dropdown-divider { height:1px;background:var(--border);margin:0.4rem 0.5rem; }
-</style>
+  </div>
+</div>
 
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
@@ -740,77 +264,172 @@
 const cachedUser = Auth.requireAuth();
 if (!cachedUser) throw new Error();
 
-// Set nav
 Auth.setNavUser(cachedUser.name || cachedUser.email);
-document.getElementById('dd-name').textContent  = cachedUser.name  || 'Student';
-document.getElementById('dd-email').textContent = cachedUser.email || '';
+document.getElementById('nav-name').textContent  = cachedUser.name || '';
+document.getElementById('dd-name').textContent   = cachedUser.name || '';
+document.getElementById('dd-email').textContent  = cachedUser.email || '';
+document.getElementById('nav-avatar').textContent = (cachedUser.name||'U').charAt(0).toUpperCase();
 
-// Init with cached, refresh from server
-(async function() {
-  let u = cachedUser;
+const TOPICS = [
+  {slug:'arrays',name:'Arrays & Strings',icon:'📐',total:40},
+  {slug:'linkedlist',name:'Linked List',icon:'🔗',total:22},
+  {slug:'stacks',name:'Stacks & Queues',icon:'📚',total:20},
+  {slug:'recursion',name:'Recursion',icon:'🔄',total:24},
+  {slug:'trees',name:'Trees & BST',icon:'🌳',total:28},
+  {slug:'sorting',name:'Searching & Sorting',icon:'🔍',total:20},
+  {slug:'binarysearch',name:'Binary Search',icon:'🎯',total:18},
+  {slug:'heaps',name:'Heaps',icon:'⛰️',total:16},
+  {slug:'graphs',name:'Graphs',icon:'🕸️',total:24},
+  {slug:'greedy',name:'Greedy',icon:'💰',total:16},
+  {slug:'dp',name:'Dynamic Programming',icon:'🧩',total:36},
+  {slug:'tries',name:'Tries',icon:'🌲',total:14},
+  {slug:'bits',name:'Bit Manipulation',icon:'⚙️',total:16},
+  {slug:'math',name:'Math',icon:'🔢',total:14},
+];
+
+// Sidebar topics
+document.getElementById('sb-topics-list').innerHTML =
+  TOPICS.map(t => `<a class="sb-item" href="masterdsa-practice.html#${t.slug}"><span>${t.icon}</span> ${t.name}</a>`).join('');
+
+(async function init() {
   try {
     const fresh = await API.call('/auth/me');
-    if (fresh && fresh.user) {
-      u = fresh.user;
-      if (fresh.token) localStorage.setItem('pp_token', fresh.token);
-      localStorage.setItem('pp_user', JSON.stringify(u));
+    if (!fresh?.user) return;
+    const u = fresh.user;
+    if (fresh.token) localStorage.setItem('pp_token', fresh.token);
+    localStorage.setItem('pp_user', JSON.stringify(u));
+
+    document.getElementById('main-name').textContent = u.name || 'there';
+    const initials = (u.name||'U').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+
+    if (!u.masterDsaAccess) {
+      document.getElementById('paywall-section').style.display = 'block';
+      document.getElementById('main-sub').textContent = 'Unlock to start your DSA journey';
+      return;
     }
-  } catch(e) {}
 
-  // Set name
-  document.getElementById('main-name').textContent = u.name || 'there';
-  const initials = (u.name || 'U').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-  document.getElementById('lb-you-avatar').textContent = initials;
-
-  // Check access
-  if (!u.masterDsaAccess) {
-    document.getElementById('paywall-section').style.display = 'block';
-    document.getElementById('content-section').style.display = 'none';
-    document.getElementById('main-sub').textContent = 'Unlock to start your DSA journey';
-  } else {
-    document.getElementById('paywall-section').style.display = 'none';
     document.getElementById('content-section').style.display = 'block';
     document.getElementById('main-sub').textContent = 'Keep going — consistency wins!';
-    loadProgress();
+
+    // Load all data in parallel
+    const [dailyData, lbData] = await Promise.allSettled([
+      API.call('/masterdsa/daily'),
+      API.call('/masterdsa/leaderboard')
+    ]);
+
+    // Daily problem
+    if (dailyData.status === 'fulfilled' && dailyData.value?.question) {
+      const dq = dailyData.value.question;
+      const count = dailyData.value.solvedToday || 0;
+      document.getElementById('dq-title').textContent = dq.title;
+      document.getElementById('dq-meta').textContent  = `${dq.topic} · ${dq.difficulty}`;
+      document.getElementById('dq-count').textContent = `${count} solved today`;
+      document.getElementById('dq-bar').style.width   = Math.min((count/50)*100, 100) + '%';
+      document.getElementById('dq-btn').dataset.qid   = dq._id;
+    } else {
+      document.getElementById('dq-title').textContent = 'No question today — come back soon!';
+    }
+
+    // Leaderboard
+    if (lbData.status === 'fulfilled') {
+      const lb = lbData.value;
+      const myRank  = lb.myRank  || '—';
+      const myCount = lb.myCount || 0;
+
+      // Stats
+      const streak = 0; // TODO: streak tracking
+      document.getElementById('st-solved').textContent  = myCount;
+      document.getElementById('st-streak').textContent  = streak + '🔥';
+      document.getElementById('st-topics').textContent  = '—';
+      document.getElementById('st-rank').textContent    = '#' + myRank;
+      document.getElementById('wb-solved').textContent  = myCount;
+      document.getElementById('wb-streak').textContent  = streak + '🔥';
+      document.getElementById('nav-streak').textContent = streak;
+      document.getElementById('sb-streak').textContent  = streak;
+      const pct = Math.round((myCount/308)*100);
+      document.getElementById('sb-solved').textContent  = `${myCount}/308`;
+      document.getElementById('dd-prog-txt').textContent = `${myCount}/308`;
+      document.getElementById('dd-prog').style.width    = pct + '%';
+      const circ = 138.2;
+      document.getElementById('prog-ring').style.strokeDashoffset = circ - (pct/100)*circ;
+
+      // LB list
+      const colors = ['#fbbf24','rgba(255,255,255,0.4)','rgba(248,113,113,0.7)'];
+      const top = (lb.leaderboard||[]).slice(0,5);
+      let lbHtml = top.map((item,i) => `
+        <div class="lb-row">
+          <div style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:800;color:${colors[i]||'rgba(255,255,255,0.3)'};width:24px;text-align:center">${i+1}</div>
+          <div style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.5);flex-shrink:0">${(item.name||'?').charAt(0).toUpperCase()}</div>
+          <div style="flex:1;font-size:0.85rem;color:rgba(255,255,255,0.8)">${item.name||'—'}</div>
+          <div style="font-size:0.78rem;color:rgba(255,255,255,0.4)">${item.count} solved</div>
+        </div>`).join('');
+      // You row
+      lbHtml += `
+        <div class="lb-row you">
+          <div style="font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:800;color:#a89df7;width:24px;text-align:center">${myRank}</div>
+          <div style="width:30px;height:30px;border-radius:50%;background:rgba(124,106,247,0.15);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;color:#a89df7;flex-shrink:0">${initials}</div>
+          <div style="flex:1;font-size:0.85rem;color:#a89df7">You</div>
+          <div style="font-size:0.78rem;color:#a89df7">${myCount} solved</div>
+        </div>`;
+      document.getElementById('lb-list').innerHTML = lbHtml || '<div style="text-align:center;padding:1rem;color:rgba(255,255,255,0.3);font-size:0.82rem">No data yet — be the first!</div>';
+    }
+
+    // Topics preview
+    renderTopicsPreview();
+
+    // Roadmap mini
+    renderRoadmapMini();
+
+  } catch(e) {
+    console.error('Init error:', e);
   }
 })();
 
-function loadProgress() {
-  // Dummy data for now — will connect to API later
-  const solved = 69; // arrays(40) + linked list(22) + stacks partial(7)
-  const streak = 8;
-  const total  = 308;
-  const pct    = Math.round((solved/total)*100);
-
-  // Update all counters
-  ['stat-solved','wbar-solved'].forEach(id => document.getElementById(id).textContent = solved);
-  ['stat-streak','wbar-streak'].forEach(id => document.getElementById(id).textContent = streak + '🔥');
-  document.getElementById('nav-streak').textContent = streak;
-  document.getElementById('sb-streak').textContent  = streak;
-  document.getElementById('sb-solved').textContent  = `${solved}/${total}`;
-  document.getElementById('stat-topics').textContent = '2';
-  document.getElementById('stat-rank').textContent   = '#12';
-  document.getElementById('lb-you-score').textContent = `${solved} solved`;
-  document.getElementById('dd-progress-txt').textContent = `${solved}/${total}`;
-  document.getElementById('dd-progress-bar').style.width = pct + '%';
-
-  // Progress ring
-  const ring = document.getElementById('progress-ring');
-  const circumference = 2 * Math.PI * 22;
-  ring.style.strokeDashoffset = circumference - (pct/100) * circumference;
+function renderTopicsPreview() {
+  const preview = TOPICS.slice(0, 6);
+  document.getElementById('topics-preview').innerHTML = preview.map(t => `
+    <div style="display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer" onclick="window.location.href='masterdsa-practice.html'">
+      <span style="font-size:0.9rem;width:20px;text-align:center">${t.icon}</span>
+      <span style="font-size:0.82rem;color:rgba(255,255,255,0.7);flex:1">${t.name}</span>
+      <span style="font-size:0.65rem;color:rgba(255,255,255,0.3)">${t.total} Q</span>
+    </div>`).join('');
 }
 
-function toggleDropdown() {
-  document.getElementById('profile-dropdown').classList.toggle('open');
+function renderRoadmapMini() {
+  const steps = [
+    {label:'Arrays & Strings (40 Q)', state:'done'},
+    {label:'Linked List (22 Q)', state:'done'},
+    {label:'Stacks & Queues (20 Q)', state:'active'},
+    {label:'Recursion (24 Q)', state:'lock'},
+    {label:'Trees & BST (28 Q)', state:'lock'},
+    {label:'9 more topics...', state:'lock'},
+  ];
+  document.getElementById('rm-mini').innerHTML = steps.map((s,i) => `
+    ${i > 0 ? '<div class="rm-line"></div>' : ''}
+    <div class="rm-step">
+      <div class="rm-dot ${s.state}">${s.state==='done'?'✓':s.state==='active'?'★':i+1}</div>
+      <span style="font-size:0.82rem;color:${s.state==='done'?'#34d399':s.state==='active'?'#a89df7':'rgba(255,255,255,0.4)'}">${s.label}${s.state==='active'?' ← You are here':''}</span>
+    </div>`).join('');
 }
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.profile-wrap'))
-    document.getElementById('profile-dropdown').classList.remove('open');
+
+async function solveDaily() {
+  try {
+    await API.call('/masterdsa/daily/solve', { method: 'POST' });
+    toast('Daily problem marked as solved! 🎉', 'success');
+    document.getElementById('dq-btn').textContent = '✓ Solved today!';
+    document.getElementById('dq-btn').style.background = 'rgba(52,211,153,0.12)';
+    document.getElementById('dq-btn').style.color = '#34d399';
+    document.getElementById('dq-btn').style.borderColor = 'rgba(52,211,153,0.25)';
+    document.getElementById('dq-btn').onclick = null;
+  } catch(e) {
+    toast('Could not mark — try again', 'error');
+  }
+}
+
+function toggleDD() { document.getElementById('dd').classList.toggle('open'); }
+document.addEventListener('click', e => {
+  if (!e.target.closest('.profile-wrap')) document.getElementById('dd').classList.remove('open');
 });
-
-function showSection(sec) {
-  toast('Opening ' + sec + '...', 'info');
-}
 </script>
 </body>
 </html>
