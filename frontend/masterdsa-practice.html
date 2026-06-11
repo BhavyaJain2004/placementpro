@@ -624,16 +624,15 @@ async function runCode() {
   const { language, version } = langMap[currentLang];
 
   try {
-    const res = await fetch('https://emkc.org/api/v2/piston/execute', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      mode: 'cors',
-      body: JSON.stringify({
-        language,
-        version,
-        files: [{ content: code }]
-      })
-    });
+    const res = await fetch('https://piston.tjcsl.workers.dev/api/v2/execute', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    language: 'java',
+    version: '*',
+    files: [{ content: code }]
+  })
+});
     const data = await res.json();
     const stdout = data.run?.stdout || '';
     const stderr = data.run?.stderr || '';
