@@ -627,6 +627,7 @@ async function runCode() {
     const res = await fetch('https://emkc.org/api/v2/piston/execute', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      mode: 'cors',
       body: JSON.stringify({
         language,
         version,
