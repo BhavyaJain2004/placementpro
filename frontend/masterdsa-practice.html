@@ -623,16 +623,27 @@ async function runCode() {
   };
   const { language, version } = langMap[currentLang];
 
-  try {
-    const res = await fetch('https://piston.tjcsl.workers.dev/api/v2/execute', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    language: 'java',
-    version: '*',
-    files: [{ content: code }]
-  })
-});
+ try {
+  const res = await fetch('https://api.codex.jaagrav.in', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      language: 'java',
+      code: code,
+      input: '' // Agar user input dena ho toh
+    })
+  });
+
+  const data = await res.json();
+  
+  if (data.error) {
+    console.error("Error:", data.error); // Kuch galti hui toh yahan dikhega
+  } else {
+    console.log("Output:", data.output); // Ye aapka code ka output hai
+  }
+} catch (error) {
+  console.error("Network Error:", error);
+}
     const data = await res.json();
     const stdout = data.run?.stdout || '';
     const stderr = data.run?.stderr || '';
