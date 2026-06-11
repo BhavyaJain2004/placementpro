@@ -603,6 +603,7 @@ function resetCode() {
 }
 
 // ── RUN CODE (Piston API) ──
+// ── RUN CODE (CodeX API) ──
 async function runCode() {
   const btn  = document.getElementById('run-btn');
   const code = document.getElementById('code-editor').value.trim();
@@ -615,42 +616,28 @@ async function runCode() {
   document.getElementById('run-status').textContent = 'Executing...';
   out.innerHTML = '<span class="out-info">// Running your code...</span>';
 
-  const langMap = {
-    java:   { language:'java',   version:'*' },
-    python: { language:'python', version:'3' },
-    cpp:    { language:'c++',    version:'*' },
-    c:      { language:'c',      version:'*' },
-  };
-  const { language, version } = langMap[currentLang];
+  // 1. Yahan try block ko wapas open hona zaroori hai taaki niche ka catch chal sake
+  try { 
+    // 2. CodeX API Call
+    const res = await fetch('https://api.codex.jaagrav.in', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        language: currentLang, 
+        code: code,
+        input: '' 
+      })
+    });
 
-
-
-  // ── YAHAN SE CHANGES KARO ──
-  const res = await fetch('https://api.codex.jaagrav.in', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      language: currentLang, // CodeX direct java, python, cpp leta hai
-      code: code,
-      input: '' 
-    })
-  });
-
-  // const data = await res.json();
-  
-//   if (data.error) {
-//     console.error("Error:", data.error); // Kuch galti hui toh yahan dikhega
-//   } else {
-//     console.log("Output:", data.output); // Ye aapka code ka output hai
-//   }
-// } catch (error) {
-//   console.error("Network Error:", error);
-// }
+    // 3. Response read karo (Sirf ek baar bina kisi double declaration ke)
     const data = await res.json();
-    const stdout = data.run?.stdout || '';
-    const stderr = data.run?.stderr || '';
-    const exitCode = data.run?.code;
+    
+    // 4. CodeX ke response variable ko tumhare purane Piston logic variables par map kiya
+    const stdout = data.output || '';
+    const stderr = data.error || '';
+    const exitCode = data.error ? 1 : 0;
 
+    // Yahan se niche ka tumhara if-else code bina kisi change ke as-is chalega
     if (stderr && !stdout) {
       out.innerHTML = `<span class="out-error">${escHtml(stderr)}</span>`;
     } else if (stdout) {
