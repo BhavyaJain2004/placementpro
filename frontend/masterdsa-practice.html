@@ -623,27 +623,29 @@ async function runCode() {
   };
   const { language, version } = langMap[currentLang];
 
- try {
+
+
+  // ── YAHAN SE CHANGES KARO ──
   const res = await fetch('https://api.codex.jaagrav.in', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      language: 'java',
+      language: currentLang, // CodeX direct java, python, cpp leta hai
       code: code,
-      input: '' // Agar user input dena ho toh
+      input: '' 
     })
   });
 
   const data = await res.json();
   
-  if (data.error) {
-    console.error("Error:", data.error); // Kuch galti hui toh yahan dikhega
-  } else {
-    console.log("Output:", data.output); // Ye aapka code ka output hai
-  }
-} catch (error) {
-  console.error("Network Error:", error);
-}
+//   if (data.error) {
+//     console.error("Error:", data.error); // Kuch galti hui toh yahan dikhega
+//   } else {
+//     console.log("Output:", data.output); // Ye aapka code ka output hai
+//   }
+// } catch (error) {
+//   console.error("Network Error:", error);
+// }
     const data = await res.json();
     const stdout = data.run?.stdout || '';
     const stderr = data.run?.stderr || '';
