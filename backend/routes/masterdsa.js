@@ -148,14 +148,14 @@ router.get('/daily', verifyToken, verifyMasterDSA, async (req, res) => {
     const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
     const idx = dayOfYear % total;
     const question = await Q.findOne({ isActive: true })
-      .sort({ globalOrder: 1 })
-      .skip(idx)
+      .sort({ globalOrder: 1 }).skip(idx)
       .select('-java_code -python_code -cpp_code -c_code -hint -approach');
 
     const today = new Date().toISOString().split('T')[0];
     const solvedToday = await DailySolve.countDocuments({ date: today });
+    const mine = await DailySolve.findOne({ userId: req.user.id, date: today });
 
-    res.json({ question, solvedToday });
+    res.json({ question, solvedToday, alreadySolvedByMe: !!mine });
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
 
@@ -227,23 +227,26 @@ router.post('/daily/solve', verifyToken, verifyMasterDSA, async (req, res) => {
 // GET /api/masterdsa/leaderboard — top 20 by questions solved
 router.get('/leaderboard', verifyToken, verifyMasterDSA, async (req, res) => {
   try {
-    const top = await DailySolve.aggregate([
-      { $group: { _id: '$userId', name: { $first: '$name' }, email: { $first: '$email' }, count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 20 },
-      { $project: { _id: 0, userId: '$_id', name: 1, count: 1 } }
+    const solves = await DailySolve.aggregate([
+      { $group: { _id: '$userId', name: { $first: '$name' }, count: { $sum: 1 } } }
     ]);
+    const solveMap = {};
+    solves.forEach(s => solveMap[s._id.toString()] = { name: s.name, count: s.count });
 
-    // Find current user rank
-    const myCount = await DailySolve.countDocuments({ userId: req.user.id });
-    const myRank  = await DailySolve.aggregate([
-      { $group: { _id: '$userId', count: { $sum: 1 } } },
-      { $match: { count: { $gt: myCount } } },
-      { $count: 'rank' }
-    ]);
-    const rank = (myRank[0]?.rank || 0) + 1;
+    const allUsers = await User.find({ masterDsaAccess: true }).select('_id name');
+    const combined = allUsers.map(u => ({
+      userId: u._id.toString(),
+      name: solveMap[u._id.toString()]?.name || u.name,
+      count: solveMap[u._id.toString()]?.count || 0
+    }));
+    combined.sort((a,b) => b.count - a.count);
 
-    res.json({ leaderboard: top, myRank: rank, myCount });
+    const top = combined.slice(0, 20);
+    const myIndex = combined.findIndex(c => c.userId === req.user.id.toString());
+    const myRank  = myIndex + 1;
+    const myCount = combined[myIndex]?.count || 0;
+
+    res.json({ leaderboard: top, myRank, myCount });
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
 
