@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const DailySolve = require('../models/DailySolve');
+const axios = require('axios');
 
 const Q = require('../models/MasterDSAQuestion');
 const User = require('../models/User');
@@ -289,5 +290,26 @@ router.get('/leaderboard', verifyToken, verifyMasterDSA, async (req, res) => {
 
     res.json({ leaderboard: top, myRank: rank, myCount });
   } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+
+
+router.post('/run-code', verifyToken, verifyMasterDSA, async (req, res) => {
+  try {
+    const { code, language } = req.body;
+    const langMap = { java:'java', python:'python3', cpp:'cpp17', c:'c' };
+    const versionMap = { java:'4', python:'4', cpp:'5', c:'5' };
+
+    const resp = await axios.post('https://api.jdoodle.com/v1/execute', {
+      clientId: process.env.JDOODLE_CLIENT_ID,
+      clientSecret: process.env.JDOODLE_CLIENT_SECRET,
+      script: code,
+      language: langMap[language],
+      versionIndex: versionMap[language]
+    });
+    res.json(resp.data);
+  } catch(err) {
+    res.status(500).json({ output: 'Compiler error: ' + err.message });
+  }
 });
 module.exports = router;
