@@ -613,43 +613,32 @@ async function runCode() {
 
   btn.classList.add('running');
   btn.textContent = '⏳ Running...';
-  document.getElementById('run-status').textContent = 'Executing...';
-  out.innerHTML = '<span class="out-info">// Running your code...</span>';
+  out.innerHTML = '<span class="out-info">// Running...</span>';
 
-  // 1. Yahan try block ko wapas open hona zaroori hai taaki niche ka catch chal sake
-  try { 
-    // 2. CodeX API Call
-    const res = await fetch('https://api.codex.jaagrav.in', {
+  try {
+    const res = await fetch('https://wandbox.org/api/compile.json', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        language: currentLang, 
         code: code,
-        input: '' 
+        compiler: 'openjdk-head',
+        options: ''
       })
     });
-
-    // 3. Response read karo (Sirf ek baar bina kisi double declaration ke)
     const data = await res.json();
-    
-    // 4. CodeX ke response variable ko tumhare purane Piston logic variables par map kiya
-    const stdout = data.output || '';
-    const stderr = data.error || '';
-    const exitCode = data.error ? 1 : 0;
+    const stdout = data.program_output || '';
+    const stderr = data.program_error || data.compiler_error || '';
 
-    // Yahan se niche ka tumhara if-else code bina kisi change ke as-is chalega
     if (stderr && !stdout) {
       out.innerHTML = `<span class="out-error">${escHtml(stderr)}</span>`;
     } else if (stdout) {
       out.innerHTML = `<span class="out-success">${escHtml(stdout)}</span>`;
-      if (stderr) out.innerHTML += `\n<span class="out-error">${escHtml(stderr)}</span>`;
     } else {
-      out.innerHTML = `<span class="out-info">// No output (exit code: ${exitCode})</span>`;
+      out.innerHTML = `<span class="out-info">// No output</span>`;
     }
-    document.getElementById('run-status').textContent = exitCode === 0 ? '✓ Done' : '✗ Error';
+    document.getElementById('run-status').textContent = stderr ? '✗ Error' : '✓ Done';
   } catch(e) {
-    out.innerHTML = `<span class="out-error">// Compiler unavailable. Check your internet connection.</span>`;
-    document.getElementById('run-status').textContent = '✗ Failed';
+    out.innerHTML = `<span class="out-error">// Compiler unavailable</span>`;
   } finally {
     btn.classList.remove('running');
     btn.innerHTML = '▶ Run Code';
