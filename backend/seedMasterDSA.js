@@ -1,14 +1,11 @@
 // backend/seedMasterDSA.js
-// Run: node seedMasterDSA.js
-
 require('dotenv').config();
 const mongoose = require('mongoose');
 const MasterDSAQuestion = require('./models/MasterDSAQuestion');
 
 mongoose.connect(process.env.MONGO_URI).then(() => console.log('DB connected'));
 
-// Questions 1-10 — Arrays & Strings
-module.exports = [
+const questions = [
 {topicSlug:'arrays',topic:'Arrays & Strings',order:1,globalOrder:1,title:'Two Sum',difficulty:'Easy',
 description:'Given an array of integers nums and an integer target, return indices of two numbers that add up to target.',
 examples:[{input:'nums=[2,7,11,15], target=9',output:'[0,1]'}],
@@ -98,10 +95,7 @@ java_code:'class Solution{public List<List<String>> groupAnagrams(String[] strs)
 python_code:'from collections import defaultdict\ndef groupAnagrams(strs):\n    m=defaultdict(list)\n    for s in strs: m["".join(sorted(s))].append(s)\n    return list(m.values())',
 cpp_code:'vector<vector<string>> groupAnagrams(vector<string>&strs){unordered_map<string,vector<string>>m;for(auto&s:strs){string k=s;sort(k.begin(),k.end());m[k].push_back(s);}vector<vector<string>>res;for(auto&p:m)res.push_back(p.second);return res;}',
 companies:['Amazon','Flipkart'],tags:['String','HashMap'],similarQs:['Valid Anagram'],timeComplex:'O(n*klogk)',spaceComplex:'O(n*k)',pattern:'HashMap grouping',trick:'Sorted string as canonical key',leetcodeUrl:'https://leetcode.com/problems/group-anagrams/'},
-];
 
-// Questions 11-25 — Arrays & Strings
-module.exports = [
 {topicSlug:'arrays',topic:'Arrays & Strings',order:11,globalOrder:11,title:'Longest Substring Without Repeating Characters',difficulty:'Medium',
 description:'Find length of longest substring without repeating characters.',
 examples:[{input:'"abcabcbb"',output:'3'}],
