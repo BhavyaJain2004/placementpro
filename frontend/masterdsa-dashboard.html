@@ -318,15 +318,28 @@ document.getElementById('sb-topics-list').innerHTML =
     ]);
 
     // Daily problem
-    if (dailyData.status === 'fulfilled' && dailyData.value?.question) {
-      const dq = dailyData.value.question;
-      const count = dailyData.value.solvedToday || 0;
-      document.getElementById('dq-title').textContent = dq.title;
-      document.getElementById('dq-meta').textContent  = `${dq.topic} · ${dq.difficulty}`;
-      document.getElementById('dq-count').textContent = `${count} solved today`;
-      document.getElementById('dq-bar').style.width   = Math.min((count/50)*100, 100) + '%';
-      document.getElementById('dq-btn').dataset.qid   = dq._id;
-    } else {
+   // init() ke andar, daily data load karte time check karo already solved hai ya nahi
+if (dailyData.status === 'fulfilled' && dailyData.value?.question) {
+  const dq = dailyData.value.question;
+  const count = dailyData.value.solvedToday || 0;
+  const alreadySolved = dailyData.value.alreadySolvedByMe || false; // backend se aana chahiye
+
+  document.getElementById('dq-title').textContent = dq.title;
+  document.getElementById('dq-meta').textContent  = `${dq.topic} · ${dq.difficulty}`;
+  document.getElementById('dq-count').textContent = `${count} solved today`;
+  document.getElementById('dq-bar').style.width   = Math.min((count/50)*100, 100) + '%';
+  document.getElementById('dq-btn').dataset.qid   = dq._id;
+  document.getElementById('dq-btn').dataset.slug  = dq.topicSlug;
+
+  if (alreadySolved) {
+    const btn = document.getElementById('dq-btn');
+    btn.textContent = '✓ Solved today!';
+    btn.style.background = 'rgba(52,211,153,0.12)';
+    btn.style.color = '#34d399';
+    btn.style.borderColor = 'rgba(52,211,153,0.25)';
+    btn.onclick = null;
+  }
+}else {
       document.getElementById('dq-title').textContent = 'No question today — come back soon!';
     }
 
@@ -413,14 +426,12 @@ function renderRoadmapMini() {
 }
 
 async function solveDaily() {
+  const btn = document.getElementById('dq-btn');
+  const slug = btn.dataset.slug;
   try {
     await API.call('/masterdsa/daily/solve', { method: 'POST' });
-    toast('Daily problem marked as solved! 🎉', 'success');
-    document.getElementById('dq-btn').textContent = '✓ Solved today!';
-    document.getElementById('dq-btn').style.background = 'rgba(52,211,153,0.12)';
-    document.getElementById('dq-btn').style.color = '#34d399';
-    document.getElementById('dq-btn').style.borderColor = 'rgba(52,211,153,0.25)';
-    document.getElementById('dq-btn').onclick = null;
+    toast('Marked! Opening question...', 'success');
+    window.location.href = `masterdsa-practice.html?topic=${slug}&daily=1`;
   } catch(e) {
     toast('Could not mark — try again', 'error');
   }
