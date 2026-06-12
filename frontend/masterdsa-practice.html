@@ -579,10 +579,14 @@ function showTab(tab, btn) {
 function showListView() {
   document.getElementById('q-list-view').style.display   = 'flex';
   document.getElementById('q-detail-view').style.display = 'none';
+  document.getElementById('editor-panel').style.display   = 'none';
+  document.getElementById('practice-main').style.gridTemplateColumns = '1fr';
 }
 function showDetailView() {
   document.getElementById('q-list-view').style.display   = 'none';
   document.getElementById('q-detail-view').style.display = 'flex';
+  document.getElementById('editor-panel').style.display   = 'flex';
+  document.getElementById('practice-main').style.gridTemplateColumns = '1fr 1fr';
 }
 function backToList() { showListView(); }
 
