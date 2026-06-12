@@ -613,22 +613,11 @@ async function runCode() {
   btn.textContent = '⏳ Running...';
   out.innerHTML = '<span class="out-info">// Running...</span>';
 
-  const langMap = { java:'java', python:'python3', cpp:'cpp17', c:'c' };
-  const versionMap = { java:'4', python:'4', cpp:'5', c:'5' };
-
   try {
-    const res = await fetch('https://api.jdoodle.com/v1/execute', {
+    const data = await API.call('/masterdsa/run-code', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        clientId: 'bb213711f87fa7ea7b52895a52c081a2',
-        clientSecret: 'cfcfe46701c7504e221c442106b8dae1889e0ccc32acb9d229de19fd23a91409',
-        script: code,
-        language: langMap[currentLang],
-        versionIndex: versionMap[currentLang]
-      })
+      body: JSON.stringify({ code, language: currentLang })
     });
-    const data = await res.json();
     const stdout = data.output || '';
     out.innerHTML = `<span class="${data.statusCode===200?'out-success':'out-error'}">${escHtml(stdout)}</span>`;
     document.getElementById('run-status').textContent = data.statusCode===200?'✓ Done':'✗ Error';
