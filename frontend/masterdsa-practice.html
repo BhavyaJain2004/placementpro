@@ -608,35 +608,30 @@ async function runCode() {
   const btn  = document.getElementById('run-btn');
   const code = document.getElementById('code-editor').value.trim();
   const out  = document.getElementById('output-panel');
-
   if (!code) { out.innerHTML = '<span class="out-error">// Nothing to run</span>'; return; }
-
   btn.classList.add('running');
   btn.textContent = '⏳ Running...';
   out.innerHTML = '<span class="out-info">// Running...</span>';
 
+  const langMap = { java:'java', python:'python3', cpp:'cpp17', c:'c' };
+  const versionMap = { java:'4', python:'4', cpp:'5', c:'5' };
+
   try {
-    const res = await fetch('https://wandbox.org/api/compile.json', {
+    const res = await fetch('https://api.jdoodle.com/v1/execute', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        code: code,
-        compiler: 'openjdk-head',
-        options: ''
+        clientId: 'bb213711f87fa7ea7b52895a52c081a2',
+        clientSecret: 'cfcfe46701c7504e221c442106b8dae1889e0ccc32acb9d229de19fd23a91409',
+        script: code,
+        language: langMap[currentLang],
+        versionIndex: versionMap[currentLang]
       })
     });
     const data = await res.json();
-    const stdout = data.program_output || '';
-    const stderr = data.program_error || data.compiler_error || '';
-
-    if (stderr && !stdout) {
-      out.innerHTML = `<span class="out-error">${escHtml(stderr)}</span>`;
-    } else if (stdout) {
-      out.innerHTML = `<span class="out-success">${escHtml(stdout)}</span>`;
-    } else {
-      out.innerHTML = `<span class="out-info">// No output</span>`;
-    }
-    document.getElementById('run-status').textContent = stderr ? '✗ Error' : '✓ Done';
+    const stdout = data.output || '';
+    out.innerHTML = `<span class="${data.statusCode===200?'out-success':'out-error'}">${escHtml(stdout)}</span>`;
+    document.getElementById('run-status').textContent = data.statusCode===200?'✓ Done':'✗ Error';
   } catch(e) {
     out.innerHTML = `<span class="out-error">// Compiler unavailable</span>`;
   } finally {
@@ -644,7 +639,6 @@ async function runCode() {
     btn.innerHTML = '▶ Run Code';
   }
 }
-
 // ── SEARCH ──
 function searchQ() {
   const q = document.getElementById('q-search').value.toLowerCase();
