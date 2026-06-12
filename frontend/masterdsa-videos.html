@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Video Library — Master DSA</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.vid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-top:1.5rem}
+.vid-card{background:#0e0e1e;border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden;transition:border-color .15s}
+.vid-card:hover{border-color:rgba(124,106,247,0.3)}
+.vid-frame{width:100%;aspect-ratio:16/9;border:none}
+.vid-info{padding:0.85rem 1rem}
+.vid-title{font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:0.3rem}
+.vid-meta{font-size:0.72rem;color:rgba(255,255,255,0.35)}
+.vid-tag{display:inline-block;font-size:0.62rem;padding:2px 8px;border-radius:99px;margin-top:0.4rem}
+.filter-row{display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:1rem}
+.f-tab{font-size:0.78rem;padding:5px 14px;border-radius:99px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:rgba(255,255,255,0.45);cursor:pointer}
+.f-tab.on{background:rgba(124,106,247,0.12);border-color:rgba(124,106,247,0.35);color:#a89df7}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<nav class="navbar" style="position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06);">
+  <div class="nav-logo"><a href="masterdsa-dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit"><span class="dot"></span> Master DSA</a></div>
+  <div style="display:flex;align-items:center;gap:0.25rem">
+    <a href="masterdsa-dashboard.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">🏠 Home</a>
+    <a href="masterdsa-roadmap.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">🗺️ Roadmap</a>
+    <a href="masterdsa-practice.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">📚 Practice</a>
+    <a href="masterdsa-videos.html" style="font-size:0.82rem;color:#a89df7;text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px;background:rgba(124,106,247,0.1)">🎥 Videos</a>
+  </div>
+  <div class="nav-right"><a href="masterdsa-dashboard.html" style="font-size:0.85rem;color:var(--muted);text-decoration:none">← Back</a></div>
+</nav>
+
+<div class="container page-body">
+  <h1 style="font-family:'Syne',sans-serif;font-size:1.6rem;color:#fff">🎥 Video Library</h1>
+  <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-top:0.3rem">Curated DSA videos — Hindi & English, topic-wise</p>
+
+  <div class="filter-row" id="filters"></div>
+  <div class="vid-grid" id="vid-grid"></div>
+</div>
+
+<script>
+const VIDEOS = [
+  {id:'0K_eZGS5NsU',title:"Striver's A2Z DSA Sheet — Full Course",ch:'takeUforward',lang:'English',topic:'All Topics'},
+  {id:'rZ41tD2lc6w',title:'Complete DSA in Hindi — Roadmap',ch:'Apna College',lang:'Hindi',topic:'All Topics'},
+  {id:'kBhDZbbA8WI',title:'Sliding Window Technique Explained',ch:'takeUforward',lang:'English',topic:'Arrays'},
+  {id:'9w1Y4VdH9Mc',title:'Arrays in Hindi — Complete Tutorial',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Arrays'},
+  {id:'Uo2cwOJ3hKk',title:'Linked List Tutorial — Full Concepts',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Linked List'},
+  {id:'WwfhLC16bis',title:'Linked List in English — Patterns',ch:'NeetCode',lang:'English',topic:'Linked List'},
+  {id:'lvmuStXM3UE',title:'Stack & Queue — Full Concepts',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Stacks & Queues'},
+  {id:'KOC8POBOlNQ',title:'Recursion — Complete Course',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Recursion'},
+  {id:'ke6KOQ6X5h0',title:'Recursion Visualized — English',ch:'NeetCode',lang:'English',topic:'Recursion'},
+  {id:'_WIfanFr20U',title:'Binary Trees — Complete Playlist',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Trees'},
+  {id:'fAAZixBzIAI',title:'Tree Traversals & BST — English',ch:'NeetCode',lang:'English',topic:'Trees'},
+  {id:'f2xi3c1S95M',title:'Binary Search — Master Class',ch:'takeUforward',lang:'English',topic:'Binary Search'},
+  {id:'fDKIpRe8GW4',title:'Searching & Sorting Algorithms',ch:'Apna College',lang:'Hindi',topic:'Searching & Sorting'},
+  {id:'HpPHwY3M6dE',title:'Heaps & Priority Queue Explained',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Heaps'},
+  {id:'k1wraWzqtvQ',title:'Graphs — Complete Series',ch:'WilliamFiset',lang:'English',topic:'Graphs'},
+  {id:'M5oHzC0XK1c',title:'Graph Algorithms in Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Graphs'},
+  {id:'mzAtjlA0fzo',title:'Greedy Algorithms Explained',ch:'Apna College',lang:'Hindi',topic:'Greedy'},
+  {id:'oBt53YbR9Kk',title:'Dynamic Programming — Full Course',ch:'freeCodeCamp',lang:'English',topic:'Dynamic Programming'},
+  {id:'nqowUJzG-iM',title:'DP for Beginners — Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Dynamic Programming'},
+  {id:'oobqoCJlHA0',title:'Tries Data Structure Explained',ch:'NeetCode',lang:'English',topic:'Tries'},
+  {id:'NLKQEOgBAnw',title:'Bit Manipulation Tricks',ch:'takeUforward',lang:'English',topic:'Bit Manipulation'},
+  {id:'7SCkSF7XOOM',title:'Bit Manipulation in Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Bit Manipulation'},
+];
+
+const topics = ['All','All Topics','Arrays','Linked List','Stacks & Queues','Recursion','Trees','Binary Search','Searching & Sorting','Heaps','Graphs','Greedy','Dynamic Programming','Tries','Bit Manipulation'];
+let active = 'All';
+
+document.getElementById('filters').innerHTML = topics.map(t=>
+  `<button class="f-tab ${t==='All'?'on':''}" onclick="filterVids('${t}',this)">${t}</button>`).join('');
+
+function filterVids(t, btn){
+  active = t;
+  document.querySelectorAll('.f-tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+
+function render(){
+  const list = active==='All' ? VIDEOS : VIDEOS.filter(v=>v.topic===active);
+  document.getElementById('vid-grid').innerHTML = list.map(v=>`
+    <div class="vid-card">
+      <iframe class="vid-frame" src="https://www.youtube.com/embed/${v.id}" loading="lazy" allowfullscreen></iframe>
+      <div class="vid-info">
+        <div class="vid-title">${v.title}</div>
+        <div class="vid-meta">${v.ch} · ${v.topic}</div>
+        <span class="vid-tag" style="background:${v.lang==='Hindi'?'rgba(251,191,36,0.1)':'rgba(52,211,153,0.1)'};color:${v.lang==='Hindi'?'#fbbf24':'#34d399'}">${v.lang}</span>
+      </div>
+    </div>`).join('');
+}
+render();
+</script>
+</body>
+</html>
