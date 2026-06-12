@@ -142,42 +142,22 @@ router.get(
 );
 
 // GET /api/masterdsa/daily
-router.get(
-  '/daily',
-  verifyToken,
-  verifyMasterDSA,
-  async (req, res) => {
-    try {
-      const total = await Q.countDocuments({
-        isActive: true
-      });
+router.get('/daily', verifyToken, verifyMasterDSA, async (req, res) => {
+  try {
+    const total = await Q.countDocuments({ isActive: true });
+    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    const idx = dayOfYear % total;
+    const question = await Q.findOne({ isActive: true })
+      .sort({ globalOrder: 1 })
+      .skip(idx)
+      .select('-java_code -python_code -cpp_code -c_code -hint -approach');
 
-      const dayOfYear = Math.floor(
-        (
-          Date.now() -
-          new Date(new Date().getFullYear(), 0, 0)
-        ) / 86400000
-      );
+    const today = new Date().toISOString().split('T')[0];
+    const solvedToday = await DailySolve.countDocuments({ date: today });
 
-      const idx = dayOfYear % total;
-
-      const question = await Q.findOne({
-        isActive: true
-      })
-        .skip(idx)
-        .select(
-          '-java_code -python_code -cpp_code -c_code -hint -approach'
-        );
-
-      res.json(question);
-
-    } catch (err) {
-      res.status(500).json({
-        message: err.message
-      });
-    }
-  }
-);
+    res.json({ question, solvedToday });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
 
 // GET /api/masterdsa/search?q=keyword
 router.get(
@@ -229,33 +209,8 @@ router.get(
   }
 );
 
-// Add these routes to backend/routes/masterdsa.js
-// (paste after existing routes, before module.exports)
 
 
-
-// GET /api/masterdsa/daily — today's problem
-router.get('/daily', verifyToken, verifyMasterDSA, async (req, res) => {
-  try {
-    const total = await Q.countDocuments({ isActive: true });
-    const dayOfYear = Math.floor(
-      (Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000
-    );
-    const idx = dayOfYear % total;
-    const q = await Q.findOne({ isActive: true })
-      .sort({ globalOrder: 1 })
-      .skip(idx)
-      .select('-java_code -python_code -cpp_code -c_code -hint -approach');
-
-    // Count how many solved today
-    const today = new Date().toISOString().split('T')[0];
-    const solvedCount = await DailySolve.countDocuments({ date: today });
-
-    res.json({ question: q, solvedToday: solvedCount });
-  } catch(err) { res.status(500).json({ message: err.message }); }
-});
-
-// POST /api/masterdsa/daily/solve — mark today's daily as solved
 router.post('/daily/solve', verifyToken, verifyMasterDSA, async (req, res) => {
   try {
     const today = new Date().toISOString().split('T')[0];
