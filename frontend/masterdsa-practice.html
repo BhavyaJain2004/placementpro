@@ -391,14 +391,10 @@ const LANG_IDS = { java:'java', python:'python', cpp:'cpp', c:'c' };
 
 // ── INIT ──
 (async function init() {
-  // Fresh auth check
   try {
     const fresh = await API.call('/auth/me');
     if (fresh?.user) {
-      if (!fresh.user.masterDsaAccess) {
-        window.location.href = 'masterdsa.html';
-        return;
-      }
+      if (!fresh.user.masterDsaAccess) { window.location.href = 'masterdsa.html'; return; }
       if (fresh.token) localStorage.setItem('pp_token', fresh.token);
       localStorage.setItem('pp_user', JSON.stringify(fresh.user));
       document.getElementById('nav-streak').textContent = 0;
@@ -406,8 +402,25 @@ const LANG_IDS = { java:'java', python:'python', cpp:'cpp', c:'c' };
   } catch(e) {}
 
   renderTopicTabs();
-  // Load first topic by default
-  selectTopic(TOPIC_DATA[0]);
+
+  // Check for daily question redirect
+  const params = new URLSearchParams(window.location.search);
+  const dailySlug = params.get('topic');
+  const isDaily = params.get('daily');
+
+  if (isDaily && dailySlug) {
+    const topicObj = TOPIC_DATA.find(t => t.slug === dailySlug) || TOPIC_DATA[0];
+    selectTopic(topicObj);
+    // Fetch daily question and open it directly
+    try {
+      const dailyData = await API.call('/masterdsa/daily');
+      if (dailyData?.question) {
+        await openQuestion(dailyData.question._id, dailyData.question);
+      }
+    } catch(e) {}
+  } else {
+    selectTopic(TOPIC_DATA[0]);
+  }
 })();
 
 // ── TOPIC TABS ──
