@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Choose — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem">
+<div style="max-width:560px;width:100%;text-align:center">
+  <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:0.4rem">Welcome back, <span id="uname" style="color:#a89df7">there</span> 👋</div>
+  <p style="color:rgba(255,255,255,0.4);font-size:0.88rem;margin-bottom:2rem">You have access to both. Where do you want to go?</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div onclick="window.location.href='dashboard.html'" style="background:#12121f;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:2rem 1.25rem;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='rgba(124,106,247,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
+      <div style="font-size:2rem;margin-bottom:0.75rem">🏢</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:0.3rem">Base Platform</div>
+      <div style="font-size:0.78rem;color:rgba(255,255,255,0.4)">Companies · Notes · Experiences</div>
+    </div>
+
+    <div onclick="window.location.href='masterdsa-dashboard.html'" style="background:#12121f;border:1px solid rgba(124,106,247,0.3);border-radius:16px;padding:2rem 1.25rem;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='rgba(124,106,247,0.6)'" onmouseout="this.style.borderColor='rgba(124,106,247,0.3)'">
+      <div style="font-size:2rem;margin-bottom:0.75rem">🎯</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:0.3rem">Master DSA</div>
+      <div style="font-size:0.78rem;color:rgba(255,255,255,0.4)">Roadmap · Compiler · Daily Quest</div>
+    </div>
+  </div>
+
+  <button onclick="Auth.logout()" style="margin-top:2rem;background:none;border:none;color:rgba(255,255,255,0.25);font-size:0.8rem;cursor:pointer">Log out</button>
+</div>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+const u = Auth.requireAuth();
+if (u) document.getElementById('uname').textContent = u.name || u.email;
+</script>
+</body>
+</html>
