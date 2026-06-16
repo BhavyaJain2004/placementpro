@@ -293,6 +293,11 @@ document.getElementById('sb-topics-list').innerHTML =
     document.getElementById('content-section').style.display = 'block';
     document.getElementById('main-sub').textContent = 'Keep going — consistency wins!';
 
+    document.getElementById('switch-link').style.display = 'flex';
+if (u.isAdmin) {
+  document.getElementById('admin-link').style.display = 'flex';
+}
+
     // Load all data in parallel
     const [dailyData, lbData] = await Promise.allSettled([
       API.call('/masterdsa/daily'),
