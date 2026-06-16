@@ -282,4 +282,76 @@ router.post('/seed-masterdsa', verifyToken, verifyAdmin, async (req, res) => {
     res.json({ message: `Done! ${count} questions` });
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
+// backend/routes/admin.js mein ye routes ADD karo (module.exports se PEHLE)
+// verifyAdmin middleware already exists hoga — wahi use karo
+
+// Simple password gate for the panel itself (extra layer)
+router.post('/panel-login', verifyToken, verifyAdmin, async (req, res) => {
+  const { password } = req.body;
+  if (password !== 'adminbhavya') {
+    return res.status(401).json({ message: 'Wrong password' });
+  }
+  res.json({ ok: true });
+});
+
+// MAIN STATS — totals, overlaps, growth
+router.get('/analytics/overview', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const totalUsers   = await User.countDocuments({});
+    const basePaid     = await User.countDocuments({ isPaid: true });
+    const masterDsa    = await User.countDocuments({ masterDsaAccess: true });
+    const bothAccess   = await User.countDocuments({ isPaid: true, masterDsaAccess: true });
+    const freeUsers    = await User.countDocuments({ isPaid: false, masterDsaAccess: false });
+
+    // New users today
+    const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+    const newToday = await User.countDocuments({ createdAt: { $gte: todayStart } });
+
+    // DAU — users with activity ping today (assuming Activity model exists with userId+date)
+    let dau = 0;
+    try {
+      const Activity = require('../models/Activity');
+      dau = await Activity.distinct('userId', { createdAt: { $gte: todayStart } }).then(arr => arr.length);
+    } catch(e) {}
+
+    // 7-day signup growth
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const start = new Date(); start.setDate(start.getDate() - i); start.setHours(0,0,0,0);
+      const end = new Date(start); end.setDate(end.getDate() + 1);
+      const count = await User.countDocuments({ createdAt: { $gte: start, $lt: end } });
+      days.push({ date: start.toISOString().split('T')[0], count });
+    }
+
+    res.json({
+      totalUsers, basePaid, masterDsa, bothAccess, freeUsers,
+      newToday, dau, weeklyGrowth: days
+    });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// USER ACTIVITY LIST — who used what today
+router.get('/analytics/active-today', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+    let list = [];
+    try {
+      const Activity = require('../models/Activity');
+      list = await Activity.find({ createdAt: { $gte: todayStart } })
+        .populate('userId', 'name email isPaid masterDsaAccess')
+        .sort({ createdAt: -1 })
+        .limit(100);
+    } catch(e) {}
+    res.json(list);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// FEEDBACK LIST — all feedback with user names
+router.get('/analytics/feedback-list', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const Feedback = require('../models/Feedback');
+    const list = await Feedback.find({}).sort({ createdAt: -1 }).limit(200);
+    res.json(list);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
 module.exports = router;
