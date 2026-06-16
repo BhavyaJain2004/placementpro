@@ -27,10 +27,13 @@ const requirePaid = () => {
 const redirectIfLoggedIn = () => {
   const u = decodeToken();
   if (!u) return;
-  // masterDsaAccess check karo pp_user se
   try {
     const saved = JSON.parse(localStorage.getItem('pp_user'));
-    if (saved && saved.masterDsaAccess) {
+    const hasBase = saved && saved.isPaid;
+    const hasMaster = saved && saved.masterDsaAccess;
+    if (hasBase && hasMaster) {
+      window.location.href = 'choose.html';
+    } else if (hasMaster) {
       window.location.href = 'masterdsa-dashboard.html';
     } else {
       window.location.href = 'dashboard.html';
