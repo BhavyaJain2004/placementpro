@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Panel — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+*{box-sizing:border-box}
+body{background:#06060f}
+.gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
+.gate-box{background:#12121f;border:1px solid rgba(124,106,247,0.25);border-radius:18px;padding:2.5rem 2rem;max-width:380px;width:100%;text-align:center}
+.gate-box input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.75rem 1rem;color:#fff;font-size:0.9rem;margin:1rem 0;outline:none;box-sizing:border-box}
+.gate-box button{width:100%;background:#7c6af7;color:#fff;border:none;padding:0.8rem;border-radius:10px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer}
+.gate-err{color:#f87171;font-size:0.8rem;margin-top:0.5rem;min-height:1rem}
+
+.admin-layout{display:none;grid-template-columns:220px 1fr;min-height:100vh}
+.admin-sidebar{background:#0a0a18;border-right:1px solid rgba(255,255,255,0.06);padding:1.5rem 0}
+.as-logo{padding:0 1.25rem 1.5rem;font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:1rem;display:flex;align-items:center;gap:8px}
+.as-item{display:flex;align-items:center;gap:10px;padding:0.7rem 1.25rem;font-size:0.85rem;color:rgba(255,255,255,0.5);cursor:pointer;transition:all .15s;border-left:2px solid transparent}
+.as-item:hover{background:rgba(255,255,255,0.04);color:#fff}
+.as-item.active{background:rgba(124,106,247,0.1);border-left-color:#a89df7;color:#a89df7}
+.admin-main{padding:1.75rem 2rem;overflow-y:auto}
+
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.9rem;margin-bottom:1.5rem}
+.stat-box{background:#12121f;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:1.2rem}
+.stat-box .v{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#fff}
+.stat-box .l{font-size:0.7rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.05em;margin-top:4px}
+
+.card{background:#12121f;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:1.5rem;margin-bottom:1.25rem}
+.card-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:1rem}
+
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:140px;padding:0 4px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bar{width:100%;background:linear-gradient(180deg,#a89df7,#7c6af7);border-radius:6px 6px 0 0;min-height:4px;transition:height .4s}
+.bar-lbl{font-size:0.62rem;color:rgba(255,255,255,0.35)}
+.bar-val{font-size:0.68rem;color:#a89df7;font-weight:700}
+
+.donut-wrap{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.legend{display:flex;flex-direction:column;gap:0.5rem}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:0.8rem;color:rgba(255,255,255,0.6)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+
+.list-row{display:flex;align-items:center;gap:10px;padding:0.65rem 0;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer}
+.list-row:hover{background:rgba(255,255,255,0.03)}
+.avatar{width:30px;height:30px;border-radius:50%;background:rgba(124,106,247,0.15);color:#a89df7;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0}
+.tag{font-size:0.62rem;padding:2px 7px;border-radius:99px}
+
+.fb-detail{display:none;background:rgba(124,106,247,0.05);border:1px solid rgba(124,106,247,0.2);border-radius:12px;padding:1.25rem;margin-top:1rem}
+.stars-disp{color:#fbbf24;font-size:1rem}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div class="gate" id="gate">
+  <div class="gate-box">
+    <div style="font-size:2rem;margin-bottom:0.5rem">🔐</div>
+    <div style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:#fff">Admin Panel</div>
+    <p style="color:rgba(255,255,255,0.4);font-size:0.82rem;margin-top:0.3rem">Enter password to continue</p>
+    <input type="password" id="gate-pwd" placeholder="Password">
+    <button onclick="checkPwd()">Unlock</button>
+    <div class="gate-err" id="gate-err"></div>
+  </div>
+</div>
+
+<!-- ADMIN LAYOUT -->
+<div class="admin-layout" id="admin-layout">
+  <div class="admin-sidebar">
+    <div class="as-logo"><span class="dot"></span> Admin Panel</div>
+    <div class="as-item active" onclick="showTab('overview',this)">📊 Overview</div>
+    <div class="as-item" onclick="showTab('users',this)">👥 Active Today</div>
+    <div class="as-item" onclick="showTab('feedback',this)">💬 Feedback</div>
+    <div style="padding:1.5rem 1.25rem 0">
+      <a href="dashboard.html" style="font-size:0.78rem;color:rgba(255,255,255,0.3);text-decoration:none">← Back to site</a>
+    </div>
+  </div>
+
+  <div class="admin-main">
+
+    <!-- OVERVIEW TAB -->
+    <div id="tab-overview">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">📊 Platform Overview</h2>
+
+      <div class="stat-grid" id="stat-grid">
+        <div class="stat-box"><div class="v">—</div><div class="l">Total Users</div></div>
+        <div class="stat-box"><div class="v">—</div><div class="l">Base Paid</div></div>
+        <div class="stat-box"><div class="v">—</div><div class="l">Master DSA</div></div>
+        <div class="stat-box"><div class="v">—</div><div class="l">Both Access</div></div>
+        <div class="stat-box"><div class="v">—</div><div class="l">New Today</div></div>
+        <div class="stat-box"><div class="v">—</div><div class="l">DAU</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📈 New Signups — Last 7 Days</div>
+        <div class="bar-chart" id="growth-chart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🥧 User Distribution</div>
+        <div class="donut-wrap">
+          <svg width="160" height="160" viewBox="0 0 160 160" id="donut-svg"></svg>
+          <div class="legend" id="donut-legend"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS TAB -->
+    <div id="tab-users" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">👥 Active Today</h2>
+      <div class="card">
+        <div id="active-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- FEEDBACK TAB -->
+    <div id="tab-feedback" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">💬 User Feedback</h2>
+      <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:1.25rem">
+        <div class="card" style="max-height:600px;overflow-y:auto">
+          <div id="feedback-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+        </div>
+        <div class="card" id="feedback-detail-card">
+          <div style="color:rgba(255,255,255,0.3);text-align:center;padding:2rem">← Select a feedback to view</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+const cachedUser = Auth.requireAuth();
+if (!cachedUser) throw new Error();
+
+// Admin check
+if (!cachedUser.isAdmin) {
+  window.location.href = 'dashboard.html';
+}
+
+function checkPwd() {
+  const pwd = document.getElementById('gate-pwd').value;
+  if (pwd === 'adminbhavya') {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('admin-layout').style.display = 'grid';
+    loadOverview();
+  } else {
+    document.getElementById('gate-err').textContent = 'Wrong password';
+  }
+}
+document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
+
+function showTab(tab, btn) {
+  ['overview','users','feedback'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab === 'users') loadActiveToday();
+  if (tab === 'feedback') loadFeedback();
+}
+
+async function loadOverview() {
+  try {
+    const d = await API.call('/admin/analytics/overview');
+    const grid = document.getElementById('stat-grid');
+    grid.innerHTML = `
+      <div class="stat-box"><div class="v">${d.totalUsers}</div><div class="l">Total Users</div></div>
+      <div class="stat-box"><div class="v" style="color:#34d399">${d.basePaid}</div><div class="l">Base Paid</div></div>
+      <div class="stat-box"><div class="v" style="color:#a89df7">${d.masterDsa}</div><div class="l">Master DSA</div></div>
+      <div class="stat-box"><div class="v" style="color:#fbbf24">${d.bothAccess}</div><div class="l">Both Access</div></div>
+      <div class="stat-box"><div class="v" style="color:#06b6d4">${d.newToday}</div><div class="l">New Today</div></div>
+      <div class="stat-box"><div class="v" style="color:#f87171">${d.dau}</div><div class="l">DAU</div></div>
+    `;
+
+    // Bar chart
+    const max = Math.max(...d.weeklyGrowth.map(x=>x.count), 1);
+    document.getElementById('growth-chart').innerHTML = d.weeklyGrowth.map(day => {
+      const h = Math.max((day.count/max)*100, 4);
+      const lbl = new Date(day.date).toLocaleDateString('en-IN',{weekday:'short'});
+      return `<div class="bar-col"><div class="bar-val">${day.count}</div><div class="bar" style="height:${h}%"></div><div class="bar-lbl">${lbl}</div></div>`;
+    }).join('');
+
+    // Donut chart
+    drawDonut(d);
+  } catch(e) { console.error(e); }
+}
+
+function drawDonut(d) {
+  const total = d.totalUsers || 1;
+  const segs = [
+    { label:'Free', value:d.freeUsers, color:'#3a3a52' },
+    { label:'Base Only', value:d.basePaid - d.bothAccess, color:'#34d399' },
+    { label:'Master DSA Only', value:d.masterDsa - d.bothAccess, color:'#a89df7' },
+    { label:'Both', value:d.bothAccess, color:'#fbbf24' },
+  ];
+  let angle = 0;
+  const svg = document.getElementById('donut-svg');
+  const r = 60, cx = 80, cy = 80;
+  let paths = '';
+  segs.forEach(s => {
+    const frac = s.value/total;
+    const a2 = angle + frac*360;
+    const x1 = cx + r*Math.cos(Math.PI*angle/180-Math.PI/2);
+    const y1 = cy + r*Math.sin(Math.PI*angle/180-Math.PI/2);
+    const x2 = cx + r*Math.cos(Math.PI*a2/180-Math.PI/2);
+    const y2 = cy + r*Math.sin(Math.PI*a2/180-Math.PI/2);
+    const large = frac > 0.5 ? 1 : 0;
+    if (s.value > 0) {
+      paths += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z" fill="${s.color}" opacity="0.85"/>`;
+    }
+    angle = a2;
+  });
+  svg.innerHTML = paths + `<circle cx="${cx}" cy="${cy}" r="32" fill="#12121f"/>`;
+  document.getElementById('donut-legend').innerHTML = segs.map(s =>
+    `<div class="legend-item"><span class="legend-dot" style="background:${s.color}"></span>${s.label}: ${s.value}</div>`
+  ).join('');
+}
+
+async function loadActiveToday() {
+  try {
+    const list = await API.call('/admin/analytics/active-today');
+    if (!list.length) {
+      document.getElementById('active-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No activity yet today</div>';
+      return;
+    }
+    document.getElementById('active-list').innerHTML = list.map(a => {
+      const u = a.userId || {};
+      return `<div class="list-row">
+        <div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div>
+        <div style="flex:1">
+          <div style="font-size:0.85rem;color:#fff">${u.name||'Unknown'}</div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email||''}</div>
+        </div>
+        ${u.isPaid?'<span class="tag" style="background:rgba(52,211,153,0.12);color:#34d399">Base</span>':''}
+        ${u.masterDsaAccess?'<span class="tag" style="background:rgba(124,106,247,0.12);color:#a89df7">DSA</span>':''}
+      </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('active-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Could not load</div>';
+  }
+}
+
+let feedbackData = [];
+async function loadFeedback() {
+  try {
+    feedbackData = await API.call('/admin/analytics/feedback-list');
+    if (!feedbackData.length) {
+      document.getElementById('feedback-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No feedback yet</div>';
+      return;
+    }
+    document.getElementById('feedback-list').innerHTML = feedbackData.map((f,i) => `
+      <div class="list-row" onclick="showFeedback(${i})">
+        <div class="avatar">${(f.name||'?').charAt(0).toUpperCase()}</div>
+        <div style="flex:1">
+          <div style="font-size:0.85rem;color:#fff">${f.name||f.email||'Anonymous'}</div>
+          <div class="stars-disp">${'⭐'.repeat(f.rating||0)}</div>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('feedback-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Could not load</div>';
+  }
+}
+
+function showFeedback(i) {
+  const f = feedbackData[i];
+  document.getElementById('feedback-detail-card').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
+      <div class="avatar" style="width:40px;height:40px;font-size:0.9rem">${(f.name||'?').charAt(0).toUpperCase()}</div>
+      <div>
+        <div style="color:#fff;font-weight:600">${f.name||'Anonymous'}</div>
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.3)">${f.email||''}</div>
+      </div>
+    </div>
+    <div class="stars-disp" style="margin-bottom:1rem">${'⭐'.repeat(f.rating||0)}</div>
+    <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:0.3rem">Feedback</div>
+    <div style="color:rgba(255,255,255,0.75);font-size:0.85rem;margin-bottom:1rem;line-height:1.6">${f.message||'—'}</div>
+    <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:0.3rem">Wants</div>
+    <div style="color:rgba(255,255,255,0.75);font-size:0.85rem;line-height:1.6">${f.want||'—'}</div>
+  `;
+}
+</script>
+</body>
+</html>
