@@ -354,4 +354,65 @@ router.get('/analytics/feedback-list', verifyToken, verifyAdmin, async (req, res
     res.json(list);
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
+router.get('/analytics/funnel', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const totalSignups = await User.countDocuments({});
+    const anyPaid = await User.countDocuments({ $or: [{ isPaid: true }, { masterDsaAccess: true }] });
+    const basePaid = await User.countDocuments({ isPaid: true });
+    const masterDsa = await User.countDocuments({ masterDsaAccess: true });
+    const bothAccess = await User.countDocuments({ isPaid: true, masterDsaAccess: true });
+
+    res.json({
+      totalSignups,
+      anyPaid,
+      basePaid,
+      masterDsa,
+      bothAccess,
+      conversionRate: totalSignups ? ((anyPaid/totalSignups)*100).toFixed(1) : 0
+    });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// TOP PERFORMERS — by Master DSA solves
+router.get('/analytics/top-performers', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const DailySolve = require('../models/DailySolve');
+    const top = await DailySolve.aggregate([
+      { $group: { _id: '$userId', name: { $first: '$name' }, email: { $first: '$email' }, count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
+    ]);
+    res.json(top);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// INACTIVE USERS — last seen 7+ days ago (or never)
+router.get('/analytics/inactive', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    let Activity;
+    try { Activity = require('../models/Activity'); } catch(e) {}
+
+    const allUsers = await User.find({ $or: [{ isPaid: true }, { masterDsaAccess: true }] })
+      .select('name email createdAt').lean();
+
+    let lastSeenMap = {};
+    if (Activity) {
+      const lastSeens = await Activity.aggregate([
+        { $sort: { createdAt: -1 } },
+        { $group: { _id: '$userId', lastSeen: { $first: '$createdAt' } } }
+      ]);
+      lastSeens.forEach(l => lastSeenMap[l._id.toString()] = l.lastSeen);
+    }
+
+    const inactive = allUsers.map(u => ({
+      name: u.name, email: u.email,
+      lastSeen: lastSeenMap[u._id.toString()] || null,
+      signedUp: u.createdAt
+    })).filter(u => !u.lastSeen || new Date(u.lastSeen) < sevenDaysAgo)
+      .sort((a,b) => new Date(a.lastSeen||a.signedUp) - new Date(b.lastSeen||b.signedUp));
+
+    res.json(inactive.slice(0, 100));
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
 module.exports = router;
