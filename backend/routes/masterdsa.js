@@ -270,4 +270,25 @@ router.post('/run-code', verifyToken, verifyMasterDSA, async (req, res) => {
     res.status(500).json({ output: 'Compiler error: ' + err.message });
   }
 });
+// backend/routes/masterdsa.js mein add karo, module.exports se PEHLE
+const axios2 = require('axios');
+
+router.post('/mentor/chat', verifyToken, verifyMasterDSA, async (req, res) => {
+  try {
+    const { message, history } = req.body;
+    const sysPrompt = "You are a friendly DSA mentor for placement prep students. Keep replies short (3-5 lines), encouraging, in simple Hindi+English mix (Hinglish). Help them with DSA doubts, suggest what to study next, and track their comfort level if they mention it.";
+
+    const contents = (history||[]).map(h => ({ role: h.role, parts: [{text: h.text}] }));
+    contents.push({ role: 'user', parts: [{text: message}] });
+
+    const resp = await axios2.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      { contents, systemInstruction: { parts: [{text: sysPrompt}] } }
+    );
+    const reply = resp.data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, samajh nahi paya. Phir se try karo?";
+    res.json({ reply });
+  } catch(err) {
+    res.status(500).json({ reply: "Mentor abhi busy hai, thodi der mein try karo." });
+  }
+});
 module.exports = router;
