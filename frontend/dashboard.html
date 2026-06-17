@@ -1080,7 +1080,9 @@
 <script src="js/payment.js"></script>
 <script>
   const cachedUser = Auth.requireAuth();
+  
   if (!cachedUser) throw new Error();
+  API.call('/auth/ping', { method: 'POST' }).catch(()=>{});
 
   Auth.setNavUser(cachedUser.name || cachedUser.email);
   document.getElementById('dd-name').textContent  = cachedUser.name  || 'Student';
