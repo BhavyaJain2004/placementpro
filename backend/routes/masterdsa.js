@@ -287,8 +287,9 @@ router.post('/mentor/chat', verifyToken, verifyMasterDSA, async (req, res) => {
     );
     const reply = resp.data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, samajh nahi paya. Phir se try karo?";
     res.json({ reply });
-  } catch(err) {
-    res.status(500).json({ reply: "Mentor abhi busy hai, thodi der mein try karo." });
-  }
+  }} catch(err) {
+  console.error('Mentor error:', err.response?.data || err.message);
+  res.status(500).json({ reply: "Mentor abhi busy hai, thodi der mein try karo." });
+}
 });
 module.exports = router;
