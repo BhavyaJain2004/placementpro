@@ -276,7 +276,7 @@ router.post('/run-code', verifyToken, verifyMasterDSA, async (req, res) => {
 const axios2 = require('axios');
 let workingModel = null; // cache after first success
 
-const MODEL_LIST = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-pro'];
+const MODEL_LIST = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
 async function callGemini(contents, sysPrompt) {
   const modelsToTry = workingModel ? [workingModel, ...MODEL_LIST] : MODEL_LIST;
