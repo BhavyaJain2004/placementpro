@@ -297,5 +297,13 @@ router.post('/change-password', verifyToken, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+const Activity = require('../models/Activity');
+
+router.post('/ping', verifyToken, async (req, res) => {
+  try {
+    await Activity.create({ userId: req.user.id, createdAt: new Date() });
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
 
 module.exports = router;
