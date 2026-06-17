@@ -245,6 +245,7 @@
 <script>
 const cachedUser = Auth.requireAuth();
 if (!cachedUser) throw new Error();
+API.call('/auth/ping', { method: 'POST' }).catch(()=>{});
 
 Auth.setNavUser(cachedUser.name || cachedUser.email);
 document.getElementById('nav-name').textContent  = cachedUser.name || '';
