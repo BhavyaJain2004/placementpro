@@ -71,6 +71,8 @@ body{background:#06060f}
     <div class="as-item active" onclick="showTab('overview',this)">📊 Overview</div>
     <div class="as-item" onclick="showTab('users',this)">👥 Active Today</div>
     <div class="as-item" onclick="showTab('feedback',this)">💬 Feedback</div>
+    <div class="as-item" onclick="showTab('funnel',this)">📈 Funnel</div>
+<div class="as-item" onclick="showTab('inactive',this)">😴 Inactive</div>
     <div style="padding:1.5rem 1.25rem 0">
       <a href="dashboard.html" style="font-size:0.78rem;color:rgba(255,255,255,0.3);text-decoration:none">← Back to site</a>
     </div>
@@ -125,6 +127,22 @@ body{background:#06060f}
         </div>
       </div>
     </div>
+    <div id="tab-funnel" style="display:none">
+  <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">📈 Conversion Funnel</h2>
+  <div class="card" id="funnel-card"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+
+  <div class="card">
+    <div class="card-title">🏆 Top Performers (Master DSA)</div>
+    <div id="top-performers-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+  </div>
+</div>
+
+<div id="tab-inactive" style="display:none">
+  <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">😴 Inactive Users (7+ days)</h2>
+  <div class="card">
+    <div id="inactive-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+  </div>
+</div>
 
   </div>
 </div>
@@ -153,13 +171,16 @@ function checkPwd() {
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
 function showTab(tab, btn) {
-  ['overview','users','feedback'].forEach(t => {
-    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+  ['overview','users','feedback','funnel','inactive'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if (el) el.style.display = t===tab ? 'block' : 'none';
   });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
   if (tab === 'users') loadActiveToday();
   if (tab === 'feedback') loadFeedback();
+  if (tab === 'funnel') loadFunnel();
+  if (tab === 'inactive') loadInactive();
 }
 
 async function loadOverview() {
@@ -280,6 +301,63 @@ function showFeedback(i) {
     <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:0.3rem">Wants</div>
     <div style="color:rgba(255,255,255,0.75);font-size:0.85rem;line-height:1.6">${f.want||'—'}</div>
   `;
+}
+  async function loadFunnel() {
+  try {
+    const d = await API.call('/admin/analytics/funnel');
+    document.getElementById('funnel-card').innerHTML = `
+      <div class="card-title">Signup → Paid Conversion</div>
+      <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:1rem">
+        <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:0.9rem 1.1rem;display:flex;justify-content:space-between;align-items:center">
+          <span style="color:rgba(255,255,255,0.6)">Total Signups</span>
+          <span style="font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:1.3rem">${d.totalSignups}</span>
+        </div>
+        <div style="background:rgba(124,106,247,0.08);border-radius:10px;padding:0.9rem 1.1rem;display:flex;justify-content:space-between;align-items:center">
+          <span style="color:rgba(255,255,255,0.6)">Any Paid Access</span>
+          <span style="font-family:'Syne',sans-serif;font-weight:800;color:#a89df7;font-size:1.3rem">${d.anyPaid} <span style="font-size:0.7rem;color:#34d399">(${d.conversionRate}%)</span></span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;margin-top:0.5rem">
+          <div style="background:rgba(52,211,153,0.08);border-radius:10px;padding:0.75rem;text-align:center">
+            <div style="font-family:'Syne',sans-serif;font-weight:800;color:#34d399">${d.basePaid}</div>
+            <div style="font-size:0.65rem;color:rgba(255,255,255,0.4)">Base ₹99</div>
+          </div>
+          <div style="background:rgba(168,157,247,0.08);border-radius:10px;padding:0.75rem;text-align:center">
+            <div style="font-family:'Syne',sans-serif;font-weight:800;color:#a89df7">${d.masterDsa}</div>
+            <div style="font-size:0.65rem;color:rgba(255,255,255,0.4)">Master DSA</div>
+          </div>
+          <div style="background:rgba(251,191,36,0.08);border-radius:10px;padding:0.75rem;text-align:center">
+            <div style="font-family:'Syne',sans-serif;font-weight:800;color:#fbbf24">${d.bothAccess}</div>
+            <div style="font-size:0.65rem;color:rgba(255,255,255,0.4)">Both</div>
+          </div>
+        </div>
+      </div>`;
+
+    const top = await API.call('/admin/analytics/top-performers');
+    document.getElementById('top-performers-list').innerHTML = top.length ? top.map((u,i) => `
+      <div class="list-row">
+        <div style="width:22px;font-family:'Syne',sans-serif;font-weight:800;color:${i<3?'#fbbf24':'rgba(255,255,255,0.3)'}">${i+1}</div>
+        <div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div>
+        <div style="flex:1"><div style="color:#fff;font-size:0.85rem">${u.name||'—'}</div></div>
+        <div style="color:#34d399;font-size:0.8rem;font-weight:600">${u.count} solved</div>
+      </div>`).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No solves yet</div>';
+  } catch(e) { console.error(e); }
+}
+
+async function loadInactive() {
+  try {
+    const list = await API.call('/admin/analytics/inactive');
+    document.getElementById('inactive-list').innerHTML = list.length ? list.map(u => `
+      <div class="list-row">
+        <div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div>
+        <div style="flex:1">
+          <div style="color:#fff;font-size:0.85rem">${u.name||'—'}</div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email||''}</div>
+        </div>
+        <div style="font-size:0.72rem;color:rgba(248,113,113,0.7);text-align:right">
+          ${u.lastSeen ? 'Last seen: '+new Date(u.lastSeen).toLocaleDateString('en-IN') : 'Never active'}
+        </div>
+      </div>`).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Everyone is active! 🎉</div>';
+  } catch(e) { console.error(e); }
 }
 </script>
 </body>
