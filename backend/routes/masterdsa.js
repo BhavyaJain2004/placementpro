@@ -348,5 +348,42 @@ router.get('/mentor/history', verifyToken, verifyMasterDSA, async (req, res) => 
     res.json({ messages: chat?.messages || [] });
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
+// backend/routes/masterdsa.js mein add karo, /mentor/history route ke baad
+
+router.get('/mentor/proactive', verifyToken, verifyMasterDSA, async (req, res) => {
+  try {
+    const DailySolve = require('../models/DailySolve');
+    const chat = await MentorChat.findOne({ userId: req.user.id });
+
+    // Get last solve
+    const lastSolve = await DailySolve.findOne({ userId: req.user.id }).sort({ date: -1 });
+    const totalSolved = await DailySolve.countDocuments({ userId: req.user.id });
+
+    // Check if we already sent a proactive nudge recently (avoid spam)
+    const now = new Date();
+    if (chat?.lastNudgeAt && (now - chat.lastNudgeAt) < 3600000) {
+      return res.json({ message: null }); // already nudged in last hour
+    }
+
+    let message = null;
+    if (totalSolved === 0) {
+      message = "Hey! Abhi tak koi question solve nahi kiya hai. Arrays & Strings se shuru karte hain? Practice page khol ke first topic try karo 💪";
+    } else if (lastSolve) {
+      const daysSince = Math.floor((now - new Date(lastSolve.date)) / 86400000);
+      if (daysSince === 0) {
+        message = `Maine dekha aaj aapne practice ki hai 🎉 Total ${totalSolved} questions solve ho gaye. Ab next topic try karo, momentum maintain rakho!`;
+      } else if (daysSince >= 2) {
+        message = `${daysSince} din se aaye nahi the! Tension nahi, chalo wapas track pe aate hain. Total ${totalSolved} solved hain abhi tak — aaj ek aur karte hain?`;
+      }
+    }
+
+    if (message) {
+      if (!chat) await MentorChat.create({ userId: req.user.id, messages: [{role:'assistant', text: message}], lastNudgeAt: now });
+      else { chat.messages.push({role:'assistant', text: message}); chat.lastNudgeAt = now; await chat.save(); }
+    }
+
+    res.json({ message });
+  } catch(err) { res.status(500).json({ message: null }); }
+});
 
 module.exports = router;
