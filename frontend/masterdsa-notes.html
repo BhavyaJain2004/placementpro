@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notes — Master DSA</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.notes-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px)}
+@media(max-width:768px){.notes-layout{grid-template-columns:1fr}.notes-sidebar{display:none}}
+.notes-sidebar{background:#09091a;border-right:1px solid rgba(255,255,255,0.06);padding:1.5rem 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;align-self:start}
+.nt-item{display:flex;align-items:center;gap:0.6rem;padding:0.6rem 1.25rem;font-size:0.83rem;color:rgba(255,255,255,0.45);cursor:pointer;border-left:2px solid transparent;text-decoration:none}
+.nt-item:hover{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.8)}
+.nt-item.active{background:rgba(124,106,247,0.08);border-left-color:#a89df7;color:#a89df7;font-weight:600}
+.nt-item.locked{opacity:0.3;cursor:not-allowed}
+.notes-main{padding:2rem 3rem;max-width:820px}
+@media(max-width:768px){.notes-main{padding:1.25rem}}
+.nt-h1{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#fff;margin-bottom:0.5rem}
+.nt-h2{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:700;color:#a89df7;margin:2.5rem 0 1rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:0.5rem}
+.nt-h2:first-of-type{border-top:none;padding-top:0;margin-top:1.25rem}
+.nt-h3{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:#fff;margin:1.4rem 0 0.6rem}
+.nt-p{font-size:0.92rem;color:rgba(255,255,255,0.72);line-height:1.85;margin-bottom:1rem}
+.nt-code{background:#0a0a18;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1rem 1.1rem;font-family:'Fira Code',monospace;font-size:0.78rem;color:#e2e8f0;line-height:1.7;margin-bottom:1rem;overflow-x:auto;white-space:pre}
+.nt-tip{background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.18);border-radius:10px;padding:0.9rem 1.1rem;font-size:0.85rem;color:rgba(251,191,36,0.9);margin-bottom:1rem;display:flex;gap:0.6rem;line-height:1.6}
+.nt-warn{background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.18);border-radius:10px;padding:0.9rem 1.1rem;font-size:0.85rem;color:rgba(248,113,113,0.9);margin-bottom:1rem;display:flex;gap:0.6rem;line-height:1.6}
+.nt-try{background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.2);border-radius:10px;padding:0.9rem 1.1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.nt-try-text{font-size:0.85rem;color:rgba(255,255,255,0.75)}
+.nt-try-text b{color:#34d399}
+.nt-try-btn{background:rgba(52,211,153,0.15);color:#34d399;border:1px solid rgba(52,211,153,0.3);border-radius:8px;padding:0.4rem 0.9rem;font-size:0.78rem;font-weight:700;text-decoration:none;white-space:nowrap}
+.nt-nav{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.06)}
+.nt-nav a{font-size:0.82rem;color:#a89df7;text-decoration:none}
+.progress-pill{display:inline-flex;align-items:center;gap:6px;font-size:0.7rem;color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.04);padding:3px 10px;border-radius:99px;margin-bottom:1rem}
+.trace-box{background:#0a0a18;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1rem;margin-bottom:1rem;overflow-x:auto}
+.trace-table{width:100%;border-collapse:collapse;font-size:0.78rem;font-family:'Fira Code',monospace}
+.trace-table th{color:rgba(255,255,255,0.4);text-align:left;padding:0.4rem 0.7rem;border-bottom:1px solid rgba(255,255,255,0.08);font-weight:600}
+.trace-table td{color:#e2e8f0;padding:0.4rem 0.7rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+.arr-viz{display:flex;gap:4px;margin:0.75rem 0;flex-wrap:wrap}
+.arr-cell{width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:#16162a;border:1.5px solid rgba(255,255,255,0.1);border-radius:7px;font-family:'Fira Code',monospace;font-size:0.8rem;color:#e2e8f0;position:relative;flex-shrink:0}
+.arr-cell.active{border-color:#a89df7;background:rgba(124,106,247,0.15);color:#a89df7}
+.arr-cell.l{border-color:#34d399;background:rgba(52,211,153,0.12)}
+.arr-cell.r{border-color:#f87171;background:rgba(248,113,113,0.12)}
+.arr-idx{position:absolute;top:-18px;font-size:0.6rem;color:rgba(255,255,255,0.3)}
+.toc{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1rem 1.25rem;margin-bottom:2rem}
+.toc-title{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.3);margin-bottom:0.6rem}
+.toc a{display:block;font-size:0.82rem;color:rgba(255,255,255,0.55);text-decoration:none;padding:0.25rem 0}
+.toc a:hover{color:#a89df7}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<nav class="navbar" style="position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06);">
+  <div class="nav-logo"><a href="masterdsa-dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit"><span class="dot"></span> Master DSA</a></div>
+  <div style="display:flex;align-items:center;gap:0.25rem">
+    <a href="masterdsa-dashboard.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">🏠 Home</a>
+    <a href="masterdsa-practice.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">📚 Practice</a>
+    <a href="masterdsa-notes.html" style="font-size:0.82rem;color:#a89df7;text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px;background:rgba(124,106,247,0.1)">📖 Notes</a>
+    <a href="masterdsa-videos.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">🎥 Videos</a>
+  </div>
+  <div class="nav-right"><a href="masterdsa-dashboard.html" style="font-size:0.85rem;color:var(--muted);text-decoration:none">← Back</a></div>
+</nav>
+
+<div class="notes-layout">
+  <div class="notes-sidebar">
+    <div style="padding:0 1.25rem 1rem;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.25)">Topics</div>
+    <a class="nt-item active" href="#">📐 Arrays & Strings</a>
+    <a class="nt-item locked" href="#">🔗 Linked List 🔒</a>
+    <a class="nt-item locked" href="#">📚 Stacks & Queues 🔒</a>
+    <a class="nt-item locked" href="#">🔄 Recursion 🔒</a>
+    <a class="nt-item locked" href="#">🌳 Trees & BST 🔒</a>
+    <div style="padding:0.75rem 1.25rem;font-size:0.68rem;color:rgba(255,255,255,0.2)">More topics coming soon</div>
+  </div>
+
+  <div class="notes-main">
+    <div class="progress-pill">📐 Topic 1 of 14 · Arrays & Strings</div>
+    <div class="nt-h1">Arrays & Strings — Complete Guide</div>
+    <p class="nt-p">Yeh DSA ka foundation topic hai. Almost har company (TCS se Amazon tak) ka pehla round arrays se shuru hota hai. Is page mein har pattern ko step-by-step samjhaya gaya hai — concept, diagram, code, common mistakes — sab kuch. Poora padhne mein 25-30 minute lagenge, par ek baar samajh gaye toh 27 questions easily solve ho jaayenge.</p>
+
+    <div class="toc">
+      <div class="toc-title">Is page mein kya hai</div>
+      <a href="#basics">1. Array Basics — memory, indexing, complexity</a>
+      <a href="#twopointer">2. Two Pointer Technique</a>
+      <a href="#sliding">3. Sliding Window</a>
+      <a href="#hashmap">4. HashMap Pattern</a>
+      <a href="#kadane">5. Kadane's Algorithm</a>
+      <a href="#prefix">6. Prefix Sum</a>
+      <a href="#binarysearch">7. Binary Search on Arrays</a>
+      <a href="#sorting">8. Sorting-based Tricks</a>
+      <a href="#mistakes">9. Common Mistakes</a>
+    </div>
+
+    <div class="nt-h2" id="basics">📦 1. Array Basics</div>
+    <p class="nt-p">Array ek collection hota hai jisme same-type elements ek continuous (lagataar) memory block mein store hote hain. Har element ka apna <b>index</b> hota hai, jo 0 se shuru hota hai. Yeh "continuous memory" wali property hi array ko special banati hai — isi wajah se tum kisi bhi index pe O(1) (instant) access kar sakte ho.</p>
+
+    <div class="arr-viz">
+      <div class="arr-cell"><span class="arr-idx">0</span>10</div>
+      <div class="arr-cell"><span class="arr-idx">1</span>20</div>
+      <div class="arr-cell"><span class="arr-idx">2</span>30</div>
+      <div class="arr-cell"><span class="arr-idx">3</span>40</div>
+      <div class="arr-cell"><span class="arr-idx">4</span>50</div>
+    </div>
+    <p class="nt-p">Memory mein yeh values ek doosre ke bilkul saath rakhi hoti hain. Agar array ka starting address pata hai, toh <code>arr[i]</code> ka address seedha calculate ho jata hai (<code>base_address + i × size_of_type</code>) — isliye access O(1) hai, chahe array ki size 10 ho ya 10 lakh.</p>
+
+    <div class="nt-h3">Time Complexity Cheat Sheet</div>
+    <div class="trace-box">
+      <table class="trace-table">
+        <tr><th>Operation</th><th>Time</th><th>Kyun</th></tr>
+        <tr><td>Access by index</td><td>O(1)</td><td>Direct address calculation</td></tr>
+        <tr><td>Search (unsorted)</td><td>O(n)</td><td>Har element check karna padega</td></tr>
+        <tr><td>Search (sorted)</td><td>O(log n)</td><td>Binary search use kar sakte ho</td></tr>
+        <tr><td>Insert/Delete at end</td><td>O(1)</td><td>Bas last position update</td></tr>
+        <tr><td>Insert/Delete at start/middle</td><td>O(n)</td><td>Baaki sab elements shift karne padenge</td></tr>
+      </table>
+    </div>
+    <div class="nt-tip">💡 Java/C++ mein array ka size fixed hota hai jab tum banate ho. Python ki list aur Java ka ArrayList dynamically grow karte hain — andar se woh bhi resize karte waqt naya bada array bana ke purana copy karte hain.</div>
+
+    <div class="nt-h2" id="twopointer">👈👉 2. Two Pointer Technique</div>
+    <p class="nt-p">Jab array <b>sorted</b> ho ya tumhe kisi pair/triplet ko efficiently dhundna ho, do pointers — ek shuru se (<code>left</code>), ek end se (<code>right</code>) — use karke tum O(n²) brute-force ko O(n) mein convert kar sakte ho.</p>
+
+    <div class="nt-h3">Kaise kaam karta hai — example ke saath</div>
+    <p class="nt-p">Maan lo tumhe sorted array <code>[2, 7, 11, 15]</code> mein woh do numbers chahiye jinka sum 9 ho.</p>
+    <div class="arr-viz">
+      <div class="arr-cell l"><span class="arr-idx">L</span>2</div>
+      <div class="arr-cell">7</div>
+      <div class="arr-cell">11</div>
+      <div class="arr-cell r"><span class="arr-idx">R</span>15</div>
+    </div>
+    <p class="nt-p">Step 1: <code>L=2, R=15</code>, sum = 17 — bahut zyada hai, toh <code>R</code> ko ek step left lao.</p>
+    <div class="arr-viz">
+      <div class="arr-cell l"><span class="arr-idx">L</span>2</div>
+      <div class="arr-cell">7</div>
+      <div class="arr-cell r"><span class="arr-idx">R</span>11</div>
+      <div class="arr-cell">15</div>
+    </div>
+    <p class="nt-p">Step 2: <code>L=2, R=11</code>, sum = 13 — abhi bhi zyada, <code>R</code> ko aur left lao.</p>
+    <div class="arr-viz">
+      <div class="arr-cell l"><span class="arr-idx">L</span>2</div>
+      <div class="arr-cell r"><span class="arr-idx">R</span>7</div>
+      <div class="arr-cell">11</div>
+      <div class="arr-cell">15</div>
+    </div>
+    <p class="nt-p">Step 3: <code>L=2, R=7</code>, sum = 9 ✅ — answer mil gaya! Bina kisi nested loop ke, sirf 3 steps mein.</p>
+
+    <div class="nt-code">int l = 0, r = arr.length - 1;
+while (l < r) {
+  int sum = arr[l] + arr[r];
+  if (sum == target) {
+    // found! return l, r
+  } else if (sum < target) {
+    l++;   // sum chhota hai, left ko aage badhao (bada number lao)
+  } else {
+    r--;   // sum bada hai, right ko peeche lao (chhota number lao)
+  }
+}</div>
+    <div class="nt-tip">💡 Kaise pehchaano: agar question mein "sorted array" ka zikr ho aur tumhe pair/triplet ka sum, ya array ko reverse karna ho, ya palindrome check karna ho — Two Pointer try karo.</div>
+    <div class="nt-try">
+      <div class="nt-try-text">Try karo: <b>Container With Most Water</b>, <b>3Sum</b>, <b>Move Zeroes</b></div>
+      <a href="masterdsa-practice.html?topic=arrays" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-h2" id="sliding">🪟 3. Sliding Window</div>
+    <p class="nt-p">Yeh technique tab use hoti hai jab tumhe ek <b>contiguous</b> (lagataar) subarray ya substring ka best answer chahiye ho — jaise max sum, min length, ya longest unique substring. "Window" ek range hai jo expand (right pointer aage) aur shrink (left pointer aage) hoti rehti hai.</p>
+
+    <div class="nt-h3">Example — Minimum Size Subarray with sum >= 7</div>
+    <p class="nt-p">Array: <code>[2, 3, 1, 2, 4, 3]</code>, target sum = 7</p>
+    <div class="trace-box">
+      <table class="trace-table">
+        <tr><th>Step</th><th>Window</th><th>Sum</th><th>Action</th></tr>
+        <tr><td>1</td><td>[2]</td><td>2</td><td>Expand right</td></tr>
+        <tr><td>2</td><td>[2,3]</td><td>5</td><td>Expand right</td></tr>
+        <tr><td>3</td><td>[2,3,1]</td><td>6</td><td>Expand right</td></tr>
+        <tr><td>4</td><td>[2,3,1,2]</td><td>8</td><td>Sum&gt;=7! Shrink left → length 4</td></tr>
+        <tr><td>5</td><td>[3,1,2]</td><td>6</td><td>Sum&lt;7, expand right again</td></tr>
+        <tr><td>6</td><td>[3,1,2,4]</td><td>10</td><td>Sum&gt;=7! Shrink → [1,2,4]=7, shrink → [2,4]=6 stop. Best length so far = 2</td></tr>
+      </table>
+    </div>
+    <p class="nt-p">Final answer: length <b>2</b> (window <code>[4,3]</code>). Notice — hum kabhi peeche jaake dobara nahi check karte, isliye yeh O(n) hai, na ki O(n²).</p>
+
+    <div class="nt-code">int l = 0, sum = 0, minLen = Integer.MAX_VALUE;
+for (int r = 0; r < arr.length; r++) {
+  sum += arr[r];               // window expand
+  while (sum >= target) {      // condition match? shrink karo
+    minLen = Math.min(minLen, r - l + 1);
+    sum -= arr[l];
+    l++;
+  }
+}</div>
+    <div class="nt-tip">💡 Pehchaan: agar question mein "contiguous subarray/substring" ho aur kuch maximize/minimize karna ho (length, sum, count of distinct chars) — Sliding Window 90% chance hai ki sahi approach hai.</div>
+    <div class="nt-warn">⚠️ Common mistake: log "while" ki jagah "if" likh dete hain shrink karte waqt — isse window sahi se shrink nahi hota jab multiple shrinks chahiye ho. Hamesha <b>while</b> use karo jab tak condition true ho.</div>
+    <div class="nt-try">
+      <div class="nt-try-text">Try karo: <b>Minimum Size Subarray Sum</b>, <b>Longest Substring Without Repeating Characters</b>, <b>Sliding Window Maximum</b></div>
+      <a href="masterdsa-practice.html?topic=arrays" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-h2" id="hashmap">🗂️ 4. HashMap Pattern</div>
+    <p class="nt-p">Bahut sare array problems mein tumhe yeh yaad rakhna padta hai "kya yeh value pehle dekhi hai?" — HashMap/HashSet isko O(1) mein answer de deta hai (average case), jisse nested loop ki zarurat khatam ho jaati hai.</p>
+
+    <div class="nt-h3">Classic Example — Two Sum</div>
+    <p class="nt-p"><code>nums = [2,7,11,15]</code>, <code>target = 9</code>. Brute force har pair check karega (O(n²)). HashMap approach: har number ke liye check karo "kya complement (target - num) pehle dekha hai?"</p>
+    <div class="trace-box">
+      <table class="trace-table">
+        <tr><th>i</th><th>nums[i]</th><th>complement</th><th>seen map?</th><th>Action</th></tr>
+        <tr><td>0</td><td>2</td><td>7</td><td>empty</td><td>Not found → store {2:0}</td></tr>
+        <tr><td>1</td><td>7</td><td>2</td><td>{2:0}</td><td>Found! 2 is at index 0 → answer [0,1]</td></tr>
+      </table>
+    </div>
+    <div class="nt-code">Map<Integer,Integer> seen = new HashMap<>();
+for (int i = 0; i < nums.length; i++) {
+  int complement = target - nums[i];
+  if (seen.containsKey(complement)) {
+    return new int[]{seen.get(complement), i};  // found!
+  }
+  seen.put(nums[i], i);   // store AFTER checking
+}</div>
+    <div class="nt-warn">⚠️ Common mistake: complement check karne se <b>pehle</b> current number ko map mein daal dena — isse galat self-match ho sakta hai (jaise target=4, nums=[2] toh 2+2 match kar jayega jo wrong hai). Hamesha check karo, phir store karo.</div>
+    <div class="nt-try">
+      <div class="nt-try-text">Try karo: <b>Two Sum</b>, <b>Subarray Sum Equals K</b>, <b>Group Anagrams</b></div>
+      <a href="masterdsa-practice.html?topic=arrays" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-h2" id="kadane">📈 5. Kadane's Algorithm</div>
+    <p class="nt-p">Jab tumhe maximum sum wala contiguous subarray dhundna ho, Kadane's Algorithm O(n) mein solve karta hai. Idea: har position pe decide karo — "current element ko pichle subarray mein jodu, ya yahan se naya subarray shuru karu?"</p>
+
+    <div class="nt-h3">Example: [-2, 1, -3, 4, -1, 2, 1, -5, 4]</div>
+    <div class="trace-box">
+      <table class="trace-table">
+        <tr><th>i</th><th>arr[i]</th><th>curSum</th><th>maxSum</th><th>Logic</th></tr>
+        <tr><td>0</td><td>-2</td><td>-2</td><td>-2</td><td>Start</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>max(1, -2+1=-1) = 1 → restart better</td></tr>
+        <tr><td>2</td><td>-3</td><td>-2</td><td>1</td><td>max(-3, 1-3=-2) = -2</td></tr>
+        <tr><td>3</td><td>4</td><td>4</td><td>4</td><td>max(4, -2+4=2) = 4 → restart better</td></tr>
+        <tr><td>4</td><td>-1</td><td>3</td><td>4</td><td>4-1=3, better than starting fresh (-1)</td></tr>
+        <tr><td>5</td><td>2</td><td>5</td><td>5</td><td>3+2=5</td></tr>
+        <tr><td>6</td><td>1</td><td>6</td><td><b>6</b></td><td>5+1=6, new max!</td></tr>
+      </table>
+    </div>
+    <p class="nt-p">Answer = <b>6</b> (subarray <code>[4,-1,2,1]</code>). Notice — jab bhi current sum negative hota, hum usse "discard" kar dete (naya start), kyunki negative sum kabhi future mein madad nahi karega.</p>
+    <div class="nt-code">int maxSum = arr[0], curSum = arr[0];
+for (int i = 1; i < arr.length; i++) {
+  curSum = Math.max(arr[i], curSum + arr[i]);  // restart ya continue?
+  maxSum = Math.max(maxSum, curSum);
+}</div>
+    <div class="nt-try">
+      <div class="nt-try-text">Try karo: <b>Maximum Subarray</b>, <b>Maximum Product Subarray</b></div>
+      <a href="masterdsa-practice.html?topic=arrays" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-h2" id="prefix">➕ 6. Prefix Sum</div>
+    <p class="nt-p">Agar tumhe baar-baar "index i se j tak ka sum kya hai" jaisa sawaal poocha jaaye, ya "kitne subarrays ka sum exactly X hai" — prefix sum array bana lo jisme <code>prefix[i] = arr[0]+arr[1]+...+arr[i]</code>. Fir koi bhi range sum O(1) mein nikal sakte ho: <code>sum(i,j) = prefix[j] - prefix[i-1]</code>.</p>
+    <div class="nt-p">Combine karke HashMap ke saath, "subarray count with sum = K" jaisa problem bhi O(n) mein solve hota hai — jab bhi <code>(currentSum - K)</code> pehle dekha gaya ho, matlab beech ka subarray sum K hai.</p>
+    <div class="nt-try">
+      <div class="nt-try-text">Try karo: <b>Product of Array Except Self</b>, <b>Subarray Sum Equals K</b></div>
+      <a href="masterdsa-practice.html?topic=arrays" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-h2" id="binarysearch">🎯 7. Binary Search on Arrays</div>
+    <p class="nt-p">Sorted array mein linear search O(n) lagta hai, par binary search O(log n) mein kaam karta hai — har step pe search space half ho jaata hai. <code>mid = (low+high)/2</code>, agar target chhota hai toh right half discard, bada hai toh left half discard.</p>
+    <p class="nt-p">Rotated sorted array mein thoda twist hai — array poora sorted nahi lagega, par ek half hamesha sorted hoga. Pehle check karo kaunsa half sorted hai, fir decide karo target us half mein hai ya nahi.</p>
+    <div class="nt-try">
+      <div class="nt-try-text">Try karo: <b>Find Minimum in Rotated Sorted Array</b>, <b>Search in Rotated Sorted Array</b></div>
+      <a href="masterdsa-practice.html?topic=arrays" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-h2" id="sorting">🔢 8. Sorting-based Tricks</div>
+    <p class="nt-p">Kabhi-kabhi array ko pehle sort karna problem ko bahut simple bana deta hai — jaise 3Sum mein sort karne ke baad two-pointer use kar sakte ho, ya merge intervals mein sort karne ke baad overlapping intervals adjacent ho jaate hain.</p>
+    <div class="nt-tip">💡 Trade-off yaad rakho: sorting O(n log n) lagta hai, toh agar tumhe O(n) solution chahiye (jaise Kadane's), sorting use nahi karna.</div>
+    <div class="nt-try">
+      <div class="nt-try-text">Try karo: <b>Merge Intervals</b>, <b>3Sum</b></div>
+      <a href="masterdsa-practice.html?topic=arrays" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-h2" id="mistakes">⚠️ 9. Common Mistakes (Sabse zyada hone wali galtiyan)</div>
+    <p class="nt-p"><b>1. Off-by-one errors:</b> <code>while(l < r)</code> vs <code>while(l <= r)</code> — galat condition se infinite loop ya wrong answer aata hai. Hamesha socho: kya l aur r same index pe milne chahiye ya nahi?</p>
+    <p class="nt-p"><b>2. Empty array check bhool jana:</b> Agar array empty ho toh code crash ho sakta hai. Hamesha edge case socho.</p>
+    <p class="nt-p"><b>3. Integer overflow:</b> Bade sums ke saath int overflow ho sakta hai — agar values bahut badi hain, long use karo.</p>
+    <p class="nt-p"><b>4. HashMap mein check aur insert ka order:</b> Jaisa Two Sum mein dekha — pehle check karo, phir insert karo, warna galat self-match ho sakta hai.</p>
+    <p class="nt-p"><b>5. Sliding window mein "if" vs "while":</b> Shrink karte waqt while use karo, if nahi — taaki multiple shrinks ho sake jab zarurat ho.</p>
+
+    <p class="nt-p" style="margin-top:2rem">Yeh sab patterns ek baar dimag mein clear ho jaaye, toh 80% array questions in 7 patterns mein se kisi ek mein fit ho jaate hain. Ab practice page pe jakar saare 27 questions try karo — agar kahin atko, Mentor chat khol ke pooch sakte ho, woh isi notes ke basis pe samjhayega.</p>
+
+    <div class="nt-nav">
+      <span></span>
+      <a href="masterdsa-practice.html?topic=arrays">Start Practicing Arrays →</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
