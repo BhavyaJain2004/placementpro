@@ -195,6 +195,13 @@ async function loadOverview() {
       <div class="stat-box"><div class="v" style="color:#06b6d4">${d.newToday}</div><div class="l">New Today</div></div>
       <div class="stat-box"><div class="v" style="color:#f87171">${d.dau}</div><div class="l">DAU</div></div>
     `;
+    if (d.newTodayList && d.newTodayList.length) {
+  document.getElementById('stat-grid').insertAdjacentHTML('afterend', `
+    <div class="card" style="margin-top:1.25rem">
+      <div class="card-title">🆕 Today's Signups</div>
+      ${d.newTodayList.map(u => `<div class="list-row"><div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div><div style="flex:1"><div style="color:#fff;font-size:0.85rem">${u.name||'—'}</div><div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email}</div></div></div>`).join('')}
+    </div>`);
+}
 
     // Bar chart
     const max = Math.max(...d.weeklyGrowth.map(x=>x.count), 1);
