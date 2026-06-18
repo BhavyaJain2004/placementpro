@@ -608,6 +608,25 @@ java_code:'class FreqStack{Map<Integer,Integer> freq=new HashMap<>();Map<Integer
 python_code:'class FreqStack:\n    def __init__(self):\n        self.freq={};self.group={};self.maxFreq=0\n    def push(self,x):\n        f=self.freq.get(x,0)+1;self.freq[x]=f\n        self.maxFreq=max(self.maxFreq,f)\n        self.group.setdefault(f,[]).append(x)\n    def pop(self):\n        x=self.group[self.maxFreq].pop()\n        self.freq[x]-=1\n        if not self.group[self.maxFreq]: self.maxFreq-=1\n        return x',
 cpp_code:'class FreqStack{unordered_map<int,int>freq;unordered_map<int,vector<int>>group;int maxFreq=0;public:void push(int x){int f=++freq[x];maxFreq=max(maxFreq,f);group[f].push_back(x);}int pop(){int x=group[maxFreq].back();group[maxFreq].pop_back();freq[x]--;if(group[maxFreq].empty())maxFreq--;return x;}};',
 companies:['Amazon','Google'],tags:['Stack','Design','HashMap'],similarQs:['Top K Frequent Elements'],timeComplex:'O(1)',spaceComplex:'O(n)',pattern:'Frequency-grouped stacks',trick:'Each frequency level has its own stack to preserve recency',leetcodeUrl:'https://leetcode.com/problems/maximum-frequency-stack/'},
+ module.exports = [
+{topicSlug:'arrays',topic:'Arrays & Strings',order:26,globalOrder:26,title:'Trapping Rain Water',difficulty:'Hard',
+description:'Given heights of bars, compute how much water can be trapped after raining.',
+examples:[{input:'height=[0,1,0,2,1,0,1,3,2,1,2,1]',output:'6'}],
+hint:'Track max height from left and right for each bar.',approach:'Two pointer: maintain leftMax and rightMax, move the pointer with smaller max, add trapped water.',
+java_code:'class Solution{public int trap(int[] h){int l=0,r=h.length-1,leftMax=0,rightMax=0,water=0;while(l<r){if(h[l]<h[r]){leftMax=Math.max(leftMax,h[l]);water+=leftMax-h[l];l++;}else{rightMax=Math.max(rightMax,h[r]);water+=rightMax-h[r];r--;}}return water;}}',
+python_code:'def trap(h):\n    l,r=0,len(h)-1;leftMax=rightMax=water=0\n    while l<r:\n        if h[l]<h[r]:\n            leftMax=max(leftMax,h[l]);water+=leftMax-h[l];l+=1\n        else:\n            rightMax=max(rightMax,h[r]);water+=rightMax-h[r];r-=1\n    return water',
+cpp_code:'int trap(vector<int>&h){int l=0,r=h.size()-1,leftMax=0,rightMax=0,water=0;while(l<r){if(h[l]<h[r]){leftMax=max(leftMax,h[l]);water+=leftMax-h[l];l++;}else{rightMax=max(rightMax,h[r]);water+=rightMax-h[r];r--;}}return water;}',
+companies:['Amazon','Google'],tags:['Array','Two Pointer'],similarQs:['Container With Most Water'],timeComplex:'O(n)',spaceComplex:'O(1)',pattern:'Two Pointer with running max',trick:'Move pointer with smaller max — water level bounded by it',leetcodeUrl:'https://leetcode.com/problems/trapping-rain-water/'},
+
+{topicSlug:'arrays',topic:'Arrays & Strings',order:27,globalOrder:27,title:'Median of Two Sorted Arrays',difficulty:'Hard',
+description:'Find the median of two sorted arrays in O(log(min(n,m))) time.',
+examples:[{input:'nums1=[1,3], nums2=[2]',output:'2.0'}],
+hint:'Binary search on the smaller array to find correct partition.',approach:'Binary search partition point so left half max <= right half min across both arrays.',
+java_code:'class Solution{public double findMedianSortedArrays(int[] a,int[] b){if(a.length>b.length){int[] t=a;a=b;b=t;}int m=a.length,n=b.length,lo=0,hi=m;while(lo<=hi){int i=(lo+hi)/2,j=(m+n+1)/2-i;int aLeft=(i==0)?Integer.MIN_VALUE:a[i-1];int aRight=(i==m)?Integer.MAX_VALUE:a[i];int bLeft=(j==0)?Integer.MIN_VALUE:b[j-1];int bRight=(j==n)?Integer.MAX_VALUE:b[j];if(aLeft<=bRight&&bLeft<=aRight){if((m+n)%2==0)return (Math.max(aLeft,bLeft)+Math.min(aRight,bRight))/2.0;else return Math.max(aLeft,bLeft);}else if(aLeft>bRight)hi=i-1;else lo=i+1;}return 0.0;}}',
+python_code:'def findMedianSortedArrays(a,b):\n    if len(a)>len(b): a,b=b,a\n    m,n=len(a),len(b);lo,hi=0,m\n    while lo<=hi:\n        i=(lo+hi)//2;j=(m+n+1)//2-i\n        aLeft=float("-inf") if i==0 else a[i-1]\n        aRight=float("inf") if i==m else a[i]\n        bLeft=float("-inf") if j==0 else b[j-1]\n        bRight=float("inf") if j==n else b[j]\n        if aLeft<=bRight and bLeft<=aRight:\n            if (m+n)%2==0: return (max(aLeft,bLeft)+min(aRight,bRight))/2\n            return max(aLeft,bLeft)\n        elif aLeft>bRight: hi=i-1\n        else: lo=i+1',
+cpp_code:'double findMedianSortedArrays(vector<int>&a,vector<int>&b){if(a.size()>b.size())swap(a,b);int m=a.size(),n=b.size(),lo=0,hi=m;while(lo<=hi){int i=(lo+hi)/2,j=(m+n+1)/2-i;int aLeft=(i==0)?INT_MIN:a[i-1];int aRight=(i==m)?INT_MAX:a[i];int bLeft=(j==0)?INT_MIN:b[j-1];int bRight=(j==n)?INT_MAX:b[j];if(aLeft<=bRight&&bLeft<=aRight){if((m+n)%2==0)return (max(aLeft,bLeft)+min(aRight,bRight))/2.0;return max(aLeft,bLeft);}else if(aLeft>bRight)hi=i-1;else lo=i+1;}return 0.0;}',
+companies:['Amazon','Google','Microsoft'],tags:['Array','Binary Search'],similarQs:['Kth Largest Element'],timeComplex:'O(log(min(n,m)))',spaceComplex:'O(1)',pattern:'Binary search on partition',trick:'Partition both arrays so combined left half has exactly half elements',leetcodeUrl:'https://leetcode.com/problems/median-of-two-sorted-arrays/'},
+];
 ];
 
 async function seed() {
