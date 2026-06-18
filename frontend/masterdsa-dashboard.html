@@ -381,6 +381,14 @@ if (dailyData.status === 'fulfilled' && dailyData.value?.question) {
     // Roadmap mini
     renderRoadmapMini();
 
+    API.call('/masterdsa/mentor/proactive').then(d => {
+  if (d.message) {
+    const fab = document.getElementById('mentor-fab');
+    if (fab) fab.style.boxShadow = '0 0 0 4px rgba(124,106,247,0.4), 0 4px 20px rgba(124,106,247,0.5)';
+    mentorLoaded = false;
+  }
+}).catch(()=>{});
+
   } catch(e) {
     console.error('Init error:', e);
   }
