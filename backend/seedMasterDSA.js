@@ -608,7 +608,7 @@ java_code:'class FreqStack{Map<Integer,Integer> freq=new HashMap<>();Map<Integer
 python_code:'class FreqStack:\n    def __init__(self):\n        self.freq={};self.group={};self.maxFreq=0\n    def push(self,x):\n        f=self.freq.get(x,0)+1;self.freq[x]=f\n        self.maxFreq=max(self.maxFreq,f)\n        self.group.setdefault(f,[]).append(x)\n    def pop(self):\n        x=self.group[self.maxFreq].pop()\n        self.freq[x]-=1\n        if not self.group[self.maxFreq]: self.maxFreq-=1\n        return x',
 cpp_code:'class FreqStack{unordered_map<int,int>freq;unordered_map<int,vector<int>>group;int maxFreq=0;public:void push(int x){int f=++freq[x];maxFreq=max(maxFreq,f);group[f].push_back(x);}int pop(){int x=group[maxFreq].back();group[maxFreq].pop_back();freq[x]--;if(group[maxFreq].empty())maxFreq--;return x;}};',
 companies:['Amazon','Google'],tags:['Stack','Design','HashMap'],similarQs:['Top K Frequent Elements'],timeComplex:'O(1)',spaceComplex:'O(n)',pattern:'Frequency-grouped stacks',trick:'Each frequency level has its own stack to preserve recency',leetcodeUrl:'https://leetcode.com/problems/maximum-frequency-stack/'},
- module.exports = [
+
 {topicSlug:'arrays',topic:'Arrays & Strings',order:26,globalOrder:26,title:'Trapping Rain Water',difficulty:'Hard',
 description:'Given heights of bars, compute how much water can be trapped after raining.',
 examples:[{input:'height=[0,1,0,2,1,0,1,3,2,1,2,1]',output:'6'}],
