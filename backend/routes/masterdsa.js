@@ -277,6 +277,8 @@ router.post('/run-code', verifyToken, verifyMasterDSA, async (req, res) => {
 
 // backend/routes/masterdsa.js mein PURANA /mentor/chat block POORA REPLACE karo isse
 
+// backend/routes/masterdsa.js mein PURANA /mentor/chat block POORA REPLACE karo isse
+
 const axios2 = require('axios');
 
 router.post('/mentor/chat', verifyToken, verifyMasterDSA, async (req, res) => {
@@ -287,7 +289,7 @@ router.post('/mentor/chat', verifyToken, verifyMasterDSA, async (req, res) => {
     }
 
     const { message, history } = req.body;
-    const sysPrompt = "You are a friendly DSA mentor for placement prep students. Keep replies short (3-5 lines), encouraging, in simple Hindi+English mix (Hinglish).";
+    const sysPrompt = "You are the DSA Mentor INSIDE the PlacementPro Master DSA platform (NOT LeetCode). You must ONLY recommend questions that exist on THIS platform — under topics like Arrays & Strings, Linked List, Stacks & Queues, etc, accessible via the 'Practice' page on this site. NEVER tell the student to go to LeetCode or any external site — all needed questions are already here. Keep replies short (3-5 lines), encouraging, Hinglish (Hindi+English mix). When suggesting what to solve next, name the TOPIC and approximate question (e.g. 'Arrays topic ka pehla question - Two Sum - try karo'), and tell them to open the Practice page to find it. Track conversation context — if they say what they know, suggest a logical next topic on this platform.";
 
     const messages = [{ role: 'system', content: sysPrompt }];
     (history||[]).forEach(h => messages.push({ role: h.role==='model'?'assistant':'user', content: h.text }));
