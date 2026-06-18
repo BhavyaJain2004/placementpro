@@ -270,14 +270,6 @@ router.post('/run-code', verifyToken, verifyMasterDSA, async (req, res) => {
     res.status(500).json({ output: 'Compiler error: ' + err.message });
   }
 });
-// backend/routes/masterdsa.js mein add karo, module.exports se PEHLE
-// backend/routes/masterdsa.js mein PURANA /mentor/chat route POORA REPLACE karo isse
-
-// backend/routes/masterdsa.js mein PURANA /mentor/chat + callGemini POORA REPLACE karo isse
-
-// backend/routes/masterdsa.js mein PURANA /mentor/chat block POORA REPLACE karo isse
-
-// backend/routes/masterdsa.js mein PURANA /mentor/chat block POORA REPLACE karo isse
 // backend/routes/masterdsa.js mein PURANA /mentor/chat block POORA REPLACE karo isse
 const axios2 = require('axios');
 const MentorChat = require('../models/MentorChat');
@@ -291,12 +283,20 @@ router.post('/mentor/chat', verifyToken, verifyMasterDSA, async (req, res) => {
     let chat = await MentorChat.findOne({ userId: req.user.id });
     if (!chat) chat = await MentorChat.create({ userId: req.user.id, messages: [] });
 
-    // Get list of topics+counts from DB so mentor knows what actually exists
+    // Get list of topics+counts AND actual question titles so mentor never invents names
     const topicCounts = await Q.aggregate([
       { $match: { isActive: true } },
       { $group: { _id: '$topic', count: { $sum: 1 } } }
     ]);
     const topicList = topicCounts.map(t => `${t._id} (${t.count} questions)`).join(', ');
+
+    const sampleQs = await Q.find({ isActive: true }).select('topic title difficulty order').sort({ globalOrder: 1 }).limit(60).lean();
+    const qListByTopic = {};
+    sampleQs.forEach(q => {
+      if (!qListByTopic[q.topic]) qListByTopic[q.topic] = [];
+      qListByTopic[q.topic].push(`${q.order}. ${q.title} (${q.difficulty})`);
+    });
+    const qListText = Object.entries(qListByTopic).map(([topic, qs]) => `${topic}: ${qs.join(', ')}`).join('\n');
 
     // Get user's solved count for context
     const DailySolve = require('../models/DailySolve');
@@ -304,14 +304,17 @@ router.post('/mentor/chat', verifyToken, verifyMasterDSA, async (req, res) => {
 
     const sysPrompt = `You are the DSA Mentor inside PlacementPro's Master DSA platform (NOT LeetCode, NOT any external site).
 Topics available on THIS platform right now: ${topicList}.
+EXACT question titles that exist on this platform (use ONLY these names, never invent or use LeetCode names not in this list):
+${qListText}
 The student has solved ${solvedCount} questions so far on this platform.
 RULES:
-- ONLY recommend topics/questions from the list above. Never mention LeetCode or external sites.
-- If the student asks something unrelated to DSA, placements, or this platform (e.g. random chit-chat, unrelated topics), politely refuse and redirect: say you're a DSA mentor and can only help with DSA/placement prep.
-- If they mention what they know (e.g. "Arrays aata hai"), remember it for later, acknowledge it, and suggest the next logical topic from the list.
+- ONLY recommend question titles EXACTLY as they appear in the list above. Never invent a question name. If unsure a question exists, just recommend the topic generally instead of naming one.
+- Never mention LeetCode or external sites.
+- If the student asks something unrelated to DSA, placements, or this platform, politely refuse and redirect: say you're a DSA mentor and can only help with DSA/placement prep.
+- If they mention what they know (e.g. "Arrays aata hai"), remember it, acknowledge it, and suggest the next logical topic from the list.
 - Keep replies short (3-5 lines), encouraging, Hinglish (Hindi+English mix).
-- Act like a real mentor who teaches concepts briefly when asked (e.g. if asked "sliding window kya hai", explain in 3-4 lines).
-- When pointing to a topic, tell them to open the Practice page and select that topic from the sidebar.`;
+- Explain concepts briefly when asked (3-4 lines), like a real mentor.
+- When pointing to a question, tell them to open the Practice page, select that topic, and find that exact question title in the list.`;
 
     // Build message history from DB (memory!)
     const history = chat.messages.slice(-12).map(m => ({ role: m.role==='assistant'?'assistant':'user', content: m.text }));
