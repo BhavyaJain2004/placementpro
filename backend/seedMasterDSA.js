@@ -626,7 +626,7 @@ java_code:'class Solution{public double findMedianSortedArrays(int[] a,int[] b){
 python_code:'def findMedianSortedArrays(a,b):\n    if len(a)>len(b): a,b=b,a\n    m,n=len(a),len(b);lo,hi=0,m\n    while lo<=hi:\n        i=(lo+hi)//2;j=(m+n+1)//2-i\n        aLeft=float("-inf") if i==0 else a[i-1]\n        aRight=float("inf") if i==m else a[i]\n        bLeft=float("-inf") if j==0 else b[j-1]\n        bRight=float("inf") if j==n else b[j]\n        if aLeft<=bRight and bLeft<=aRight:\n            if (m+n)%2==0: return (max(aLeft,bLeft)+min(aRight,bRight))/2\n            return max(aLeft,bLeft)\n        elif aLeft>bRight: hi=i-1\n        else: lo=i+1',
 cpp_code:'double findMedianSortedArrays(vector<int>&a,vector<int>&b){if(a.size()>b.size())swap(a,b);int m=a.size(),n=b.size(),lo=0,hi=m;while(lo<=hi){int i=(lo+hi)/2,j=(m+n+1)/2-i;int aLeft=(i==0)?INT_MIN:a[i-1];int aRight=(i==m)?INT_MAX:a[i];int bLeft=(j==0)?INT_MIN:b[j-1];int bRight=(j==n)?INT_MAX:b[j];if(aLeft<=bRight&&bLeft<=aRight){if((m+n)%2==0)return (max(aLeft,bLeft)+min(aRight,bRight))/2.0;return max(aLeft,bLeft);}else if(aLeft>bRight)hi=i-1;else lo=i+1;}return 0.0;}',
 companies:['Amazon','Google','Microsoft'],tags:['Array','Binary Search'],similarQs:['Kth Largest Element'],timeComplex:'O(log(min(n,m)))',spaceComplex:'O(1)',pattern:'Binary search on partition',trick:'Partition both arrays so combined left half has exactly half elements',leetcodeUrl:'https://leetcode.com/problems/median-of-two-sorted-arrays/'},
-];
+
 ];
 
 async function seed() {
