@@ -443,11 +443,24 @@ document.addEventListener('click', e => {
 
 <script>
 let mentorHistory = [];
-function toggleMentor() {
+let mentorLoaded = false;
+
+async function toggleMentor() {
   const box = document.getElementById('mentor-box');
   box.style.display = box.style.display === 'none' ? 'flex' : 'none';
-  if (box.style.display==='flex' && !mentorHistory.length) {
-    addMentorMsg("Hi! Main tumhara DSA Mentor hoon 🧑‍🏫 Tension mat lena, data dheere dheere load ho raha hai. Batao, DSA mein kya aata hai abhi?", 'bot');
+  if (box.style.display==='flex' && !mentorLoaded) {
+    mentorLoaded = true;
+    try {
+      const data = await API.call('/masterdsa/mentor/history');
+      if (data.messages && data.messages.length) {
+        data.messages.forEach(m => addMentorMsg(m.text, m.role==='assistant'?'bot':'user'));
+        mentorHistory = data.messages.map(m => ({role: m.role, text: m.text}));
+      } else {
+        addMentorMsg("Hi! Main tumhara DSA Mentor hoon 🧑‍🏫 Tension mat lena, data dheere dheere load ho raha hai. Batao, DSA mein kya aata hai abhi?", 'bot');
+      }
+    } catch(e) {
+      addMentorMsg("Hi! Main tumhara DSA Mentor hoon 🧑‍🏫", 'bot');
+    }
   }
 }
 function addMentorMsg(text, who) {
@@ -462,14 +475,12 @@ async function sendMentorMsg() {
   const msg = inp.value.trim();
   if (!msg) return;
   addMentorMsg(msg, 'user');
-  mentorHistory.push({role:'user', text: msg});
   inp.value = '';
   addMentorMsg('Type ho raha hai...', 'bot');
   try {
-    const data = await API.call('/masterdsa/mentor/chat', { method:'POST', body: JSON.stringify({ message: msg, history: mentorHistory.slice(-6) }) });
+    const data = await API.call('/masterdsa/mentor/chat', { method:'POST', body: JSON.stringify({ message: msg }) });
     document.getElementById('mentor-msgs').lastChild.remove();
     addMentorMsg(data.reply, 'bot');
-    mentorHistory.push({role:'model', text: data.reply});
   } catch(e) {
     document.getElementById('mentor-msgs').lastChild.remove();
     addMentorMsg('Error aaya, phir try karo', 'bot');
