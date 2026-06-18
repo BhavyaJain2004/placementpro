@@ -275,34 +275,32 @@ router.post('/run-code', verifyToken, verifyMasterDSA, async (req, res) => {
 
 // backend/routes/masterdsa.js mein PURANA /mentor/chat + callGemini POORA REPLACE karo isse
 
+// backend/routes/masterdsa.js mein PURANA /mentor/chat block POORA REPLACE karo isse
+
 const axios2 = require('axios');
-const GEMINI_MODEL = 'gemini-2.0-flash'; // stable, widely available
 
 router.post('/mentor/chat', verifyToken, verifyMasterDSA, async (req, res) => {
   try {
-    if (!process.env.GEMINI_API_KEY) {
-      console.error('GEMINI_API_KEY missing in env');
-      return res.status(500).json({ reply: "Mentor setup incomplete — API key missing." });
+    if (!process.env.GROQ_API_KEY) {
+      console.error('GROQ_API_KEY missing in env');
+      return res.status(500).json({ reply: "Mentor setup incomplete." });
     }
 
     const { message, history } = req.body;
     const sysPrompt = "You are a friendly DSA mentor for placement prep students. Keep replies short (3-5 lines), encouraging, in simple Hindi+English mix (Hinglish).";
 
-    const contents = (history||[]).map(h => ({ role: h.role, parts: [{text: h.text}] }));
-    contents.push({ role: 'user', parts: [{text: message}] });
+    const messages = [{ role: 'system', content: sysPrompt }];
+    (history||[]).forEach(h => messages.push({ role: h.role==='model'?'assistant':'user', content: h.text }));
+    messages.push({ role: 'user', content: message });
 
     const resp = await axios2.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      { contents, systemInstruction: { parts: [{text: sysPrompt}] } },
-      { timeout: 15000 }
+      'https://api.groq.com/openai/v1/chat/completions',
+      { model: 'llama-3.3-70b-versatile', messages, max_tokens: 300 },
+      { headers: { 'Authorization': `Bearer ${process.env.GROQ_API_KEY}`, 'Content-Type': 'application/json' }, timeout: 15000 }
     );
 
-    const reply = resp.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!reply) {
-      console.error('Gemini empty response:', JSON.stringify(resp.data));
-      return res.json({ reply: "Samajh nahi paya, dobara try karo." });
-    }
-    res.json({ reply });
+    const reply = resp.data?.choices?.[0]?.message?.content;
+    res.json({ reply: reply || "Samajh nahi paya, dobara try karo." });
   } catch(err) {
     console.error('Mentor error:', JSON.stringify(err.response?.data || err.message));
     res.status(500).json({ reply: "Mentor abhi busy hai, thodi der mein try karo." });
