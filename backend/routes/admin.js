@@ -295,6 +295,19 @@ router.post('/panel-login', verifyToken, verifyAdmin, async (req, res) => {
 });
 
 // MAIN STATS — totals, overlaps, growth
+// backend/routes/admin.js mein ye routes ADD karo (module.exports se PEHLE)
+// verifyAdmin middleware already exists hoga — wahi use karo
+
+// Simple password gate for the panel itself (extra layer)
+router.post('/panel-login', verifyToken, verifyAdmin, async (req, res) => {
+  const { password } = req.body;
+  if (password !== 'adminbhavya') {
+    return res.status(401).json({ message: 'Wrong password' });
+  }
+  res.json({ ok: true });
+});
+
+// MAIN STATS — totals, overlaps, growth
 router.get('/analytics/overview', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const totalUsers   = await User.countDocuments({});
@@ -303,9 +316,10 @@ router.get('/analytics/overview', verifyToken, verifyAdmin, async (req, res) => 
     const bothAccess   = await User.countDocuments({ isPaid: true, masterDsaAccess: true });
     const freeUsers    = await User.countDocuments({ isPaid: false, masterDsaAccess: false });
 
-    // New users today
+    // New users today (with names)
     const todayStart = new Date(); todayStart.setHours(0,0,0,0);
     const newToday = await User.countDocuments({ createdAt: { $gte: todayStart } });
+    const newTodayList = await User.find({ createdAt: { $gte: todayStart } }).select('name email createdAt').sort({ createdAt: -1 }).lean();
 
     // DAU — users with activity ping today (assuming Activity model exists with userId+date)
     let dau = 0;
@@ -325,7 +339,7 @@ router.get('/analytics/overview', verifyToken, verifyAdmin, async (req, res) => 
 
     res.json({
       totalUsers, basePaid, masterDsa, bothAccess, freeUsers,
-      newToday, dau, weeklyGrowth: days
+      newToday, newTodayList, dau, weeklyGrowth: days
     });
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
