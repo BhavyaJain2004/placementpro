@@ -278,22 +278,44 @@ router.post('/run-code', verifyToken, verifyMasterDSA, async (req, res) => {
 // backend/routes/masterdsa.js mein PURANA /mentor/chat block POORA REPLACE karo isse
 
 // backend/routes/masterdsa.js mein PURANA /mentor/chat block POORA REPLACE karo isse
-
+// backend/routes/masterdsa.js mein PURANA /mentor/chat block POORA REPLACE karo isse
 const axios2 = require('axios');
+const MentorChat = require('../models/MentorChat');
 
 router.post('/mentor/chat', verifyToken, verifyMasterDSA, async (req, res) => {
   try {
-    if (!process.env.GROQ_API_KEY) {
-      console.error('GROQ_API_KEY missing in env');
-      return res.status(500).json({ reply: "Mentor setup incomplete." });
-    }
+    if (!process.env.GROQ_API_KEY) return res.status(500).json({ reply: "Mentor setup incomplete." });
+    const { message } = req.body;
 
-    const { message, history } = req.body;
-    const sysPrompt = "You are the DSA Mentor INSIDE the PlacementPro Master DSA platform (NOT LeetCode). You must ONLY recommend questions that exist on THIS platform — under topics like Arrays & Strings, Linked List, Stacks & Queues, etc, accessible via the 'Practice' page on this site. NEVER tell the student to go to LeetCode or any external site — all needed questions are already here. Keep replies short (3-5 lines), encouraging, Hinglish (Hindi+English mix). When suggesting what to solve next, name the TOPIC and approximate question (e.g. 'Arrays topic ka pehla question - Two Sum - try karo'), and tell them to open the Practice page to find it. Track conversation context — if they say what they know, suggest a logical next topic on this platform.";
+    // Load or create chat record
+    let chat = await MentorChat.findOne({ userId: req.user.id });
+    if (!chat) chat = await MentorChat.create({ userId: req.user.id, messages: [] });
 
-    const messages = [{ role: 'system', content: sysPrompt }];
-    (history||[]).forEach(h => messages.push({ role: h.role==='model'?'assistant':'user', content: h.text }));
-    messages.push({ role: 'user', content: message });
+    // Get list of topics+counts from DB so mentor knows what actually exists
+    const topicCounts = await Q.aggregate([
+      { $match: { isActive: true } },
+      { $group: { _id: '$topic', count: { $sum: 1 } } }
+    ]);
+    const topicList = topicCounts.map(t => `${t._id} (${t.count} questions)`).join(', ');
+
+    // Get user's solved count for context
+    const DailySolve = require('../models/DailySolve');
+    const solvedCount = await DailySolve.countDocuments({ userId: req.user.id });
+
+    const sysPrompt = `You are the DSA Mentor inside PlacementPro's Master DSA platform (NOT LeetCode, NOT any external site).
+Topics available on THIS platform right now: ${topicList}.
+The student has solved ${solvedCount} questions so far on this platform.
+RULES:
+- ONLY recommend topics/questions from the list above. Never mention LeetCode or external sites.
+- If the student asks something unrelated to DSA, placements, or this platform (e.g. random chit-chat, unrelated topics), politely refuse and redirect: say you're a DSA mentor and can only help with DSA/placement prep.
+- If they mention what they know (e.g. "Arrays aata hai"), remember it for later, acknowledge it, and suggest the next logical topic from the list.
+- Keep replies short (3-5 lines), encouraging, Hinglish (Hindi+English mix).
+- Act like a real mentor who teaches concepts briefly when asked (e.g. if asked "sliding window kya hai", explain in 3-4 lines).
+- When pointing to a topic, tell them to open the Practice page and select that topic from the sidebar.`;
+
+    // Build message history from DB (memory!)
+    const history = chat.messages.slice(-12).map(m => ({ role: m.role==='assistant'?'assistant':'user', content: m.text }));
+    const messages = [{ role: 'system', content: sysPrompt }, ...history, { role: 'user', content: message }];
 
     const resp = await axios2.post(
       'https://api.groq.com/openai/v1/chat/completions',
@@ -301,11 +323,27 @@ router.post('/mentor/chat', verifyToken, verifyMasterDSA, async (req, res) => {
       { headers: { 'Authorization': `Bearer ${process.env.GROQ_API_KEY}`, 'Content-Type': 'application/json' }, timeout: 15000 }
     );
 
-    const reply = resp.data?.choices?.[0]?.message?.content;
-    res.json({ reply: reply || "Samajh nahi paya, dobara try karo." });
+    const reply = resp.data?.choices?.[0]?.message?.content || "Samajh nahi paya, dobara try karo.";
+
+    // Save both messages to memory
+    chat.messages.push({ role: 'user', text: message });
+    chat.messages.push({ role: 'assistant', text: reply });
+    if (chat.messages.length > 60) chat.messages = chat.messages.slice(-60); // cap history size
+    await chat.save();
+
+    res.json({ reply });
   } catch(err) {
     console.error('Mentor error:', JSON.stringify(err.response?.data || err.message));
     res.status(500).json({ reply: "Mentor abhi busy hai, thodi der mein try karo." });
   }
 });
+
+// GET previous chat history (for loading on page open)
+router.get('/mentor/history', verifyToken, verifyMasterDSA, async (req, res) => {
+  try {
+    const chat = await MentorChat.findOne({ userId: req.user.id });
+    res.json({ messages: chat?.messages || [] });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
 module.exports = router;
