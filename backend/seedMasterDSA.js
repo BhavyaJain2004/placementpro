@@ -851,7 +851,7 @@ hint:'Inorder traversal of a BST gives sorted order.',approach:'Do inorder trave
 java_code:'class Solution{int count=0,result=-1;public int kthSmallest(TreeNode root,int k){inorder(root,k);return result;}void inorder(TreeNode node,int k){if(node==null||count>=k)return;inorder(node.left,k);count++;if(count==k){result=node.val;return;}inorder(node.right,k);}}',
 python_code:'def kthSmallest(root,k):\n    stack=[];node=root\n    while True:\n        while node:\n            stack.append(node);node=node.left\n        node=stack.pop();k-=1\n        if k==0: return node.val\n        node=node.right',
 cpp_code:'void inorder(TreeNode* node,int k,int&count,int&result){if(!node||count>=k)return;inorder(node->left,k,count,result);count++;if(count==k){result=node->val;return;}inorder(node->right,k,count,result);}int kthSmallest(TreeNode* root,int k){int count=0,result=-1;inorder(root,k,count,result);return result;}',
-companies:['Amazon','Google'],tags:['Tree','BST','DFS'],similarQs:['Validate BST'],timeComplex:'O(h+k)',spaceComplex:'O(h)',pattern:'Inorder traversal with early stop',trick:'BST inorder = sorted order — stop counting at Kth element instead of building full list',leetcodeUrl:'https://leetcode.com/problems/kth-smallest-element-in-a-bst/'},
+companies:['Amazon','Google'],tags:['Tree','BST','DFS'],similarQs:['Validate BST'],timeComplex:'O(h+k)',spaceComplex:'O(h)',pattern:'Inorder traversal with early stop',trick:'BST inorder = sorted order — stop counting at Kth element instead of building full list',leetcodeUrl:'https://leetcode.com/problems/kth-smallest-element-in-a-bst/'}
   
 
 ];
