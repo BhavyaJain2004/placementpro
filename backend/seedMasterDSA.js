@@ -717,7 +717,7 @@ python_code:'def mergeSort(arr,l,r):\n    if l>=r: return\n    mid=(l+r)//2\n   
 cpp_code:'void merge(vector<int>&arr,int l,int mid,int r){vector<int>temp;int i=l,j=mid+1;while(i<=mid&&j<=r)temp.push_back(arr[i]<=arr[j]?arr[i++]:arr[j++]);while(i<=mid)temp.push_back(arr[i++]);while(j<=r)temp.push_back(arr[j++]);for(int x=0;x<(int)temp.size();x++)arr[l+x]=temp[x];}void mergeSort(vector<int>&arr,int l,int r){if(l>=r)return;int mid=(l+r)/2;mergeSort(arr,l,mid);mergeSort(arr,mid+1,r);merge(arr,l,mid,r);}',
 companies:['TCS','Amazon'],tags:['Recursion','Sorting','Divide and Conquer'],similarQs:['Sort List'],timeComplex:'O(n log n)',spaceComplex:'O(n)',pattern:'Divide and conquer',trick:'Merge step is the key — combines two sorted halves in O(n)',leetcodeUrl:'https://leetcode.com/problems/sort-an-array/'},
 
- odule.exports = [
+
 {topicSlug:'recursion',topic:'Recursion',order:0,globalOrder:82,title:'Print Numbers 1 to N using Recursion',difficulty:'Easy',
 description:'Print numbers from 1 to N using recursion only (no loops). The simplest possible recursion to understand call stack flow.',
 examples:[{input:'n=5',output:'1 2 3 4 5'}],
