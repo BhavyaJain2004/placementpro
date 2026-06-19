@@ -1,22 +1,11 @@
-// backend/routes/masterdsa.js mein add karo, module.exports se PEHLE
-const QuestionSolve = require('../models/QuestionSolve');
+const mongoose = require('mongoose');
 
-// Mark a question as solved
-router.post('/question/:id/solve', verifyToken, verifyMasterDSA, async (req, res) => {
-  try {
-    await QuestionSolve.findOneAndUpdate(
-      { userId: req.user.id, questionId: req.params.id },
-      { userId: req.user.id, questionId: req.params.id, solvedAt: new Date() },
-      { upsert: true }
-    );
-    res.json({ message: 'Marked solved!' });
-  } catch(err) { res.status(500).json({ message: err.message }); }
+const questionSolveSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  questionId: { type: mongoose.Schema.Types.ObjectId, ref: 'MasterDSAQuestion', required: true },
+  solvedAt: { type: Date, default: Date.now }
 });
 
-// Get all solved question IDs for current user (for showing ticks)
-router.get('/solved-ids', verifyToken, verifyMasterDSA, async (req, res) => {
-  try {
-    const solved = await QuestionSolve.find({ userId: req.user.id }).select('questionId');
-    res.json({ ids: solved.map(s => s.questionId.toString()) });
-  } catch(err) { res.status(500).json({ message: err.message }); }
-});
+questionSolveSchema.index({ userId: 1, questionId: 1 }, { unique: true });
+
+module.exports = mongoose.model('QuestionSolve', questionSolveSchema);
