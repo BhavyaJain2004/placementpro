@@ -452,14 +452,19 @@ function selectTopic(t) {
   loadQuestions(t.slug);
 }
 
+let solvedIds = new Set();
+
 async function loadQuestions(slug) {
   document.getElementById('q-list').innerHTML = `
     <div style="padding:2rem;text-align:center;color:rgba(255,255,255,0.3);font-size:0.82rem">Loading...</div>`;
   try {
-    const qs = await API.call('/masterdsa/questions/' + slug);
+    const [qs, solvedData] = await Promise.all([
+      API.call('/masterdsa/questions/' + slug),
+      API.call('/masterdsa/solved-ids')
+    ]);
+    solvedIds = new Set(solvedData.ids || []);
     renderQList(qs);
   } catch(e) {
-    // Fallback demo questions if API not ready
     renderQList(getDemoQuestions(slug));
   }
 }
