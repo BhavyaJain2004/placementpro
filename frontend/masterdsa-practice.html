@@ -335,6 +335,7 @@
       </div>
       <div class="editor-footer">
         <button class="run-btn" id="run-btn" onclick="runCode()">▶ Run Code</button>
+        <button id="mark-solved-btn" style="display:none;background:rgba(124,106,247,0.12);color:#a89df7;border:1px solid rgba(124,106,247,0.25);border-radius:8px;padding:0.5rem 1.1rem;font-size:0.82rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer" onclick="markQuestionSolved()">✓ Mark Solved</button>
         <button onclick="resetCode()" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:0.5rem 1rem;font-size:0.78rem;cursor:pointer;font-family:'DM Sans',sans-serif;">Reset</button>
         <span id="run-status" style="font-size:0.72rem;color:rgba(255,255,255,0.3);margin-left:auto"></span>
       </div>
@@ -501,13 +502,17 @@ function renderQList(qs) {
       '<div style="padding:2rem;text-align:center;color:rgba(255,255,255,0.3);font-size:0.82rem">No questions yet — coming soon!</div>';
     return;
   }
-  document.getElementById('q-list').innerHTML = qs.map((q,i) => `
+  document.getElementById('q-list').innerHTML = qs.map((q,i) => {
+    const isSolved = solvedIds.has(q._id);
+    return `
     <div class="q-row" id="qrow-${q._id}" onclick="openQuestion('${q._id}', ${JSON.stringify(q).replace(/"/g,'&quot;')})">
       <span style="font-size:0.65rem;color:rgba(255,255,255,0.2);width:18px;flex-shrink:0">${i+1}</span>
       <span class="q-diff diff-${q.difficulty}">${q.difficulty}</span>
       <span class="q-row-title">${q.title}</span>
       <span class="q-row-companies">${(q.companies||[]).slice(0,2).join(', ')}</span>
-    </div>`).join('');
+      ${isSolved ? '<span class="q-solved-tick">✓</span>' : ''}
+    </div>`;
+  }).join('');
 }
 
 // ── OPEN QUESTION ──
@@ -645,6 +650,7 @@ async function runCode() {
     });
     const stdout = data.output || '';
     out.innerHTML = `<span class="${data.statusCode===200?'out-success':'out-error'}">${escHtml(stdout)}</span>`;
+    document.getElementById('mark-solved-btn').style.display = 'inline-block';
     document.getElementById('run-status').textContent = data.statusCode===200?'✓ Done':'✗ Error';
   } catch(e) {
     out.innerHTML = `<span class="out-error">// Compiler unavailable</span>`;
@@ -652,6 +658,18 @@ async function runCode() {
     btn.classList.remove('running');
     btn.innerHTML = '▶ Run Code';
   }
+}
+  async function markQuestionSolved() {
+  if (!currentQ) return;
+  try {
+    await API.call(`/masterdsa/question/${currentQ._id}/solve`, { method: 'POST' });
+    solvedIds.add(currentQ._id);
+    toast('Marked as solved! 🎉', 'success');
+    const row = document.getElementById('qrow-' + currentQ._id);
+    if (row && !row.querySelector('.q-solved-tick')) {
+      row.insertAdjacentHTML('beforeend', '<span class="q-solved-tick">✓</span>');
+    }
+  } catch(e) { toast('Error marking solved', 'error'); }
 }
 // ── SEARCH ──
 function searchQ() {
