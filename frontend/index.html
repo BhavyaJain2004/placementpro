@@ -280,6 +280,10 @@
   //     });
 async function handleSignup(e) {
   e.preventDefault();
+  if (!document.getElementById('terms-check').checked) {
+    document.getElementById('signup-err').textContent = 'Please accept Terms & Privacy Policy to continue';
+    return;
+  }
   const btn  = document.getElementById('signup-btn');
   const plan = document.getElementById('signup-plan').value;
   btn.disabled = true; btn.textContent = 'Creating account…';
@@ -315,5 +319,9 @@ async function handleSignup(e) {
     if (e.target === this) closeAuth();
   });
 </script>
+  <div style="text-align:center;padding:1.5rem;border-top:1px solid rgba(255,255,255,0.06)">
+  <a href="terms.html" style="font-size:0.75rem;color:rgba(255,255,255,0.3);text-decoration:none;margin-right:1rem">Terms & Conditions</a>
+  <a href="privacy.html" style="font-size:0.75rem;color:rgba(255,255,255,0.3);text-decoration:none">Privacy Policy</a>
+</div>
 </body>
 </html>
