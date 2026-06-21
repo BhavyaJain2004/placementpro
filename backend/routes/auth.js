@@ -120,6 +120,7 @@ router.post('/register', async (req, res) => {
   password:   hashed,
   mobile:     mobile ? mobile.trim() : '',
   referredBy: referredBy ? referredBy.toUpperCase().trim() : '',
+  termsAcceptedAt: new Date(),
   sessions:   []
 });
 
