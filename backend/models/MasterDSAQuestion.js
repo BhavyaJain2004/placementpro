@@ -40,6 +40,11 @@ const masterDSASchema = new mongoose.Schema({
   // Pattern / Trick
   pattern: { type: String },
   trick: { type: String },
+  testCases: [{
+  input: String,
+  expected: String,
+  driverCode: String
+}],
 
   isActive: { type: Boolean, default: true }
 
