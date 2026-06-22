@@ -429,4 +429,12 @@ router.get('/analytics/inactive', verifyToken, verifyAdmin, async (req, res) => 
     res.json(inactive.slice(0, 100));
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
+
+router.post('/run-patch', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { execSync } = require('child_process');
+    execSync('node /opt/render/project/src/backend/patchTestCases.js', { stdio: 'inherit' });
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
 module.exports = router;
