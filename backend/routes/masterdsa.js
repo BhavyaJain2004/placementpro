@@ -252,22 +252,91 @@ router.get('/leaderboard', verifyToken, verifyMasterDSA, async (req, res) => {
 
 
 
+// backend/routes/masterdsa.js mein PURANA /run-code route POORA REPLACE karo isse
+
 router.post('/run-code', verifyToken, verifyMasterDSA, async (req, res) => {
   try {
-    const { code, language } = req.body;
-    const langMap = { java:'java', python:'python3', cpp:'cpp17', c:'c' };
-    const versionMap = { java:'4', python:'4', cpp:'5', c:'5' };
+    const { userCode, questionId } = req.body;
+
+    if (!questionId) {
+      return res.status(400).json({ output: 'No question selected', passed: false });
+    }
+
+    const q = await Q.findById(questionId).select('testCases title');
+    if (!q || !q.testCases || !q.testCases.length) {
+      // No test cases yet — just run code as-is
+      const resp = await axios.post('https://api.jdoodle.com/v1/execute', {
+        clientId: process.env.JDOODLE_CLIENT_ID,
+        clientSecret: process.env.JDOODLE_CLIENT_SECRET,
+        script: userCode, language: 'java', versionIndex: '4'
+      });
+      return res.json({ output: resp.data.output, passed: null, noTestCases: true });
+    }
+
+    // Build full Java program: user's Solution class + Main class with all test cases
+    const mainClass = `
+import java.util.*;
+public class Main {
+  public static void main(String[] args) {
+    Solution sol = new Solution();
+    ${q.testCases.map((tc, i) => `
+    try {
+      ${tc.driverCode.trim()}
+    } catch(Exception e) {
+      System.out.println("__TC${i}_ERROR__:" + e.getMessage());
+    }
+    System.out.println("__TC${i}_END__");`).join('\n')}
+  }
+}`;
+
+    const fullCode = userCode + '\n' + mainClass;
 
     const resp = await axios.post('https://api.jdoodle.com/v1/execute', {
       clientId: process.env.JDOODLE_CLIENT_ID,
       clientSecret: process.env.JDOODLE_CLIENT_SECRET,
-      script: code,
-      language: langMap[language],
-      versionIndex: versionMap[language]
+      script: fullCode,
+      language: 'java',
+      versionIndex: '4'
     });
-    res.json(resp.data);
+
+    const rawOutput = (resp.data.output || '').trim();
+
+    // Parse per-test-case results
+    const results = q.testCases.map((tc, i) => {
+      const endMarker = `__TC${i}_END__`;
+      const errMarker = `__TC${i}_ERROR__:`;
+
+      const endIdx = rawOutput.indexOf(endMarker);
+      // Find start: after previous TC_END__ or beginning
+      const prevEnd = i === 0 ? 0 : rawOutput.indexOf(`__TC${i-1}_END__`) + `__TC${i-1}_END__`.length;
+      const segment = rawOutput.substring(prevEnd, endIdx === -1 ? undefined : endIdx).trim();
+
+      if (segment.includes(errMarker)) {
+        return { input: tc.input, expected: tc.expected, actual: 'Runtime Error', pass: false };
+      }
+
+      const actual = segment.replace(/^__TC\d+_ERROR__:.*$/m, '').trim();
+      const pass = actual.replace(/\s+/g,'') === tc.expected.replace(/\s+/g,'');
+      return { input: tc.input, expected: tc.expected, actual, pass };
+    });
+
+    const allPassed = results.every(r => r.pass);
+
+    // Auto-mark solved if all passed
+    if (allPassed) {
+      const QuestionSolve = require('../models/QuestionSolve');
+      await QuestionSolve.findOneAndUpdate(
+        { userId: req.user.id, questionId },
+        { userId: req.user.id, questionId, solvedAt: new Date() },
+        { upsert: true }
+      );
+    }
+
+    res.json({ output: rawOutput, passed: allPassed, results });
+
   } catch(err) {
-    res.status(500).json({ output: 'Compiler error: ' + err.message });
+    console.error('Run-code error:', err.response?.data || err.message);
+    res.status(500).json({ output: 'Compiler error: ' + err.message, passed: false });
   }
 });
 // backend/routes/masterdsa.js mein PURANA /mentor/chat block POORA REPLACE karo isse
