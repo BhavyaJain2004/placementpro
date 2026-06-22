@@ -635,28 +635,50 @@ function resetCode() {
 // ── RUN CODE (Piston API) ──
 // ── RUN CODE (CodeX API) ──
 async function runCode() {
-  const btn  = document.getElementById('run-btn');
+  const btn = document.getElementById('run-btn');
   const code = document.getElementById('code-editor').value.trim();
-  const out  = document.getElementById('output-panel');
+  const out = document.getElementById('output-panel');
   if (!code) { out.innerHTML = '<span class="out-error">// Nothing to run</span>'; return; }
-  btn.classList.add('running');
-  btn.textContent = '⏳ Running...';
-  out.innerHTML = '<span class="out-info">// Running...</span>';
+  btn.classList.add('running'); btn.textContent = '⏳ Running...';
+  out.innerHTML = '<span class="out-info">// Running test cases...</span>';
 
   try {
     const data = await API.call('/masterdsa/run-code', {
       method: 'POST',
-      body: JSON.stringify({ code, language: currentLang })
+      body: JSON.stringify({ userCode: code, questionId: currentQ?._id })
     });
-    const stdout = data.output || '';
-    out.innerHTML = `<span class="${data.statusCode===200?'out-success':'out-error'}">${escHtml(stdout)}</span>`;
-    document.getElementById('mark-solved-btn').style.display = 'inline-block';
-    document.getElementById('run-status').textContent = data.statusCode===200?'✓ Done':'✗ Error';
+
+    if (data.noTestCases) {
+      out.innerHTML = `<span class="out-info">${escHtml(data.output || 'No output')}</span>`;
+      document.getElementById('run-status').textContent = '⚠ No test cases yet';
+      return;
+    }
+
+    // Show per-test-case results
+    let html = (data.results || []).map((r, i) => `
+      <div style="margin-bottom:0.75rem;padding:0.6rem;background:${r.pass ? 'rgba(52,211,153,0.08)' : 'rgba(248,113,113,0.08)'};border-radius:8px;border-left:3px solid ${r.pass ? '#34d399' : '#f87171'}">
+        <div style="font-size:0.7rem;color:${r.pass ? '#34d399' : '#f87171'};font-weight:700;margin-bottom:4px">${r.pass ? '✓ PASSED' : '✗ FAILED'} — Test Case ${i+1}</div>
+        <div style="font-size:0.72rem;color:rgba(255,255,255,0.5)">Input: ${escHtml(r.input)}</div>
+        <div style="font-size:0.72rem;color:rgba(255,255,255,0.5)">Expected: ${escHtml(r.expected)}</div>
+        ${!r.pass ? `<div style="font-size:0.72rem;color:#f87171">Got: ${escHtml(r.actual || '')}</div>` : ''}
+      </div>`).join('');
+
+    if (data.passed) {
+      html += `<div style="color:#34d399;font-weight:700;font-size:0.85rem;margin-top:0.5rem">🎉 All test cases passed! Question marked as solved!</div>`;
+      // Update tick in question list
+      solvedIds.add(currentQ._id);
+      const row = document.getElementById('qrow-' + currentQ._id);
+      if (row && !row.querySelector('.q-solved-tick')) {
+        row.insertAdjacentHTML('beforeend', '<span class="q-solved-tick">✓</span>');
+      }
+    }
+
+    out.innerHTML = html;
+    document.getElementById('run-status').textContent = data.passed ? '✓ All Passed' : '✗ Some Failed';
   } catch(e) {
     out.innerHTML = `<span class="out-error">// Compiler unavailable</span>`;
   } finally {
-    btn.classList.remove('running');
-    btn.innerHTML = '▶ Run Code';
+    btn.classList.remove('running'); btn.innerHTML = '▶ Run Code';
   }
 }
   async function markQuestionSolved() {
