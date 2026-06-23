@@ -437,4 +437,14 @@ router.post('/run-patch', verifyToken, verifyAdmin, async (req, res) => {
     res.json({ ok: true });
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
+
+router.get('/analytics/upsell-list', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const users = await User.find({
+      isPaid: true,
+      hasTestAccess: false
+    }).select('name email mobile createdAt').sort({ createdAt: -1 }).lean();
+    res.json(users);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
 module.exports = router;
