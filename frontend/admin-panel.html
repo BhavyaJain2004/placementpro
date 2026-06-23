@@ -73,6 +73,7 @@ body{background:#06060f}
     <div class="as-item" onclick="showTab('feedback',this)">💬 Feedback</div>
     <div class="as-item" onclick="showTab('funnel',this)">📈 Funnel</div>
 <div class="as-item" onclick="showTab('inactive',this)">😴 Inactive</div>
+    <div class="as-item" onclick="showTab('upsell',this)">💰 Upsell List</div>
     <div style="padding:1.5rem 1.25rem 0">
       <a href="dashboard.html" style="font-size:0.78rem;color:rgba(255,255,255,0.3);text-decoration:none">← Back to site</a>
     </div>
@@ -144,6 +145,18 @@ body{background:#06060f}
   </div>
 </div>
 
+    <div id="tab-upsell" style="display:none">
+  <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">💰 Upsell Targets</h2>
+  <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.25rem">Base (₹99) wale users jinhone Mock Tests nahi liye — potential ₹199 upsell</p>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div class="card-title" style="margin:0">Users List</div>
+      <div id="upsell-count" style="font-size:0.75rem;color:rgba(255,255,255,0.35)"></div>
+    </div>
+    <div id="upsell-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+  </div>
+</div>
+
   </div>
 </div>
 
@@ -171,7 +184,7 @@ function checkPwd() {
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
 function showTab(tab, btn) {
-  ['overview','users','feedback','funnel','inactive'].forEach(t => {
+  ['overview','users','feedback','funnel','inactive','upsell'].forEach(t => {
     const el = document.getElementById('tab-'+t);
     if (el) el.style.display = t===tab ? 'block' : 'none';
   });
@@ -181,6 +194,7 @@ function showTab(tab, btn) {
   if (tab === 'feedback') loadFeedback();
   if (tab === 'funnel') loadFunnel();
   if (tab === 'inactive') loadInactive();
+  
 }
 
 async function loadOverview() {
@@ -365,6 +379,39 @@ async function loadInactive() {
         </div>
       </div>`).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Everyone is active! 🎉</div>';
   } catch(e) { console.error(e); }
+}
+  async function loadUpsell() {
+  try {
+    const list = await API.call('/admin/analytics/upsell-list');
+    document.getElementById('upsell-count').textContent = `${list.length} users`;
+    if (!list.length) {
+      document.getElementById('upsell-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Sab ne le liya! 🎉</div>';
+      return;
+    }
+    document.getElementById('upsell-list').innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.75rem">
+        ${list.map(u => `
+          <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1rem 1.1rem">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem">
+              <div style="width:34px;height:34px;border-radius:50%;background:rgba(124,106,247,0.15);color:#a89df7;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;flex-shrink:0">
+                ${(u.name||'?').charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div style="color:#fff;font-size:0.88rem;font-weight:600">${u.name||'—'}</div>
+                <div style="font-size:0.68rem;color:rgba(255,255,255,0.35)">${u.email||''}</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div style="font-size:0.72rem;color:rgba(255,255,255,0.35)">
+                📱 ${u.mobile||'N/A'} &nbsp;·&nbsp; Joined ${new Date(u.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}
+              </div>
+              <span style="font-size:0.62rem;padding:2px 8px;border-radius:99px;background:rgba(251,191,36,0.1);color:#fbbf24;font-weight:700">₹199</span>
+            </div>
+          </div>`).join('')}
+      </div>`;
+  } catch(e) {
+    document.getElementById('upsell-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Could not load</div>';
+  }
 }
 </script>
 </body>
