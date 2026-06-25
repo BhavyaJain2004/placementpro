@@ -10,49 +10,68 @@
 body{background:#06060f}
 .gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
 .gate-box{background:#12121f;border:1px solid rgba(124,106,247,0.25);border-radius:18px;padding:2.5rem 2rem;max-width:380px;width:100%;text-align:center}
-.gate-box input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.75rem 1rem;color:#fff;font-size:0.9rem;margin:1rem 0;outline:none;box-sizing:border-box}
+.gate-box input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.75rem 1rem;color:#fff;font-size:0.9rem;margin:1rem 0;outline:none}
 .gate-box button{width:100%;background:#7c6af7;color:#fff;border:none;padding:0.8rem;border-radius:10px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer}
-.gate-err{color:#f87171;font-size:0.8rem;margin-top:0.5rem;min-height:1rem}
-
+.gate-err{color:#f87171;font-size:0.8rem;margin-top:0.5rem}
 .admin-layout{display:none;grid-template-columns:220px 1fr;min-height:100vh}
-.admin-sidebar{background:#0a0a18;border-right:1px solid rgba(255,255,255,0.06);padding:1.5rem 0}
+.admin-sidebar{background:#0a0a18;border-right:1px solid rgba(255,255,255,0.06);padding:1.5rem 0;overflow-y:auto}
 .as-logo{padding:0 1.25rem 1.5rem;font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:1rem;display:flex;align-items:center;gap:8px}
 .as-item{display:flex;align-items:center;gap:10px;padding:0.7rem 1.25rem;font-size:0.85rem;color:rgba(255,255,255,0.5);cursor:pointer;transition:all .15s;border-left:2px solid transparent}
 .as-item:hover{background:rgba(255,255,255,0.04);color:#fff}
 .as-item.active{background:rgba(124,106,247,0.1);border-left-color:#a89df7;color:#a89df7}
+.as-section{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.2);padding:1rem 1.25rem 0.4rem}
 .admin-main{padding:1.75rem 2rem;overflow-y:auto}
-
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.9rem;margin-bottom:1.5rem}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0.9rem;margin-bottom:1.5rem}
 .stat-box{background:#12121f;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:1.2rem}
 .stat-box .v{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:#fff}
 .stat-box .l{font-size:0.7rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.05em;margin-top:4px}
-
 .card{background:#12121f;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:1.5rem;margin-bottom:1.25rem}
 .card-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:1rem}
-
-.bar-chart{display:flex;align-items:flex-end;gap:8px;height:140px;padding:0 4px}
-.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:140px;padding:0 4px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.bar-col:hover .bar{opacity:0.7}
 .bar{width:100%;background:linear-gradient(180deg,#a89df7,#7c6af7);border-radius:6px 6px 0 0;min-height:4px;transition:height .4s}
-.bar-lbl{font-size:0.62rem;color:rgba(255,255,255,0.35)}
-.bar-val{font-size:0.68rem;color:#a89df7;font-weight:700}
-
+.bar-lbl{font-size:0.58rem;color:rgba(255,255,255,0.35)}
+.bar-val{font-size:0.65rem;color:#a89df7;font-weight:700}
 .donut-wrap{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
 .legend{display:flex;flex-direction:column;gap:0.5rem}
 .legend-item{display:flex;align-items:center;gap:8px;font-size:0.8rem;color:rgba(255,255,255,0.6)}
 .legend-dot{width:10px;height:10px;border-radius:50%}
-
-.list-row{display:flex;align-items:center;gap:10px;padding:0.65rem 0;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer}
-.list-row:hover{background:rgba(255,255,255,0.03)}
+.list-row{display:flex;align-items:center;gap:10px;padding:0.65rem 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.list-row:hover{background:rgba(255,255,255,0.03);border-radius:8px;padding-left:4px}
 .avatar{width:30px;height:30px;border-radius:50%;background:rgba(124,106,247,0.15);color:#a89df7;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0}
 .tag{font-size:0.62rem;padding:2px 7px;border-radius:99px}
-
-.fb-detail{display:none;background:rgba(124,106,247,0.05);border:1px solid rgba(124,106,247,0.2);border-radius:12px;padding:1.25rem;margin-top:1rem}
 .stars-disp{color:#fbbf24;font-size:1rem}
+.rev-big{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:#34d399}
+.month-bar{display:flex;align-items:flex-end;gap:6px;height:160px}
+.month-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:opacity .15s}
+.month-col:hover{opacity:0.75}
+.month-bar-inner{width:100%;border-radius:5px 5px 0 0;min-height:4px;transition:height .4s}
+.month-lbl{font-size:0.58rem;color:rgba(255,255,255,0.35)}
+.month-val{font-size:0.62rem;font-weight:700}
+.notif-card{background:#1a1a2e;border:1px solid rgba(124,106,247,0.2);border-radius:12px;padding:1rem 1.25rem;margin-bottom:0.75rem}
+.ntf-status{display:inline-flex;align-items:center;gap:5px;font-size:0.68rem;padding:2px 8px;border-radius:99px;font-weight:700}
+.ntf-active{background:rgba(52,211,153,0.12);color:#34d399}
+.ntf-paused{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.4)}
+.btn-sm{font-size:0.72rem;padding:4px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.5);cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-sm:hover{background:rgba(255,255,255,0.06);color:#fff}
+.btn-danger{border-color:rgba(248,113,113,0.3);color:#f87171}
+.btn-danger:hover{background:rgba(248,113,113,0.1)}
+.notif-banner{position:fixed;bottom:0;left:0;right:0;z-index:9999;padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:0.88rem;font-weight:600;transform:translateY(100%);transition:transform 0.4s ease;box-shadow:0 -4px 24px rgba(0,0,0,0.4)}
+.notif-banner.show{transform:translateY(0)}
+.pulse-dot{width:7px;height:7px;border-radius:50%;display:inline-block;animation:pulse 1.5s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 </style>
 </head>
 <body>
+<div id="notif-banner" class="notif-banner">
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="pulse-dot" id="notif-dot"></span>
+    <span id="notif-text"></span>
+  </div>
+  <button onclick="closeBanner()" style="background:none;border:none;color:inherit;cursor:pointer;font-size:1.2rem;opacity:0.6">×</button>
+</div>
 
-<!-- PASSWORD GATE -->
 <div class="gate" id="gate">
   <div class="gate-box">
     <div style="font-size:2rem;margin-bottom:0.5rem">🔐</div>
@@ -64,16 +83,27 @@ body{background:#06060f}
   </div>
 </div>
 
-<!-- ADMIN LAYOUT -->
 <div class="admin-layout" id="admin-layout">
   <div class="admin-sidebar">
     <div class="as-logo"><span class="dot"></span> Admin Panel</div>
+
+    <div class="as-section">Analytics</div>
     <div class="as-item active" onclick="showTab('overview',this)">📊 Overview</div>
-    <div class="as-item" onclick="showTab('users',this)">👥 Active Today</div>
+    <div class="as-item" onclick="showTab('revenue',this)">💰 Revenue</div>
+    <div class="as-item" onclick="showTab('signups',this)">📅 Signups History</div>
+    <div class="as-item" onclick="showTab('active',this)">👥 Active Users</div>
+
+    <div class="as-section">Users</div>
+    <div class="as-item" onclick="showTab('users',this)">🟢 Active Today</div>
+    <div class="as-item" onclick="showTab('pending',this)">⏳ Pending Payments</div>
+    <div class="as-item" onclick="showTab('upsell',this)">💸 Upsell (No Tests)</div>
+    <div class="as-item" onclick="showTab('inactive',this)">😴 Inactive</div>
+
+    <div class="as-section">Engagement</div>
     <div class="as-item" onclick="showTab('feedback',this)">💬 Feedback</div>
     <div class="as-item" onclick="showTab('funnel',this)">📈 Funnel</div>
-<div class="as-item" onclick="showTab('inactive',this)">😴 Inactive</div>
-    <div class="as-item" onclick="showTab('upsell',this)">💰 Upsell List</div>
+    <div class="as-item" onclick="showTab('notifications',this)">🔔 Notifications</div>
+
     <div style="padding:1.5rem 1.25rem 0">
       <a href="dashboard.html" style="font-size:0.78rem;color:rgba(255,255,255,0.3);text-decoration:none">← Back to site</a>
     </div>
@@ -81,24 +111,21 @@ body{background:#06060f}
 
   <div class="admin-main">
 
-    <!-- OVERVIEW TAB -->
+    <!-- OVERVIEW -->
     <div id="tab-overview">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">📊 Platform Overview</h2>
-
       <div class="stat-grid" id="stat-grid">
         <div class="stat-box"><div class="v">—</div><div class="l">Total Users</div></div>
         <div class="stat-box"><div class="v">—</div><div class="l">Base Paid</div></div>
         <div class="stat-box"><div class="v">—</div><div class="l">Master DSA</div></div>
-        <div class="stat-box"><div class="v">—</div><div class="l">Both Access</div></div>
+        <div class="stat-box"><div class="v">—</div><div class="l">Both</div></div>
         <div class="stat-box"><div class="v">—</div><div class="l">New Today</div></div>
         <div class="stat-box"><div class="v">—</div><div class="l">DAU</div></div>
       </div>
-
       <div class="card">
-        <div class="card-title">📈 New Signups — Last 7 Days</div>
+        <div class="card-title">📈 Last 7 Days Signups</div>
         <div class="bar-chart" id="growth-chart"></div>
       </div>
-
       <div class="card">
         <div class="card-title">🥧 User Distribution</div>
         <div class="donut-wrap">
@@ -108,15 +135,110 @@ body{background:#06060f}
       </div>
     </div>
 
-    <!-- USERS TAB -->
-    <div id="tab-users" style="display:none">
-      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">👥 Active Today</h2>
+    <!-- REVENUE -->
+    <div id="tab-revenue" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">💰 Revenue Dashboard</h2>
+      <div class="stat-grid" id="rev-stat-grid">
+        <div class="stat-box"><div class="v" id="rev-total" style="color:#34d399">—</div><div class="l">Total Revenue</div></div>
+        <div class="stat-box"><div class="v" id="rev-today" style="color:#a89df7">—</div><div class="l">Today</div></div>
+        <div class="stat-box"><div class="v" id="rev-base" style="color:#06b6d4">—</div><div class="l">Base Users</div></div>
+        <div class="stat-box"><div class="v" id="rev-dsa" style="color:#fbbf24">—</div><div class="l">DSA Users</div></div>
+        <div class="stat-box"><div class="v" id="rev-both" style="color:#f87171">—</div><div class="l">Both</div></div>
+      </div>
       <div class="card">
-        <div id="active-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+        <div class="card-title">📅 Monthly Revenue (Last 12 Months)</div>
+        <div class="month-bar" id="monthly-rev-chart"></div>
+        <div style="display:flex;gap:1rem;margin-top:0.75rem;font-size:0.72rem;color:rgba(255,255,255,0.35)">
+          <span>🟢 Revenue</span><span>🔵 Signups</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 Month-wise Breakdown</div>
+        <div id="monthly-table"></div>
       </div>
     </div>
 
-    <!-- FEEDBACK TAB -->
+    <!-- SIGNUPS HISTORY -->
+    <div id="tab-signups" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.5rem">📅 All-time Signups</h2>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.25rem">Click on any bar to see who signed up that day</p>
+      <div class="card">
+        <div class="card-title">Daily Signups — All Time</div>
+        <div id="alltime-chart" style="overflow-x:auto"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+      </div>
+      <div class="card" id="day-detail-card" style="display:none">
+        <div class="card-title" id="day-detail-title">Users on selected date</div>
+        <div id="day-detail-list"></div>
+      </div>
+    </div>
+
+    <!-- ACTIVE USERS -->
+    <div id="tab-active" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">👥 Active Users</h2>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="v" id="au-dau" style="color:#34d399">—</div><div class="l">DAU (Today)</div></div>
+        <div class="stat-box"><div class="v" id="au-wau" style="color:#a89df7">—</div><div class="l">WAU (7 days)</div></div>
+        <div class="stat-box"><div class="v" id="au-mau" style="color:#fbbf24">—</div><div class="l">MAU (30 days)</div></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <div style="flex:1;min-width:180px;background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.2);border-radius:12px;padding:1.25rem;text-align:center">
+            <div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Stickiness (DAU/MAU)</div>
+            <div id="stickiness" style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:#34d399">—%</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:4px">Higher = better retention</div>
+          </div>
+          <div style="flex:1;min-width:180px;background:rgba(124,106,247,0.06);border:1px solid rgba(124,106,247,0.2);border-radius:12px;padding:1.25rem;text-align:center">
+            <div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">WAU/MAU Ratio</div>
+            <div id="wau-mau" style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:#a89df7">—%</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:4px">Weekly engagement</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVE TODAY -->
+    <div id="tab-users" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">🟢 Active Today</h2>
+      <div class="card"><div id="active-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div></div>
+    </div>
+
+    <!-- PENDING PAYMENTS -->
+    <div id="tab-pending" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">⏳ Pending Payments</h2>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.25rem">Users who signed up but haven't paid yet</p>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="v" id="pend-total">—</div><div class="l">Total Unpaid</div></div>
+        <div class="stat-box"><div class="v" id="pend-conv" style="color:#34d399">—%</div><div class="l">Signup→Paid Conversion</div></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <div class="card-title" style="margin:0">Unpaid Users</div>
+          <div id="pend-count" style="font-size:0.75rem;color:rgba(255,255,255,0.35)"></div>
+        </div>
+        <div id="pending-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- UPSELL -->
+    <div id="tab-upsell" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">💸 Upsell Targets</h2>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.25rem">Base (₹99) paid users who haven't bought Mock Tests — potential ₹199 upsell</p>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <div class="card-title" style="margin:0">Users List</div>
+          <div id="upsell-count" style="font-size:0.75rem;color:rgba(255,255,255,0.35)"></div>
+        </div>
+        <div id="upsell-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- INACTIVE -->
+    <div id="tab-inactive" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">😴 Inactive Users</h2>
+      <div class="card"><div id="inactive-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div></div>
+    </div>
+
+    <!-- FEEDBACK -->
     <div id="tab-feedback" style="display:none">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">💬 User Feedback</h2>
       <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:1.25rem">
@@ -124,38 +246,79 @@ body{background:#06060f}
           <div id="feedback-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
         </div>
         <div class="card" id="feedback-detail-card">
-          <div style="color:rgba(255,255,255,0.3);text-align:center;padding:2rem">← Select a feedback to view</div>
+          <div style="color:rgba(255,255,255,0.3);text-align:center;padding:2rem">← Select a feedback</div>
         </div>
       </div>
     </div>
+
+    <!-- FUNNEL -->
     <div id="tab-funnel" style="display:none">
-  <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">📈 Conversion Funnel</h2>
-  <div class="card" id="funnel-card"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
-
-  <div class="card">
-    <div class="card-title">🏆 Top Performers (Master DSA)</div>
-    <div id="top-performers-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
-  </div>
-</div>
-
-<div id="tab-inactive" style="display:none">
-  <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">😴 Inactive Users (7+ days)</h2>
-  <div class="card">
-    <div id="inactive-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
-  </div>
-</div>
-
-    <div id="tab-upsell" style="display:none">
-  <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">💰 Upsell Targets</h2>
-  <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.25rem">Base (₹99) wale users jinhone Mock Tests nahi liye — potential ₹199 upsell</p>
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div class="card-title" style="margin:0">Users List</div>
-      <div id="upsell-count" style="font-size:0.75rem;color:rgba(255,255,255,0.35)"></div>
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">📈 Conversion Funnel</h2>
+      <div class="card" id="funnel-card"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+      <div class="card">
+        <div class="card-title">🏆 Top Performers</div>
+        <div id="top-performers-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
+      </div>
     </div>
-    <div id="upsell-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading...</div></div>
-  </div>
-</div>
+
+    <!-- NOTIFICATIONS -->
+    <div id="tab-notifications" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">🔔 Notification Centre</h2>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.5rem">Create floating banners shown to all users on the platform</p>
+
+      <!-- Create Notification -->
+      <div class="card">
+        <div class="card-title">✏️ Create New Notification</div>
+        <div style="display:flex;flex-direction:column;gap:0.85rem">
+          <div>
+            <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Message</div>
+            <input id="ntf-msg" placeholder="e.g. 🎉 New questions added — Arrays topic updated!" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem">
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Background Color</div>
+              <select id="ntf-color" style="width:100%;background:#12121f;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.6rem;color:#fff;font-size:0.82rem;outline:none">
+                <option value="#7c6af7,#fff">Purple (default)</option>
+                <option value="#34d399,#06160f">Green</option>
+                <option value="#f87171,#fff">Red / Alert</option>
+                <option value="#fbbf24,#000">Yellow</option>
+                <option value="#06b6d4,#fff">Cyan</option>
+                <option value="#0a0a18,#a89df7">Dark Purple</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Repeat Every</div>
+              <select id="ntf-repeat" style="width:100%;background:#12121f;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.6rem;color:#fff;font-size:0.82rem;outline:none">
+                <option value="0">Show once</option>
+                <option value="30">Every 30 min</option>
+                <option value="60">Every 1 hour</option>
+                <option value="120">Every 2 hours</option>
+                <option value="1440">Daily</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Auto-hide After</div>
+              <select id="ntf-duration" style="width:100%;background:#12121f;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.6rem;color:#fff;font-size:0.82rem;outline:none">
+                <option value="0">Manual close only</option>
+                <option value="5000">5 seconds</option>
+                <option value="10000">10 seconds</option>
+                <option value="30000">30 seconds</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:0.75rem;align-items:center">
+            <button onclick="previewNotif()" style="background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.6rem 1.1rem;font-size:0.82rem;cursor:pointer">👁 Preview</button>
+            <button onclick="createNotif()" style="background:#7c6af7;color:#fff;border:none;border-radius:8px;padding:0.6rem 1.25rem;font-size:0.82rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer">🚀 Publish</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Notifications -->
+      <div class="card">
+        <div class="card-title">📋 Active Notifications</div>
+        <div id="notif-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No active notifications</div></div>
+      </div>
+    </div>
 
   </div>
 </div>
@@ -165,69 +328,145 @@ body{background:#06060f}
 <script>
 const cachedUser = Auth.requireAuth();
 if (!cachedUser) throw new Error();
+if (!cachedUser.isAdmin) window.location.href = 'dashboard.html';
 
-// Admin check
-if (!cachedUser.isAdmin) {
-  window.location.href = 'dashboard.html';
+// ── NOTIFICATIONS (stored in localStorage for now) ──
+let notifications = JSON.parse(localStorage.getItem('admin_notifs') || '[]');
+let notifIntervals = {};
+
+function saveNotifs() { localStorage.setItem('admin_notifs', JSON.stringify(notifications)); }
+
+function showBanner(notif) {
+  const [bg, fg] = (notif.color || '#7c6af7,#fff').split(',');
+  const banner = document.getElementById('notif-banner');
+  document.getElementById('notif-text').textContent = notif.message;
+  document.getElementById('notif-dot').style.background = fg;
+  banner.style.background = bg;
+  banner.style.color = fg;
+  banner.classList.add('show');
+  if (notif.duration > 0) setTimeout(() => banner.classList.remove('show'), notif.duration);
 }
 
+function closeBanner() { document.getElementById('notif-banner').classList.remove('show'); }
+
+function startNotifLoop(notif) {
+  if (!notif.active) return;
+  showBanner(notif);
+  if (notif.repeat > 0) {
+    clearInterval(notifIntervals[notif.id]);
+    notifIntervals[notif.id] = setInterval(() => { if (notif.active) showBanner(notif); }, notif.repeat * 60000);
+  }
+}
+
+function previewNotif() {
+  const msg = document.getElementById('ntf-msg').value.trim();
+  if (!msg) { alert('Please enter a message'); return; }
+  showBanner({ message: msg, color: document.getElementById('ntf-color').value, duration: parseInt(document.getElementById('ntf-duration').value) });
+}
+
+function createNotif() {
+  const msg = document.getElementById('ntf-msg').value.trim();
+  if (!msg) { alert('Please enter a message'); return; }
+  const notif = {
+    id: Date.now(),
+    message: msg,
+    color: document.getElementById('ntf-color').value,
+    repeat: parseInt(document.getElementById('ntf-repeat').value),
+    duration: parseInt(document.getElementById('ntf-duration').value),
+    active: true,
+    createdAt: new Date().toISOString()
+  };
+  notifications.push(notif);
+  saveNotifs();
+  startNotifLoop(notif);
+  document.getElementById('ntf-msg').value = '';
+  renderNotifList();
+}
+
+function toggleNotif(id) {
+  const n = notifications.find(n => n.id === id);
+  if (!n) return;
+  n.active = !n.active;
+  if (!n.active) { clearInterval(notifIntervals[id]); closeBanner(); }
+  else startNotifLoop(n);
+  saveNotifs(); renderNotifList();
+}
+
+function deleteNotif(id) {
+  clearInterval(notifIntervals[id]);
+  notifications = notifications.filter(n => n.id !== id);
+  saveNotifs(); renderNotifList();
+}
+
+function renderNotifList() {
+  const el = document.getElementById('notif-list');
+  if (!notifications.length) { el.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No notifications created yet</div>'; return; }
+  el.innerHTML = notifications.map(n => `
+    <div class="notif-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0.6rem">
+        <div style="font-size:0.88rem;color:#fff;flex:1">${n.message}</div>
+        <span class="ntf-status ${n.active ? 'ntf-active' : 'ntf-paused'}">${n.active ? '● Active' : '⏸ Paused'}</span>
+      </div>
+      <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);margin-bottom:0.75rem">
+        Repeat: ${n.repeat === 0 ? 'Once' : 'Every ' + (n.repeat >= 60 ? n.repeat/60 + 'hr' : n.repeat + 'min')} &nbsp;·&nbsp;
+        Auto-hide: ${n.duration === 0 ? 'Manual' : n.duration/1000 + 's'} &nbsp;·&nbsp;
+        Created: ${new Date(n.createdAt).toLocaleDateString('en-IN')}
+      </div>
+      <div style="display:flex;gap:0.5rem">
+        <button class="btn-sm" onclick="showBanner({message:'${n.message.replace(/'/g,"\\'")}',color:'${n.color}',duration:${n.duration}})">👁 Preview</button>
+        <button class="btn-sm" onclick="toggleNotif(${n.id})">${n.active ? '⏸ Pause' : '▶ Resume'}</button>
+        <button class="btn-sm btn-danger" onclick="deleteNotif(${n.id})">🗑 Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── AUTH ──
 function checkPwd() {
-  const pwd = document.getElementById('gate-pwd').value;
-  if (pwd === 'adminbhavya') {
+  if (document.getElementById('gate-pwd').value === 'adminbhavya') {
     document.getElementById('gate').style.display = 'none';
     document.getElementById('admin-layout').style.display = 'grid';
     loadOverview();
-  } else {
-    document.getElementById('gate-err').textContent = 'Wrong password';
-  }
+    notifications.forEach(n => { if (n.active) startNotifLoop(n); });
+  } else document.getElementById('gate-err').textContent = 'Wrong password';
 }
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
+// ── TAB ROUTING ──
+const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications'];
 function showTab(tab, btn) {
-  ['overview','users','feedback','funnel','inactive','upsell'].forEach(t => {
-    const el = document.getElementById('tab-'+t);
-    if (el) el.style.display = t===tab ? 'block' : 'none';
-  });
+  ALL_TABS.forEach(t => { const el = document.getElementById('tab-'+t); if(el) el.style.display = t===tab?'block':'none'; });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
-  if (tab === 'users') loadActiveToday();
-  if (tab === 'feedback') loadFeedback();
-  if (tab === 'funnel') loadFunnel();
-  if (tab === 'inactive') loadInactive();
-    if (tab === 'upsell') loadUpsell();
-  
-  
+  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: renderNotifList };
+  if (loaders[tab]) loaders[tab]();
 }
 
+// ── OVERVIEW ──
 async function loadOverview() {
   try {
     const d = await API.call('/admin/analytics/overview');
-    const grid = document.getElementById('stat-grid');
-    grid.innerHTML = `
+    document.getElementById('stat-grid').innerHTML = `
       <div class="stat-box"><div class="v">${d.totalUsers}</div><div class="l">Total Users</div></div>
       <div class="stat-box"><div class="v" style="color:#34d399">${d.basePaid}</div><div class="l">Base Paid</div></div>
       <div class="stat-box"><div class="v" style="color:#a89df7">${d.masterDsa}</div><div class="l">Master DSA</div></div>
-      <div class="stat-box"><div class="v" style="color:#fbbf24">${d.bothAccess}</div><div class="l">Both Access</div></div>
+      <div class="stat-box"><div class="v" style="color:#fbbf24">${d.bothAccess}</div><div class="l">Both</div></div>
       <div class="stat-box"><div class="v" style="color:#06b6d4">${d.newToday}</div><div class="l">New Today</div></div>
-      <div class="stat-box"><div class="v" style="color:#f87171">${d.dau}</div><div class="l">DAU</div></div>
-    `;
-    if (d.newTodayList && d.newTodayList.length) {
-  document.getElementById('stat-grid').insertAdjacentHTML('afterend', `
-    <div class="card" style="margin-top:1.25rem">
-      <div class="card-title">🆕 Today's Signups</div>
-      ${d.newTodayList.map(u => `<div class="list-row"><div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div><div style="flex:1"><div style="color:#fff;font-size:0.85rem">${u.name||'—'}</div><div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email}</div></div></div>`).join('')}
-    </div>`);
-}
+      <div class="stat-box"><div class="v" style="color:#f87171">${d.dau}</div><div class="l">DAU</div></div>`;
 
-    // Bar chart
+    if (d.newTodayList?.length) {
+      document.getElementById('stat-grid').insertAdjacentHTML('afterend', `
+        <div class="card" style="margin-top:1.25rem">
+          <div class="card-title">🆕 Today's Signups (${d.newTodayList.length})</div>
+          ${d.newTodayList.map(u => `<div class="list-row"><div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div><div style="flex:1"><div style="color:#fff;font-size:0.85rem">${u.name||'—'}</div><div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email}</div></div>${u.isPaid?'<span class="tag" style="background:rgba(52,211,153,0.12);color:#34d399">Paid</span>':''}</div>`).join('')}
+        </div>`);
+    }
+
     const max = Math.max(...d.weeklyGrowth.map(x=>x.count), 1);
     document.getElementById('growth-chart').innerHTML = d.weeklyGrowth.map(day => {
       const h = Math.max((day.count/max)*100, 4);
       const lbl = new Date(day.date).toLocaleDateString('en-IN',{weekday:'short'});
       return `<div class="bar-col"><div class="bar-val">${day.count}</div><div class="bar" style="height:${h}%"></div><div class="bar-lbl">${lbl}</div></div>`;
     }).join('');
-
-    // Donut chart
     drawDonut(d);
   } catch(e) { console.error(e); }
 }
@@ -236,110 +475,229 @@ function drawDonut(d) {
   const total = d.totalUsers || 1;
   const segs = [
     { label:'Free', value:d.freeUsers, color:'#3a3a52' },
-    { label:'Base Only', value:d.basePaid - d.bothAccess, color:'#34d399' },
-    { label:'Master DSA Only', value:d.masterDsa - d.bothAccess, color:'#a89df7' },
-    { label:'Both', value:d.bothAccess, color:'#fbbf24' },
+    { label:'Base Only', value:(d.basePaid||0)-(d.bothAccess||0), color:'#34d399' },
+    { label:'DSA Only', value:(d.masterDsa||0)-(d.bothAccess||0), color:'#a89df7' },
+    { label:'Both', value:d.bothAccess||0, color:'#fbbf24' },
   ];
   let angle = 0;
-  const svg = document.getElementById('donut-svg');
-  const r = 60, cx = 80, cy = 80;
+  const r=60, cx=80, cy=80;
   let paths = '';
   segs.forEach(s => {
     const frac = s.value/total;
     const a2 = angle + frac*360;
-    const x1 = cx + r*Math.cos(Math.PI*angle/180-Math.PI/2);
-    const y1 = cy + r*Math.sin(Math.PI*angle/180-Math.PI/2);
-    const x2 = cx + r*Math.cos(Math.PI*a2/180-Math.PI/2);
-    const y2 = cy + r*Math.sin(Math.PI*a2/180-Math.PI/2);
-    const large = frac > 0.5 ? 1 : 0;
-    if (s.value > 0) {
-      paths += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} Z" fill="${s.color}" opacity="0.85"/>`;
-    }
+    const x1 = cx+r*Math.cos(Math.PI*angle/180-Math.PI/2);
+    const y1 = cy+r*Math.sin(Math.PI*angle/180-Math.PI/2);
+    const x2 = cx+r*Math.cos(Math.PI*a2/180-Math.PI/2);
+    const y2 = cy+r*Math.sin(Math.PI*a2/180-Math.PI/2);
+    if (s.value > 0) paths += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${frac>.5?1:0} 1 ${x2},${y2} Z" fill="${s.color}" opacity="0.85"/>`;
     angle = a2;
   });
-  svg.innerHTML = paths + `<circle cx="${cx}" cy="${cy}" r="32" fill="#12121f"/>`;
-  document.getElementById('donut-legend').innerHTML = segs.map(s =>
-    `<div class="legend-item"><span class="legend-dot" style="background:${s.color}"></span>${s.label}: ${s.value}</div>`
-  ).join('');
+  document.getElementById('donut-svg').innerHTML = paths + `<circle cx="${cx}" cy="${cy}" r="32" fill="#12121f"/>`;
+  document.getElementById('donut-legend').innerHTML = segs.map(s => `<div class="legend-item"><span class="legend-dot" style="background:${s.color}"></span>${s.label}: ${s.value}</div>`).join('');
 }
 
-async function loadActiveToday() {
+// ── REVENUE ──
+async function loadRevenue() {
   try {
-    const list = await API.call('/admin/analytics/active-today');
-    if (!list.length) {
-      document.getElementById('active-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No activity yet today</div>';
-      return;
-    }
-    document.getElementById('active-list').innerHTML = list.map(a => {
-      const u = a.userId || {};
-      return `<div class="list-row">
+    const [rev, monthly] = await Promise.all([
+      API.call('/admin/analytics/revenue'),
+      API.call('/admin/analytics/monthly')
+    ]);
+    document.getElementById('rev-total').textContent = '₹' + rev.totalRevenue.toLocaleString('en-IN');
+    document.getElementById('rev-today').textContent = '₹' + rev.todayRevenue.toLocaleString('en-IN');
+    document.getElementById('rev-base').textContent = rev.baseOnly;
+    document.getElementById('rev-dsa').textContent = rev.dsaOnly;
+    document.getElementById('rev-both').textContent = rev.bothAccess;
+
+    const maxRev = Math.max(...monthly.map(m => m.revenue), 1);
+    document.getElementById('monthly-rev-chart').innerHTML = monthly.map(m => {
+      const h = Math.max((m.revenue/maxRev)*100, 4);
+      return `<div class="month-col">
+        <div class="month-val" style="color:#34d399">₹${m.revenue>=1000?(m.revenue/1000).toFixed(1)+'k':m.revenue}</div>
+        <div class="month-bar-inner" style="height:${h}%;background:linear-gradient(180deg,#34d399,#059669)"></div>
+        <div class="month-lbl">${m.month}</div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('monthly-table').innerHTML = `
+      <table style="width:100%;border-collapse:collapse;font-size:0.82rem">
+        <tr style="color:rgba(255,255,255,0.4);font-size:0.7rem;text-transform:uppercase">
+          <th style="text-align:left;padding:0.5rem 0.6rem">Month</th>
+          <th style="text-align:right;padding:0.5rem 0.6rem">Signups</th>
+          <th style="text-align:right;padding:0.5rem 0.6rem">Base Paid</th>
+          <th style="text-align:right;padding:0.5rem 0.6rem">DSA Paid</th>
+          <th style="text-align:right;padding:0.5rem 0.6rem;color:#34d399">Revenue</th>
+        </tr>
+        ${monthly.map(m => `
+        <tr style="border-top:1px solid rgba(255,255,255,0.05)">
+          <td style="padding:0.55rem 0.6rem;color:#fff;font-weight:600">${m.month}</td>
+          <td style="padding:0.55rem 0.6rem;text-align:right;color:rgba(255,255,255,0.6)">${m.signups}</td>
+          <td style="padding:0.55rem 0.6rem;text-align:right;color:#34d399">${m.basePaid}</td>
+          <td style="padding:0.55rem 0.6rem;text-align:right;color:#a89df7">${m.masterDsa}</td>
+          <td style="padding:0.55rem 0.6rem;text-align:right;color:#34d399;font-weight:700">₹${m.revenue.toLocaleString('en-IN')}</td>
+        </tr>`).join('')}
+      </table>`;
+  } catch(e) { console.error(e); }
+}
+
+// ── ALL TIME SIGNUPS ──
+async function loadSignups() {
+  try {
+    const data = await API.call('/admin/analytics/daily-signups');
+    if (!data.length) { document.getElementById('alltime-chart').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No data</div>'; return; }
+    const max = Math.max(...data.map(d => d.count), 1);
+    const last90 = data.slice(-90);
+    document.getElementById('alltime-chart').innerHTML = `
+      <div style="display:flex;align-items:flex-end;gap:3px;height:120px;min-width:${last90.length*18}px">
+        ${last90.map(d => {
+          const h = Math.max((d.count/max)*100, 5);
+          const lbl = d._id ? new Date(d._id).toLocaleDateString('en-IN',{month:'short',day:'numeric'}) : '';
+          return `<div style="flex:0 0 14px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer" onclick="loadDayDetail('${d._id}','${lbl}')">
+            <div title="${lbl}: ${d.count} signups" style="width:14px;border-radius:3px 3px 0 0;background:${d.paid>0?'#7c6af7':'#3a3a52'};height:${h}%"></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="font-size:0.68rem;color:rgba(255,255,255,0.25);margin-top:0.5rem">Last 90 days · Purple = had paid signups · Click any bar for details</div>`;
+  } catch(e) { console.error(e); }
+}
+
+async function loadDayDetail(date, label) {
+  document.getElementById('day-detail-card').style.display = 'block';
+  document.getElementById('day-detail-title').textContent = `Signups on ${label}`;
+  document.getElementById('day-detail-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:0.82rem">Loading...</div>';
+  try {
+    const data = await API.call('/admin/analytics/daily-signups?date=' + date);
+    if (!data.users?.length) { document.getElementById('day-detail-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:0.82rem;padding:0.5rem 0">No signups this day</div>'; return; }
+    document.getElementById('day-detail-list').innerHTML = data.users.map(u => `
+      <div class="list-row">
         <div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div>
         <div style="flex:1">
-          <div style="font-size:0.85rem;color:#fff">${u.name||'Unknown'}</div>
-          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email||''}</div>
+          <div style="color:#fff;font-size:0.85rem">${u.name||'—'}</div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.35)">${u.email} · 📱 ${u.mobile||'N/A'}</div>
         </div>
         ${u.isPaid?'<span class="tag" style="background:rgba(52,211,153,0.12);color:#34d399">Base</span>':''}
         ${u.masterDsaAccess?'<span class="tag" style="background:rgba(124,106,247,0.12);color:#a89df7">DSA</span>':''}
-      </div>`;
-    }).join('');
-  } catch(e) {
-    document.getElementById('active-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Could not load</div>';
-  }
+      </div>`).join('');
+  } catch(e) {}
 }
 
+// ── ACTIVE USERS ──
+async function loadActiveUsers() {
+  try {
+    const d = await API.call('/admin/analytics/active-users');
+    document.getElementById('au-dau').textContent = d.dau;
+    document.getElementById('au-wau').textContent = d.wau;
+    document.getElementById('au-mau').textContent = d.mau;
+    document.getElementById('stickiness').textContent = d.mau > 0 ? ((d.dau/d.mau)*100).toFixed(1)+'%' : '0%';
+    document.getElementById('wau-mau').textContent = d.mau > 0 ? ((d.wau/d.mau)*100).toFixed(1)+'%' : '0%';
+  } catch(e) {}
+}
+
+// ── PENDING PAYMENTS ──
+async function loadPending() {
+  try {
+    const d = await API.call('/admin/analytics/pending-payments');
+    document.getElementById('pend-total').textContent = d.unpaid;
+    document.getElementById('pend-conv').textContent = d.conversionRate + '%';
+    document.getElementById('pend-count').textContent = `${d.unpaid} users`;
+    document.getElementById('pending-list').innerHTML = d.users.length ? `
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0.75rem">
+        ${d.users.map(u => `
+          <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1rem">
+            <div style="display:flex;align-items:center;gap:0.65rem;margin-bottom:0.5rem">
+              <div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div>
+              <div>
+                <div style="color:#fff;font-size:0.85rem;font-weight:600">${u.name||'—'}</div>
+                <div style="font-size:0.68rem;color:rgba(255,255,255,0.35)">${u.email}</div>
+              </div>
+            </div>
+            <div style="font-size:0.72rem;color:rgba(255,255,255,0.35)">📱 ${u.mobile||'N/A'} · Joined ${new Date(u.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div>
+          </div>`).join('')}
+      </div>` : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Sab ne payment kar di! 🎉</div>';
+  } catch(e) {}
+}
+
+// ── UPSELL ──
+async function loadUpsell() {
+  try {
+    const list = await API.call('/admin/analytics/upsell-list');
+    document.getElementById('upsell-count').textContent = `${list.length} users`;
+    document.getElementById('upsell-list').innerHTML = list.length ? `
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.75rem">
+        ${list.map(u => `
+          <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1rem">
+            <div style="display:flex;align-items:center;gap:0.65rem;margin-bottom:0.5rem">
+              <div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div>
+              <div>
+                <div style="color:#fff;font-size:0.85rem;font-weight:600">${u.name||'—'}</div>
+                <div style="font-size:0.68rem;color:rgba(255,255,255,0.35)">${u.email}</div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-size:0.72rem;color:rgba(255,255,255,0.35)">📱 ${u.mobile||'N/A'} · ${new Date(u.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div>
+              <span style="font-size:0.62rem;padding:2px 8px;border-radius:99px;background:rgba(251,191,36,0.1);color:#fbbf24;font-weight:700">₹199</span>
+            </div>
+          </div>`).join('')}
+      </div>` : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Sab ne le liya! 🎉</div>';
+  } catch(e) {}
+}
+
+// ── INACTIVE ──
+async function loadInactive() {
+  try {
+    const list = await API.call('/admin/analytics/inactive');
+    document.getElementById('inactive-list').innerHTML = list.length ? list.map(u => `
+      <div class="list-row">
+        <div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div>
+        <div style="flex:1"><div style="color:#fff;font-size:0.85rem">${u.name||'—'}</div><div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email}</div></div>
+        <div style="font-size:0.72rem;color:rgba(248,113,113,0.7)">${u.lastSeen?'Last: '+new Date(u.lastSeen).toLocaleDateString('en-IN'):'Never'}</div>
+      </div>`).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Everyone active! 🎉</div>';
+  } catch(e) {}
+}
+
+// ── FEEDBACK ──
 let feedbackData = [];
 async function loadFeedback() {
   try {
     feedbackData = await API.call('/admin/analytics/feedback-list');
-    if (!feedbackData.length) {
-      document.getElementById('feedback-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No feedback yet</div>';
-      return;
-    }
-    document.getElementById('feedback-list').innerHTML = feedbackData.map((f,i) => `
+    document.getElementById('feedback-list').innerHTML = feedbackData.length ? feedbackData.map((f,i) => `
       <div class="list-row" onclick="showFeedback(${i})">
         <div class="avatar">${(f.name||'?').charAt(0).toUpperCase()}</div>
-        <div style="flex:1">
-          <div style="font-size:0.85rem;color:#fff">${f.name||f.email||'Anonymous'}</div>
-          <div class="stars-disp">${'⭐'.repeat(f.rating||0)}</div>
-        </div>
-      </div>`).join('');
-  } catch(e) {
-    document.getElementById('feedback-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Could not load</div>';
-  }
+        <div style="flex:1"><div style="font-size:0.85rem;color:#fff">${f.name||f.email||'Anonymous'}</div><div class="stars-disp">${'⭐'.repeat(f.rating||0)}</div></div>
+      </div>`).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No feedback yet</div>';
+  } catch(e) {}
 }
 
 function showFeedback(i) {
   const f = feedbackData[i];
   document.getElementById('feedback-detail-card').innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
-      <div class="avatar" style="width:40px;height:40px;font-size:0.9rem">${(f.name||'?').charAt(0).toUpperCase()}</div>
-      <div>
-        <div style="color:#fff;font-weight:600">${f.name||'Anonymous'}</div>
-        <div style="font-size:0.75rem;color:rgba(255,255,255,0.3)">${f.email||''}</div>
-      </div>
+      <div class="avatar" style="width:40px;height:40px">${(f.name||'?').charAt(0).toUpperCase()}</div>
+      <div><div style="color:#fff;font-weight:600">${f.name||'Anonymous'}</div><div style="font-size:0.75rem;color:rgba(255,255,255,0.3)">${f.email||''}</div></div>
     </div>
     <div class="stars-disp" style="margin-bottom:1rem">${'⭐'.repeat(f.rating||0)}</div>
     <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:0.3rem">Feedback</div>
     <div style="color:rgba(255,255,255,0.75);font-size:0.85rem;margin-bottom:1rem;line-height:1.6">${f.message||'—'}</div>
     <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:0.3rem">Wants</div>
-    <div style="color:rgba(255,255,255,0.75);font-size:0.85rem;line-height:1.6">${f.want||'—'}</div>
-  `;
+    <div style="color:rgba(255,255,255,0.75);font-size:0.85rem;line-height:1.6">${f.want||'—'}</div>`;
 }
-  async function loadFunnel() {
+
+// ── FUNNEL ──
+async function loadFunnel() {
   try {
     const d = await API.call('/admin/analytics/funnel');
     document.getElementById('funnel-card').innerHTML = `
       <div class="card-title">Signup → Paid Conversion</div>
       <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:1rem">
-        <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:0.9rem 1.1rem;display:flex;justify-content:space-between;align-items:center">
+        <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:0.9rem 1.1rem;display:flex;justify-content:space-between">
           <span style="color:rgba(255,255,255,0.6)">Total Signups</span>
           <span style="font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:1.3rem">${d.totalSignups}</span>
         </div>
-        <div style="background:rgba(124,106,247,0.08);border-radius:10px;padding:0.9rem 1.1rem;display:flex;justify-content:space-between;align-items:center">
-          <span style="color:rgba(255,255,255,0.6)">Any Paid Access</span>
+        <div style="background:rgba(124,106,247,0.08);border-radius:10px;padding:0.9rem 1.1rem;display:flex;justify-content:space-between">
+          <span style="color:rgba(255,255,255,0.6)">Any Paid</span>
           <span style="font-family:'Syne',sans-serif;font-weight:800;color:#a89df7;font-size:1.3rem">${d.anyPaid} <span style="font-size:0.7rem;color:#34d399">(${d.conversionRate}%)</span></span>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;margin-top:0.5rem">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem">
           <div style="background:rgba(52,211,153,0.08);border-radius:10px;padding:0.75rem;text-align:center">
             <div style="font-family:'Syne',sans-serif;font-weight:800;color:#34d399">${d.basePaid}</div>
             <div style="font-size:0.65rem;color:rgba(255,255,255,0.4)">Base ₹99</div>
@@ -354,7 +712,6 @@ function showFeedback(i) {
           </div>
         </div>
       </div>`;
-
     const top = await API.call('/admin/analytics/top-performers');
     document.getElementById('top-performers-list').innerHTML = top.length ? top.map((u,i) => `
       <div class="list-row">
@@ -363,57 +720,23 @@ function showFeedback(i) {
         <div style="flex:1"><div style="color:#fff;font-size:0.85rem">${u.name||'—'}</div></div>
         <div style="color:#34d399;font-size:0.8rem;font-weight:600">${u.count} solved</div>
       </div>`).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No solves yet</div>';
-  } catch(e) { console.error(e); }
+  } catch(e) {}
 }
 
-async function loadInactive() {
+// ── ACTIVE TODAY ──
+async function loadActiveToday() {
   try {
-    const list = await API.call('/admin/analytics/inactive');
-    document.getElementById('inactive-list').innerHTML = list.length ? list.map(u => `
-      <div class="list-row">
+    const list = await API.call('/admin/analytics/active-today');
+    document.getElementById('active-list').innerHTML = list.length ? list.map(a => {
+      const u = a.userId||{};
+      return `<div class="list-row">
         <div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div>
-        <div style="flex:1">
-          <div style="color:#fff;font-size:0.85rem">${u.name||'—'}</div>
-          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email||''}</div>
-        </div>
-        <div style="font-size:0.72rem;color:rgba(248,113,113,0.7);text-align:right">
-          ${u.lastSeen ? 'Last seen: '+new Date(u.lastSeen).toLocaleDateString('en-IN') : 'Never active'}
-        </div>
-      </div>`).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Everyone is active! 🎉</div>';
-  } catch(e) { console.error(e); }
-}
-  async function loadUpsell() {
-  try {
-    const list = await API.call('/admin/analytics/upsell-list');
-    document.getElementById('upsell-count').textContent = `${list.length} users`;
-    if (!list.length) {
-      document.getElementById('upsell-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Sab ne le liya! 🎉</div>';
-      return;
-    }
-    document.getElementById('upsell-list').innerHTML = `
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.75rem">
-        ${list.map(u => `
-          <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1rem 1.1rem">
-            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem">
-              <div style="width:34px;height:34px;border-radius:50%;background:rgba(124,106,247,0.15);color:#a89df7;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;flex-shrink:0">
-                ${(u.name||'?').charAt(0).toUpperCase()}
-              </div>
-              <div>
-                <div style="color:#fff;font-size:0.88rem;font-weight:600">${u.name||'—'}</div>
-                <div style="font-size:0.68rem;color:rgba(255,255,255,0.35)">${u.email||''}</div>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <div style="font-size:0.72rem;color:rgba(255,255,255,0.35)">
-                📱 ${u.mobile||'N/A'} &nbsp;·&nbsp; Joined ${new Date(u.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}
-              </div>
-              <span style="font-size:0.62rem;padding:2px 8px;border-radius:99px;background:rgba(251,191,36,0.1);color:#fbbf24;font-weight:700">₹199</span>
-            </div>
-          </div>`).join('')}
+        <div style="flex:1"><div style="font-size:0.85rem;color:#fff">${u.name||'Unknown'}</div><div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email||''}</div></div>
+        ${u.isPaid?'<span class="tag" style="background:rgba(52,211,153,0.12);color:#34d399">Base</span>':''}
+        ${u.masterDsaAccess?'<span class="tag" style="background:rgba(124,106,247,0.12);color:#a89df7">DSA</span>':''}
       </div>`;
-  } catch(e) {
-    document.getElementById('upsell-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Could not load</div>';
-  }
+    }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No activity today yet</div>';
+  } catch(e) {}
 }
 </script>
 </body>
