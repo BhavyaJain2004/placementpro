@@ -447,4 +447,105 @@ router.get('/analytics/upsell-list', verifyToken, verifyAdmin, async (req, res) 
     res.json(users);
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
+
+// backend/routes/admin.js mein add karo (module.exports se PEHLE)
+
+// MONTHLY SIGNUPS + REVENUE
+router.get('/analytics/monthly', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const months = [];
+    const now = new Date();
+    for (let i = 11; i >= 0; i--) {
+      const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+      const signups = await User.countDocuments({ createdAt: { $gte: start, $lt: end } });
+      const basePaid = await User.countDocuments({ isPaid: true, createdAt: { $gte: start, $lt: end } });
+      const masterDsa = await User.countDocuments({ masterDsaAccess: true, createdAt: { $gte: start, $lt: end } });
+      const revenue = (basePaid * 99) + (masterDsa * 1000);
+      months.push({
+        month: start.toLocaleDateString('en-IN', { month: 'short', year: '2-digit' }),
+        signups, basePaid, masterDsa, revenue
+      });
+    }
+    res.json(months);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// ALL-TIME DAILY SIGNUPS (for calendar click)
+router.get('/analytics/daily-signups', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { date } = req.query;
+    if (date) {
+      // Return users who signed up on that specific date
+      const start = new Date(date); start.setHours(0,0,0,0);
+      const end = new Date(date); end.setHours(23,59,59,999);
+      const users = await User.find({ createdAt: { $gte: start, $lte: end } })
+        .select('name email mobile isPaid masterDsaAccess createdAt').lean();
+      return res.json({ users });
+    }
+    // All time daily counts grouped by date
+    const data = await User.aggregate([
+      { $group: {
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+        count: { $sum: 1 },
+        paid: { $sum: { $cond: ['$isPaid', 1, 0] } }
+      }},
+      { $sort: { _id: 1 } }
+    ]);
+    res.json(data);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// DAU / WAU / MAU
+router.get('/analytics/active-users', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    let Activity;
+    try { Activity = require('../models/Activity'); } catch(e) {}
+    if (!Activity) return res.json({ dau: 0, wau: 0, mau: 0 });
+
+    const now = new Date();
+    const day = new Date(now); day.setHours(0,0,0,0);
+    const week = new Date(now); week.setDate(week.getDate() - 7);
+    const month = new Date(now); month.setDate(month.getDate() - 30);
+
+    const [dauArr, wauArr, mauArr] = await Promise.all([
+      Activity.distinct('userId', { createdAt: { $gte: day } }),
+      Activity.distinct('userId', { createdAt: { $gte: week } }),
+      Activity.distinct('userId', { createdAt: { $gte: month } })
+    ]);
+    res.json({ dau: dauArr.length, wau: wauArr.length, mau: mauArr.length });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// PENDING PAYMENTS — signed up but isPaid=false and masterDsaAccess=false
+router.get('/analytics/pending-payments', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const users = await User.find({ isPaid: false, masterDsaAccess: false })
+      .select('name email mobile createdAt').sort({ createdAt: -1 }).lean();
+    const total = await User.countDocuments({});
+    const conversionRate = total ? (((total - users.length) / total) * 100).toFixed(1) : 0;
+    res.json({ users, total, unpaid: users.length, conversionRate });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// TOTAL REVENUE SUMMARY
+router.get('/analytics/revenue', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const basePaid = await User.countDocuments({ isPaid: true });
+    const masterDsa = await User.countDocuments({ masterDsaAccess: true });
+    const bothAccess = await User.countDocuments({ isPaid: true, masterDsaAccess: true });
+    // Estimate: base = ₹99 each, masterDsa only = ₹1000 each, both = ₹99 + ₹1000
+    const baseOnly = basePaid - bothAccess;
+    const dsaOnly = masterDsa - bothAccess;
+    const totalRevenue = (baseOnly * 99) + (dsaOnly * 1000) + (bothAccess * 1099);
+
+    // Today's revenue
+    const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+    const todayBase = await User.countDocuments({ isPaid: true, createdAt: { $gte: todayStart } });
+    const todayDsa = await User.countDocuments({ masterDsaAccess: true, createdAt: { $gte: todayStart } });
+    const todayRevenue = (todayBase * 99) + (todayDsa * 1000);
+
+    res.json({ totalRevenue, todayRevenue, baseOnly, dsaOnly, bothAccess, basePaid, masterDsa });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
 module.exports = router;
