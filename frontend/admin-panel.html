@@ -331,10 +331,7 @@ if (!cachedUser) throw new Error();
 if (!cachedUser.isAdmin) window.location.href = 'dashboard.html';
 
 // ── NOTIFICATIONS (stored in localStorage for now) ──
-let notifications = JSON.parse(localStorage.getItem('admin_notifs') || '[]');
-let notifIntervals = {};
 
-function saveNotifs() { localStorage.setItem('admin_notifs', JSON.stringify(notifications)); }
 
 function showBanner(notif) {
   const [bg, fg] = (notif.color || '#7c6af7,#fff').split(',');
@@ -349,84 +346,78 @@ function showBanner(notif) {
 
 function closeBanner() { document.getElementById('notif-banner').classList.remove('show'); }
 
-function startNotifLoop(notif) {
-  if (!notif.active) return;
-  showBanner(notif);
-  if (notif.repeat > 0) {
-    clearInterval(notifIntervals[notif.id]);
-    notifIntervals[notif.id] = setInterval(() => { if (notif.active) showBanner(notif); }, notif.repeat * 60000);
-  }
-}
 
+// ── NOTIFICATIONS (backend-connected) ──
 function previewNotif() {
   const msg = document.getElementById('ntf-msg').value.trim();
   if (!msg) { alert('Please enter a message'); return; }
-  showBanner({ message: msg, color: document.getElementById('ntf-color').value, duration: parseInt(document.getElementById('ntf-duration').value) });
+  showBanner({ message: msg, color: document.getElementById('ntf-color').value });
 }
 
-function createNotif() {
+async function createNotif() {
   const msg = document.getElementById('ntf-msg').value.trim();
   if (!msg) { alert('Please enter a message'); return; }
-  const notif = {
-    id: Date.now(),
-    message: msg,
-    color: document.getElementById('ntf-color').value,
-    repeat: parseInt(document.getElementById('ntf-repeat').value),
-    duration: parseInt(document.getElementById('ntf-duration').value),
-    active: true,
-    createdAt: new Date().toISOString()
-  };
-  notifications.push(notif);
-  saveNotifs();
-  startNotifLoop(notif);
-  document.getElementById('ntf-msg').value = '';
-  renderNotifList();
+  try {
+    await API.call('/admin/notification', {
+      method: 'POST',
+      body: JSON.stringify({
+        message: msg,
+        color: document.getElementById('ntf-color').value,
+        repeat: parseInt(document.getElementById('ntf-repeat').value),
+        duration: parseInt(document.getElementById('ntf-duration').value),
+        active: true
+      })
+    });
+    document.getElementById('ntf-msg').value = '';
+    loadNotifList();
+    alert('Published! Users will see it on their next page load.');
+  } catch(e) { alert('Error publishing notification'); }
 }
 
-function toggleNotif(id) {
-  const n = notifications.find(n => n.id === id);
-  if (!n) return;
-  n.active = !n.active;
-  if (!n.active) { clearInterval(notifIntervals[id]); closeBanner(); }
-  else startNotifLoop(n);
-  saveNotifs(); renderNotifList();
+async function toggleNotifBackend(id, current) {
+  try {
+    await API.call('/admin/notification/' + id, { method: 'PATCH', body: JSON.stringify({ active: !current }) });
+    loadNotifList();
+  } catch(e) {}
 }
 
-function deleteNotif(id) {
-  clearInterval(notifIntervals[id]);
-  notifications = notifications.filter(n => n.id !== id);
-  saveNotifs(); renderNotifList();
+async function deleteNotifBackend(id) {
+  try {
+    await API.call('/admin/notification/' + id, { method: 'DELETE' });
+    loadNotifList();
+  } catch(e) {}
 }
 
-function renderNotifList() {
-  const el = document.getElementById('notif-list');
-  if (!notifications.length) { el.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No notifications created yet</div>'; return; }
-  el.innerHTML = notifications.map(n => `
-    <div class="notif-card">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0.6rem">
-        <div style="font-size:0.88rem;color:#fff;flex:1">${n.message}</div>
-        <span class="ntf-status ${n.active ? 'ntf-active' : 'ntf-paused'}">${n.active ? '● Active' : '⏸ Paused'}</span>
-      </div>
-      <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);margin-bottom:0.75rem">
-        Repeat: ${n.repeat === 0 ? 'Once' : 'Every ' + (n.repeat >= 60 ? n.repeat/60 + 'hr' : n.repeat + 'min')} &nbsp;·&nbsp;
-        Auto-hide: ${n.duration === 0 ? 'Manual' : n.duration/1000 + 's'} &nbsp;·&nbsp;
-        Created: ${new Date(n.createdAt).toLocaleDateString('en-IN')}
-      </div>
-      <div style="display:flex;gap:0.5rem">
-        <button class="btn-sm" onclick="showBanner({message:'${n.message.replace(/'/g,"\\'")}',color:'${n.color}',duration:${n.duration}})">👁 Preview</button>
-        <button class="btn-sm" onclick="toggleNotif(${n.id})">${n.active ? '⏸ Pause' : '▶ Resume'}</button>
-        <button class="btn-sm btn-danger" onclick="deleteNotif(${n.id})">🗑 Delete</button>
-      </div>
-    </div>`).join('');
+async function loadNotifList() {
+  try {
+    const list = await API.call('/admin/notifications');
+    const el = document.getElementById('notif-list');
+    if (!list.length) { el.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No notifications yet</div>'; return; }
+    el.innerHTML = list.map(n => `
+      <div class="notif-card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0.6rem">
+          <div style="font-size:0.88rem;color:#fff;flex:1">${n.message}</div>
+          <span class="ntf-status ${n.active ? 'ntf-active' : 'ntf-paused'}">${n.active ? '● Active' : '⏸ Paused'}</span>
+        </div>
+        <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);margin-bottom:0.5rem">
+          👁 Viewed by ${n.viewers?.length || 0} users &nbsp;·&nbsp; Created ${new Date(n.createdAt).toLocaleDateString('en-IN')}
+        </div>
+        <div style="display:flex;gap:0.5rem">
+          <button class="btn-sm" onclick="toggleNotifBackend('${n._id}', ${n.active})">${n.active ? '⏸ Pause' : '▶ Resume'}</button>
+          <button class="btn-sm btn-danger" onclick="deleteNotifBackend('${n._id}')">🗑 Delete</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('notif-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Could not load</div>';
+  }
 }
-
 // ── AUTH ──
 function checkPwd() {
   if (document.getElementById('gate-pwd').value === 'adminbhavya') {
     document.getElementById('gate').style.display = 'none';
     document.getElementById('admin-layout').style.display = 'grid';
     loadOverview();
-    notifications.forEach(n => { if (n.active) startNotifLoop(n); });
+   
   } else document.getElementById('gate-err').textContent = 'Wrong password';
 }
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
@@ -437,7 +428,7 @@ function showTab(tab, btn) {
   ALL_TABS.forEach(t => { const el = document.getElementById('tab-'+t); if(el) el.style.display = t===tab?'block':'none'; });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
-  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: renderNotifList };
+  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList };
   if (loaders[tab]) loaders[tab]();
 }
 
