@@ -499,6 +499,59 @@ async function sendMentorMsg() {
   }
 }
 document.getElementById('mentor-input').addEventListener('keypress', e=>{ if(e.key==='Enter') sendMentorMsg(); });
-</script>
+  // ADD THIS to every page's <script> section (after API.call is available)
+// Also add this HTML before </body>:
+// <div id="ntf-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:0.88rem;font-weight:600;box-shadow:0 -4px 24px rgba(0,0,0,0.4);transition:transform 0.4s;transform:translateY(100%)">
+//   <div style="display:flex;align-items:center;gap:10px"><span id="ntf-dot" style="width:7px;height:7px;border-radius:50%;display:inline-block;animation:pulse 1.5s infinite;flex-shrink:0"></span><span id="ntf-text"></span></div>
+//   <button onclick="closeNtf()" style="background:none;border:none;color:inherit;cursor:pointer;font-size:1.2rem;opacity:0.6">×</button>
+// </div>
+
+let shownNotifs = JSON.parse(sessionStorage.getItem('shown_notifs') || '[]');
+
+async function loadNotifications() {
+  try {
+    const list = await API.call('/admin/active-notifications');
+    list.forEach(n => {
+      const key = 'ntf_last_' + n._id;
+      const lastShown = localStorage.getItem(key);
+      const now = Date.now();
+      const shouldShow = !lastShown || (n.repeat > 0 && now - parseInt(lastShown) > n.repeat * 60000);
+      if (shouldShow && !shownNotifs.includes(n._id)) {
+        setTimeout(() => showNtf(n), 1500);
+      }
+    });
+  } catch(e) {}
+}
+
+function showNtf(n) {
+  const [bg, fg] = (n.color || '#7c6af7,#fff').split(',');
+  const banner = document.getElementById('ntf-banner');
+  if (!banner) return;
+  document.getElementById('ntf-text').textContent = n.message;
+  document.getElementById('ntf-dot').style.background = fg;
+  banner.style.background = bg;
+  banner.style.color = fg;
+  banner.style.transform = 'translateY(0)';
+  banner.style.display = 'flex';
+  shownNotifs.push(n._id);
+  sessionStorage.setItem('shown_notifs', JSON.stringify(shownNotifs));
+  localStorage.setItem('ntf_last_' + n._id, Date.now().toString());
+  // Mark as viewed in backend
+  API.call('/admin/notification/' + n._id + '/view', { method: 'POST' }).catch(()=>{});
+  if (n.duration > 0) setTimeout(closeNtf, n.duration);
+}
+
+function closeNtf() {
+  const b = document.getElementById('ntf-banner');
+  if (b) b.style.transform = 'translateY(100%)';
+}
+
+// Call on page load
+loadNotifications();
+</script>\
+  <div id="ntf-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99999;padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:0.88rem;font-weight:600;box-shadow:0 -4px 24px rgba(0,0,0,0.4);transition:transform 0.4s;transform:translateY(100%)">
+  <div style="display:flex;align-items:center;gap:10px"><span id="ntf-dot" style="width:7px;height:7px;border-radius:50%;display:inline-block;animation:pulse 1.5s infinite;flex-shrink:0"></span><span id="ntf-text"></span></div>
+  <button onclick="closeNtf()" style="background:none;border:none;color:inherit;cursor:pointer;font-size:1.2rem;opacity:0.6">×</button>
+</div>
 </body>
 </html>
