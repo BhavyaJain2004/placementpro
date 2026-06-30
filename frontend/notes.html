@@ -393,5 +393,12 @@ function closeNtf() {
 loadNotifications();
 </script>
 <!-- ═══ END LAUNCH POPUP ═══ -->
+  <div id="ntf-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99999;align-items:center;justify-content:center;padding:1rem">
+  <div id="ntf-modal" style="max-width:420px;width:100%;border-radius:16px;padding:1.75rem;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.5)">
+    <button onclick="closeNtf()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:inherit;cursor:pointer;font-size:1.4rem;opacity:0.6">×</button>
+    <div id="ntf-dot" style="width:8px;height:8px;border-radius:50%;display:inline-block;margin-bottom:0.75rem;animation:pulse 1.5s infinite"></div>
+    <div id="ntf-text" style="font-size:1rem;font-weight:600;line-height:1.6"></div>
+  </div>
+</div>
 </body>
 </html>
