@@ -548,4 +548,63 @@ router.get('/analytics/revenue', verifyToken, verifyAdmin, async (req, res) => {
     res.json({ totalRevenue, todayRevenue, baseOnly, dsaOnly, bothAccess, basePaid, masterDsa });
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
+
+// backend/routes/admin.js mein add karo
+const Notification = require('../models/Notification');
+
+// Admin — create notification
+router.post('/notification', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const n = await Notification.create(req.body);
+    res.json(n);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// Admin — get all notifications with viewer count
+router.get('/notifications', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const list = await Notification.find().sort({ createdAt: -1 }).lean();
+    const User = require('../models/User');
+    const withNames = await Promise.all(list.map(async n => {
+      const viewers = await User.find({ _id: { $in: n.viewedBy } }).select('name email').lean();
+      return { ...n, viewers };
+    }));
+    res.json(withNames);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// Admin — toggle active
+router.patch('/notification/:id', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const n = await Notification.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(n);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// Admin — delete
+router.delete('/notification/:id', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    await Notification.findByIdAndDelete(req.params.id);
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// ALL USERS — get active notifications (called on every page load)
+router.get('/active-notifications', verifyToken, async (req, res) => {
+  try {
+    const Notification = require('../models/Notification');
+    const list = await Notification.find({ active: true }).select('-viewedBy').lean();
+    res.json(list);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// ALL USERS — mark as viewed
+router.post('/notification/:id/view', verifyToken, async (req, res) => {
+  try {
+    await Notification.findByIdAndUpdate(req.params.id, {
+      $addToSet: { viewedBy: req.user.id }
+    });
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
 module.exports = router;
