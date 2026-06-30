@@ -355,6 +355,42 @@
 function closePopup() {
   document.getElementById('ts-popup').style.display = 'none';
 }
+  let shownNotifs = JSON.parse(sessionStorage.getItem('shown_notifs') || '[]');
+
+async function loadNotifications() {
+  try {
+    const list = await API.call('/admin/active-notifications');
+    list.forEach(n => {
+      const key = 'ntf_last_' + n._id;
+      const lastShown = localStorage.getItem(key);
+      const now = Date.now();
+      const shouldShow = !lastShown || (n.repeat > 0 && now - parseInt(lastShown) > n.repeat * 60000);
+      if (shouldShow && !shownNotifs.includes(n._id)) {
+        setTimeout(() => showNtf(n), 1500);
+      }
+    });
+  } catch(e) {}
+}
+
+function showNtf(n) {
+  const [bg, fg] = (n.color || '#7c6af7,#fff').split(',');
+  document.getElementById('ntf-text').textContent = n.message;
+  document.getElementById('ntf-dot').style.background = fg;
+  document.getElementById('ntf-modal').style.background = bg;
+  document.getElementById('ntf-modal').style.color = fg;
+  document.getElementById('ntf-overlay').style.display = 'flex';
+  shownNotifs.push(n._id);
+  sessionStorage.setItem('shown_notifs', JSON.stringify(shownNotifs));
+  localStorage.setItem('ntf_last_' + n._id, Date.now().toString());
+  API.call('/admin/notification/' + n._id + '/view', { method: 'POST' }).catch(()=>{});
+  if (n.duration > 0) setTimeout(closeNtf, n.duration);
+}
+
+function closeNtf() {
+  document.getElementById('ntf-overlay').style.display = 'none';
+}
+
+loadNotifications();
 </script>
 <!-- ═══ END LAUNCH POPUP ═══ -->
 </body>
