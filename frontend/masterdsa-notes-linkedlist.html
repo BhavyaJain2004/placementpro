@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linked List Notes — Master DSA</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.notes-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px)}
+@media(max-width:768px){.notes-layout{grid-template-columns:1fr}.notes-sidebar{display:none}}
+.notes-sidebar{background:#09091a;border-right:1px solid rgba(255,255,255,0.06);padding:1.5rem 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;align-self:start}
+.nt-item{display:flex;align-items:center;gap:0.6rem;padding:0.6rem 1.25rem;font-size:0.83rem;color:rgba(255,255,255,0.45);cursor:pointer;border-left:2px solid transparent;text-decoration:none}
+.nt-item:hover{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.8)}
+.nt-item.active{background:rgba(124,106,247,0.08);border-left-color:#a89df7;color:#a89df7;font-weight:600}
+.nt-item.locked{opacity:0.3;cursor:not-allowed}
+.notes-main{padding:2.5rem 3.5rem 5rem;max-width:760px}
+@media(max-width:768px){.notes-main{padding:1.5rem 1.25rem 4rem}}
+.nt-h1{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:#fff;margin-bottom:0.6rem;line-height:1.2}
+.nt-intro{font-size:1rem;color:rgba(255,255,255,0.55);line-height:1.9;margin-bottom:2.5rem}
+.nt-h2{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:4rem 0 1.5rem;display:flex;align-items:center;gap:0.6rem}
+.nt-h2-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;background:rgba(124,106,247,0.15);color:#a89df7;font-size:0.95rem;flex-shrink:0}
+.nt-h3{font-family:'Syne',sans-serif;font-size:1.02rem;font-weight:700;color:#a89df7;margin:2rem 0 0.9rem}
+.nt-p{font-size:0.95rem;color:rgba(255,255,255,0.68);line-height:2;margin-bottom:1.4rem}
+.nt-p b{color:rgba(255,255,255,0.92);font-weight:600}
+.nt-p code{background:rgba(124,106,247,0.1);color:#a89df7;padding:1px 7px;border-radius:5px;font-family:'Fira Code',monospace;font-size:0.85em}
+.nt-divider{height:1px;background:rgba(255,255,255,0.06);margin:3.5rem 0}
+.nt-code{background:#0a0a18;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.25rem 1.4rem;font-family:'Fira Code',monospace;font-size:0.8rem;color:#e2e8f0;line-height:1.85;margin:1.5rem 0;overflow-x:auto;white-space:pre}
+.nt-code .c{color:rgba(255,255,255,0.3)}
+.nt-tip{background:rgba(251,191,36,0.05);border-left:3px solid #fbbf24;border-radius:0 10px 10px 0;padding:1rem 1.25rem;font-size:0.88rem;color:rgba(251,191,36,0.92);margin:1.5rem 0;line-height:1.8}
+.nt-tip-label{font-weight:800;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;display:block}
+.nt-warn{background:rgba(248,113,113,0.05);border-left:3px solid #f87171;border-radius:0 10px 10px 0;padding:1rem 1.25rem;font-size:0.88rem;color:rgba(248,113,113,0.92);margin:1.5rem 0;line-height:1.8}
+.nt-warn-label{font-weight:800;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;display:block}
+.nt-try{background:linear-gradient(135deg,rgba(52,211,153,0.07),rgba(52,211,153,0.02));border:1px solid rgba(52,211,153,0.25);border-radius:14px;padding:1.25rem 1.4rem;margin:2rem 0;display:flex;align-items:center;justify-content:space-between;gap:1.25rem;flex-wrap:wrap}
+.nt-try-label{font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#34d399;margin-bottom:0.4rem}
+.nt-try-text{font-size:0.92rem;color:rgba(255,255,255,0.85);line-height:1.6}
+.nt-try-btn{background:#34d399;color:#06160f;border:none;border-radius:9px;padding:0.6rem 1.1rem;font-size:0.82rem;font-weight:800;text-decoration:none;white-space:nowrap;font-family:'Syne',sans-serif}
+.nt-nav{display:flex;justify-content:flex-end;margin-top:3.5rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,0.06)}
+.nt-nav a{font-size:0.88rem;color:#fff;background:#7c6af7;text-decoration:none;padding:0.75rem 1.5rem;border-radius:10px;font-weight:700;font-family:'Syne',sans-serif}
+.progress-pill{display:inline-flex;align-items:center;gap:6px;font-size:0.72rem;color:#a89df7;background:rgba(124,106,247,0.1);padding:5px 12px;border-radius:99px;margin-bottom:1.25rem;font-weight:600}
+.trace-box{background:#0a0a18;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.1rem;margin:1.5rem 0;overflow-x:auto}
+.trace-table{width:100%;border-collapse:collapse;font-size:0.8rem;font-family:'Fira Code',monospace}
+.trace-table th{color:rgba(255,255,255,0.4);text-align:left;padding:0.55rem 0.8rem;border-bottom:1px solid rgba(255,255,255,0.08);font-weight:600;font-family:'DM Sans',sans-serif;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em}
+.trace-table td{color:#e2e8f0;padding:0.55rem 0.8rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+.toc{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:3rem}
+.toc-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.3);margin-bottom:0.85rem}
+.toc a{display:flex;align-items:center;gap:0.6rem;font-size:0.88rem;color:rgba(255,255,255,0.6);text-decoration:none;padding:0.4rem 0}
+.toc a:hover{color:#a89df7}
+.toc-num{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:0.68rem;color:rgba(255,255,255,0.4);flex-shrink:0}
+.def-card{background:linear-gradient(135deg,rgba(124,106,247,0.08),rgba(6,182,212,0.03));border:1px solid rgba(124,106,247,0.2);border-radius:14px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+.def-label{font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#a89df7;margin-bottom:0.6rem}
+.def-text{font-size:0.95rem;color:rgba(255,255,255,0.85);line-height:1.85}
+.node-viz{display:flex;align-items:center;gap:0;margin:1.5rem 0;flex-wrap:wrap}
+.node-box{display:flex;border:1.5px solid rgba(124,106,247,0.4);border-radius:8px;overflow:hidden}
+.node-val{padding:0.7rem 1rem;background:rgba(124,106,247,0.12);color:#a89df7;font-family:'Fira Code',monospace;font-weight:700;font-size:0.9rem}
+.node-ptr{padding:0.7rem 0.85rem;background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.4);font-family:'Fira Code',monospace;font-size:0.75rem}
+.node-arrow{color:rgba(255,255,255,0.25);font-size:1.2rem;padding:0 8px}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<nav class="navbar" style="position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06);">
+  <div class="nav-logo"><a href="masterdsa-dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit"><span class="dot"></span> Master DSA</a></div>
+  <div style="display:flex;align-items:center;gap:0.25rem">
+    <a href="masterdsa-dashboard.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">🏠 Home</a>
+    <a href="masterdsa-practice.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">📚 Practice</a>
+    <a href="masterdsa-notes.html" style="font-size:0.82rem;color:#a89df7;text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px;background:rgba(124,106,247,0.1)">📖 Notes</a>
+    <a href="masterdsa-videos.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">🎥 Videos</a>
+  </div>
+  <div class="nav-right"><a href="masterdsa-dashboard.html" style="font-size:0.85rem;color:var(--muted);text-decoration:none">← Back</a></div>
+</nav>
+
+<div class="notes-layout">
+  <div class="notes-sidebar">
+    <div style="padding:0 1.25rem 1rem;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.25)">Topics</div>
+    <a class="nt-item" href="masterdsa-notes.html">📐 Arrays & Strings</a>
+    <a class="nt-item active" href="#">🔗 Linked List</a>
+    <a class="nt-item locked" href="#">📚 Stacks & Queues 🔒</a>
+    <a class="nt-item locked" href="#">🔄 Recursion 🔒</a>
+    <a class="nt-item locked" href="#">🌳 Trees & BST 🔒</a>
+  </div>
+
+  <div class="notes-main">
+    <div class="progress-pill">🔗 Topic 2 of 14</div>
+    <div class="nt-h1">Linked List</div>
+    <p class="nt-intro">Linked List Arrays se bilkul alag soch maangta hai — yahan koi index nahi hota, sirf "agle node ka address" hota hai. Shuru mein thoda confusing lagta hai (especially pointers ka concept), lekin ek baar samajh aa gaya toh ye topic genuinely simple ho jaata hai. Chalo bilkul zero se shuru karte hain.</p>
+
+    <div class="toc">
+      <div class="toc-title">Is page mein kya padhenge</div>
+      <a href="#basics"><span class="toc-num">1</span> Linked List hota kya hai</a>
+      <a href="#vsarray"><span class="toc-num">2</span> Array vs Linked List</a>
+      <a href="#reverse"><span class="toc-num">3</span> Reverse karna (3-pointer technique)</a>
+      <a href="#fastslow"><span class="toc-num">4</span> Fast-Slow Pointer (Cycle Detection)</a>
+      <a href="#dummy"><span class="toc-num">5</span> Dummy Node Trick</a>
+      <a href="#merge"><span class="toc-num">6</span> Merging Lists</a>
+      <a href="#mistakes"><span class="toc-num">7</span> Common Mistakes</a>
+    </div>
+
+    <div class="nt-h2" id="basics"><span class="nt-h2-num">1</span> Linked List hota kya hai?</div>
+
+    <p class="nt-p">Array mein socho lockers ek line mein fix hote hain. Linked List mein socho ek <b>treasure hunt</b> — har clue (node) tumhe agla clue kahan milega woh batata hai. Tumhe pura raasta pata nahi hota, bas itna pata hota hai "agla kahan hai".</p>
+
+    <p class="nt-p">Har <b>node</b> do cheezein store karta hai: ek <b>value</b> (data), aur ek <b>pointer</b> jo agle node ka address batata hai. Last node ka pointer <code>null</code> hota hai — matlab "yahan list khatam".</p>
+
+    <div class="node-viz">
+      <div class="node-box"><div class="node-val">10</div><div class="node-ptr">next →</div></div>
+      <div class="node-arrow">→</div>
+      <div class="node-box"><div class="node-val">20</div><div class="node-ptr">next →</div></div>
+      <div class="node-arrow">→</div>
+      <div class="node-box"><div class="node-val">30</div><div class="node-ptr">null</div></div>
+    </div>
+
+    <p class="nt-p">Java mein ek node aisa dikhta hai:</p>
+    <div class="nt-code">class ListNode {
+  int val;
+  ListNode next;
+  ListNode(int val) {
+    this.val = val;
+    this.next = null;
+  }
+}</div>
+
+    <p class="nt-p">List access karne ke liye sirf <b>head</b> (pehla node) ka reference chahiye hota hai — wahan se <code>.next</code> follow karke poori list traverse kar sakte ho.</p>
+
+    <div class="nt-divider"></div>
+
+    <div class="nt-h2" id="vsarray"><span class="nt-h2-num">2</span> Array vs Linked List — Kab Kya Use Karein</div>
+
+    <div class="trace-box">
+      <table class="trace-table">
+        <tr><th>Operation</th><th>Array</th><th>Linked List</th></tr>
+        <tr><td>Access by index</td><td>O(1) — fast</td><td>O(n) — slow, traverse karna padega</td></tr>
+        <tr><td>Insert/Delete at start</td><td>O(n) — sab shift karna padega</td><td>O(1) — bas pointer change</td></tr>
+        <tr><td>Insert/Delete at end</td><td>O(1)</td><td>O(n) (without tail pointer)</td></tr>
+        <tr><td>Memory</td><td>Continuous block</td><td>Scattered, extra pointer memory</td></tr>
+        <tr><td>Size</td><td>Fixed (or costly resize)</td><td>Dynamic, easy grow/shrink</td></tr>
+      </table>
+    </div>
+
+    <p class="nt-p">Simple rule: agar baar-baar beech mein insert/delete karna ho, Linked List behtar hai. Agar baar-baar random index access karna ho, Array behtar hai.</p>
+
+    <div class="nt-divider"></div>
+
+    <div class="nt-h2" id="reverse"><span class="nt-h2-num">3</span> Reverse Karna — 3 Pointer Technique</div>
+
+    <div class="def-card">
+      <div class="def-label">Yeh sबसे important pattern hai</div>
+      <div class="def-text">Linked List reverse karna matlab har node ka <code>next</code> pointer ulta kar dena — jo node pehle aage point kar raha tha, ab woh peeche point kare. Iske liye <b>3 pointers</b> chahiye: <code>prev</code>, <code>curr</code>, <code>next</code>.</div>
+    </div>
+
+    <p class="nt-p">Example: <code>1 → 2 → 3 → null</code> ko <code>3 → 2 → 1 → null</code> banana hai।</p>
+
+    <div class="trace-box">
+      <table class="trace-table">
+        <tr><th>Step</th><th>prev</th><th>curr</th><th>Action</th></tr>
+        <tr><td>Start</td><td>null</td><td>1</td><td>curr.next ko prev (null) banao</td></tr>
+        <tr><td>1</td><td>1</td><td>2</td><td>1 ab kisi ko point nahi karta (list ka end ban gaya), curr.next ko prev (1) banao</td></tr>
+        <tr><td>2</td><td>2</td><td>3</td><td>2.next ab 1 hai, curr.next ko prev (2) banao</td></tr>
+        <tr><td>End</td><td>3</td><td>null</td><td>3.next ab 2 hai — prev (3) hi naya head hai!</td></tr>
+      </table>
+    </div>
+
+    <p class="nt-p">Logic: har step pe, current node ka <code>next</code> "prev" ki taraf mod do, fir dono pointers ek-ek step aage badha do.</p>
+
+    <div class="nt-code">ListNode prev = null, curr = head;
+while (curr != null) {
+  ListNode next = curr.next;  <span class="c">// agle node ko bhool jaane se pehle save karo</span>
+  curr.next = prev;            <span class="c">// pointer ulta karo</span>
+  prev = curr;                 <span class="c">// prev ko aage badhao</span>
+  curr = next;                 <span class="c">// curr ko aage badhao</span>
+}
+return prev;  <span class="c">// prev hi naya head hai</span></div>
+
+    <div class="nt-warn"><span class="nt-warn-label">⚠️ Sabse common mistake</span><code>curr.next</code> ko ulta karne se <b>pehle</b> agle node (<code>next</code>) ko save karna mat bhoolo — warna ek baar pointer ulta karne ke baad tum list ka baaki hissa "kho" dete ho, kyunki <code>curr.next</code> ab kisi aur ko point kar raha hai.</div>
+
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Reverse Linked List</b>, <b>Reverse Linked List II</b></div></div>
+      <a href="masterdsa-practice.html?topic=linkedlist" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="nt-h2" id="fastslow"><span class="nt-h2-num">4</span> Fast-Slow Pointer (Floyd's Algorithm)</div>
+
+    <div class="def-card">
+      <div class="def-label">Simple shabdon mein</div>
+      <div class="def-text">Do pointers ek saath chalte hain — ek "slow" (1 step at a time), ek "fast" (2 steps at a time). Socho race track pe ek runner dusre se double speed se daud raha hai — agar track circular hai (cycle hai), fast wala slow ko ek na ek din pakad lega.</div>
+    </div>
+
+    <p class="nt-p">Agar list mein cycle hai (koi node wapas peeche kisi node ki taraf point kar raha hai), fast pointer kabhi <code>null</code> tak nahi pahunchega — balki ek din slow pointer ko "pakad" lega, kyunki woh usse dogni speed se chal raha hai aur cycle ke andar fasa hua hai.</p>
+
+    <div class="nt-code">ListNode slow = head, fast = head;
+while (fast != null && fast.next != null) {
+  slow = slow.next;        <span class="c">// 1 step</span>
+  fast = fast.next.next;   <span class="c">// 2 steps</span>
+  if (slow == fast) return true;  <span class="c">// mil gaye = cycle hai!</span>
+}
+return false;  <span class="c">// fast null tak pahunch gaya = cycle nahi hai</span></div>
+
+    <div class="nt-tip"><span class="nt-tip-label">💡 Yeh technique aur kahan kaam aati hai</span>Fast-slow pointer sirf cycle detection ke liye nahi — list ka <b>middle node</b> dhundne ke liye bhi use hota hai. Jab fast pointer end tak pahunche, slow pointer exactly middle mein hoga (kyunki woh aadhi speed se chal raha tha).</div>
+
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Detect Cycle in Linked List</b>, <b>Linked List Cycle II</b>, <b>Middle of the Linked List</b></div></div>
+      <a href="masterdsa-practice.html?topic=linkedlist" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="nt-h2" id="dummy"><span class="nt-h2-num">5</span> Dummy Node Trick</div>
+
+    <div class="def-card">
+      <div class="def-label">Yeh problem solve karta hai</div>
+      <div class="def-text">Jab tumhe list ke <b>head ko hi modify/delete</b> karna ho (jaise pehla node hata dena), code mein "agar yeh head hai toh alag handle karo" jaisa special case baar-baar likhna padta — bahut messy ho jaata hai. Dummy node ye problem khatam kar deta hai.</div>
+    </div>
+
+    <p class="nt-p">Trick: ek fake "dummy" node banao jiska <code>next</code> head ki taraf point kare. Ab tumhara "real" starting point dummy hai, head nahi — isliye head ko delete/change karna bhi ek normal case ban jaata hai, special case nahi.</p>
+
+    <div class="nt-code">ListNode dummy = new ListNode(0);
+dummy.next = head;
+ListNode curr = dummy;
+<span class="c">// ab curr.next se shuru karke kaam karo
+// list ke end mein, dummy.next hi tumhara naya head hai</span>
+return dummy.next;</div>
+
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Remove Nth Node From End</b>, <b>Remove Linked List Elements</b>, <b>Partition List</b></div></div>
+      <a href="masterdsa-practice.html?topic=linkedlist" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="nt-h2" id="merge"><span class="nt-h2-num">6</span> Do Lists ko Merge Karna</div>
+
+    <p class="nt-p">Do sorted linked lists ko merge karke ek sorted list banana — bahut common pattern hai (Merge Sort ka base bhi yehi hai). Idea: dummy node se shuru karo, dono lists ke heads compare karo, jo chhota ho usse result mein jodo, us list ko aage badhao, repeat karo.</p>
+
+    <div class="nt-code">ListNode dummy = new ListNode(0), curr = dummy;
+while (a != null && b != null) {
+  if (a.val <= b.val) { curr.next = a; a = a.next; }
+  else { curr.next = b; b = b.next; }
+  curr = curr.next;
+}
+curr.next = (a != null) ? a : b;  <span class="c">// jo bachi list hai usse attach kar do</span>
+return dummy.next;</div>
+
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Merge Two Sorted Lists</b>, <b>Sort List</b></div></div>
+      <a href="masterdsa-practice.html?topic=linkedlist" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="nt-h2" id="mistakes"><span class="nt-h2-num">7</span> Common Mistakes</div>
+
+    <p class="nt-p"><b>1. NullPointerException</b> — hamesha check karo node ya node.next null toh nahi, especially <code>fast.next.next</code> jaisi cheez likhte waqt.</p>
+    <p class="nt-p"><b>2. Pointer ulta karne se pehle next save na karna</b> — Reverse karte waqt sबसे common bug, jisse list ka baaki hissa "lost" ho jaata hai.</p>
+    <p class="nt-p"><b>3. Head modify karte waqt dummy node use na karna</b> — special-case code likhna padta hai jo error-prone hai.</p>
+    <p class="nt-p"><b>4. Cycle wali list mein normal traversal try karna</b> — agar list mein cycle hai aur tum normal loop likho, infinite loop ban jaayega.</p>
+
+    <p class="nt-p" style="margin-top:2.5rem;font-size:1rem;color:rgba(255,255,255,0.8)">Ye 5 patterns — reversal, fast-slow pointer, dummy node, merging, aur careful null-checking — Linked List ke 90% questions cover kar dete hain. Practice page pe jao aur saare 22 questions try karo.</p>
+
+    <div class="nt-nav">
+      <a href="masterdsa-practice.html?topic=linkedlist">Start Practicing Linked List →</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
