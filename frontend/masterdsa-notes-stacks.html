@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stacks & Queues Notes — Master DSA</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.notes-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px)}
+@media(max-width:768px){.notes-layout{grid-template-columns:1fr}.notes-sidebar{display:none}}
+.notes-sidebar{background:#09091a;border-right:1px solid rgba(255,255,255,0.06);padding:1.5rem 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;align-self:start}
+.nt-item{display:flex;align-items:center;gap:0.6rem;padding:0.6rem 1.25rem;font-size:0.83rem;color:rgba(255,255,255,0.45);cursor:pointer;border-left:2px solid transparent;text-decoration:none}
+.nt-item:hover{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.8)}
+.nt-item.active{background:rgba(124,106,247,0.08);border-left-color:#a89df7;color:#a89df7;font-weight:600}
+.nt-item.locked{opacity:0.3;cursor:not-allowed}
+.notes-main{padding:2.5rem 3.5rem 5rem;max-width:760px}
+@media(max-width:768px){.notes-main{padding:1.5rem 1.25rem 4rem}}
+.nt-h1{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:#fff;margin-bottom:0.6rem;line-height:1.2}
+.nt-intro{font-size:1rem;color:rgba(255,255,255,0.55);line-height:1.9;margin-bottom:2.5rem}
+.nt-h2{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:4rem 0 1.5rem;display:flex;align-items:center;gap:0.6rem}
+.nt-h2-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;background:rgba(124,106,247,0.15);color:#a89df7;font-size:0.95rem;flex-shrink:0}
+.nt-h3{font-family:'Syne',sans-serif;font-size:1.02rem;font-weight:700;color:#a89df7;margin:2rem 0 0.9rem}
+.nt-p{font-size:0.95rem;color:rgba(255,255,255,0.68);line-height:2;margin-bottom:1.4rem}
+.nt-p b{color:rgba(255,255,255,0.92);font-weight:600}
+.nt-p code{background:rgba(124,106,247,0.1);color:#a89df7;padding:1px 7px;border-radius:5px;font-family:'Fira Code',monospace;font-size:0.85em}
+.nt-divider{height:1px;background:rgba(255,255,255,0.06);margin:3.5rem 0}
+.nt-code{background:#0a0a18;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.25rem 1.4rem;font-family:'Fira Code',monospace;font-size:0.8rem;color:#e2e8f0;line-height:1.85;margin:1.5rem 0;overflow-x:auto;white-space:pre}
+.nt-code .c{color:rgba(255,255,255,0.3)}
+.nt-tip{background:rgba(251,191,36,0.05);border-left:3px solid #fbbf24;border-radius:0 10px 10px 0;padding:1rem 1.25rem;font-size:0.88rem;color:rgba(251,191,36,0.92);margin:1.5rem 0;line-height:1.8}
+.nt-tip-label{font-weight:800;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;display:block}
+.nt-warn{background:rgba(248,113,113,0.05);border-left:3px solid #f87171;border-radius:0 10px 10px 0;padding:1rem 1.25rem;font-size:0.88rem;color:rgba(248,113,113,0.92);margin:1.5rem 0;line-height:1.8}
+.nt-warn-label{font-weight:800;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;display:block}
+.nt-try{background:linear-gradient(135deg,rgba(52,211,153,0.07),rgba(52,211,153,0.02));border:1px solid rgba(52,211,153,0.25);border-radius:14px;padding:1.25rem 1.4rem;margin:2rem 0;display:flex;align-items:center;justify-content:space-between;gap:1.25rem;flex-wrap:wrap}
+.nt-try-label{font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#34d399;margin-bottom:0.4rem}
+.nt-try-text{font-size:0.92rem;color:rgba(255,255,255,0.85);line-height:1.6}
+.nt-try-btn{background:#34d399;color:#06160f;border:none;border-radius:9px;padding:0.6rem 1.1rem;font-size:0.82rem;font-weight:800;text-decoration:none;white-space:nowrap;font-family:'Syne',sans-serif}
+.nt-nav{display:flex;justify-content:space-between;margin-top:3.5rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,0.06)}
+.nt-nav a{font-size:0.88rem;color:#fff;background:#7c6af7;text-decoration:none;padding:0.75rem 1.5rem;border-radius:10px;font-weight:700;font-family:'Syne',sans-serif}
+.progress-pill{display:inline-flex;align-items:center;gap:6px;font-size:0.72rem;color:#a89df7;background:rgba(124,106,247,0.1);padding:5px 12px;border-radius:99px;margin-bottom:1.25rem;font-weight:600}
+.trace-box{background:#0a0a18;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.1rem;margin:1.5rem 0;overflow-x:auto}
+.trace-table{width:100%;border-collapse:collapse;font-size:0.8rem;font-family:'Fira Code',monospace}
+.trace-table th{color:rgba(255,255,255,0.4);text-align:left;padding:0.55rem 0.8rem;border-bottom:1px solid rgba(255,255,255,0.08);font-weight:600;font-family:'DM Sans',sans-serif;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em}
+.trace-table td{color:#e2e8f0;padding:0.55rem 0.8rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+.trace-table tr:last-child td{font-weight:700;color:#34d399}
+.toc{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:3rem}
+.toc-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.3);margin-bottom:0.85rem}
+.toc a{display:flex;align-items:center;gap:0.6rem;font-size:0.88rem;color:rgba(255,255,255,0.6);text-decoration:none;padding:0.4rem 0}
+.toc a:hover{color:#a89df7}
+.toc-num{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:0.68rem;color:rgba(255,255,255,0.4);flex-shrink:0}
+.def-card{background:linear-gradient(135deg,rgba(124,106,247,0.08),rgba(6,182,212,0.03));border:1px solid rgba(124,106,247,0.2);border-radius:14px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+.def-label{font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#a89df7;margin-bottom:0.6rem}
+.def-text{font-size:0.95rem;color:rgba(255,255,255,0.85);line-height:1.85}
+.stack-viz{display:flex;flex-direction:column;gap:3px;width:120px;margin:1.5rem 0}
+.stack-cell{padding:0.6rem 1rem;background:rgba(124,106,247,0.12);border:1.5px solid rgba(124,106,247,0.35);border-radius:8px;font-family:'Fira Code',monospace;font-size:0.85rem;color:#a89df7;text-align:center;font-weight:700}
+.stack-cell.top{background:rgba(124,106,247,0.25);border-color:#a89df7}
+.queue-viz{display:flex;gap:3px;margin:1.5rem 0;align-items:center}
+.queue-cell{padding:0.6rem 1rem;background:rgba(52,211,153,0.1);border:1.5px solid rgba(52,211,153,0.3);border-radius:8px;font-family:'Fira Code',monospace;font-size:0.85rem;color:#34d399;text-align:center;font-weight:700}
+.queue-label{font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.4rem;text-align:center}
+.mono-viz{display:flex;gap:3px;margin:1.5rem 0;align-items:flex-end}
+.mono-bar{width:40px;background:rgba(124,106,247,0.15);border:1.5px solid rgba(124,106,247,0.3);border-radius:6px 6px 0 0;display:flex;align-items:center;justify-content:center;font-family:'Fira Code',monospace;font-size:0.8rem;color:#a89df7;font-weight:700}
+.mono-bar.popped{background:rgba(248,113,113,0.1);border-color:rgba(248,113,113,0.3);color:#f87171;text-decoration:line-through;opacity:0.5}
+.mono-bar.curr{background:rgba(52,211,153,0.15);border-color:#34d399;color:#34d399}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<nav class="navbar" style="position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06);">
+  <div class="nav-logo"><a href="masterdsa-dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit"><span class="dot"></span> Master DSA</a></div>
+  <div style="display:flex;align-items:center;gap:0.25rem">
+    <a href="masterdsa-dashboard.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">🏠 Home</a>
+    <a href="masterdsa-practice.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">📚 Practice</a>
+    <a href="masterdsa-notes.html" style="font-size:0.82rem;color:#a89df7;text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px;background:rgba(124,106,247,0.1)">📖 Notes</a>
+    <a href="masterdsa-videos.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">🎥 Videos</a>
+  </div>
+  <div class="nav-right"><a href="masterdsa-notes.html" style="font-size:0.85rem;color:var(--muted);text-decoration:none">← Notes Home</a></div>
+</nav>
+
+<div class="notes-layout">
+  <div class="notes-sidebar">
+    <div style="padding:0 1.25rem 1rem;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.25)">Topics</div>
+    <a class="nt-item" href="masterdsa-notes.html">📐 Arrays & Strings</a>
+    <a class="nt-item" href="masterdsa-notes-linkedlist.html">🔗 Linked List</a>
+    <a class="nt-item active" href="#">📚 Stacks & Queues</a>
+    <a class="nt-item locked" href="#">🔄 Recursion 🔒</a>
+    <a class="nt-item locked" href="#">🌳 Trees & BST 🔒</a>
+    <a class="nt-item locked" href="#">🔍 Binary Search 🔒</a>
+    <div style="padding:0.75rem 1.25rem;font-size:0.68rem;color:rgba(255,255,255,0.2)">More coming soon</div>
+  </div>
+
+  <div class="notes-main">
+    <div class="progress-pill">📚 Topic 3 of 14</div>
+    <div class="nt-h1">Stacks & Queues</div>
+    <p class="nt-intro">Stack aur Queue do aisi data structures hain jinhe samajhna bahut easy hai — sirf ek rule follow karte hain. Lekin interview mein jo problems aati hain woh thodi trickier hoti hain, kyunki inhe creatively use karna padta hai (jaise monotonic stack, ya two-stack queue). Is module mein sab cover karenge — ekdam zero se, with proper examples aur visualizations.</p>
+
+    <div class="toc">
+      <div class="toc-title">Is page mein kya padhenge</div>
+      <a href="#stack-basics"><span class="toc-num">1</span> Stack — kya hota hai, kaise kaam karta hai</a>
+      <a href="#stack-impl"><span class="toc-num">2</span> Stack implement karna (array + linked list dono se)</a>
+      <a href="#valid-paren"><span class="toc-num">3</span> Valid Parentheses — Stack ka Classic Use</a>
+      <a href="#monotonic"><span class="toc-num">4</span> Monotonic Stack — sabse important pattern</a>
+      <a href="#queue-basics"><span class="toc-num">5</span> Queue — kya hota hai, kaise kaam karta hai</a>
+      <a href="#two-stack-queue"><span class="toc-num">6</span> Queue using Two Stacks</a>
+      <a href="#deque"><span class="toc-num">7</span> Deque & Sliding Window Maximum</a>
+      <a href="#mistakes"><span class="toc-num">8</span> Common Mistakes & Interview Tips</a>
+    </div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <div class="nt-h2" id="stack-basics"><span class="nt-h2-num">1</span> Stack — Kya Hota Hai?</div>
+
+    <div class="def-card">
+      <div class="def-label">Real life analogy</div>
+      <div class="def-text">Stack bilkul plate ki stack jaisi hoti hai — plates ek ke upar ek rakhte ho, aur hamesha <b>sabse upar wali plate pehle uthate ho</b>. Neeche wali plate tab tak nahi milti jab tak upar ki saari plates uthao. Yahi Stack ka rule hai: <b>Last In, First Out (LIFO)</b>.</div>
+    </div>
+
+    <p class="nt-p">Stack mein sirf do main operations hote hain:</p>
+    <p class="nt-p"><b>Push</b> — element daalo (top pe). <b>Pop</b> — element nikalo (top se). Dono O(1) time mein hote hain — instant, size se farak nahi padta.</p>
+
+    <div style="display:flex;gap:2rem;align-items:flex-start;flex-wrap:wrap;margin:1.5rem 0">
+      <div>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.35);margin-bottom:0.5rem">Push karne ke baad:</p>
+        <div class="stack-viz">
+          <div class="stack-cell top">← TOP: 30</div>
+          <div class="stack-cell">20</div>
+          <div class="stack-cell">10</div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.25);text-align:center;margin-top:4px">BOTTOM</div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.35);margin-bottom:0.5rem">Pop karne ke baad (30 nikla):</p>
+        <div class="stack-viz">
+          <div class="stack-cell top">← TOP: 20</div>
+          <div class="stack-cell">10</div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.25);text-align:center;margin-top:4px">BOTTOM</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="nt-p">Stack ka use kab hota hai? <b>Jab tumhe "pichli cheez yaad rakhni ho"</b> — jaise browser ka back button (pichle pages yaad rakhta hai), undo/redo feature, expression evaluation, ya nested structures (brackets, HTML tags) check karna.</p>
+
+    <div class="nt-h2" id="stack-impl"><span class="nt-h2-num">2</span> Stack Implement Karna</div>
+
+    <div class="nt-h3">Java mein built-in Stack use karna</div>
+    <div class="nt-code">import java.util.*;
+
+Stack&lt;Integer&gt; st = new Stack&lt;&gt;();
+st.push(10);          <span class="c">// [10]</span>
+st.push(20);          <span class="c">// [10, 20]</span>
+st.push(30);          <span class="c">// [10, 20, 30]</span>
+int top = st.peek();  <span class="c">// 30 (sirf dekha, nikala nahi)</span>
+int popped = st.pop();<span class="c">// 30 nikal gaya → [10, 20]</span>
+boolean empty = st.isEmpty(); <span class="c">// false</span></div>
+
+    <div class="nt-tip"><span class="nt-tip-label">💡 Important</span>Java mein <code>Stack</code> class legacy hai — interviews mein <code>Deque&lt;Integer&gt; st = new ArrayDeque&lt;&gt;()</code> prefer karo. Deque faster hai aur thread-safe issues nahi hote. <code>push</code> ki jagah <code>offerLast()</code>, <code>pop</code> ki jagah <code>pollLast()</code>, <code>peek</code> ki jagah <code>peekLast()</code> use karo.</div>
+
+    <div class="nt-h3">Array se Stack banana (conceptually samajhne ke liye)</div>
+    <div class="nt-code">class MyStack {
+  int[] arr;
+  int top = -1;
+
+  MyStack(int size) { arr = new int[size]; }
+
+  void push(int val) {
+    if (top == arr.length - 1) throw new RuntimeException("Stack full!");
+    arr[++top] = val;  <span class="c">// top badhao, phir value daalo</span>
+  }
+
+  int pop() {
+    if (top == -1) throw new RuntimeException("Stack empty!");
+    return arr[top--];  <span class="c">// value lo, phir top ghata do</span>
+  }
+
+  int peek() {
+    if (top == -1) throw new RuntimeException("Stack empty!");
+    return arr[top];
+  }
+
+  boolean isEmpty() { return top == -1; }
+}</div>
+
+    <p class="nt-p">Ye samajhna zaroori hai kyunki interviews mein kabhi bhi poocha ja sakta hai "stack without built-in implement karo". Array se karna O(1) time, O(n) space leta hai.</p>
+
+    <div class="nt-divider"></div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <div class="nt-h2" id="valid-paren"><span class="nt-h2-num">3</span> Valid Parentheses — Stack ka Classic Use</div>
+
+    <p class="nt-p">Ye problem stack ka textbook example hai aur almost har interview mein ek baar zaroor aata hai (ya iska variant). Problem: given a string like <code>"()[]{}"</code> ya <code>"([)]"</code> — kya ye valid hai?</p>
+
+    <p class="nt-p"><b>Rule:</b> Har opening bracket (<code>(</code>, <code>[</code>, <code>{</code>) ko uska matching closing bracket (<code>)</code>, <code>]</code>, <code>}</code>) milna chahiye, sahi order mein.</p>
+
+    <div class="nt-h3">Step-by-step trace: <code>"({[]})"</code></div>
+    <div class="trace-box">
+      <table class="trace-table">
+        <tr><th>Char</th><th>Action</th><th>Stack after</th></tr>
+        <tr><td>(</td><td>Opening — push karo</td><td>[ ( ]</td></tr>
+        <tr><td>{</td><td>Opening — push karo</td><td>[ (, { ]</td></tr>
+        <tr><td>[</td><td>Opening — push karo</td><td>[ (, {, [ ]</td></tr>
+        <tr><td>]</td><td>Closing ] — pop karo, top [ hai — match ✓</td><td>[ (, { ]</td></tr>
+        <tr><td>}</td><td>Closing } — pop karo, top { hai — match ✓</td><td>[ ( ]</td></tr>
+        <tr><td>)</td><td>Closing ) — pop karo, top ( hai — match ✓</td><td>[ ] (empty)</td></tr>
+        <tr><td>End</td><td>Stack empty → Valid ✅</td><td></td></tr>
+      </table>
+    </div>
+
+    <div class="nt-code">public boolean isValid(String s) {
+  Deque&lt;Character&gt; st = new ArrayDeque&lt;&gt;();
+  for (char c : s.toCharArray()) {
+    if (c == '(' || c == '[' || c == '{') {
+      st.push(c);  <span class="c">// opening bracket — push karo</span>
+    } else {
+      if (st.isEmpty()) return false;  <span class="c">// closing bracket bina opening ke</span>
+      char top = st.pop();
+      if (c == ')' && top != '(') return false;
+      if (c == ']' && top != '[') return false;
+      if (c == '}' && top != '{') return false;
+    }
+  }
+  return st.isEmpty();  <span class="c">// sab match hua toh empty hogi</span>
+}</div>
+
+    <div class="nt-warn"><span class="nt-warn-label">⚠️ Edge case mat bhoolo</span>Return karte waqt sirf <code>true</code> mat likho — <code>st.isEmpty()</code> likho. Warna <code>"(("</code> (sirf opening brackets) ke case mein galat <code>true</code> return ho jaayega kyunki loop mein koi closing bracket nahi mila jo fail karta.</div>
+
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Valid Parentheses</b>, <b>Generate Parentheses</b>, <b>Decode String</b></div></div>
+      <a href="masterdsa-practice.html?topic=stacks" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <div class="nt-h2" id="monotonic"><span class="nt-h2-num">4</span> Monotonic Stack — Sabse Important Pattern</div>
+
+    <div class="def-card">
+      <div class="def-label">Monotonic Stack kya hai</div>
+      <div class="def-text">Monotonic stack ek normal stack hai jisme ek extra rule hota hai — stack ka har element ya toh hamesha <b>increasing</b> ya hamesha <b>decreasing</b> order mein hota hai (bottom se top tak). Jab bhi naya element aata hai jo is order ko tod raha ho, hum purane elements pop kar dete hain.</div>
+    </div>
+
+    <p class="nt-p">Ye pattern tab use hota hai jab tumhe har element ke liye "next greater element" ya "previous smaller element" dhundna ho — O(n²) brute force ko O(n) mein convert kar deta hai.</p>
+
+    <div class="nt-h3">Example — Daily Temperatures</div>
+    <p class="nt-p">Array: <code>[73, 74, 75, 71, 69, 72, 76, 73]</code>. Har index ke liye answer chahiye — "kitne din baad temperature zyada milega?" Output: <code>[1, 1, 4, 2, 1, 1, 0, 0]</code>.</p>
+
+    <p class="nt-p">Idea: stack mein indices store karo (values nahi). Jab current element stack ke top (index) wale element se zyada ho, pop karo aur difference calculate karo.</p>
+
+    <div class="trace-box">
+      <table class="trace-table">
+        <tr><th>i</th><th>temp[i]</th><th>Stack (indices)</th><th>Action</th></tr>
+        <tr><td>0</td><td>73</td><td>[0]</td><td>Stack khaali tha, push 0</td></tr>
+        <tr><td>1</td><td>74</td><td>[1]</td><td>74 &gt; temp[0]=73 → pop 0, ans[0]=1-0=1, push 1</td></tr>
+        <tr><td>2</td><td>75</td><td>[2]</td><td>75 &gt; temp[1]=74 → pop 1, ans[1]=2-1=1, push 2</td></tr>
+        <tr><td>3</td><td>71</td><td>[2,3]</td><td>71 &lt; temp[2]=75 → push 3</td></tr>
+        <tr><td>4</td><td>69</td><td>[2,3,4]</td><td>69 &lt; 71 → push 4</td></tr>
+        <tr><td>5</td><td>72</td><td>[2,3,5]</td><td>72 &gt; 69 → pop 4, ans[4]=5-4=1. 72 &gt; 71 → pop 3, ans[3]=5-3=2. 72 &lt; 75 → push 5</td></tr>
+        <tr><td>6</td><td>76</td><td>[6]</td><td>76 &gt; 72 → pop 5, ans[5]=1. 76 &gt; 75 → pop 2, ans[2]=6-2=4. Push 6</td></tr>
+        <tr><td>7</td><td>73</td><td>[6,7]</td><td>73 &lt; 76 → push 7</td></tr>
+        <tr><td>End</td><td>—</td><td>—</td><td>Remaining [6,7] → ans[6]=0, ans[7]=0</td></tr>
+      </table>
+    </div>
+
+    <div class="nt-code">public int[] dailyTemperatures(int[] temps) {
+  int[] ans = new int[temps.length];
+  Deque&lt;Integer&gt; st = new ArrayDeque&lt;&gt;();  <span class="c">// indices store karo</span>
+
+  for (int i = 0; i &lt; temps.length; i++) {
+    <span class="c">// jab tak stack non-empty aur current temp &gt; stack top ka temp</span>
+    while (!st.isEmpty() && temps[i] > temps[st.peek()]) {
+      int idx = st.pop();
+      ans[idx] = i - idx;  <span class="c">// kitne din baad mila</span>
+    }
+    st.push(i);  <span class="c">// index push karo</span>
+  }
+  return ans;  <span class="c">// remaining indices ka ans already 0 hai (default)</span>
+}</div>
+
+    <div class="nt-tip"><span class="nt-tip-label">💡 Key insight</span>Monotonic stack problems mein <b>values ki jagah indices</b> store karo stack mein — taaki "kitne door" calculate kar sako. Sirf value store karoge toh distance nahi nikal payoge.</div>
+
+    <div class="nt-h3">Min Stack — O(1) mein minimum element</div>
+    <p class="nt-p">Ye ek design problem hai: ek stack banao jo normal push/pop/top ke saath <code>getMin()</code> bhi O(1) mein de. Trick: <b>ek auxiliary stack</b> banao jo sirf minimums track kare.</p>
+
+    <div class="nt-code">class MinStack {
+  Deque&lt;Integer&gt; st = new ArrayDeque&lt;&gt;();
+  Deque&lt;Integer&gt; minSt = new ArrayDeque&lt;&gt;();  <span class="c">// parallel min-tracking stack</span>
+
+  public void push(int val) {
+    st.push(val);
+    <span class="c">// minSt mein current minimum push karo (purana min ya naya val, jo chhota ho)</span>
+    int curMin = minSt.isEmpty() ? val : Math.min(val, minSt.peek());
+    minSt.push(curMin);
+  }
+
+  public void pop() {
+    st.pop();
+    minSt.pop();  <span class="c">// dono stacks sync mein hain, saath pop karo</span>
+  }
+
+  public int top() { return st.peek(); }
+  public int getMin() { return minSt.peek(); }  <span class="c">// O(1)!</span>
+}</div>
+
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Daily Temperatures</b>, <b>Next Greater Element I</b>, <b>Largest Rectangle in Histogram</b>, <b>Min Stack</b></div></div>
+      <a href="masterdsa-practice.html?topic=stacks" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <div class="nt-h2" id="queue-basics"><span class="nt-h2-num">5</span> Queue — Kya Hota Hai?</div>
+
+    <div class="def-card">
+      <div class="def-label">Real life analogy</div>
+      <div class="def-text">Queue bilkul bank ki line jaisi hai — jo pehle aaya woh pehle nikla. Isko <b>First In, First Out (FIFO)</b> kehte hain. Elements ek taraf se daale jaate hain (<b>rear/back</b>) aur doosri taraf se nikale jaate hain (<b>front</b>).</div>
+    </div>
+
+    <div class="queue-viz">
+      <div>
+        <div class="queue-cell">10</div>
+        <div class="queue-label">FRONT (niklenga pehle)</div>
+      </div>
+      <div style="color:rgba(255,255,255,0.2);padding:0 8px;font-size:1.2rem">→</div>
+      <div class="queue-cell">20</div>
+      <div style="color:rgba(255,255,255,0.2);padding:0 8px;font-size:1.2rem">→</div>
+      <div class="queue-cell">30</div>
+      <div style="color:rgba(255,255,255,0.2);padding:0 8px;font-size:1.2rem">→</div>
+      <div>
+        <div class="queue-cell">40</div>
+        <div class="queue-label">REAR (naya aata hai)</div>
+      </div>
+    </div>
+
+    <div class="nt-code">Queue&lt;Integer&gt; q = new LinkedList&lt;&gt;();
+q.offer(10);   <span class="c">// rear mein add karo [10]</span>
+q.offer(20);   <span class="c">// [10, 20]</span>
+q.offer(30);   <span class="c">// [10, 20, 30]</span>
+int front = q.peek();  <span class="c">// 10 (sirf dekha)</span>
+int removed = q.poll(); <span class="c">// 10 nikala → [20, 30]</span></div>
+
+    <div class="nt-tip"><span class="nt-tip-label">💡 Queue ka sabse important use case</span>Queue ka maximum use <b>BFS (Breadth-First Search)</b> mein hota hai — graphs aur trees explore karne ke liye. Jab bhi level-by-level traverse karna ho (jaise tree ka level order traversal), queue use hogi. Ye Trees topic mein detail mein aayega.</div>
+
+    <div class="nt-divider"></div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <div class="nt-h2" id="two-stack-queue"><span class="nt-h2-num">6</span> Queue Using Two Stacks</div>
+
+    <p class="nt-p">Ye ek classic design interview question hai — sirf do stacks use karke ek queue banao jisme enqueue (push) aur dequeue (pop) dono O(1) amortized time mein ho.</p>
+
+    <p class="nt-p">Idea: Do stacks rakho — <code>inStack</code> (naye elements aate hain) aur <code>outStack</code> (purane elements nikalte hain). Jab <code>outStack</code> khaali ho, <b>poora <code>inStack</code></b> <code>outStack</code> mein transfer karo — isse order reverse ho jaata hai (LIFO → FIFO).</p>
+
+    <div class="trace-box">
+      <table class="trace-table">
+        <tr><th>Operation</th><th>inStack</th><th>outStack</th><th>Action</th></tr>
+        <tr><td>push(1)</td><td>[1]</td><td>[]</td><td>inStack mein daalo</td></tr>
+        <tr><td>push(2)</td><td>[1,2]</td><td>[]</td><td>inStack mein daalo</td></tr>
+        <tr><td>push(3)</td><td>[1,2,3]</td><td>[]</td><td>inStack mein daalo</td></tr>
+        <tr><td>pop()</td><td>[]</td><td>[3,2,1]</td><td>outStack khaali tha → sab transfer karo, phir pop → 1 nikla</td></tr>
+        <tr><td>pop()</td><td>[]</td><td>[3,2]</td><td>outStack mein 2 hai → seedha pop → 2 nikla</td></tr>
+        <tr><td>push(4)</td><td>[4]</td><td>[3,2]</td><td>sirf inStack mein daalo, outStack disturb mat karo</td></tr>
+        <tr><td>pop()</td><td>[4]</td><td>[3]</td><td>outStack mein abhi 3 hai → pop → 3 nikla</td></tr>
+      </table>
+    </div>
+
+    <div class="nt-code">class MyQueue {
+  Deque&lt;Integer&gt; inStack = new ArrayDeque&lt;&gt;();
+  Deque&lt;Integer&gt; outStack = new ArrayDeque&lt;&gt;();
+
+  public void push(int x) {
+    inStack.push(x);  <span class="c">// hamesha inStack mein daalo</span>
+  }
+
+  public int pop() {
+    peek();  <span class="c">// outStack khaali ho toh transfer karo</span>
+    return outStack.pop();
+  }
+
+  public int peek() {
+    if (outStack.isEmpty()) {
+      while (!inStack.isEmpty()) {
+        outStack.push(inStack.pop());  <span class="c">// poora transfer — order reverse hoga</span>
+      }
+    }
+    return outStack.peek();
+  }
+
+  public boolean empty() {
+    return inStack.isEmpty() && outStack.isEmpty();
+  }
+}</div>
+
+    <div class="nt-tip"><span class="nt-tip-label">💡 Amortized O(1) kyun?</span>Har element sirf ek baar <code>inStack</code> se <code>outStack</code> mein transfer hota hai — total O(n) transfers n elements ke liye, isliye <b>per-operation average O(1)</b> hai. Transfer hamesha tab hi hota hai jab <code>outStack</code> khaali ho.</div>
+
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Implement Queue using Stacks</b>, <b>Implement Stack using Queues</b></div></div>
+      <a href="masterdsa-practice.html?topic=stacks" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <div class="nt-h2" id="deque"><span class="nt-h2-num">7</span> Deque & Sliding Window Maximum</div>
+
+    <div class="def-card">
+      <div class="def-label">Deque kya hota hai</div>
+      <div class="def-text"><b>Double-Ended Queue (Deque)</b> — isme dono taraf se elements add aur remove kar sakte ho. Front se bhi, back se bhi. Ye stack + queue dono ka kaam karta hai. Java mein <code>ArrayDeque</code> hi deque hai.</div>
+    </div>
+
+    <p class="nt-p">Deque ka sabse famous interview use case hai — <b>Sliding Window Maximum</b>. Tumhe ek array diya gaya hai aur ek window size k — har window ke andar ka maximum element return karo.</p>
+
+    <p class="nt-p">Brute force: har window ke liye max dhundho = O(n×k). Deque approach: O(n) mein sab windows ka max nikal sakte ho.</p>
+
+    <div class="nt-h3">Approach — Monotonic Decreasing Deque</div>
+    <p class="nt-p">Deque mein <b>indices</b> store karo, aur condition maintain karo: <b>deque mein stored indices ke values hamesha decreasing order mein hon</b> (front mein sabse bada). Jab naya element aata hai, peeche se chhote elements pop karo (woh kabhi maximum ban nahi sakte).</p>
+
+    <div class="trace-box">
+      <table class="trace-table">
+        <tr><th>i</th><th>nums[i]</th><th>Deque (indices)</th><th>Window Max</th></tr>
+        <tr><td>0</td><td>1</td><td>[0]</td><td>—</td></tr>
+        <tr><td>1</td><td>3</td><td>[1]</td><td>—(3 &gt; 1, so pop 0, push 1)</td></tr>
+        <tr><td>2</td><td>-1</td><td>[1,2]</td><td>3 (window [1,3,-1], front=1, nums[1]=3)</td></tr>
+        <tr><td>3</td><td>-3</td><td>[1,2,3]</td><td>3 (window [3,-1,-3], front=1 still valid)</td></tr>
+        <tr><td>4</td><td>5</td><td>[4]</td><td>5 (5 &gt; all, pop 3,2,1; front=4, nums[4]=5)</td></tr>
+        <tr><td>5</td><td>3</td><td>[4,5]</td><td>5 (window [5,3,...], front=4)</td></tr>
+        <tr><td>6</td><td>6</td><td>[6]</td><td>6 (6 &gt; all)</td></tr>
+        <tr><td>7</td><td>7</td><td>[7]</td><td>7</td></tr>
+      </table>
+    </div>
+
+    <div class="nt-code">public int[] maxSlidingWindow(int[] nums, int k) {
+  Deque&lt;Integer&gt; dq = new ArrayDeque&lt;&gt;();  <span class="c">// indices store karega</span>
+  int[] result = new int[nums.length - k + 1];
+
+  for (int i = 0; i &lt; nums.length; i++) {
+    <span class="c">// front se: window ke bahar chale gaye indices remove karo</span>
+    if (!dq.isEmpty() && dq.peekFirst() &lt; i - k + 1) {
+      dq.pollFirst();
+    }
+
+    <span class="c">// back se: current element se chhote indices remove karo (woh kabhi max nahi honge)</span>
+    while (!dq.isEmpty() && nums[dq.peekLast()] &lt; nums[i]) {
+      dq.pollLast();
+    }
+
+    dq.offerLast(i);  <span class="c">// current index add karo</span>
+
+    <span class="c">// window complete hone ke baad result store karo</span>
+    if (i >= k - 1) {
+      result[i - k + 1] = nums[dq.peekFirst()];  <span class="c">// front = maximum</span>
+    }
+  }
+  return result;
+}</div>
+
+    <div class="nt-warn"><span class="nt-warn-label">⚠️ Yaad rakho</span>Window se bahar gaye index ko <b>first</b> remove karo (front se), phir chhote elements remove karo (back se). Order matter karta hai — pehle expiry check, phir monotonic property maintain karo.</div>
+
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Sliding Window Maximum</b>, <b>Online Stock Span</b>, <b>Asteroid Collision</b></div></div>
+      <a href="masterdsa-practice.html?topic=stacks" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <!-- ══════════════════════════════════════════ -->
+    <div class="nt-h2" id="mistakes"><span class="nt-h2-num">8</span> Common Mistakes & Interview Tips</div>
+
+    <p class="nt-p"><b>1. isEmpty() check bhoolo mat</b> — Stack/Queue pe pop ya peek karne se pehle hamesha isEmpty() check karo, warna runtime exception aayega. Ye sabse common bug hai.</p>
+
+    <p class="nt-p"><b>2. Stack mein values nahi, indices store karo</b> — Monotonic stack problems mein mostly tum distance ya position calculate karte ho, toh values ki jagah indices store karna zaroori hai.</p>
+
+    <p class="nt-p"><b>3. Deque vs Stack vs Queue — Java mein confusion</b> — Java mein <code>ArrayDeque</code> sabse versatile hai, stack aur queue dono ki jagah use karo. Stack ke liye <code>push/pop/peek</code>, Queue ke liye <code>offer/poll/peek</code> use karo same ArrayDeque pe.</p>
+
+    <p class="nt-p"><b>4. Circular Queue ki boundary conditions</b> — Agar circular queue implement karna ho, <code>front</code> aur <code>rear</code> pointers ko modulo se manage karo. Edge cases: full queue check <code>(rear + 1) % size == front</code>, empty check <code>front == rear</code>.</p>
+
+    <p class="nt-p"><b>5. "Stack se kya solve hoga" pehchano</b> — Agar koi nested structure hai (brackets, directories), ya "pichla element" yaad rakhna ho, ya "next greater/smaller" dhundna ho — Stack sochna shuru karo. Queue ki zarurat tab hoti hai jab level-by-level ya FIFO order chahiye.</p>
+
+    <p class="nt-p" style="margin-top:2.5rem;font-size:1rem;color:rgba(255,255,255,0.8)">Stack aur Queue simple concepts hain lekin unke creative use cases — monotonic stack, min stack, two-stack queue, sliding window deque — ye sab pattern-recognition ke sawaal hain. Jitna practice karoge utna pehle se pehchaan paoge "ye monotonic stack wala sawaal hai". Ab Practice page pe jao aur 20 questions solve karo.</p>
+
+    <div class="nt-nav">
+      <a href="masterdsa-notes-linkedlist.html">← Linked List</a>
+      <a href="masterdsa-practice.html?topic=stacks">Start Practicing Stacks →</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
