@@ -41,29 +41,68 @@
 </div>
 
 <script>
+// masterdsa-videos.html mein const VIDEOS = [...] ko isse replace karo
+
 const VIDEOS = [
-  {id:'0K_eZGS5NsU',title:"Striver's A2Z DSA Sheet — Full Course",ch:'takeUforward',lang:'English',topic:'All Topics'},
-  {id:'rZ41tD2lc6w',title:'Complete DSA in Hindi — Roadmap',ch:'Apna College',lang:'Hindi',topic:'All Topics'},
-  {id:'kBhDZbbA8WI',title:'Sliding Window Technique Explained',ch:'takeUforward',lang:'English',topic:'Arrays'},
-  {id:'9w1Y4VdH9Mc',title:'Arrays in Hindi — Complete Tutorial',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Arrays'},
-  {id:'Uo2cwOJ3hKk',title:'Linked List Tutorial — Full Concepts',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Linked List'},
-  {id:'WwfhLC16bis',title:'Linked List in English — Patterns',ch:'NeetCode',lang:'English',topic:'Linked List'},
-  {id:'lvmuStXM3UE',title:'Stack & Queue — Full Concepts',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Stacks & Queues'},
-  {id:'KOC8POBOlNQ',title:'Recursion — Complete Course',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Recursion'},
-  {id:'ke6KOQ6X5h0',title:'Recursion Visualized — English',ch:'NeetCode',lang:'English',topic:'Recursion'},
-  {id:'_WIfanFr20U',title:'Binary Trees — Complete Playlist',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Trees'},
-  {id:'fAAZixBzIAI',title:'Tree Traversals & BST — English',ch:'NeetCode',lang:'English',topic:'Trees'},
-  {id:'f2xi3c1S95M',title:'Binary Search — Master Class',ch:'takeUforward',lang:'English',topic:'Binary Search'},
-  {id:'fDKIpRe8GW4',title:'Searching & Sorting Algorithms',ch:'Apna College',lang:'Hindi',topic:'Searching & Sorting'},
-  {id:'HpPHwY3M6dE',title:'Heaps & Priority Queue Explained',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Heaps'},
-  {id:'k1wraWzqtvQ',title:'Graphs — Complete Series',ch:'WilliamFiset',lang:'English',topic:'Graphs'},
-  {id:'M5oHzC0XK1c',title:'Graph Algorithms in Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Graphs'},
-  {id:'mzAtjlA0fzo',title:'Greedy Algorithms Explained',ch:'Apna College',lang:'Hindi',topic:'Greedy'},
-  {id:'oBt53YbR9Kk',title:'Dynamic Programming — Full Course',ch:'freeCodeCamp',lang:'English',topic:'Dynamic Programming'},
-  {id:'nqowUJzG-iM',title:'DP for Beginners — Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Dynamic Programming'},
-  {id:'oobqoCJlHA0',title:'Tries Data Structure Explained',ch:'NeetCode',lang:'English',topic:'Tries'},
-  {id:'NLKQEOgBAnw',title:'Bit Manipulation Tricks',ch:'takeUforward',lang:'English',topic:'Bit Manipulation'},
-  {id:'7SCkSF7XOOM',title:'Bit Manipulation in Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Bit Manipulation'},
+  // ── ALL TOPICS ──
+  {id:'0K_eZGS5NsU',title:"Striver's A2Z DSA Full Course",ch:'takeUforward',lang:'English',topic:'All Topics'},
+  {id:'VTLCoHnyACE',title:'DSA Full Course in C++ — Apna College',ch:'Apna College',lang:'Hindi',topic:'All Topics'},
+  {id:'PLDzeHZWIZsTryvtXdMr6rPh4IDexB5NIA',title:'Complete C++ DSA Placement Course',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'All Topics'},
+  {id:'ERYmGGaUHqs',title:'DSA Roadmap for Beginners 2024',ch:'takeUforward',lang:'English',topic:'All Topics'},
+
+  // ── ARRAYS ──
+  {id:'kBhDZbbA8WI',title:'Sliding Window Technique — Complete',ch:'takeUforward',lang:'English',topic:'Arrays'},
+  {id:'37E9ckMDdTk',title:'Arrays Complete Tutorial in Hindi',ch:'Apna College',lang:'Hindi',topic:'Arrays'},
+  {id:'eXFSaQR28cY',title:'Two Pointer Technique Explained',ch:'takeUforward',lang:'English',topic:'Arrays'},
+  {id:'75jGy3xAhVs',title:'Arrays in Hindi — One Shot',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Arrays'},
+
+  // ── LINKED LIST ──
+  {id:'58YbpRDc4yw',title:'Linked List One Shot — Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Linked List'},
+  {id:'WwfhLC16bis',title:'Linked List Complete — NeetCode',ch:'NeetCode',lang:'English',topic:'Linked List'},
+  {id:'Nq7ok-OyEpk',title:'Linked List in Hindi — Apna College',ch:'Apna College',lang:'Hindi',topic:'Linked List'},
+
+  // ── STACKS & QUEUES ──
+  {id:'O1KeVERSZoQ',title:'Stack & Queue One Shot — Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Stacks & Queues'},
+  {id:'KOC8POBOlNQ',title:'Recursion Full Course — Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Recursion'},
+  {id:'ke6KOX6X5h0',title:'Recursion Demystified — English',ch:'NeetCode',lang:'English',topic:'Recursion'},
+
+  // ── TREES ──
+  {id:'fAAZixBzIAI',title:'Binary Trees & BST — NeetCode',ch:'NeetCode',lang:'English',topic:'Trees'},
+  {id:'_WIfanFr20U',title:'Binary Trees One Shot — Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Trees'},
+  {id:'BHB0B1jFKQc',title:'Tree Traversals — Apna College Hindi',ch:'Apna College',lang:'Hindi',topic:'Trees'},
+
+  // ── BINARY SEARCH ──
+  {id:'f2xi3c1S95M',title:'Binary Search Masterclass — Striver',ch:'takeUforward',lang:'English',topic:'Binary Search'},
+  {id:'GU7DpgHINWQ',title:'Binary Search in 4 Minutes',ch:'Michael Sambol',lang:'English',topic:'Binary Search'},
+
+  // ── SEARCHING & SORTING ──
+  {id:'pkkFqlG0Hds',title:'Sorting Algorithms Explained — Hindi',ch:'Apna College',lang:'Hindi',topic:'Searching & Sorting'},
+  {id:'4VqmGXwpLqc',title:'Searching Algorithms — Complete',ch:'Apna College',lang:'Hindi',topic:'Searching & Sorting'},
+
+  // ── HEAPS ──
+  {id:'HpPHwY3M6dE',title:'Heaps & Priority Queue — Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Heaps'},
+  {id:'t0Cq6tVNRBA',title:'Heap Sort Explained Visually',ch:'Michael Sambol',lang:'English',topic:'Heaps'},
+
+  // ── GRAPHS ──
+  {id:'k1wraWzqtvQ',title:'Graph Algorithms — WilliamFiset',ch:'WilliamFiset',lang:'English',topic:'Graphs'},
+  {id:'YTtpfjkdn9w',title:'Graphs Complete — Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Graphs'},
+  {id:'1XgBBe-wd0w',title:'BFS & DFS Explained',ch:'takeUforward',lang:'English',topic:'Graphs'},
+
+  // ── GREEDY ──
+  {id:'ARvQcqJ_-NY',title:'Greedy Algorithms — Hindi',ch:'Apna College',lang:'Hindi',topic:'Greedy'},
+
+  // ── DYNAMIC PROGRAMMING ──
+  {id:'oBt53YbR9Kk',title:'Dynamic Programming Full Course',ch:'freeCodeCamp',lang:'English',topic:'Dynamic Programming'},
+  {id:'nqowUJzG-iM',title:'DP One Shot — Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Dynamic Programming'},
+  {id:'tyB0ztf0DNY',title:'DP Patterns for Interviews',ch:'takeUforward',lang:'English',topic:'Dynamic Programming'},
+
+  // ── TRIES ──
+  {id:'oobqoCJlHA0',title:'Trie Data Structure — NeetCode',ch:'NeetCode',lang:'English',topic:'Tries'},
+  {id:'jXAHLqQthKw',title:'Trie Explained in Hindi',ch:'takeUforward',lang:'Hindi',topic:'Tries'},
+
+  // ── BIT MANIPULATION ──
+  {id:'NLKQEOgBAnw',title:'Bit Manipulation Tricks — Striver',ch:'takeUforward',lang:'English',topic:'Bit Manipulation'},
+  {id:'qvBVTNOJxYk',title:'Bit Manipulation in Hindi',ch:'Apna College',lang:'Hindi',topic:'Bit Manipulation'},
 ];
 
 const topics = ['All','All Topics','Arrays','Linked List','Stacks & Queues','Recursion','Trees','Binary Search','Searching & Sorting','Heaps','Graphs','Greedy','Dynamic Programming','Tries','Bit Manipulation'];
