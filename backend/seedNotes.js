@@ -742,6 +742,1378 @@ any([False,True,False])  # True
 all([True,True,True])    # True
 sorted([(1,'b'),(0,'a')], key=lambda x:x[0])  # by first element</pre>`
 },
+  {
+  title: 'Python Complete Basics — Variables, Functions & Modules',
+  category: 'Python', order: 4,
+  description: 'Python fundamentals, functions, arguments, modules and error handling',
+  tags: ['Python Basics','Functions','Modules','Exceptions'],
+  content: `<h2>Python Basics Complete Guide</h2>
+
+<h3>Variables & Data Types</h3>
+<pre>
+x = 10
+name = "Python"
+price = 99.5
+active = True
+
+print(type(x))
+</pre>
+
+<h3>Python Collections</h3>
+<ul>
+<li>List → Ordered, Mutable</li>
+<li>Tuple → Ordered, Immutable</li>
+<li>Set → Unique values</li>
+<li>Dictionary → Key Value pair</li>
+</ul>
+
+<h3>Functions</h3>
+<pre>
+def add(a,b):
+    return a+b
+
+print(add(5,3))
+</pre>
+
+<h3>Function Arguments</h3>
+<pre>
+def user(name, age=18):
+    print(name, age)
+
+user("Alex")
+user("Alex",25)
+</pre>
+
+<h3>*args and **kwargs</h3>
+<pre>
+def demo(*args):
+    print(args)
+
+demo(1,2,3)
+
+
+def info(**kwargs):
+    print(kwargs)
+
+info(name="John", age=20)
+</pre>
+
+<h3>Lambda Function</h3>
+<pre>
+square = lambda x: x*x
+
+print(square(5))
+</pre>
+
+<h3>Map Filter Reduce</h3>
+<pre>
+nums=[1,2,3,4]
+
+squares=list(map(lambda x:x*x, nums))
+
+even=list(filter(lambda x:x%2==0, nums))
+</pre>
+
+<h3>Exception Handling</h3>
+<pre>
+try:
+    x=10/0
+
+except ZeroDivisionError:
+    print("Cannot divide by zero")
+
+finally:
+    print("Done")
+</pre>
+
+<h3>Modules</h3>
+<pre>
+import math
+
+print(math.sqrt(16))
+</pre>
+
+<h3>Virtual Environment</h3>
+<pre>
+python -m venv env
+
+# activate
+env\\Scripts\\activate
+</pre>
+
+<h3>Important Interview Questions</h3>
+<ul>
+<li>Difference between list and tuple?</li>
+<li>Why Python is dynamically typed?</li>
+<li>What are mutable and immutable objects?</li>
+<li>Difference between shallow copy and deep copy?</li>
+</ul>`
+},
+  {
+  title: 'Python Intermediate to Advanced — Complete Guide',
+  category: 'Python', order: 3,
+  description: 'Python execution, memory, advanced concepts, files, modules and interview concepts',
+  tags: ['Python Advanced','Memory','Iterator','Exception','Async','File Handling'],
+  content: `<h2>Python Intermediate & Advanced Concepts</h2>
+
+
+<h3>1. Mutable vs Immutable Objects</h3>
+<ul>
+<li>Mutable: list, dict, set can be changed</li>
+<li>Immutable: int, float, string, tuple cannot be changed</li>
+</ul>
+
+<pre>
+a = [1,2,3]
+a.append(4)
+
+x = "hello"
+x = x + " world"
+</pre>
+
+
+<h3>2. Python Memory Management</h3>
+
+<p>Python uses private heap space for objects.</p>
+
+<ul>
+<li>Reference Counting</li>
+<li>Garbage Collector</li>
+<li>Memory is automatically managed</li>
+</ul>
+
+
+<h3>3. Copy vs Deep Copy</h3>
+
+<pre>
+import copy
+
+a = [[1,2],[3,4]]
+
+b = copy.copy(a)      
+c = copy.deepcopy(a)
+
+</pre>
+
+<ul>
+<li>Shallow copy shares nested objects</li>
+<li>Deep copy creates completely independent copy</li>
+</ul>
+
+
+<h3>4. Iterators</h3>
+
+<pre>
+
+nums = [1,2,3]
+
+it = iter(nums)
+
+print(next(it))
+print(next(it))
+
+</pre>
+
+<p>Iterator stores one value at a time.</p>
+
+
+<h3>5. Generators</h3>
+
+<pre>
+
+def count():
+
+    yield 1
+    yield 2
+    yield 3
+
+
+for x in count():
+    print(x)
+
+</pre>
+
+<ul>
+<li>Uses yield</li>
+<li>Memory efficient</li>
+<li>Lazy execution</li>
+</ul>
+
+
+<h3>6. Decorators</h3>
+
+<pre>
+
+def logger(func):
+
+    def wrapper():
+
+        print("Before")
+        func()
+        print("After")
+
+    return wrapper
+
+
+@logger
+def hello():
+
+    print("Hello")
+
+hello()
+
+</pre>
+
+
+<h3>7. File Handling</h3>
+
+<pre>
+
+file = open("data.txt","w")
+
+file.write("Hello Python")
+
+file.close()
+
+
+with open("data.txt","r") as f:
+
+    print(f.read())
+
+</pre>
+
+
+<h3>8. JSON Handling</h3>
+
+<pre>
+
+import json
+
+data = {
+"name":"Alex",
+"age":20
+}
+
+
+json_data = json.dumps(data)
+
+print(json_data)
+
+</pre>
+
+
+<h3>9. Regular Expression</h3>
+
+<pre>
+
+import re
+
+
+text="my email test@gmail.com"
+
+
+result=re.findall(
+r'\\S+@\\S+',
+text
+)
+
+
+print(result)
+
+</pre>
+
+
+<h3>10. Threading</h3>
+
+<pre>
+
+import threading
+
+
+def task():
+
+    print("Running")
+
+
+t = threading.Thread(target=task)
+
+t.start()
+
+</pre>
+
+
+<h3>11. Multiprocessing</h3>
+
+<p>Uses multiple CPU cores.</p>
+
+<pre>
+
+from multiprocessing import Process
+
+
+p = Process(target=task)
+
+p.start()
+
+</pre>
+
+
+<h3>12. Async Programming</h3>
+
+<pre>
+
+import asyncio
+
+
+async def hello():
+
+    print("Hello")
+
+
+asyncio.run(hello())
+
+</pre>
+
+
+<h3>13. Virtual Environment & Packages</h3>
+
+<pre>
+
+python -m venv env
+
+pip install package
+
+pip freeze
+
+</pre>
+
+
+<h3>14. Important Python Interview Questions</h3>
+
+<ul>
+
+<li>Why Python is interpreted language?</li>
+
+<li>Difference between compiler and interpreter?</li>
+
+<li>How Python manages memory?</li>
+
+<li>Difference between iterator and generator?</li>
+
+<li>What are decorators?</li>
+
+<li>What is GIL in Python?</li>
+
+<li>Difference between threading and multiprocessing?</li>
+
+<li>Why list is mutable but tuple immutable?</li>
+
+</ul>`
+},
+  {
+  title: 'Python Developer Concepts — Professional Guide',
+  category: 'Python', order: 5,
+  description: 'Professional Python concepts used in real projects and interviews',
+  tags: ['Python Developer','GIL','Testing','API','Dataclass','Typing'],
+  content: `<h2>Professional Python Concepts</h2>
+
+
+<h3>1. Python Execution Flow</h3>
+
+<ul>
+<li>Python code → Bytecode → Python Virtual Machine executes</li>
+<li>Interpreter executes instructions line by line</li>
+</ul>
+
+
+<h3>2. Python GIL (Global Interpreter Lock)</h3>
+
+<p>
+GIL allows only one thread to execute Python bytecode at a time.
+</p>
+
+<ul>
+<li>CPU bound tasks → use multiprocessing</li>
+<li>I/O bound tasks → threading/async works better</li>
+</ul>
+
+
+<h3>3. Type Hints</h3>
+
+<pre>
+
+def add(a:int,b:int) -> int:
+
+    return a+b
+
+
+</pre>
+
+<p>Type hints improve readability and IDE support.</p>
+
+
+<h3>4. Dataclasses</h3>
+
+<pre>
+
+from dataclasses import dataclass
+
+
+@dataclass
+class User:
+
+    name:str
+    age:int
+
+
+u = User("Alex",20)
+
+</pre>
+
+
+<h3>5. Abstract Classes</h3>
+
+<pre>
+
+from abc import ABC, abstractmethod
+
+
+class Animal(ABC):
+
+
+    @abstractmethod
+    def sound(self):
+        pass
+
+
+</pre>
+
+
+<h3>6. Property Decorator</h3>
+
+<pre>
+
+class Person:
+
+
+    def __init__(self,name):
+
+        self._name=name
+
+
+    @property
+    def name(self):
+
+        return self._name
+
+
+
+p=Person("John")
+
+print(p.name)
+
+</pre>
+
+
+<h3>7. Logging</h3>
+
+<pre>
+
+import logging
+
+
+logging.basicConfig(level=logging.INFO)
+
+
+logging.info("Application started")
+
+</pre>
+
+
+<h3>8. Unit Testing</h3>
+
+<pre>
+
+import unittest
+
+
+def add(a,b):
+
+    return a+b
+
+
+
+class Test(unittest.TestCase):
+
+
+    def test_add(self):
+
+        self.assertEqual(add(2,3),5)
+
+
+
+unittest.main()
+
+</pre>
+
+
+<h3>9. API Requests</h3>
+
+<pre>
+
+import requests
+
+
+response = requests.get(
+"https://api.example.com/users"
+)
+
+
+print(response.json())
+
+</pre>
+
+
+<h3>10. Working With Environment Variables</h3>
+
+<pre>
+
+import os
+
+
+api_key=os.getenv("API_KEY")
+
+
+</pre>
+
+
+<h3>11. SQLite Database</h3>
+
+<pre>
+
+import sqlite3
+
+
+conn = sqlite3.connect("users.db")
+
+
+cursor = conn.cursor()
+
+
+cursor.execute(
+"CREATE TABLE user(name TEXT)"
+)
+
+
+conn.commit()
+
+
+</pre>
+
+
+<h3>12. Pickle Serialization</h3>
+
+<pre>
+
+import pickle
+
+
+data=[1,2,3]
+
+
+with open("data.pkl","wb") as f:
+
+    pickle.dump(data,f)
+
+
+
+</pre>
+
+
+<h3>13. Sorting Custom Objects</h3>
+
+<pre>
+
+students=[
+
+{"name":"A","marks":90},
+
+{"name":"B","marks":80}
+
+]
+
+
+students.sort(
+key=lambda x:x["marks"]
+)
+
+
+</pre>
+
+
+<h3>14. Closures</h3>
+
+<pre>
+
+def outer(x):
+
+    def inner():
+
+        return x
+
+    return inner
+
+
+
+fun=outer(10)
+
+print(fun())
+
+
+</pre>
+
+
+<h3>15. Context Manager</h3>
+
+<pre>
+
+with open("file.txt") as f:
+
+    data=f.read()
+
+
+</pre>
+
+<p>
+Automatically handles resource closing.
+</p>
+
+
+<h3>16. Python Best Practices</h3>
+
+<ul>
+
+<li>Use virtual environments</li>
+
+<li>Follow PEP8</li>
+
+<li>Write reusable functions</li>
+
+<li>Handle exceptions properly</li>
+
+<li>Use meaningful variable names</li>
+
+</ul>
+
+
+<h3>Interview Questions</h3>
+
+<ul>
+
+<li>Explain Python GIL</li>
+
+<li>Difference between threading and multiprocessing</li>
+
+<li>How decorators work internally?</li>
+
+<li>What happens when Python executes a file?</li>
+
+<li>Difference between deepcopy and shallow copy</li>
+
+<li>What are closures?</li>
+
+<li>Why use virtual environment?</li>
+
+</ul>`
+},
+  {
+  title: 'Python Level 0 — Complete Beginner Foundation',
+  category: 'Python', order: 0,
+  description: 'Python introduction, installation, syntax, variables, operators, conditions, loops and basic data structures',
+  tags: ['Python Basics','Installation','Syntax','Loops','Variables','Beginner'],
+
+  content: `<h2>Python Level 0 — Beginner Complete Guide</h2>
+
+
+<h3>1. What is Python?</h3>
+
+<p>
+Python is a high-level, interpreted, general purpose programming language.
+It was created by Guido van Rossum and released in 1991.
+</p>
+
+<ul>
+<li>Easy to read syntax</li>
+<li>Large community support</li>
+<li>Huge number of libraries</li>
+<li>Used in web, AI, automation, data science</li>
+</ul>
+
+
+<h3>Why Python is Popular?</h3>
+
+<ul>
+
+<li>Simple syntax compared to Java/C++</li>
+
+<li>Less code required</li>
+
+<li>Powerful libraries available</li>
+
+<li>Cross platform language</li>
+
+</ul>
+
+
+<h3>Where Python is Used Today?</h3>
+
+
+<h4>1. Artificial Intelligence & Machine Learning</h4>
+
+<ul>
+<li>Machine Learning models</li>
+<li>Deep Learning</li>
+<li>Neural Networks</li>
+<li>Data processing</li>
+</ul>
+
+<p>
+Popular libraries:
+</p>
+
+<pre>
+NumPy
+Pandas
+TensorFlow
+PyTorch
+Scikit-learn
+</pre>
+
+
+<h4>2. Data Science</h4>
+
+<ul>
+<li>Data analysis</li>
+<li>Data visualization</li>
+<li>Statistics</li>
+</ul>
+
+
+<h4>3. Web Development</h4>
+
+<pre>
+
+Django
+Flask
+FastAPI
+
+</pre>
+
+
+<h4>4. Automation</h4>
+
+<ul>
+<li>Web scraping</li>
+<li>File automation</li>
+<li>Scripts</li>
+</ul>
+
+
+<h4>5. Backend Development</h4>
+
+<p>
+Python is used to create APIs, servers and backend systems.
+</p>
+
+
+
+<h2>2. Python Installation</h2>
+
+
+<h3>Install Python</h3>
+
+<p>
+Download Python from official website and install it.
+</p>
+
+
+<h3>Check Installation</h3>
+
+<pre>
+
+python --version
+
+</pre>
+
+
+<h3>Run Python</h3>
+
+<pre>
+
+python
+
+</pre>
+
+
+<h3>First Program</h3>
+
+
+<pre>
+
+print("Hello Python")
+
+</pre>
+
+
+Output:
+
+<pre>
+
+Hello Python
+
+</pre>
+
+
+
+<h2>3. Python Syntax Basics</h2>
+
+
+<p>
+Python does not use curly brackets {}.
+It uses indentation.
+</p>
+
+
+Example:
+
+<pre>
+
+if True:
+
+    print("Hello")
+
+</pre>
+
+
+Wrong:
+
+<pre>
+
+if True:
+print("Hello")
+
+</pre>
+
+
+
+<h2>4. Comments</h2>
+
+
+<pre>
+
+# This is single line comment
+
+
+"""
+This is
+multi line comment
+"""
+
+</pre>
+
+
+
+<h2>5. Variables in Python</h2>
+
+
+<p>
+Python is dynamically typed language.
+No need to define datatype.
+</p>
+
+
+<pre>
+
+name = "John"
+
+age = 20
+
+price = 99.5
+
+active = True
+
+</pre>
+
+
+
+<h3>Data Types</h3>
+
+
+<ul>
+
+<li>int</li>
+<li>float</li>
+<li>string</li>
+<li>boolean</li>
+<li>list</li>
+<li>tuple</li>
+<li>set</li>
+<li>dictionary</li>
+
+</ul>
+
+
+Example:
+
+<pre>
+
+x = 10
+
+print(type(x))
+
+
+</pre>
+
+
+
+<h2>6. Taking Input</h2>
+
+
+<pre>
+
+name = input("Enter name: ")
+
+print(name)
+
+</pre>
+
+
+<p>
+Input always returns string.
+</p>
+
+
+Convert:
+
+<pre>
+
+age = int(input("Age: "))
+
+</pre>
+
+
+
+<h2>7. Operators in Python</h2>
+
+
+<h3>Arithmetic Operators</h3>
+
+
+<pre>
+
++
+-
+*
+/
+%
+**
+
+</pre>
+
+
+Example:
+
+<pre>
+
+a=10
+b=3
+
+
+print(a+b)
+
+print(a/b)
+
+print(a%b)
+
+print(a**2)
+
+</pre>
+
+
+
+<h3>Comparison Operators</h3>
+
+<pre>
+
+==
+!=
+>
+<
+>=
+<=
+
+</pre>
+
+
+Example:
+
+<pre>
+
+10 > 5
+
+True
+
+</pre>
+
+
+
+<h3>Logical Operators</h3>
+
+
+<pre>
+
+and
+
+or
+
+not
+
+</pre>
+
+
+Example:
+
+<pre>
+
+age=20
+
+age>18 and age<30
+
+
+</pre>
+
+
+
+<h3>Assignment Operators</h3>
+
+
+<pre>
+
+=
+
++=
+
+-=
+
+*=
+
+</pre>
+
+
+
+<h2>8. Conditional Statements</h2>
+
+
+<h3>If Else</h3>
+
+
+<pre>
+
+age = 18
+
+
+if age >= 18:
+
+    print("Adult")
+
+else:
+
+    print("Minor")
+
+
+</pre>
+
+
+
+<h3>Elif</h3>
+
+
+<pre>
+
+marks=80
+
+
+if marks>=90:
+
+    print("A")
+
+elif marks>=60:
+
+    print("B")
+
+else:
+
+    print("C")
+
+
+</pre>
+
+
+
+<h2>9. Loops in Python</h2>
+
+
+<h3>For Loop</h3>
+
+
+<pre>
+
+for i in range(5):
+
+    print(i)
+
+
+</pre>
+
+
+Output:
+
+<pre>
+
+0
+1
+2
+3
+4
+
+</pre>
+
+
+
+<h3>While Loop</h3>
+
+
+<pre>
+
+count=1
+
+
+while count<=5:
+
+    print(count)
+
+    count+=1
+
+
+</pre>
+
+
+
+<h3>Break</h3>
+
+
+<pre>
+
+for i in range(10):
+
+    if i==5:
+
+        break
+
+    print(i)
+
+</pre>
+
+
+
+<h3>Continue</h3>
+
+
+<pre>
+
+for i in range(5):
+
+    if i==2:
+
+        continue
+
+    print(i)
+
+
+</pre>
+
+
+
+<h2>10. Python Lists</h2>
+
+
+<p>
+List stores multiple values and is mutable.
+</p>
+
+
+<pre>
+
+numbers=[1,2,3,4]
+
+
+print(numbers[0])
+
+
+numbers.append(5)
+
+
+</pre>
+
+
+Common methods:
+
+<ul>
+
+<li>append()</li>
+<li>remove()</li>
+<li>pop()</li>
+<li>sort()</li>
+<li>reverse()</li>
+
+</ul>
+
+
+
+<h2>11. Tuple</h2>
+
+
+<p>
+Tuple is ordered but immutable.
+</p>
+
+
+<pre>
+
+data=(1,2,3)
+
+
+print(data[0])
+
+
+</pre>
+
+
+
+<h2>12. Set</h2>
+
+
+<p>
+Set stores unique values.
+</p>
+
+
+<pre>
+
+s={1,2,2,3}
+
+
+print(s)
+
+</pre>
+
+
+Output:
+
+<pre>
+
+{1,2,3}
+
+</pre>
+
+
+
+<h2>13. Dictionary</h2>
+
+
+<p>
+Stores key value pairs.
+</p>
+
+
+<pre>
+
+user={
+
+"name":"Alex",
+
+"age":20
+
+}
+
+
+print(user["name"])
+
+
+</pre>
+
+
+
+<h2>14. List vs Tuple vs Set vs Dictionary</h2>
+
+
+<ul>
+
+<li>List → Ordered + Mutable</li>
+
+<li>Tuple → Ordered + Immutable</li>
+
+<li>Set → Unique values</li>
+
+<li>Dictionary → Key Value storage</li>
+
+</ul>
+
+
+
+<h2>15. Basic Python Practice Questions</h2>
+
+
+<ul>
+
+<li>Print Hello World</li>
+
+<li>Take user input and print name</li>
+
+<li>Check even or odd number</li>
+
+<li>Find largest number</li>
+
+<li>Print table using loop</li>
+
+<li>Reverse a string</li>
+
+<li>Count vowels</li>
+
+<li>Find sum of list elements</li>
+
+</ul>
+
+
+<h2>Interview Questions</h2>
+
+
+<ul>
+
+<li>Why Python is interpreted language?</li>
+
+<li>Why Python is popular in AI/ML?</li>
+
+<li>Difference between list and tuple?</li>
+
+<li>What is dynamic typing?</li>
+
+<li>Difference between compiler and interpreter?</li>
+
+<li>Why indentation is important in Python?</li>
+
+</ul>`
+},
 {
   title: 'Python OOP & Advanced Features',
   category: 'Python', order: 2,
