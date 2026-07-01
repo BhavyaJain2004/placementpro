@@ -607,4 +607,12 @@ router.post('/notification/:id/view', verifyToken, async (req, res) => {
     res.json({ ok: true });
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
+router.post('/seed-notes', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { execSync } = require('child_process');
+    execSync('node /opt/render/project/src/backend/seedNotes.js', { stdio:'inherit' });
+    const count = await require('../models/Content').Note.countDocuments();
+    res.json({ message: `Done! ${count} notes` });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
 module.exports = router;
