@@ -1218,11 +1218,7 @@ loadStats();
 </script>
 
 <!-- FEEDBACK MODAL -->
-<div id="feedback-modal" style="
-  display:none; position:fixed; inset:0;
-  background:rgba(8,8,16,0.85); z-index:9999;
-  align-items:center; justify-content:center; padding:1rem;
-">
+<div id="feedback-modal" style="display:none;position:fixed;inset:0;background:rgba(8,8,16,0.85);z-index:9999;padding:1rem;">
   <div style="
     background:#1a1a2e; border:1px solid rgba(124,106,247,0.3);
     border-radius:16px; padding:2rem; max-width:420px; width:100%;
@@ -1317,8 +1313,11 @@ loadStats();
       if (data.given) { localStorage.setItem('fb_given', 'true'); return; }
       if (user && user.isPaid) {
         setTimeout(() => {
-          document.getElementById('feedback-modal').style.display = 'flex';
-        }, 1000);
+  const m = document.getElementById('feedback-modal');
+  m.style.display = 'flex';
+  m.style.alignItems = 'center';
+  m.style.justifyContent = 'center';
+}, 3000);
       }
     } catch(e) {}
   }
