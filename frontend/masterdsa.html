@@ -298,15 +298,23 @@
     </a>
   </div>
   <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
     <li><a href="masterdsa.html" class="active" style="color:var(--accent2)">Master DSA</a></li>
-  </ul>
-  <div class="nav-right">
-    <a href="index.html" style="font-size:0.85rem;color:var(--muted);text-decoration:none;margin-right:1rem">Login</a>
+</ul>
+<div class="nav-right">
+    <a id="nav-login-link" href="index.html" style="font-size:0.85rem;color:var(--muted);text-decoration:none;margin-right:1rem">Login</a>
     <button class="btn-glow" style="padding:0.5rem 1.25rem;font-size:0.85rem" onclick="window.location.href='https://forms.gle/EFPHn471bhrwKUJK9'">Get Access — ₹1000</button>
-  </div>
+</div>
 </nav>
-
+<script>
+  // Agar user already logged in hai (auto-login after signup), Login link hide kar do
+  (function() {
+    var user = window.Auth && Auth.decodeToken();
+    if (user) {
+      var loginLink = document.getElementById('nav-login-link');
+      if (loginLink) loginLink.style.display = 'none';
+    }
+  })();
+</script>
 <div class="container page-body">
 
 <!-- ═══ HERO ═══ -->
