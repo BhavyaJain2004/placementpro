@@ -95,7 +95,7 @@ function makeToken(user) {
 router.post('/register', async (req, res) => {
   try {
     // const { name, email, password, mobile } = req.body;
-    const { name, email, password, mobile, referredBy } = req.body;
+    const { name, email, password, mobile, referredBy , plan } = req.body;
 
     if (!name || !email || !password || !mobile)
       return res.status(400).json({ message: 'Name, email and password required' });
