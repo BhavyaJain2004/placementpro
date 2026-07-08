@@ -362,37 +362,7 @@
     <button class="btn-glow" style="padding:0.5rem 1.25rem;font-size:0.85rem" onclick="window.location.href='https://forms.gle/EFPHn471bhrwKUJK9'">Get Access — ₹1000</button>
   </div>
 </nav>
-<script>
-  // Agar user already logged in hai (auto-login after signup), profile dikhao, Login link hide karo
-  (function() {
-    var user = window.Auth && Auth.decodeToken();
-    var loginLink = document.getElementById('nav-login-link');
-    var profileWrap = document.getElementById('nav-profile-wrap');
 
-    if (user) {
-      if (loginLink) loginLink.style.display = 'none';
-      if (profileWrap) profileWrap.style.display = 'flex';
-      var savedUser = Auth.getUser() || {};
-      var name = savedUser.name || user.name || user.email || 'Student';
-      var email = savedUser.email || user.email || '';
-      Auth.setNavUser(name);
-      var ddName = document.getElementById('dd-name');
-      var ddEmail = document.getElementById('dd-email');
-      if (ddName) ddName.textContent = name;
-      if (ddEmail) ddEmail.textContent = email;
-    }
-  })();
-
-  function toggleDropdown() {
-    document.getElementById('profile-dropdown').classList.toggle('open');
-  }
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('.profile-wrap')) {
-      var dd = document.getElementById('profile-dropdown');
-      if (dd) dd.classList.remove('open');
-    }
-  });
-</script>
 <div class="container page-body">
 
 <!-- ═══ HERO ═══ -->
@@ -900,19 +870,50 @@
   <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script>
-(async function() {
-  try {
-    const cached = JSON.parse(localStorage.getItem('pp_user'));
-    if (!cached) return;
-    const fresh = await API.call('/auth/me');
-    const u = fresh?.user || cached;
-    if (fresh?.token) localStorage.setItem('pp_token', fresh.token);
-    localStorage.setItem('pp_user', JSON.stringify(u));
-    if (u.masterDsaAccess) {
-      window.location.href = 'masterdsa-dashboard.html';
+  // Profile dropdown toggle karne wale saare functions
+  function toggleDropdown() {
+    document.getElementById('profile-dropdown').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.profile-wrap')) {
+      var dd = document.getElementById('profile-dropdown');
+      if (dd) dd.classList.remove('open');
     }
-  } catch(e) {}
-})();
+  });
+
+  // Login link ki jagah profile dikhao agar user logged in hai
+  (function() {
+    var user = Auth.decodeToken();
+    var loginLink = document.getElementById('nav-login-link');
+    var profileWrap = document.getElementById('nav-profile-wrap');
+    if (user) {
+      if (loginLink) loginLink.style.display = 'none';
+      if (profileWrap) profileWrap.style.display = 'flex';
+      var savedUser = Auth.getUser() || {};
+      var name = savedUser.name || user.name || user.email || 'Student';
+      var email = savedUser.email || user.email || '';
+      Auth.setNavUser(name);
+      var ddName = document.getElementById('dd-name');
+      var ddEmail = document.getElementById('dd-email');
+      if (ddName) ddName.textContent = name;
+      if (ddEmail) ddEmail.textContent = email;
+    }
+  })();
+
+  // Agar masterDsaAccess mil chuka hai toh seedha dashboard bhejo
+  (async function() {
+    try {
+      const cached = JSON.parse(localStorage.getItem('pp_user'));
+      if (!cached) return;
+      const fresh = await API.call('/auth/me');
+      const u = fresh?.user || cached;
+      if (fresh?.token) localStorage.setItem('pp_token', fresh.token);
+      localStorage.setItem('pp_user', JSON.stringify(u));
+      if (u.masterDsaAccess) {
+        window.location.href = 'masterdsa-dashboard.html';
+      }
+    } catch(e) {}
+  })();
 </script>
 </body>
 </html>
