@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema({
   feedbackGiven: { type: Boolean, default: false },
   termsAcceptedAt: { type: Date, default: null },
   masterDsaAccess: { type: Boolean, default: false },
+  selectedPlan:    { type: String, enum: ['99', '1000'], default: '99' },
 }, { timestamps: true });
 
 
