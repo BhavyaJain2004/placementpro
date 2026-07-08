@@ -249,7 +249,7 @@
     document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
   }
 
-  async function handleLogin(e) {
+async function handleLogin(e) {
     e.preventDefault();
     const btn = document.getElementById('login-btn');
     btn.disabled = true; btn.textContent = 'Logging in…';
@@ -261,7 +261,16 @@
       });
       localStorage.setItem('pp_token', data.token);
       localStorage.setItem('pp_user', JSON.stringify(data.user));
-      window.location.href = 'dashboard.html';
+
+      // Plan ke hisab se sahi page par bhejo
+      const u = data.user;
+      if (u.isPaid && u.masterDsaAccess) {
+        window.location.href = 'choose.html';
+      } else if (u.masterDsaAccess) {
+        window.location.href = 'masterdsa-dashboard.html';
+      } else {
+        window.location.href = 'dashboard.html';
+      }
     } catch(err) {
       document.getElementById('login-err').textContent = err.message;
       btn.disabled = false; btn.textContent = 'Log in';
