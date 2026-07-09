@@ -75,7 +75,7 @@ router.post('/register', async (req, res) => {
         name:    user.name,
         email:   user.email,
         isPaid:  user.isPaid,
-        isAdmin: user.isAdmin
+        isAdmin: user.isAdmin,
         masterDsaAccess: user.masterDsaAccess || false,
         selectedPlan:    user.selectedPlan    || '99'
       }
