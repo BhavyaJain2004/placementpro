@@ -615,4 +615,52 @@ router.post('/seed-notes', verifyToken, verifyAdmin, async (req, res) => {
     res.json({ message: `Done! ${count} notes` });
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
+// ── SECURITY: Password sharing detection ──
+// Jinke abhi (last 7 din ke andar, JWT valid rehne tak) 2+ alag devices/IPs se
+// active session hai unhe suspicious mark karte hain.
+router.get('/security/suspicious-devices', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const SESSION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+    const cutoff = Date.now() - SESSION_MAX_AGE_MS;
+
+    const users = await User.find({}).select('name email mobile sessions');
+
+    const result = users
+      .map(u => {
+        const active = (u.sessions || [])
+          .filter(s => s.loginAt && new Date(s.loginAt).getTime() > cutoff)
+          .sort((a, b) => new Date(b.loginAt) - new Date(a.loginAt));
+
+        return {
+          id:    u._id,
+          name:  u.name,
+          email: u.email,
+          mobile: u.mobile,
+          activeDeviceCount: active.length,
+          devices: active.map(s => ({ ip: s.ip, device: s.device, loginAt: s.loginAt }))
+        };
+      })
+      .filter(u => u.activeDeviceCount >= 2)
+      .sort((a, b) => b.activeDeviceCount - a.activeDeviceCount);
+
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Ek specific user ki poori login history (LoginLog se, saari purani entries)
+router.get('/security/history/:userId', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const LoginLog = require('../models/LoginLog');
+    const logs = await LoginLog.find({ userId: req.params.userId })
+      .sort({ loginAt: -1 })
+      .limit(200);
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
+
