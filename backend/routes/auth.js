@@ -1,63 +1,4 @@
-// const router  = require('express').Router();
-// const bcrypt  = require('bcryptjs');
-// const jwt     = require('jsonwebtoken');
-// const User    = require('../models/User');
-// const { verifyToken } = require('../middleware/auth');
 
-// const sign = (user) => jwt.sign(
-//   { id: user._id, name: user.name, email: user.email, isPaid: user.isPaid, isAdmin: user.isAdmin },
-//   process.env.JWT_SECRET,
-//   { expiresIn: '30d' }
-// );
-
-// // Register
-// router.post('/register', async (req, res) => {
-//   try {
-//     const { name, email, password } = req.body;
-//     if (!name || !email || !password) return res.status(400).json({ error: 'All fields required' });
-//     if (password.length < 6) return res.status(400).json({ error: 'Password min 6 characters' });
-//     if (await User.findOne({ email })) return res.status(400).json({ error: 'Email already registered' });
-//     const user = await User.create({ name, email, password: await bcrypt.hash(password, 12) });
-//     res.json({ token: sign(user), user: { name: user.name, email: user.email, isPaid: user.isPaid } });
-//   } catch (e) { res.status(500).json({ error: e.message }); }
-// });
-
-// router.post('/login', async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await User.findOne({ email });
-//     if (!user) return res.status(400).json({ error: 'No account found with this email' });
-//     if (!await bcrypt.compare(password, user.password)) return res.status(400).json({ error: 'Incorrect password' });
-//     res.json({ token: sign(user), user: { name: user.name, email: user.email, isPaid: user.isPaid } });
-//   } catch (e) { res.status(500).json({ error: e.message }); }
-// });
-
-
-// // Get current user (refresh token)
-// router.get('/me', verifyToken, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user.id).select('-password');
-//     if (!user) return res.status(404).json({ error: 'User not found' });
-//     res.json({ token: sign(user), user });
-//   } catch (e) { res.status(500).json({ error: e.message }); }
-// });
-
-// // Change password
-// router.post('/change-password', verifyToken, async (req, res) => {
-//   try {
-//     const { currentPassword, newPassword } = req.body;
-//     if (!currentPassword || !newPassword) return res.status(400).json({ error: 'All fields required' });
-//     if (newPassword.length < 6) return res.status(400).json({ error: 'Min 6 characters' });
-//     const user = await User.findById(req.user.id);
-//     if (!await bcrypt.compare(currentPassword, user.password))
-//       return res.status(400).json({ error: 'Current password is incorrect' });
-//     user.password = await bcrypt.hash(newPassword, 12);
-//     await user.save();
-//     res.json({ success: true });
-//   } catch (e) { res.status(500).json({ error: e.message }); }
-// });
-
-// module.exports = router;
 
 
 const express = require('express');
@@ -107,13 +48,6 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Email already registered' });
 
     const hashed = await bcrypt.hash(password, 10);
-    // const user   = await User.create({
-    //   name:     name.trim(),
-    //   email:    email.toLowerCase().trim(),
-    //   password: hashed,
-    //   mobile:   mobile ? mobile.trim() : '',
-    //   sessions: []
-    // });
     const user = await User.create({
   name:       name.trim(),
   email:      email.toLowerCase().trim(),
@@ -121,6 +55,7 @@ router.post('/register', async (req, res) => {
   mobile:     mobile ? mobile.trim() : '',
   referredBy: referredBy ? referredBy.toUpperCase().trim() : '',
   termsAcceptedAt: new Date(),
+      selectedPlan: plan === '1000' ? '1000' : '99',
   sessions:   []
 });
 
@@ -141,6 +76,8 @@ router.post('/register', async (req, res) => {
         email:   user.email,
         isPaid:  user.isPaid,
         isAdmin: user.isAdmin
+        masterDsaAccess: user.masterDsaAccess || false,
+        selectedPlan:    user.selectedPlan    || '99'
       }
     });
   } catch (err) {
@@ -148,55 +85,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// LOGIN
-// router.post('/login', async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
 
-//     if (!email || !password)
-//       return res.status(400).json({ message: 'Email and password required' });
-
-//     const user = await User.findOne({ email: email.toLowerCase().trim() });
-//     if (!user)
-//       return res.status(400).json({ message: 'Invalid credentials' });
-
-//     const match = await bcrypt.compare(password, user.password);
-//     if (!match)
-//       return res.status(400).json({ message: 'Invalid credentials' });
-
-//     const token = makeToken(user);
-
-//     // SINGLE DEVICE — purane sab sessions delete, sirf naya rakho
-//     user.sessions = [{
-//       token,
-//       ip:      getIP(req),
-//       device:  getDevice(req),
-//       loginAt: new Date()
-//     }];
-    
-// await LoginLog.create({
-//   userId: user._id,
-//   name:   user.name,
-//   email:  user.email,
-//   ip:     getIP(req),
-//   device: getDevice(req)
-// });
-//     await user.save();
-
-//     res.json({
-//       token,
-//       user: {
-//         id:      user._id,
-//         name:    user.name,
-//         email:   user.email,
-//         isPaid:  user.isPaid,
-//         isAdmin: user.isAdmin
-//       }
-//     });
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// });
 
 router.post('/login', async (req, res) => {
   try {
@@ -244,7 +133,9 @@ router.post('/login', async (req, res) => {
         name:    user.name,
         email:   user.email,
         isPaid:  user.isPaid,
-        isAdmin: user.isAdmin
+        isAdmin: user.isAdmin,
+        masterDsaAccess: user.masterDsaAccess || false,
+    selectedPlan:    user.selectedPlan    || '99'
       }
     });
   } catch (err) {
@@ -268,7 +159,8 @@ router.get('/me', verifyToken, async (req, res) => {
     isPaid:          user.isPaid,
     isAdmin:         user.isAdmin,
     hasTestAccess:   user.hasTestAccess   || false,
-    masterDsaAccess: user.masterDsaAccess || false
+    masterDsaAccess: user.masterDsaAccess || false,
+     selectedPlan:    user.selectedPlan    || '99'
   }
 });
   } catch (err) {
