@@ -305,7 +305,8 @@ async function handleSignup(e) {
         email:      document.getElementById('s-email').value,
         password:   document.getElementById('s-pass').value,
         mobile:     document.getElementById('reg-mobile').value.trim(),
-        referredBy: document.getElementById('reg-referral').value.trim().toUpperCase()
+        referredBy: document.getElementById('reg-referral').value.trim().toUpperCase(),
+         plan:       plan
       })
     });
     localStorage.setItem('pp_token', data.token);
