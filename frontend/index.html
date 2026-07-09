@@ -260,17 +260,20 @@ async function handleLogin(e) {
         body: JSON.stringify({ email: document.getElementById('l-email').value, password: document.getElementById('l-pass').value })
       });
       localStorage.setItem('pp_token', data.token);
-      localStorage.setItem('pp_user', JSON.stringify(data.user));
+localStorage.setItem('pp_user', JSON.stringify(data.user));
 
-      // Plan ke hisab se sahi page par bhejo
-      const u = data.user;
-      if (u.isPaid && u.masterDsaAccess) {
-        window.location.href = 'choose.html';
-      } else if (u.masterDsaAccess) {
-        window.location.href = 'masterdsa-dashboard.html';
-      } else {
-        window.location.href = 'dashboard.html';
-      }
+// Plan ke hisab se sahi page par bhejo
+const u = data.user;
+if (u.isPaid && u.masterDsaAccess) {
+  window.location.href = 'choose.html';
+} else if (u.masterDsaAccess) {
+  window.location.href = 'masterdsa-dashboard.html';
+} else if (u.selectedPlan === '1000') {
+  // Master DSA ke liye enroll kiya tha but abhi payment approve nahi hua
+  window.location.href = 'masterdsa.html';
+} else {
+  window.location.href = 'dashboard.html';
+}
     } catch(err) {
       document.getElementById('login-err').textContent = err.message;
       btn.disabled = false; btn.textContent = 'Log in';
