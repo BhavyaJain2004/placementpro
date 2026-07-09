@@ -116,13 +116,13 @@ router.post('/login', async (req, res) => {
 
     const token = makeToken(user);
 
-    // SINGLE DEVICE
-    user.sessions = [{
+    // Multiple devices ek saath track honge ab (overwrite nahi, add hoga)
+    user.sessions = addSession(user.sessions, {
       token,
       ip:      getIP(req),
       device:  getDevice(req),
       loginAt: new Date()
-    }];
+    });
     await user.save();
 
     // LoginLog — save ke baad, alag try-catch mein
