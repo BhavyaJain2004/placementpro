@@ -72,12 +72,12 @@ router.post('/register', async (req, res) => {
 });
 
     const token = makeToken(user);
-    user.sessions = [{
+    user.sessions = addSession(user.sessions, {
       token,
       ip:      getIP(req),
       device:  getDevice(req),
       loginAt: new Date()
-    }];
+    });
     await user.save();
 
     res.status(201).json({
