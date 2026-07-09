@@ -620,43 +620,32 @@ router.post('/seed-notes', verifyToken, verifyAdmin, async (req, res) => {
 // active session hai unhe suspicious mark karte hain.
 router.get('/security/suspicious-devices', verifyToken, verifyAdmin, async (req, res) => {
   try {
-    const SESSION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
-    const cutoff = Date.now() - SESSION_MAX_AGE_MS;
+    const WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+    const cutoff = new Date(Date.now() - WINDOW_MS);
 
-    const users = await User.find({}).select('name email mobile sessions');
+    // Raw history — dedupe nahi hota yahan, purane accounts ka bhi data available hai
+    const logs = await LoginLog.find({ loginAt: { $gte: cutoff } }).sort({ loginAt: -1 });
 
-    const result = users
-      .map(u => {
-        const active = (u.sessions || [])
-          .filter(s => s.loginAt && new Date(s.loginAt).getTime() > cutoff)
-          .sort((a, b) => new Date(b.loginAt) - new Date(a.loginAt));
+    const byUser = {};
+    for (const log of logs) {
+      const uid = String(log.userId);
+      if (!byUser[uid]) byUser[uid] = { name: log.name, email: log.email, entries: [], deviceSet: new Set() };
+      byUser[uid].entries.push({ ip: log.ip, device: log.device, loginAt: log.loginAt });
+      byUser[uid].deviceSet.add((log.ip || '') + '|' + (log.device || ''));
+    }
 
-        return {
-          id:    u._id,
-          name:  u.name,
-          email: u.email,
-          mobile: u.mobile,
-          activeDeviceCount: active.length,
-          devices: active.map(s => ({ ip: s.ip, device: s.device, loginAt: s.loginAt }))
-        };
-      })
+    const result = Object.entries(byUser)
+      .map(([uid, u]) => ({
+        id: uid,
+        name: u.name,
+        email: u.email,
+        activeDeviceCount: u.deviceSet.size,
+        devices: u.entries.slice(0, 15) // recent 15 login attempts dikhayenge
+      }))
       .filter(u => u.activeDeviceCount >= 2)
       .sort((a, b) => b.activeDeviceCount - a.activeDeviceCount);
 
     res.json(result);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// Ek specific user ki poori login history (LoginLog se, saari purani entries)
-router.get('/security/history/:userId', verifyToken, verifyAdmin, async (req, res) => {
-  try {
-    const LoginLog = require('../models/LoginLog');
-    const logs = await LoginLog.find({ userId: req.params.userId })
-      .sort({ loginAt: -1 })
-      .limit(200);
-    res.json(logs);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
