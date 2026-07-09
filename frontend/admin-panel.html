@@ -103,6 +103,8 @@ body{background:#06060f}
     <div class="as-item" onclick="showTab('feedback',this)">💬 Feedback</div>
     <div class="as-item" onclick="showTab('funnel',this)">📈 Funnel</div>
     <div class="as-item" onclick="showTab('notifications',this)">🔔 Notifications</div>
+     <div class="as-section">Security</div>
+    <div class="as-item" onclick="showTab('security',this)">🚨 Password Sharing</div>
 
     <div style="padding:1.5rem 1.25rem 0">
       <a href="dashboard.html" style="font-size:0.78rem;color:rgba(255,255,255,0.3);text-decoration:none">← Back to site</a>
@@ -320,6 +322,20 @@ body{background:#06060f}
       </div>
     </div>
 
+     <div id="tab-security" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">🚨 Password Sharing Detector</h2>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.5rem">Accounts currently active on 2 or more devices/IPs at once (last 7 days)</p>
+
+      <div class="stat-grid" id="sec-stat-grid">
+        <div class="stat-box"><div class="v" id="sec-total" style="color:#f87171">—</div><div class="l">Suspicious Accounts</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔴 Multi-Device Accounts</div>
+        <div id="sec-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -423,12 +439,12 @@ function checkPwd() {
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
 // ── TAB ROUTING ──
-const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications'];
+const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security'];
 function showTab(tab, btn) {
   ALL_TABS.forEach(t => { const el = document.getElementById('tab-'+t); if(el) el.style.display = t===tab?'block':'none'; });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
-  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList };
+  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity };
   if (loaders[tab]) loaders[tab]();
 }
 
@@ -728,6 +744,38 @@ async function loadActiveToday() {
       </div>`;
     }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No activity today yet</div>';
   } catch(e) {}
+}
+  // ── SECURITY: Password sharing detector ──
+async function loadSecurity() {
+  try {
+    const list = await API.call('/admin/security/suspicious-devices');
+    document.getElementById('sec-total').textContent = list.length;
+
+    document.getElementById('sec-list').innerHTML = list.length ? list.map(u => {
+      const devicesHtml = u.devices.map(d => `
+        <div style="display:flex;justify-content:space-between;gap:1rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.75rem">
+          <span style="color:rgba(255,255,255,0.55)">${(d.device||'Unknown device').substring(0,60)}</span>
+          <span style="color:rgba(255,255,255,0.35);white-space:nowrap">${d.ip||'—'} · ${new Date(d.loginAt).toLocaleString('en-IN')}</span>
+        </div>`).join('');
+
+      return `
+      <div style="border-bottom:1px solid rgba(255,255,255,0.06);padding:0.85rem 0">
+        <div class="list-row" style="border:none;padding:0;cursor:pointer" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none' ? 'block' : 'none'">
+          <div class="avatar" style="background:rgba(248,113,113,0.15);color:#f87171">${(u.name||'?').charAt(0).toUpperCase()}</div>
+          <div style="flex:1">
+            <div style="font-size:0.85rem;color:#fff">${u.name||'Unknown'}</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email} ${u.mobile?'· '+u.mobile:''}</div>
+          </div>
+          <span class="tag" style="background:rgba(248,113,113,0.12);color:#f87171">${u.activeDeviceCount} devices</span>
+        </div>
+        <div style="display:none;margin-top:0.6rem;padding-left:2.5rem">
+          ${devicesHtml}
+        </div>
+      </div>`;
+    }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">✅ Koi bhi account abhi multiple devices pe active nahi hai</div>';
+  } catch(e) {
+    document.getElementById('sec-list').innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load karne mein error aaya</div>';
+  }
 }
 </script>
 </body>
