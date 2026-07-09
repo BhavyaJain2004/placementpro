@@ -31,7 +31,19 @@ function makeToken(user) {
     { expiresIn: '7d' }
   );
 }
+const SESSION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // JWT expiry (7d) ke barabar
 
+function addSession(existingSessions, newSession) {
+  const cutoff = Date.now() - SESSION_MAX_AGE_MS;
+  const cleaned = (existingSessions || []).filter(
+    s => s.loginAt && new Date(s.loginAt).getTime() > cutoff
+  );
+  const withoutSameDevice = cleaned.filter(
+    s => !(s.ip === newSession.ip && s.device === newSession.device)
+  );
+  withoutSameDevice.push(newSession);
+  return withoutSameDevice;
+}
 // REGISTER
 router.post('/register', async (req, res) => {
   try {
