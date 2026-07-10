@@ -618,12 +618,14 @@ router.post('/seed-notes', verifyToken, verifyAdmin, async (req, res) => {
 // ── SECURITY: Password sharing detection ──
 // Jinke abhi (last 7 din ke andar, JWT valid rehne tak) 2+ alag devices/IPs se
 // active session hai unhe suspicious mark karte hain.
+// ── SECURITY: Password sharing detection ──
+// Jinke abhi (last 7 din ke andar, JWT valid rehne tak) 2+ alag devices/IPs se
+// active session hai unhe suspicious mark karte hain.
 router.get('/security/suspicious-devices', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
     const cutoff = new Date(Date.now() - WINDOW_MS);
 
-    // Raw history — dedupe nahi hota yahan, purane accounts ka bhi data available hai
     const logs = await LoginLog.find({ loginAt: { $gte: cutoff } }).sort({ loginAt: -1 });
 
     const byUser = {};
@@ -640,7 +642,7 @@ router.get('/security/suspicious-devices', verifyToken, verifyAdmin, async (req,
         name: u.name,
         email: u.email,
         activeDeviceCount: u.deviceSet.size,
-        devices: u.entries.slice(0, 15) // recent 15 login attempts dikhayenge
+        devices: u.entries.slice(0, 15)
       }))
       .filter(u => u.activeDeviceCount >= 2)
       .sort((a, b) => b.activeDeviceCount - a.activeDeviceCount);
@@ -651,5 +653,117 @@ router.get('/security/suspicious-devices', verifyToken, verifyAdmin, async (req,
   }
 });
 
+// Ek specific user ki poori login history (LoginLog se, saari purani entries)
+router.get('/security/history/:userId', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const logs = await LoginLog.find({ userId: req.params.userId })
+      .sort({ loginAt: -1 })
+      .limit(200);
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── FORCE LOGOUT EVERYONE (one-time "clean slate" button) ──
+// Sabka current token turant invalid ho jayega. Koi data delete nahi hota,
+// bas login screen pe wapas bhej dega — dobara login karne pe naya
+// session-based tracking (neeche wala) turant kaam karna shuru kar dega.
+router.post('/security/force-logout-all', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const result = await User.updateMany({}, { $inc: { sessionVersion: 1 } });
+    res.json({ message: 'Sabka session invalidate ho gaya', matched: result.matchedCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── GENUINE SHARING DETECTION (session-based, IP/device pe depend nahi karta) ──
+// 🔴 Confirmed: 2 alag login-sessions ki activity overlap hui hai (real concurrent use)
+// 🟡 Suspicious: unusually zyada fresh-logins hue hain 30 din mein (turn-by-turn sharing ka signal)
+router.get('/security/genuine-detection', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const SessionActivity = require('../models/SessionActivity');
+
+    const WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+    const cutoff = new Date(Date.now() - WINDOW_MS);
+    const OVERLAP_THRESHOLD_MS = 10 * 60 * 1000;
+    const HIGH_CHURN_LOGIN_COUNT = 8;
+
+    const pings = await SessionActivity.find({ pingedAt: { $gte: cutoff } })
+      .select('userId sessionId pingedAt')
+      .sort({ pingedAt: 1 });
+
+    const byUser = {};
+    for (const p of pings) {
+      const uid = String(p.userId);
+      if (!byUser[uid]) byUser[uid] = {};
+      if (!byUser[uid][p.sessionId]) byUser[uid][p.sessionId] = [];
+      byUser[uid][p.sessionId].push(p.pingedAt);
+    }
+
+    const allLogs = await LoginLog.find({}).select('userId name email loginAt').sort({ loginAt: -1 });
+    const loginsByUser = {};
+    for (const l of allLogs) {
+      const uid = String(l.userId);
+      if (!loginsByUser[uid]) loginsByUser[uid] = { name: l.name, email: l.email, all: [], recent: 0 };
+      loginsByUser[uid].all.push(l.loginAt);
+      if (new Date(l.loginAt) > cutoff) loginsByUser[uid].recent++;
+    }
+
+    const result = [];
+
+    for (const uid of Object.keys(loginsByUser)) {
+      const sessions = byUser[uid] || {};
+      const sessionIds = Object.keys(sessions);
+
+      const overlapDays = new Set();
+      for (let i = 0; i < sessionIds.length; i++) {
+        for (let j = i + 1; j < sessionIds.length; j++) {
+          const pingsA = sessions[sessionIds[i]];
+          const pingsB = sessions[sessionIds[j]];
+          for (const ta of pingsA) {
+            for (const tb of pingsB) {
+              if (Math.abs(new Date(ta) - new Date(tb)) <= OVERLAP_THRESHOLD_MS) {
+                overlapDays.add(new Date(ta).toISOString().split('T')[0]);
+              }
+            }
+          }
+        }
+      }
+
+      const totalLogins  = loginsByUser[uid].all.length;
+      const recentLogins = loginsByUser[uid].recent;
+
+      let status = null;
+      if (overlapDays.size >= 1) status = 'confirmed';
+      else if (recentLogins >= HIGH_CHURN_LOGIN_COUNT) status = 'suspicious';
+
+      if (status) {
+        result.push({
+          id: uid,
+          name: loginsByUser[uid].name,
+          email: loginsByUser[uid].email,
+          status,
+          overlapDayCount: overlapDays.size,
+          totalLogins,
+          recentLogins,
+          distinctSessions30d: sessionIds.length
+        });
+      }
+    }
+
+    result.sort((a, b) => {
+      if (a.status !== b.status) return a.status === 'confirmed' ? -1 : 1;
+      return b.recentLogins - a.recentLogins;
+    });
+
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
+
 
