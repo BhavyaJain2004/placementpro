@@ -321,8 +321,8 @@ body{background:#06060f}
         <div id="notif-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No active notifications</div></div>
       </div>
     </div>
-
-     <div id="tab-security" style="display:none">
+    <!-- SECURITY / PASSWORD SHARING -->
+    <div id="tab-security" style="display:none">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">🚨 Password Sharing Detector</h2>
       <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.5rem">Accounts currently active on 2 or more devices/IPs at once (last 7 days)</p>
 
@@ -334,10 +334,25 @@ body{background:#06060f}
         <div class="card-title">🔴 Multi-Device Accounts</div>
         <div id="sec-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
       </div>
+
+      <!-- GENUINE DETECTION (session-based, IP/device pe depend nahi karta) -->
+      <div class="card" style="border-color:rgba(124,106,247,0.25)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.5rem">
+          <div class="card-title" style="margin-bottom:0">🎯 Genuine Detection (Session-based)</div>
+          <button onclick="forceLogoutAll()" style="background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.3);color:#f87171;padding:0.5rem 1rem;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">
+            🔌 Force Logout Everyone
+          </button>
+        </div>
+        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-bottom:1rem">
+          IP/device pe depend nahi karta — real concurrent-use aur unusual login-frequency pe based hai. Sabko logout karne ke baad, jaise jaise log wapas login karenge, ye list accurate hoti jayegi.
+        </p>
+        <div id="genuine-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
+      </div>
     </div>
 
   </div>
-</div>
+
+    </div>
 
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
@@ -772,10 +787,56 @@ async function loadSecurity() {
           ${devicesHtml}
         </div>
       </div>`;
-    }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">✅ Koi bhi account abhi multiple devices pe active nahi hai</div>';
+   }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">✅ Koi bhi account abhi multiple devices pe active nahi hai</div>';
   } catch(e) {
     document.getElementById('sec-list').innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load karne mein error aaya</div>';
   }
+  loadGenuineDetection();
+}
+
+// ── GENUINE DETECTION: session-based, IP/device pe depend nahi karta ──
+async function loadGenuineDetection() {
+  try {
+    const list = await API.call('/admin/security/genuine-detection');
+
+    document.getElementById('genuine-list').innerHTML = list.length ? list.map(u => {
+      const isConfirmed = u.status === 'confirmed';
+      const color = isConfirmed ? '#f87171' : '#fbbf24';
+      const bg = isConfirmed ? 'rgba(248,113,113,0.12)' : 'rgba(251,191,36,0.12)';
+      const label = isConfirmed ? '🔴 Confirmed Sharing' : '🟡 Suspicious';
+
+      return `
+      <div style="border-bottom:1px solid rgba(255,255,255,0.06);padding:0.85rem 0">
+        <div class="list-row" style="border:none;padding:0">
+          <div class="avatar" style="background:${bg};color:${color}">${(u.name||'?').charAt(0).toUpperCase()}</div>
+          <div style="flex:1">
+            <div style="font-size:0.85rem;color:#fff">${u.name||'Unknown'}</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email}</div>
+          </div>
+          <div style="display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:flex-end">
+            <span class="tag" style="background:${bg};color:${color}">${label}</span>
+            <span class="tag" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)">${u.totalLogins} total logins</span>
+            <span class="tag" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)">${u.recentLogins} in 30d</span>
+            ${isConfirmed ? `<span class="tag" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)">${u.overlapDayCount} overlap day(s)</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">✅ Koi bhi account abhi flag nahi hui — data build ho raha hai</div>';
+  } catch(e) {
+    document.getElementById('genuine-list').innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load karne mein error aaya</div>';
+  }
+}
+
+async function forceLogoutAll() {
+  if (!confirm('Pakka? Isse SABHI users (admins ko chhodke agar setup ho) turant logout ho jayenge — unhe dobara login karna padega. Koi data delete nahi hoga.')) return;
+  try {
+    const res = await API.call('/admin/security/force-logout-all', { method: 'POST' });
+    alert('✅ ' + res.message + ' (' + res.matched + ' accounts)');
+    loadGenuineDetection();
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+}
 }
 </script>
 </body>
