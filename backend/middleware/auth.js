@@ -85,6 +85,14 @@ const verifyToken = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Force-logout check — agar admin ne "logout everyone" chalaya hai uske baad
+    // ka token nahi hai ye, toh reject karo (purana token, naya login chahiye)
+    const user = await User.findById(decoded.id).select('sessionVersion');
+    if (user && (user.sessionVersion || 0) > (decoded.sv || 0)) {
+      return res.status(401).json({ message: 'SESSION_EXPIRED' });
+    }
+
     req.user = decoded;
     next();
   } catch (err) {
