@@ -1,6 +1,7 @@
 const express     = require('express');
 const router      = express.Router();
 const ActivityLog = require('../models/ActivityLog');
+const SessionActivity = require('../models/SessionActivity');
 const { verifyToken } = require('../middleware/auth');
 
 // POST /api/activity/ping — frontend se call hogi
@@ -12,7 +13,6 @@ router.post('/ping', verifyToken, async (req, res) => {
 
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-    // Same user same page same day — ek hi log
     const existing = await ActivityLog.findOne({
       userId: req.user.id,
       date:   today,
@@ -28,6 +28,15 @@ router.post('/ping', verifyToken, async (req, res) => {
         ip,
         date:   today
       });
+    }
+
+    // Fine-grained tracking (dedupe nahi) — password-sharing detection ke liye
+    if (req.user.sid) {
+      SessionActivity.create({
+        userId:    req.user.id,
+        sessionId: req.user.sid,
+        page:      page || 'dashboard'
+      }).catch(() => {});
     }
 
     res.json({ ok: true });
