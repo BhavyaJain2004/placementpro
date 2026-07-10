@@ -18,18 +18,24 @@ function getDevice(req) {
   return (req.headers['user-agent'] || 'Unknown').substring(0, 150);
 }
 
+const crypto = require('crypto');
+
 function makeToken(user) {
-  return jwt.sign(
+  const sessionId = crypto.randomUUID();
+  const token = jwt.sign(
     {
       id:      user._id,
       email:   user.email,
       name:    user.name,
       isPaid:  user.isPaid,
-      isAdmin: user.isAdmin
+      isAdmin: user.isAdmin,
+      sid:     sessionId,
+      sv:      user.sessionVersion || 0
     },
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   );
+  return { token, sessionId };
 }
 const SESSION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // JWT expiry (7d) ke barabar
 
@@ -71,7 +77,7 @@ router.post('/register', async (req, res) => {
   sessions:   []
 });
 
-    const token = makeToken(user);
+     const { token } = makeToken(user);
     user.sessions = addSession(user.sessions, {
       token,
       ip:      getIP(req),
@@ -114,7 +120,7 @@ router.post('/login', async (req, res) => {
     if (!match)
       return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = makeToken(user);
+const { token } = makeToken(user);
 
     // Multiple devices ek saath track honge ab (overwrite nahi, add hoga)
     user.sessions = addSession(user.sessions, {
@@ -160,7 +166,7 @@ router.get('/me', verifyToken, async (req, res) => {
     const user = await User.findById(req.user.id).select('-password -sessions');
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const newToken = makeToken(user);
+     const { token: newToken } = makeToken(user);
 
    res.json({
   token: newToken,
