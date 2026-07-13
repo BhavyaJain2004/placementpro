@@ -17,11 +17,10 @@ function getIP(req) {
 function getDevice(req) {
   return (req.headers['user-agent'] || 'Unknown').substring(0, 150);
 }
-
 const crypto = require('crypto');
 
-function makeToken(user) {
-  const sessionId = crypto.randomUUID();
+function makeToken(user, existingSid) {
+  const sessionId = existingSid || crypto.randomUUID();
   const token = jwt.sign(
     {
       id:      user._id,
@@ -37,6 +36,7 @@ function makeToken(user) {
   );
   return { token, sessionId };
 }
+
 const SESSION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // JWT expiry (7d) ke barabar
 
 function addSession(existingSessions, newSession) {
@@ -166,7 +166,7 @@ router.get('/me', verifyToken, async (req, res) => {
     const user = await User.findById(req.user.id).select('-password -sessions');
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-     const { token: newToken } = makeToken(user);
+     const { token: newToken } = makeToken(user, req.user.sid);
 
    res.json({
   token: newToken,
