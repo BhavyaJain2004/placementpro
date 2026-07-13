@@ -678,6 +678,19 @@ router.post('/security/force-logout-all', verifyToken, verifyAdmin, async (req, 
   }
 });
 
+// ── CLEAR OLD SESSION ACTIVITY (ek-baari — buggy purana ping data hatane ke liye) ──
+// Sirf SessionActivity collection clear hoti hai (jahan overlap-detection ka data hai).
+// LoginLog aur baaki kuch bhi touch nahi hota, koi user data delete nahi hota.
+router.post('/security/clear-session-activity', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const SessionActivity = require('../models/SessionActivity');
+    const result = await SessionActivity.deleteMany({});
+    res.json({ message: 'Purana session-activity data clear ho gaya', deleted: result.deletedCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // ── GENUINE SHARING DETECTION (session-based, IP/device pe depend nahi karta) ──
 // 🔴 Confirmed: 2 alag login-sessions ki activity overlap hui hai (real concurrent use)
 // 🟡 Suspicious: unusually zyada fresh-logins hue hain 30 din mein (turn-by-turn sharing ka signal)
