@@ -71,6 +71,7 @@ const setNavUser = (name) => {
 
 // Feedback popup — har page pe
 (async function showFeedbackPopup() {
+  return;
   const token = localStorage.getItem('pp_token');
   if (!token) return;
 
