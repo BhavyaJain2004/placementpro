@@ -785,10 +785,13 @@ async function loadSecurity() {
         </div>
         <div style="display:none;margin-top:0.6rem;padding-left:2.5rem">
           ${devicesHtml}
+          <button onclick="toggleFullHistory('${u.id}', 'hist-${u.id}')" style="margin-top:0.6rem;background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);color:#a89df7;padding:0.4rem 0.8rem;border-radius:8px;font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif">
+            📜 Poori Login History Dekho
+          </button>
+          <div id="hist-${u.id}" style="display:none;margin-top:0.6rem;max-height:280px;overflow-y:auto"></div>
         </div>
       </div>`;
-   }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">✅ Koi bhi account abhi multiple devices pe active nahi hai</div>';
-  } catch(e) {
+   }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">✅ Koi bhi account abhi multiple devices pe active nahi hai</div>';  } catch(e) {
     document.getElementById('sec-list').innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load karne mein error aaya</div>';
   }
   loadGenuineDetection();
@@ -807,7 +810,7 @@ async function loadGenuineDetection() {
 
       return `
       <div style="border-bottom:1px solid rgba(255,255,255,0.06);padding:0.85rem 0">
-        <div class="list-row" style="border:none;padding:0">
+        <div class="list-row" style="border:none;padding:0;cursor:pointer" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none' ? 'block' : 'none'">
           <div class="avatar" style="background:${bg};color:${color}">${(u.name||'?').charAt(0).toUpperCase()}</div>
           <div style="flex:1">
             <div style="font-size:0.85rem;color:#fff">${u.name||'Unknown'}</div>
@@ -819,6 +822,12 @@ async function loadGenuineDetection() {
             <span class="tag" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)">${u.recentLogins} in 30d</span>
             ${isConfirmed ? `<span class="tag" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)">${u.overlapDayCount} overlap day(s)</span>` : ''}
           </div>
+        </div>
+        <div style="display:none;margin-top:0.6rem;padding-left:2.5rem">
+          <button onclick="toggleFullHistory('${u.id}', 'ghist-${u.id}')" style="background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);color:#a89df7;padding:0.4rem 0.8rem;border-radius:8px;font-size:0.72rem;cursor:pointer;font-family:'DM Sans',sans-serif">
+            📜 Poori Login History Dekho
+          </button>
+          <div id="ghist-${u.id}" style="display:none;margin-top:0.6rem;max-height:280px;overflow-y:auto"></div>
         </div>
       </div>`;
     }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">✅ Koi bhi account abhi flag nahi hui — data build ho raha hai</div>';
@@ -835,6 +844,41 @@ async function forceLogoutAll() {
     loadGenuineDetection();
   } catch(e) {
     alert('Error: ' + e.message);
+  }
+}
+
+// ── FULL LOGIN HISTORY (kisi bhi user ki, LoginLog se — ek baar fetch hoti hai, phir bas toggle hota hai) ──
+const historyCache = {};
+async function toggleFullHistory(userId, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  if (container.style.display === 'block') {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+
+  if (historyCache[userId]) {
+    container.innerHTML = historyCache[userId];
+    return;
+  }
+
+  container.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:0.75rem;font-size:0.75rem">Loading history…</div>';
+
+  try {
+    const logs = await API.call('/admin/security/history/' + userId);
+    const html = logs.length ? logs.map(l => `
+      <div style="display:flex;justify-content:space-between;gap:1rem;padding:0.45rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.73rem">
+        <span style="color:rgba(255,255,255,0.5)">${(l.device||'Unknown device').substring(0,55)}</span>
+        <span style="color:rgba(255,255,255,0.3);white-space:nowrap">${l.ip||'—'} · ${new Date(l.loginAt).toLocaleString('en-IN')}</span>
+      </div>`).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:0.75rem;font-size:0.75rem">Koi history nahi mili</div>';
+
+    historyCache[userId] = html;
+    container.innerHTML = html;
+  } catch(e) {
+    container.innerHTML = '<div style="color:#f87171;text-align:center;padding:0.75rem;font-size:0.75rem">History load karne mein error aaya</div>';
   }
 }
 </script>
