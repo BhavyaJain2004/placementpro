@@ -473,12 +473,12 @@ function checkPwd() {
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
 // ── TAB ROUTING ──
-const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security'];
+const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs'];
 function showTab(tab, btn) {
   ALL_TABS.forEach(t => { const el = document.getElementById('tab-'+t); if(el) el.style.display = t===tab?'block':'none'; });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
-  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity };
+  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions };
   if (loaders[tab]) loaders[tab]();
 }
 
@@ -899,6 +899,69 @@ async function toggleFullHistory(userId, containerId) {
   } catch(e) {
     container.innerHTML = '<div style="color:#f87171;text-align:center;padding:0.75rem;font-size:0.75rem">History load karne mein error aaya</div>';
   }
+}
+
+// ── PAYMENT SUBMISSIONS ──
+async function loadPaymentSubmissions() {
+  try {
+    const data = await API.call('/admin/payment-submissions');
+    document.getElementById('ps-revenue').textContent  = '₹' + data.actualRevenue.toLocaleString('en-IN');
+    document.getElementById('ps-pending').textContent  = data.pendingCount;
+    document.getElementById('ps-approved').textContent = data.approvedCount;
+
+    const statusStyle = {
+      pending:  { bg:'rgba(251,191,36,0.12)',  color:'#fbbf24', label:'⏳ Pending' },
+      approved: { bg:'rgba(52,211,153,0.12)',  color:'#34d399', label:'✅ Approved' },
+      rejected: { bg:'rgba(248,113,113,0.12)', color:'#f87171', label:'❌ Rejected' }
+    };
+
+    document.getElementById('paysubs-list').innerHTML = data.submissions.length ? data.submissions.map(s => {
+      const st = statusStyle[s.status];
+      return `
+      <div style="border-bottom:1px solid rgba(255,255,255,0.06);padding:0.9rem 0">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div class="avatar" style="background:${st.bg};color:${st.color}">${(s.name||'?').charAt(0).toUpperCase()}</div>
+          <div style="flex:1;min-width:150px">
+            <div style="font-size:0.85rem;color:#fff">${s.name||'Unknown'}</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${s.email}</div>
+          </div>
+          <span class="tag" style="background:${s.plan==='1000'?'rgba(124,106,247,0.12)':'rgba(255,255,255,0.06)'};color:${s.plan==='1000'?'#a89df7':'rgba(255,255,255,0.5)'}">${s.plan==='1000'?'Master DSA':'Base'} plan</span>
+          <span class="tag" style="background:rgba(52,211,153,0.1);color:#34d399">₹${s.amountPaid}</span>
+          <span class="tag" style="background:${st.bg};color:${st.color}">${st.label}</span>
+        </div>
+        <div style="margin-top:0.5rem;padding-left:2.5rem;font-size:0.75rem;color:rgba(255,255,255,0.4)">
+          UTR: <span style="color:rgba(255,255,255,0.6);font-family:monospace">${s.transactionId}</span>
+          · ${new Date(s.createdAt).toLocaleString('en-IN')}
+          ${s.referredBy ? ' · Referred by: ' + s.referredBy : ''}
+        </div>
+        ${s.screenshot ? `<div style="padding-left:2.5rem;margin-top:0.5rem"><img src="${s.screenshot}" style="max-width:160px;border-radius:8px;cursor:pointer" onclick="window.open('${s.screenshot}','_blank')"></div>` : ''}
+        ${s.status === 'pending' ? `
+        <div style="padding-left:2.5rem;margin-top:0.6rem;display:flex;gap:0.5rem">
+          <button onclick="approvePayment('${s._id}')" style="background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);color:#34d399;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">✅ Approve</button>
+          <button onclick="rejectPayment('${s._id}')" style="background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.3);color:#f87171;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">❌ Reject</button>
+        </div>` : ''}
+      </div>`;
+    }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Koi submission nahi hai abhi</div>';
+  } catch(e) {
+    document.getElementById('paysubs-list').innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load karne mein error aaya</div>';
+  }
+}
+
+async function approvePayment(id) {
+  if (!confirm('Approve karke user ko access de do?')) return;
+  try {
+    const res = await API.call('/admin/payment-submissions/' + id + '/approve', { method: 'POST' });
+    alert('✅ ' + res.message);
+    loadPaymentSubmissions();
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+async function rejectPayment(id) {
+  if (!confirm('Reject karna hai? (fake/galat screenshot waghera)')) return;
+  try {
+    await API.call('/admin/payment-submissions/' + id + '/reject', { method: 'POST' });
+    loadPaymentSubmissions();
+  } catch(e) { alert('Error: ' + e.message); }
 }
 </script>
 </body>
