@@ -316,7 +316,11 @@ async function handleSignup(e) {
     localStorage.setItem('pp_user', JSON.stringify(data.user));
 
     // Plan ke hisab se redirect
-  window.location.href = 'payment.html?plan=' + plan;
+   if (plan === '1000') {
+      window.location.href = 'masterdsa.html';
+    } else {
+      window.location.href = 'dashboard.html';
+    }
   } catch(err) {
     document.getElementById('signup-err').textContent = err.message;
     btn.disabled = false; btn.textContent = 'Create account';
