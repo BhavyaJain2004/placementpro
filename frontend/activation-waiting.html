@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Activating Your Account — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body { font-family:'DM Sans',sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:1.25rem; }
+
+.wait-card {
+  max-width:460px; width:100%;
+  background:#0e0e1e; border:1px solid rgba(255,255,255,0.08);
+  border-radius:22px; padding:2.5rem 2rem; text-align:center;
+  position:relative; overflow:hidden;
+}
+.wait-card::before {
+  content:''; position:absolute; top:-100px; left:50%; transform:translateX(-50%);
+  width:340px; height:220px;
+  background:radial-gradient(ellipse,rgba(124,106,247,0.16) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.clock-wrap {
+  width:68px; height:68px; border-radius:50%; margin:0 auto 1.25rem;
+  background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.25);
+  display:flex; align-items:center; justify-content:center; position:relative; z-index:2;
+}
+.clock-icon { font-size:1.8rem; animation:tick 2s ease-in-out infinite; }
+@keyframes tick { 0%,100%{transform:rotate(-8deg)} 50%{transform:rotate(8deg)} }
+
+h1 {
+  font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; color:#fff;
+  margin-bottom:0.4rem; position:relative; z-index:2;
+}
+.sub { font-size:0.85rem; color:rgba(255,255,255,0.4); margin-bottom:1.75rem; position:relative; z-index:2; line-height:1.6; }
+
+.fact-box {
+  background:rgba(124,106,247,0.06); border:1px solid rgba(124,106,247,0.2);
+  border-radius:16px; padding:1.25rem; margin-bottom:1.5rem; position:relative; z-index:2;
+  min-height:110px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.fact-tag {
+  display:flex; align-items:center; gap:6px; font-size:0.7rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.08em; color:#a89df7; margin-bottom:0.6rem;
+}
+#fact-text { font-size:0.88rem; color:rgba(255,255,255,0.75); line-height:1.6; transition:opacity 0.25s; }
+
+.dots { display:flex; justify-content:center; gap:6px; margin-bottom:1.75rem; position:relative; z-index:2; }
+.dots span { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.15); transition:background 0.2s; }
+.dots span.on { background:#a89df7; }
+
+.status-line {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  font-size:0.78rem; color:rgba(255,255,255,0.35); margin-bottom:1.5rem; position:relative; z-index:2;
+}
+.pulse-dot { width:7px; height:7px; border-radius:50%; background:#fbbf24; animation:pulseOp 1.4s ease-in-out infinite; }
+@keyframes pulseOp { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.refresh-btn {
+  width:100%; background:#7c6af7; color:white; border:none;
+  padding:0.9rem; border-radius:12px; font-size:0.9rem; font-weight:700;
+  font-family:'Syne',sans-serif; cursor:pointer; position:relative; z-index:2;
+  box-shadow:0 4px 24px rgba(124,106,247,0.4); transition:all 0.2s;
+}
+.refresh-btn:hover:not(:disabled) { box-shadow:0 8px 32px rgba(124,106,247,0.6); transform:translateY(-2px); }
+.refresh-btn:disabled { opacity:0.6; cursor:not-allowed; }
+
+.not-yet { font-size:0.75rem; color:rgba(255,255,255,0.25); margin-top:0.9rem; position:relative; z-index:2; }
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<div class="wait-card">
+  <div class="clock-wrap"><span class="clock-icon">⏳</span></div>
+  <h1>Your account is getting activated</h1>
+  <p class="sub">We're verifying your payment — this usually takes 1-2 hours.<br>Sit back, here's something fun about CS while you wait 👇</p>
+
+  <div class="fact-box">
+    <div class="fact-tag">💡 Fun fact</div>
+    <div id="fact-text">Loading...</div>
+  </div>
+
+  <div class="dots" id="dots"></div>
+
+  <div class="status-line"><span class="pulse-dot"></span> Checking status automatically</div>
+
+  <button class="refresh-btn" id="refresh-btn" onclick="checkStatus(true)">🔄 Refresh Status</button>
+  <div class="not-yet" id="not-yet-msg" style="display:none">Not activated yet — hang tight, we'll auto-check again soon.</div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+const facts = [
+  "The word \"algorithm\" comes from Al-Khwarizmi, a 9th-century Persian mathematician.",
+  "The first computer bug was literally a moth found stuck in a Harvard Mark II relay in 1947.",
+  "The QWERTY keyboard layout was designed to slow typists down and prevent jams.",
+  "Google's first data storage rack was built using Lego bricks.",
+  "A single Google search uses roughly the same energy as boiling a small cup of water.",
+  "Python was named after the comedy show \"Monty Python's Flying Circus,\" not the snake.",
+  "The first 1GB hard drive (1980, IBM) weighed over 500 lbs and cost $40,000.",
+  "There are more possible chess games than atoms in the observable universe.",
+  "The '@' symbol was chosen for email by Ray Tomlinson simply because it was rarely used elsewhere.",
+  "Stack Overflow gets its name from the classic programming error — stack overflow.",
+  "The first computer virus, Creeper (1971), just printed \"I'm the creeper, catch me if you can!\"",
+  "Binary search is so efficient it can find a match in a billion sorted items in ~30 steps.",
+  "The term \"debugging\" predates computers — Thomas Edison used it in 1878 for electrical faults.",
+  "Git was created by Linus Torvalds in just about 10 days.",
+  "More than 90% of the world's currency exists only as digital, computerized data."
+];
+
+let idx = 0;
+const factEl = document.getElementById('fact-text');
+const dotsEl = document.getElementById('dots');
+const NUM_DOTS = 5;
+
+for (let i = 0; i < NUM_DOTS; i++) {
+  const d = document.createElement('span');
+  dotsEl.appendChild(d);
+}
+
+function renderFact() {
+  factEl.style.opacity = 0;
+  setTimeout(() => {
+    factEl.textContent = facts[idx % facts.length];
+    factEl.style.opacity = 1;
+    [...dotsEl.children].forEach((d, i) => d.classList.toggle('on', i === (idx % NUM_DOTS)));
+  }, 200);
+  idx++;
+}
+renderFact();
+setInterval(renderFact, 4000);
+
+// Plan ke hisaab se sahi page pe bhejta hai — bilkul login/redirectIfLoggedIn jaisi logic
+function redirectToCorrectPage(u) {
+  if (u.isPaid && u.masterDsaAccess) {
+    window.location.href = 'choose.html';
+  } else if (u.masterDsaAccess) {
+    window.location.href = 'masterdsa-dashboard.html';
+  } else if (u.isPaid) {
+    window.location.href = 'dashboard.html';
+  } else {
+    return false; // abhi tak activate nahi hua
+  }
+  return true;
+}
+
+async function checkStatus(manual) {
+  const btn = document.getElementById('refresh-btn');
+  const notYet = document.getElementById('not-yet-msg');
+  if (manual) { btn.disabled = true; btn.textContent = 'Checking…'; }
+
+  try {
+    const fresh = await API.call('/auth/me');
+    const u = fresh?.user;
+    if (fresh?.token) localStorage.setItem('pp_token', fresh.token);
+    if (u) localStorage.setItem('pp_user', JSON.stringify(u));
+
+    if (u && redirectToCorrectPage(u)) return; // activated — redirect ho gaya
+
+    if (manual) {
+      notYet.style.display = 'block';
+      btn.disabled = false; btn.textContent = '🔄 Refresh Status';
+    }
+  } catch (e) {
+    if (manual) { btn.disabled = false; btn.textContent = '🔄 Refresh Status'; }
+  }
+}
+
+// Login check
+if (!Auth.requireAuth()) { /* requireAuth already redirects */ }
+else {
+  checkStatus(false); // pehla silent check turant
+  setInterval(() => checkStatus(false), 20000); // har 20 sec background check
+}
+</script>
+</body>
+</html>
