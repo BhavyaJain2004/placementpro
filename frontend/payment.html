@@ -9,106 +9,112 @@
 body { font-family:'DM Sans',sans-serif; min-height:100vh; }
 
 .pay-wrap {
-  max-width:480px; margin:0 auto; padding:3rem 1.25rem 4rem;
+  max-width:420px; margin:0 auto; padding:2.5rem 1.25rem 3.5rem;
 }
 
-.pay-hdr { text-align:center; margin-bottom:2rem; }
+.pay-hdr { text-align:center; margin-bottom:1.5rem; }
 .pay-hdr .eyebrow {
   display:inline-flex; align-items:center; gap:7px;
-  font-size:0.72rem; font-weight:700; text-transform:uppercase;
+  font-size:0.7rem; font-weight:700; text-transform:uppercase;
   letter-spacing:0.1em; color:#a89df7;
   background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.25);
-  padding:5px 14px; border-radius:99px; margin-bottom:1rem;
+  padding:5px 14px; border-radius:99px; margin-bottom:0.85rem;
 }
 .pay-hdr h1 {
-  font-family:'Syne',sans-serif; font-size:1.75rem; font-weight:800;
-  color:#fff; margin-bottom:0.4rem;
+  font-family:'Syne',sans-serif; font-size:1.55rem; font-weight:800;
+  color:#fff; margin-bottom:0.35rem;
 }
-.pay-hdr p { font-size:0.85rem; color:rgba(255,255,255,0.4); }
+.pay-hdr p { font-size:0.8rem; color:rgba(255,255,255,0.4); }
 
 .pay-card {
   background:#0e0e1e; border:1px solid rgba(255,255,255,0.08);
-  border-radius:22px; padding:1.75rem;
+  border-radius:20px; padding:1.5rem;
 }
 
-.plan-select {
-  width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
-  border-radius:12px; padding:0.85rem 1rem; color:#fff; font-size:0.88rem;
-  font-family:'DM Sans',sans-serif; font-weight:600; margin-bottom:1.5rem;
-  cursor:pointer; appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%238888aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat; background-position:right 1rem center;
-}
-.plan-select:focus { outline:none; border-color:rgba(124,106,247,0.4); }
-
-/* QR box */
+/* QR box — ab sabse pehle, hero jaisa */
 .qr-box {
-  background:linear-gradient(160deg,#141428,#0a0a18);
-  border:1px solid rgba(124,106,247,0.25);
-  border-radius:20px; padding:1.75rem;
-  text-align:center; margin-bottom:1.5rem;
-  box-shadow:0 20px 50px -12px rgba(124,106,247,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+  background:linear-gradient(160deg,#161630,#0a0a18);
+  border:1px solid rgba(124,106,247,0.28);
+  border-radius:18px; padding:1.6rem 1.5rem;
+  text-align:center; margin-bottom:1.25rem;
+  box-shadow:0 24px 60px -14px rgba(124,106,247,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
   position:relative; overflow:hidden;
 }
 .qr-box::before {
   content:''; position:absolute; top:-60px; left:50%; transform:translateX(-50%);
   width:280px; height:180px;
-  background:radial-gradient(ellipse,rgba(124,106,247,0.18) 0%,transparent 70%);
+  background:radial-gradient(ellipse,rgba(124,106,247,0.2) 0%,transparent 70%);
   pointer-events:none;
 }
 .qr-img-wrap {
-  width:200px; height:200px; margin:0 auto 1rem; background:#fff;
-  border-radius:14px; padding:10px; box-shadow:0 12px 30px rgba(0,0,0,0.4);
+  width:190px; height:190px; margin:0 auto 0.9rem; background:#fff;
+  border-radius:16px; padding:10px;
+  box-shadow:0 16px 40px rgba(0,0,0,0.5), 0 4px 12px rgba(124,106,247,0.25);
   position:relative; z-index:2;
 }
-.qr-img-wrap img { width:100%; height:100%; object-fit:contain; border-radius:6px; }
-.qr-amount { font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; color:#fff; position:relative; z-index:2; }
-.qr-note { font-size:0.75rem; color:rgba(255,255,255,0.4); margin-top:0.3rem; position:relative; z-index:2; }
-.qr-upi { font-size:0.72rem; color:#a89df7; margin-top:0.5rem; font-family:monospace; position:relative; z-index:2; }
+.qr-img-wrap img { width:100%; height:100%; object-fit:contain; border-radius:8px; }
+.qr-amount { font-family:'Syne',sans-serif; font-size:1.7rem; font-weight:800; color:#fff; position:relative; z-index:2; transition:all 0.15s; }
+.qr-note { font-size:0.73rem; color:rgba(255,255,255,0.4); margin-top:0.25rem; position:relative; z-index:2; }
+.qr-upi { font-size:0.7rem; color:#a89df7; margin-top:0.45rem; font-family:monospace; position:relative; z-index:2; }
 
-.field-group { margin-bottom:1.1rem; }
-.field-label { font-size:0.78rem; color:rgba(255,255,255,0.5); margin-bottom:0.4rem; display:block; font-weight:600; }
-.field-locked {
-  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
-  border-radius:10px; padding:0.7rem 0.9rem; font-size:0.85rem; color:rgba(255,255,255,0.55);
-  display:flex; align-items:center; justify-content:space-between;
+/* Plan dropdown — QR ke NEECHE ab */
+.field-label { font-size:0.76rem; color:rgba(255,255,255,0.5); margin-bottom:0.4rem; display:block; font-weight:600; }
+.plan-select {
+  width:100%; background:#1a1a2e; border:1px solid rgba(255,255,255,0.12);
+  border-radius:12px; padding:0.8rem 2.4rem 0.8rem 1rem; color:#fff; font-size:0.85rem;
+  font-family:'DM Sans',sans-serif; font-weight:600; margin-bottom:1.4rem;
+  cursor:pointer; appearance:none;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%238888aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 1rem center;
 }
-.field-locked .lock-icon { font-size:0.7rem; opacity:0.4; }
-.field-input, .field-textarea {
-  width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
-  border-radius:10px; padding:0.7rem 0.9rem; color:#fff; font-size:0.88rem;
+.plan-select option { background:#1a1a2e; color:#fff; padding:0.5rem; }
+.plan-select:focus { outline:none; border-color:rgba(124,106,247,0.5); }
+
+.field-group { margin-bottom:1.05rem; }
+.field-locked {
+  background:rgba(255,255,255,0.035); border:1px solid rgba(255,255,255,0.08);
+  border-radius:10px; padding:0.75rem 0.9rem; font-size:0.85rem; color:#e4e4f0;
+  display:flex; align-items:center; justify-content:space-between; gap:0.5rem;
+}
+.field-locked span:first-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.field-locked .lock-icon { font-size:0.7rem; opacity:0.35; flex-shrink:0; }
+
+.field-input {
+  width:100%; background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px; padding:0.72rem 0.9rem; color:#fff; font-size:0.87rem;
   font-family:'DM Sans',sans-serif; box-sizing:border-box; transition:border-color 0.15s;
 }
-.field-input:focus, .field-textarea:focus { outline:none; border-color:rgba(124,106,247,0.45); }
-.field-input::placeholder { color:rgba(255,255,255,0.25); }
+.field-input:focus { outline:none; border-color:rgba(124,106,247,0.5); }
+.field-input::placeholder { color:rgba(255,255,255,0.28); }
 
 .referral-badge {
   display:inline-flex; align-items:center; gap:6px;
   background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.25);
-  color:#34d399; font-size:0.78rem; font-weight:600;
-  padding:0.5rem 0.9rem; border-radius:10px; margin-bottom:1.1rem;
+  color:#34d399; font-size:0.76rem; font-weight:600;
+  padding:0.5rem 0.85rem; border-radius:10px; margin-bottom:1.05rem;
 }
 
 .upload-box {
   border:1.5px dashed rgba(255,255,255,0.15); border-radius:12px;
-  padding:1.25rem; text-align:center; cursor:pointer; transition:all 0.15s;
+  padding:1.1rem; text-align:center; cursor:pointer; transition:all 0.15s;
   background:rgba(255,255,255,0.02);
 }
 .upload-box:hover { border-color:rgba(124,106,247,0.4); background:rgba(124,106,247,0.04); }
 .upload-box.has-file { border-color:rgba(52,211,153,0.4); background:rgba(52,211,153,0.05); }
 .upload-box input { display:none; }
-.upload-preview { max-width:100%; max-height:140px; border-radius:8px; margin-top:0.75rem; }
+.upload-preview { max-width:100%; max-height:130px; border-radius:8px; margin-top:0.7rem; }
 
 .submit-btn {
   width:100%; background:#7c6af7; color:white; border:none;
-  padding:1rem; border-radius:12px; font-size:0.95rem; font-weight:700;
-  font-family:'Syne',sans-serif; cursor:pointer; margin-top:0.5rem;
+  padding:0.95rem; border-radius:12px; font-size:0.92rem; font-weight:700;
+  font-family:'Syne',sans-serif; cursor:pointer; margin-top:0.4rem;
   box-shadow:0 4px 28px rgba(124,106,247,0.45); transition:all 0.2s;
 }
 .submit-btn:hover:not(:disabled) { box-shadow:0 8px 36px rgba(124,106,247,0.65); transform:translateY(-2px); }
 .submit-btn:disabled { opacity:0.5; cursor:not-allowed; }
 
-.err-msg { color:#f87171; font-size:0.8rem; margin-top:0.75rem; text-align:center; min-height:1rem; }
+.err-msg { color:#f87171; font-size:0.78rem; margin-top:0.7rem; text-align:center; min-height:1rem; }
 </style>
 </head>
 <body>
@@ -130,19 +136,21 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; }
   </div>
 
   <div class="pay-card">
-    <select class="plan-select" id="plan-select" onchange="updatePlanUI()">
-      <option value="99">Completing the Payment for Base Package — ₹99</option>
-      <option value="1000">Completing the Payment for Complete Package — ₹1000</option>
-    </select>
 
     <div class="qr-box">
       <div class="qr-img-wrap">
         <img src="images/payment-qr.jpg" alt="UPI QR Code" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:0.7rem;text-align:center;padding:0.5rem\'>QR image missing<br>add images/payment-qr.jpg</div>'">
       </div>
-      <div class="qr-amount" id="qr-amount">₹99</div>
+      <div class="qr-amount" id="qr-amount">₹0</div>
       <div class="qr-note">Scan with any UPI app to pay</div>
-      <!-- <div class="qr-upi">UPI ID: yourid@upi</div> -->
+      <div class="qr-upi">UPI ID: yourid@upi</div>
     </div>
+
+    <label class="field-label">Select Payment For</label>
+    <select class="plan-select" id="plan-select" onchange="updatePlanUI()">
+      <option value="99">Completing Payment for Base Package — ₹99</option>
+      <option value="1000">Completing Payment for Complete Package — ₹1000</option>
+    </select>
 
     <form id="payment-form" onsubmit="handlePaymentSubmit(event)">
 
@@ -162,7 +170,7 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; }
 
       <div class="field-group">
         <label class="field-label">Amount Paid (₹)</label>
-        <input type="number" class="field-input" id="pf-amount" placeholder="99" required min="1">
+        <input type="number" class="field-input" id="pf-amount" placeholder="Enter amount you paid" required min="1" oninput="updateAmountDisplay()">
       </div>
 
       <div class="field-group">
@@ -175,8 +183,8 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; }
         <div class="upload-box" id="upload-box" onclick="document.getElementById('pf-screenshot').click()">
           <input type="file" id="pf-screenshot" accept="image/*" onchange="handleScreenshotSelect(event)">
           <div id="upload-placeholder">
-            <div style="font-size:1.5rem;margin-bottom:0.35rem">📎</div>
-            <div style="font-size:0.8rem;color:rgba(255,255,255,0.5)">Tap to upload screenshot</div>
+            <div style="font-size:1.4rem;margin-bottom:0.3rem">📎</div>
+            <div style="font-size:0.78rem;color:rgba(255,255,255,0.5)">Tap to upload screenshot</div>
           </div>
           <img id="upload-preview" class="upload-preview" style="display:none">
         </div>
@@ -212,9 +220,19 @@ let screenshotBase64 = '';
 })();
 
 function updatePlanUI() {
+  // Amount field ko bhi plan ke default se prefill kar do (editable rahega)
   const plan = document.getElementById('plan-select').value;
-  document.getElementById('qr-amount').textContent = plan === '1000' ? '₹1000' : '₹99';
-  document.getElementById('pf-amount').placeholder = plan === '1000' ? '1000' : '99';
+  const amountInput = document.getElementById('pf-amount');
+  if (!amountInput.value) {
+    amountInput.value = plan === '1000' ? 1000 : 99;
+  }
+  updateAmountDisplay();
+}
+
+function updateAmountDisplay() {
+  // QR ke neeche wala amount — jo user ne field mein likha hai wahi dikhega
+  const val = document.getElementById('pf-amount').value;
+  document.getElementById('qr-amount').textContent = val ? '₹' + val : '₹0';
 }
 
 function handleScreenshotSelect(e) {
@@ -225,7 +243,6 @@ function handleScreenshotSelect(e) {
   reader.onload = function(ev) {
     const img = new Image();
     img.onload = function() {
-      // Client-side compress karte hain taaki DB bloat na ho
       const canvas = document.createElement('canvas');
       const maxW = 800;
       const scale = Math.min(1, maxW / img.width);
@@ -262,7 +279,8 @@ async function handlePaymentSubmit(e) {
         screenshot:    screenshotBase64
       })
     });
-    window.location.href = 'activation-waiting.html';
+    // replace() taaki back button se form pe wapas na aa sake
+    window.location.replace('activation-waiting.html');
   } catch (err) {
     document.getElementById('pf-err').textContent = err.message;
     btn.disabled = false; btn.textContent = 'Submit Payment Details →';
