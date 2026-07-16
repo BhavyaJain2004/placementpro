@@ -777,6 +777,66 @@ router.get('/security/genuine-detection', verifyToken, verifyAdmin, async (req, 
   }
 });
 
+
+// ── PAYMENT SUBMISSIONS (real revenue tracking) ──
+const Payment = require('../models/Payment');
+
+// Sabhi submissions — real amountPaid ke saath, actual revenue calculate karta hai
+router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { status } = req.query;
+    const filter = status ? { status } : {};
+    const submissions = await Payment.find(filter).sort({ createdAt: -1 }).lean();
+
+    const approved = submissions.filter(s => s.status === 'approved');
+    const actualRevenue = approved.reduce((sum, s) => sum + (s.amountPaid || 0), 0);
+    const pendingCount  = submissions.filter(s => s.status === 'pending').length;
+
+    res.json({ submissions, actualRevenue, approvedCount: approved.length, pendingCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Ek submission approve karo — user ko sahi access bhi mil jayega automatically
+router.post('/payment-submissions/:id/approve', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const payment = await Payment.findById(req.params.id);
+    if (!payment) return res.status(404).json({ message: 'Submission not found' });
+
+    payment.status = 'approved';
+    payment.reviewedAt = new Date();
+    await payment.save();
+
+    const update = payment.plan === '1000'
+      ? { masterDsaAccess: true }
+      : { isPaid: true, paidAt: new Date() };
+
+    const user = await User.findByIdAndUpdate(payment.userId, update, { new: true });
+
+    res.json({ message: `✅ Approved & ${payment.plan === '1000' ? 'Master DSA' : 'Base'} access diya gaya`, user: { name: user?.name, email: user?.email } });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Reject karo (galat/fake screenshot waghera)
+router.post('/payment-submissions/:id/reject', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const payment = await Payment.findByIdAndUpdate(
+      req.params.id,
+      { status: 'rejected', reviewedAt: new Date() },
+      { new: true }
+    );
+    if (!payment) return res.status(404).json({ message: 'Submission not found' });
+    res.json({ message: 'Rejected' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
+
+
 
 
