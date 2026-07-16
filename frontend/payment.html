@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Complete Payment — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body { font-family:'DM Sans',sans-serif; min-height:100vh; }
+
+.pay-wrap {
+  max-width:480px; margin:0 auto; padding:3rem 1.25rem 4rem;
+}
+
+.pay-hdr { text-align:center; margin-bottom:2rem; }
+.pay-hdr .eyebrow {
+  display:inline-flex; align-items:center; gap:7px;
+  font-size:0.72rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.1em; color:#a89df7;
+  background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.25);
+  padding:5px 14px; border-radius:99px; margin-bottom:1rem;
+}
+.pay-hdr h1 {
+  font-family:'Syne',sans-serif; font-size:1.75rem; font-weight:800;
+  color:#fff; margin-bottom:0.4rem;
+}
+.pay-hdr p { font-size:0.85rem; color:rgba(255,255,255,0.4); }
+
+.pay-card {
+  background:#0e0e1e; border:1px solid rgba(255,255,255,0.08);
+  border-radius:22px; padding:1.75rem;
+}
+
+.plan-select {
+  width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px; padding:0.85rem 1rem; color:#fff; font-size:0.88rem;
+  font-family:'DM Sans',sans-serif; font-weight:600; margin-bottom:1.5rem;
+  cursor:pointer; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%238888aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 1rem center;
+}
+.plan-select:focus { outline:none; border-color:rgba(124,106,247,0.4); }
+
+/* QR box */
+.qr-box {
+  background:linear-gradient(160deg,#141428,#0a0a18);
+  border:1px solid rgba(124,106,247,0.25);
+  border-radius:20px; padding:1.75rem;
+  text-align:center; margin-bottom:1.5rem;
+  box-shadow:0 20px 50px -12px rgba(124,106,247,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+  position:relative; overflow:hidden;
+}
+.qr-box::before {
+  content:''; position:absolute; top:-60px; left:50%; transform:translateX(-50%);
+  width:280px; height:180px;
+  background:radial-gradient(ellipse,rgba(124,106,247,0.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.qr-img-wrap {
+  width:200px; height:200px; margin:0 auto 1rem; background:#fff;
+  border-radius:14px; padding:10px; box-shadow:0 12px 30px rgba(0,0,0,0.4);
+  position:relative; z-index:2;
+}
+.qr-img-wrap img { width:100%; height:100%; object-fit:contain; border-radius:6px; }
+.qr-amount { font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; color:#fff; position:relative; z-index:2; }
+.qr-note { font-size:0.75rem; color:rgba(255,255,255,0.4); margin-top:0.3rem; position:relative; z-index:2; }
+.qr-upi { font-size:0.72rem; color:#a89df7; margin-top:0.5rem; font-family:monospace; position:relative; z-index:2; }
+
+.field-group { margin-bottom:1.1rem; }
+.field-label { font-size:0.78rem; color:rgba(255,255,255,0.5); margin-bottom:0.4rem; display:block; font-weight:600; }
+.field-locked {
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px; padding:0.7rem 0.9rem; font-size:0.85rem; color:rgba(255,255,255,0.55);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.field-locked .lock-icon { font-size:0.7rem; opacity:0.4; }
+.field-input, .field-textarea {
+  width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px; padding:0.7rem 0.9rem; color:#fff; font-size:0.88rem;
+  font-family:'DM Sans',sans-serif; box-sizing:border-box; transition:border-color 0.15s;
+}
+.field-input:focus, .field-textarea:focus { outline:none; border-color:rgba(124,106,247,0.45); }
+.field-input::placeholder { color:rgba(255,255,255,0.25); }
+
+.referral-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.25);
+  color:#34d399; font-size:0.78rem; font-weight:600;
+  padding:0.5rem 0.9rem; border-radius:10px; margin-bottom:1.1rem;
+}
+
+.upload-box {
+  border:1.5px dashed rgba(255,255,255,0.15); border-radius:12px;
+  padding:1.25rem; text-align:center; cursor:pointer; transition:all 0.15s;
+  background:rgba(255,255,255,0.02);
+}
+.upload-box:hover { border-color:rgba(124,106,247,0.4); background:rgba(124,106,247,0.04); }
+.upload-box.has-file { border-color:rgba(52,211,153,0.4); background:rgba(52,211,153,0.05); }
+.upload-box input { display:none; }
+.upload-preview { max-width:100%; max-height:140px; border-radius:8px; margin-top:0.75rem; }
+
+.submit-btn {
+  width:100%; background:#7c6af7; color:white; border:none;
+  padding:1rem; border-radius:12px; font-size:0.95rem; font-weight:700;
+  font-family:'Syne',sans-serif; cursor:pointer; margin-top:0.5rem;
+  box-shadow:0 4px 28px rgba(124,106,247,0.45); transition:all 0.2s;
+}
+.submit-btn:hover:not(:disabled) { box-shadow:0 8px 36px rgba(124,106,247,0.65); transform:translateY(-2px); }
+.submit-btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+.err-msg { color:#f87171; font-size:0.8rem; margin-top:0.75rem; text-align:center; min-height:1rem; }
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<nav class="navbar">
+  <div class="nav-logo">
+    <a href="index.html" style="display:flex;align-items:center;gap:8px;color:inherit">
+      <span class="dot"></span> PlacementPro
+    </a>
+  </div>
+</nav>
+
+<div class="pay-wrap">
+  <div class="pay-hdr">
+    <div class="eyebrow"><span style="width:6px;height:6px;border-radius:50%;background:#a89df7"></span> Secure Payment</div>
+    <h1>Complete Your Payment</h1>
+    <p>Scan, pay, and submit your details below</p>
+  </div>
+
+  <div class="pay-card">
+    <select class="plan-select" id="plan-select" onchange="updatePlanUI()">
+      <option value="99">Completing the Payment for Base Package — ₹99</option>
+      <option value="1000">Completing the Payment for Complete Package — ₹1000</option>
+    </select>
+
+    <div class="qr-box">
+      <div class="qr-img-wrap">
+        <img src="images/payment-qr.jpg" alt="UPI QR Code" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:0.7rem;text-align:center;padding:0.5rem\'>QR image missing<br>add images/payment-qr.jpg</div>'">
+      </div>
+      <div class="qr-amount" id="qr-amount">₹99</div>
+      <div class="qr-note">Scan with any UPI app to pay</div>
+      <!-- <div class="qr-upi">UPI ID: yourid@upi</div> -->
+    </div>
+
+    <form id="payment-form" onsubmit="handlePaymentSubmit(event)">
+
+      <div class="field-group">
+        <label class="field-label">Name</label>
+        <div class="field-locked"><span id="pf-name">—</span><span class="lock-icon">🔒</span></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Email</label>
+        <div class="field-locked"><span id="pf-email">—</span><span class="lock-icon">🔒</span></div>
+      </div>
+
+      <div id="referral-wrap" style="display:none">
+        <div class="referral-badge">🎁 Referred by: <strong id="pf-referral"></strong></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Amount Paid (₹)</label>
+        <input type="number" class="field-input" id="pf-amount" placeholder="99" required min="1">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Transaction ID / UTR Number</label>
+        <input type="text" class="field-input" id="pf-utr" placeholder="e.g. 234567891234" required>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Payment Screenshot <span style="color:rgba(255,255,255,0.3);font-weight:400">(optional)</span></label>
+        <div class="upload-box" id="upload-box" onclick="document.getElementById('pf-screenshot').click()">
+          <input type="file" id="pf-screenshot" accept="image/*" onchange="handleScreenshotSelect(event)">
+          <div id="upload-placeholder">
+            <div style="font-size:1.5rem;margin-bottom:0.35rem">📎</div>
+            <div style="font-size:0.8rem;color:rgba(255,255,255,0.5)">Tap to upload screenshot</div>
+          </div>
+          <img id="upload-preview" class="upload-preview" style="display:none">
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="pf-submit-btn">Submit Payment Details →</button>
+      <div class="err-msg" id="pf-err"></div>
+    </form>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+const user = Auth.requireAuth();
+let screenshotBase64 = '';
+
+(function init() {
+  const saved = Auth.getUser() || {};
+  document.getElementById('pf-name').textContent = saved.name || user?.name || '—';
+  document.getElementById('pf-email').textContent = saved.email || user?.email || '—';
+
+  if (saved.referredBy) {
+    document.getElementById('referral-wrap').style.display = 'block';
+    document.getElementById('pf-referral').textContent = saved.referredBy;
+  }
+
+  // URL se plan pre-select karo agar diya ho (?plan=1000), warna saved plan use karo
+  const params = new URLSearchParams(window.location.search);
+  const initialPlan = params.get('plan') || saved.selectedPlan || '99';
+  document.getElementById('plan-select').value = initialPlan === '1000' ? '1000' : '99';
+  updatePlanUI();
+})();
+
+function updatePlanUI() {
+  const plan = document.getElementById('plan-select').value;
+  document.getElementById('qr-amount').textContent = plan === '1000' ? '₹1000' : '₹99';
+  document.getElementById('pf-amount').placeholder = plan === '1000' ? '1000' : '99';
+}
+
+function handleScreenshotSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const img = new Image();
+    img.onload = function() {
+      // Client-side compress karte hain taaki DB bloat na ho
+      const canvas = document.createElement('canvas');
+      const maxW = 800;
+      const scale = Math.min(1, maxW / img.width);
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      screenshotBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+      document.getElementById('upload-placeholder').style.display = 'none';
+      const preview = document.getElementById('upload-preview');
+      preview.src = screenshotBase64;
+      preview.style.display = 'block';
+      document.getElementById('upload-box').classList.add('has-file');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function handlePaymentSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('pf-submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  document.getElementById('pf-err').textContent = '';
+
+  try {
+    await API.call('/payment/submit', {
+      method: 'POST',
+      body: JSON.stringify({
+        plan:          document.getElementById('plan-select').value,
+        amountPaid:    Number(document.getElementById('pf-amount').value),
+        transactionId: document.getElementById('pf-utr').value.trim(),
+        screenshot:    screenshotBase64
+      })
+    });
+    window.location.href = 'activation-waiting.html';
+  } catch (err) {
+    document.getElementById('pf-err').textContent = err.message;
+    btn.disabled = false; btn.textContent = 'Submit Payment Details →';
+  }
+}
+</script>
+</body>
+</html>
