@@ -782,9 +782,26 @@ router.get('/security/genuine-detection', verifyToken, verifyAdmin, async (req, 
 const Payment = require('../models/Payment');
 
 // Sabhi submissions — real amountPaid ke saath, actual revenue calculate karta hai
+// Sabhi submissions — real amountPaid ke saath, actual revenue calculate karta hai
 router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const { status } = req.query;
+
+    // ── AUTO-SYNC ── Agar kisi pending submission ke user ko DB se seedha
+    // access diya gaya hai (isPaid/masterDsaAccess manually true kiya gaya),
+    // toh usko yahan khud approved mark kar do — panel aur DB hamesha sync rahein
+    const pendingOnes = await Payment.find({ status: 'pending' });
+    for (const p of pendingOnes) {
+      const u = await User.findById(p.userId).select('isPaid masterDsaAccess');
+      if (!u) continue;
+      const nowHasAccess = p.plan === '1000' ? u.masterDsaAccess : u.isPaid;
+      if (nowHasAccess) {
+        p.status = 'approved';
+        p.reviewedAt = new Date();
+        await p.save();
+      }
+    }
+
     const filter = status ? { status } : {};
     const submissions = await Payment.find(filter).sort({ createdAt: -1 }).lean();
 
@@ -797,7 +814,6 @@ router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) =>
     res.status(500).json({ message: err.message });
   }
 });
-
 // Ek submission approve karo — user ko sahi access bhi mil jayega automatically
 router.post('/payment-submissions/:id/approve', verifyToken, verifyAdmin, async (req, res) => {
   try {
