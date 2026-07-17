@@ -170,11 +170,18 @@ async function checkStatus(manual) {
 }
 
 // Login check
+// Login check
 if (!Auth.requireAuth()) { /* requireAuth already redirects */ }
 else {
   checkStatus(false); // pehla silent check turant
   setInterval(() => checkStatus(false), 20000); // har 20 sec background check
 }
+
+// Back button block — user isi page pe hi rahe jab tak activate na ho
+history.pushState(null, '', window.location.href);
+window.addEventListener('popstate', function() {
+  history.pushState(null, '', window.location.href);
+});
 </script>
 </body>
 </html>
