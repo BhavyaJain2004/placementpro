@@ -127,6 +127,16 @@ body{background:#06060f}
         <div class="stat-box"><div class="v">—</div><div class="l">New Today</div></div>
         <div class="stat-box"><div class="v">—</div><div class="l">DAU</div></div>
       </div>
+    <div class="card">
+        <div class="card-title">🔑 Reset User Password</div>
+        <p style="color:rgba(255,255,255,0.35);font-size:0.78rem;margin-bottom:1rem">Kisi bhi user ka password seedha yahin se reset karo — account delete karne ki zaroorat nahi</p>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
+          <input type="email" id="rp-email" placeholder="User ka email" style="flex:1;min-width:180px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.6rem 0.85rem;color:#fff;font-size:0.82rem;font-family:'DM Sans',sans-serif">
+          <input type="text" id="rp-pass" placeholder="Naya password" style="flex:1;min-width:150px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.6rem 0.85rem;color:#fff;font-size:0.82rem;font-family:'DM Sans',sans-serif">
+          <button onclick="resetUserPassword()" style="background:rgba(124,106,247,0.15);border:1px solid rgba(124,106,247,0.35);color:#a89df7;padding:0.6rem 1.1rem;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">Reset Password</button>
+        </div>
+        <div id="rp-msg" style="font-size:0.78rem;margin-top:0.6rem"></div>
+      </div>
       <div class="card">
         <div class="card-title">📈 Last 7 Days Signups</div>
         <div class="bar-chart" id="growth-chart"></div>
@@ -962,6 +972,34 @@ async function rejectPayment(id) {
     await API.call('/admin/payment-submissions/' + id + '/reject', { method: 'POST' });
     loadPaymentSubmissions();
   } catch(e) { alert('Error: ' + e.message); }
+}
+
+// ── PASSWORD RESET TOOL ──
+async function resetUserPassword() {
+  const email = document.getElementById('rp-email').value.trim();
+  const pass  = document.getElementById('rp-pass').value;
+  const msgEl = document.getElementById('rp-msg');
+  msgEl.textContent = '';
+
+  if (!email || !pass) {
+    msgEl.style.color = '#f87171';
+    msgEl.textContent = 'Dono fields bharo';
+    return;
+  }
+
+  try {
+    const res = await API.call('/admin/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ email, newPassword: pass })
+    });
+    msgEl.style.color = '#34d399';
+    msgEl.textContent = res.message;
+    document.getElementById('rp-email').value = '';
+    document.getElementById('rp-pass').value = '';
+  } catch(e) {
+    msgEl.style.color = '#f87171';
+    msgEl.textContent = e.message;
+  }
 }
 </script>
 </body>
