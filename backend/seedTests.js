@@ -2346,85 +2346,87 @@ const tests = [
 // COMPANY SPECIFIC TESTS
 // ══════════════════════════════════════════
 
-{
+  {
   testId: 'CO-01', title: 'TCS NQT Pattern', category: 'Company',
   company: 'TCS', duration: 15, totalQ: 10, difficulty: 'Medium',
   questions: [
     {
-      question: 'TCS NQT has how many sections?',
-      options: ['2', '3', '4', '5'],
+      question: 'A shopkeeper marks his goods 40% above cost price and allows a discount of 15%. Find his profit percentage.',
+      options: ['19%', '21%', '25%', '15%'],
+      correct: 0,
+      explanation: 'Let CP = 100. MP = 140. SP after 15% discount = 140 × 0.85 = 119. Profit% = 19%.',
+      difficulty: 'Medium'
+    },
+    {
+      question: 'Pipes A and B can fill a tank in 12 and 18 minutes respectively. If both are opened together, how long will it take to fill the tank?',
+      options: ['6.6 min', '7.2 min', '8 min', '9 min'],
+      correct: 1,
+      explanation: 'Combined rate = 1/12 + 1/18 = 3/36 + 2/36 = 5/36. Time = 36/5 = 7.2 minutes.',
+      difficulty: 'Medium'
+    },
+    {
+      question: 'A train 150m long crosses a platform 250m long in 20 seconds. Find the speed of the train in km/hr.',
+      options: ['54 km/hr', '60 km/hr', '72 km/hr', '65 km/hr'],
       correct: 2,
-      explanation: 'TCS NQT: Verbal, Reasoning, Numerical, Coding (4 sections). Advanced Coding for Digital/Prime.',
+      explanation: 'Total distance = 150+250 = 400m in 20s → speed = 20 m/s = 20×18/5 = 72 km/hr.',
+      difficulty: 'Medium'
+    },
+    {
+      question: 'Choose the option that best replaces the underlined word: The manager\'s decision was quite arbitrary.',
+      options: ['Well-reasoned', 'Random', 'Delayed', 'Popular'],
+      correct: 1,
+      explanation: '"Arbitrary" means based on random choice rather than reason — closest in meaning to "Random".',
       difficulty: 'Easy'
     },
     {
-      question: 'Pattern: 3,6,11,18,27,38,? ',
-      options: ['49', '51', '53', '47'],
+      question: 'Select the grammatically correct sentence.',
+      options: [
+        'Neither of the students have submitted their assignment.',
+        'Neither of the students has submitted his assignment.',
+        'Neither of the student have submit the assignment.',
+        'Neither of student has submitted assignment.'
+      ],
       correct: 1,
-      explanation: 'Differences: 3,5,7,9,11,13. Next: 38+13=51.',
+      explanation: '"Neither" is singular and takes a singular verb ("has") — Option B is correctly matched.',
       difficulty: 'Medium'
     },
     {
-      question: 'If ROAD is coded as 1234 and LOAD is coded as 5234, what is ORAL?',
-      options: ['3125', '2315', '3215', '2135'],
-      correct: 2,
-      explanation: 'R=1,O=2,A=3,D=4,L=5. ORAL = O(2),R(1),A(3),L(5) = Wait: LOAD=5234 → L=5,O=2,A=3,D=4. ROAD=1234 → R=1,O=2,A=3,D=4. ORAL=2,1,3,5=2135.',
-      correct: 3,
-      explanation: 'R=1,O=2,A=3,D=4,L=5. ORAL=O(2)R(1)A(3)L(5)=2135.',
-      difficulty: 'Hard'
-    },
-    {
-      question: 'Which is NOT a TCS product/service?',
-      options: ['TCS BaNCS', 'Ignio', 'TCS iON', 'Infosys Nia'],
-      correct: 3,
-      explanation: 'Infosys Nia (now Infosys Cobalt) is Infosys product. BaNCS, Ignio, iON are TCS.',
-      difficulty: 'Medium'
-    },
-    {
-      question: 'In TCS NQT, Digital track minimum CPI:',
-      options: ['6.0', '7.0', '8.0', 'No minimum'],
-      correct: 1,
-      explanation: 'TCS Digital: 7.0 CPI. Prime: 8.0 CPI. Ninja: 6.0 CPI minimum.',
-      difficulty: 'Hard'
-    },
-    {
-      question: 'Find odd one out: 121, 144, 169, 196, 225, 256',
-      options: ['121', '196', 'None — all perfect squares', '256'],
-      correct: 2,
-      explanation: '11²,12²,13²,14²,15²,16² — all perfect squares. None is odd one out.',
-      difficulty: 'Medium'
-    },
-    {
-      question: 'A train goes A to B in 3h, returns in 4h. Average speed if A to B = 120km:',
-      options: ['34.3 km/h', '40 km/h', '45 km/h', '38 km/h'],
+      question: 'In a certain code, MOBILE is written as NPCJMF. How is TABLET written in that code?',
+      options: ['UBCMFU', 'SZAKDS', 'UACLES', 'TBCMFT'],
       correct: 0,
-      explanation: 'A-B: 40km/h, B-A: 30km/h. Average=2×40×30/70=2400/70=34.3 km/h.',
-      difficulty: 'Hard'
-    },
-    {
-      question: 'Which sorting is stable and in-place?',
-      options: ['Merge sort', 'Quick sort', 'Insertion sort', 'Heap sort'],
-      correct: 2,
-      explanation: 'Insertion sort: stable (preserves order of equal elements) and in-place O(1) extra.',
+      explanation: 'Each letter is shifted forward by 1: T→U, A→B, B→C, L→M, E→F, T→U = UBCMFU.',
       difficulty: 'Medium'
     },
     {
-      question: 'int x=5; x=x++ + ++x; value of x?',
-      options: ['11', '12', '13', '10'],
-      correct: 1,
-      explanation: 'x++ returns 5 (post), ++x increments to 7 (pre). 5+7=12. x=12.',
+      question: 'Statements: All pens are books. All books are tables.\nConclusions: I. All pens are tables. II. Some tables are pens.',
+      options: ['Only I follows', 'Only II follows', 'Both I and II follow', 'Neither follows'],
+      correct: 2,
+      explanation: 'Chain syllogism: pens⊆books⊆tables → all pens are tables (I true), and since all pens are tables, some tables are definitely pens (II true).',
       difficulty: 'Hard'
     },
     {
-      question: 'TCS recruits through which platform for practice tests?',
-      options: ['HackerRank', 'TCS iON', 'CodeChef', 'LeetCode'],
+      question: 'Pointing to a photograph, Rahul said, "She is the daughter of my grandfather\'s only son." How is the girl in the photograph related to Rahul?',
+      options: ['Sister', 'Cousin', 'Daughter', 'Niece'],
+      correct: 0,
+      explanation: 'Grandfather\'s only son = Rahul\'s father. So the girl is his father\'s daughter = Rahul\'s sister.',
+      difficulty: 'Medium'
+    },
+    {
+      question: 'What will be the output of the following C code?\nint a = 5, b = 2;\nprintf("%d", a/b + a%b);',
+      options: ['3', '4', '5', '2'],
+      correct: 0,
+      explanation: 'a/b = 5/2 = 2 (integer division). a%b = 5%2 = 1. Sum = 2+1 = 3.',
+      difficulty: 'Medium'
+    },
+    {
+      question: 'Which data structure is used to implement recursion internally?',
+      options: ['Queue', 'Stack', 'Array', 'Linked List'],
       correct: 1,
-      explanation: 'TCS iON is TCS\'s own platform for NQT practice and recruitment.',
+      explanation: 'Function calls (including recursive calls) are managed using a call stack — LIFO order matches how recursive calls return.',
       difficulty: 'Easy'
     }
   ]
 },
-
 {
   testId: 'CO-02', title: 'Infosys InfyTQ Pattern', category: 'Company',
   company: 'Infosys', duration: 15, totalQ: 10, difficulty: 'Medium',
