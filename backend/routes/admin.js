@@ -1,4 +1,5 @@
 const router      = require('express').Router();
+const bcrypt      = require('bcryptjs');
 const Company     = require('../models/Company');
 const DSAQuestion = require('../models/DSAQuestion');
 const { Note, Experience } = require('../models/Content');
@@ -35,11 +36,36 @@ router.get('/users', ...guard, async (req, res) => {
 });
 
 // Make a user admin (run once for yourself)
+// Make a user admin (run once for yourself)
 router.post('/make-admin', verifyToken, verifyAdmin, async (req, res) => {
   const { email } = req.body;
   const user = await User.findOneAndUpdate({ email }, { isAdmin: true }, { new: true });
   if (!user) return res.status(404).json({ error: 'User not found' });
   res.json({ success: true, message: `${email} is now admin` });
+});
+
+// Kisi bhi user ka password reset karo — bina account delete kiye
+router.post('/reset-password', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword)
+      return res.status(400).json({ message: 'Email aur new password dono chahiye' });
+    if (newPassword.length < 6)
+      return res.status(400).json({ message: 'Password kam se kam 6 characters ka hona chahiye' });
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    const user = await User.findOneAndUpdate(
+      { email: email.toLowerCase().trim() },
+      { password: hashed, sessions: [] },
+      { new: true }
+    );
+
+    if (!user) return res.status(404).json({ message: 'Is email ka koi account nahi mila' });
+
+    res.json({ message: `✅ Password reset ho gaya ${user.name} (${user.email}) ke liye` });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 // ══════════════════════════════════════════
