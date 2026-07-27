@@ -887,6 +887,15 @@ router.post('/update-company-tests', verifyToken, verifyAdmin, async (req, res) 
   }
 });
 
+router.post('/import-companies2026', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { execSync } = require('child_process');
+    const output = execSync('node /opt/render/project/src/backend/importCompanies2026.js', { encoding: 'utf-8' });
+    res.json({ message: 'Done!', log: output });
+  } catch (err) {
+    res.status(500).json({ message: err.message, log: err.stdout?.toString() });
+  }
+});
 module.exports = router;
 
 
