@@ -22,6 +22,7 @@ app.use(express.json());
 
 app.use('/api/auth',        require('./routes/auth'));
 app.use('/api/payment',     require('./routes/payment'));
+app.use('/api/companies2026', require('./routes/companies2026'));
 app.use('/api/companies',   require('./routes/companies'));
 app.use('/api/dsa',         require('./routes/dsa'));
 app.use('/api/notes',       require('./routes/notes'));
