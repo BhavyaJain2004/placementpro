@@ -156,12 +156,7 @@ async function init() {
     return;
   }
 
-  document.getElementById('stat-total').textContent = allCompanies.length;
-  const ctcVals = allCompanies.map(c => parseCTC(c.ctc)).filter(v => v > 0);
-  const avg = ctcVals.length ? (ctcVals.reduce((a,b)=>a+b,0) / ctcVals.length).toFixed(1) : 0;
-  const max = ctcVals.length ? Math.max(...ctcVals).toFixed(1) : 0;
-  document.getElementById('stat-avgctc').textContent = '₹' + avg + 'L';
-  document.getElementById('stat-maxctc').textContent = '₹' + max + 'L';
+document.getElementById('stat-total').textContent = allCompanies.length;
 
   filtered = allCompanies;
   renderGrid();
