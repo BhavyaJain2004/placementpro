@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Resume Maker — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body { font-family:'DM Sans',sans-serif; }
+.rm-hero { text-align:center; padding:3rem 1rem 1.5rem; }
+.rm-eyebrow {
+  display:inline-flex; align-items:center; gap:7px; font-size:0.72rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.1em; color:#a89df7;
+  background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.25);
+  padding:5px 14px; border-radius:99px; margin-bottom:1rem;
+}
+.rm-hero h1 { font-family:'Syne',sans-serif; font-size:clamp(1.8rem,4.5vw,2.5rem); font-weight:800; color:#fff; margin-bottom:0.5rem; }
+.rm-hero p { font-size:0.9rem; color:rgba(255,255,255,0.42); max-width:480px; margin:0 auto; }
+
+.rm-tabs { display:flex; justify-content:center; gap:0.5rem; margin:2rem 0; }
+.rm-tab {
+  background:transparent; border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.5);
+  padding:0.6rem 1.5rem; border-radius:10px; font-size:0.88rem; font-weight:600;
+  cursor:pointer; font-family:'Syne',sans-serif; transition:all 0.15s;
+}
+.rm-tab.on { background:rgba(124,106,247,0.15); border-color:rgba(124,106,247,0.4); color:#a89df7; }
+
+/* Templates grid */
+.tpl-grid { max-width:800px; margin:0 auto; padding:0 1rem 3rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem; }
+.tpl-card { position:relative; border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); background:#0e0e1e; }
+.tpl-thumb {
+  height:340px; background:#fff; position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.tpl-mini { width:90%; transform:scale(0.95); font-family:Georgia,serif; color:#111; padding:1rem; font-size:0.5rem; line-height:1.4; }
+.tpl-overlay {
+  position:absolute; inset:0; background:rgba(10,10,20,0.88);
+  display:flex; align-items:center; justify-content:center; gap:0.75rem;
+  opacity:0; transition:opacity 0.2s;
+}
+.tpl-card:hover .tpl-overlay { opacity:1; }
+.tpl-btn {
+  padding:0.6rem 1.3rem; border-radius:10px; font-size:0.82rem; font-weight:700;
+  font-family:'Syne',sans-serif; cursor:pointer; border:none;
+}
+.tpl-btn.view { background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.2); }
+.tpl-btn.create { background:#7c6af7; color:#fff; }
+.tpl-name { padding:1rem 1.25rem; font-family:'Syne',sans-serif; font-weight:700; color:#fff; font-size:0.95rem; }
+.tpl-desc { padding:0 1.25rem 1.25rem; font-size:0.78rem; color:rgba(255,255,255,0.4); }
+
+/* Pricing */
+.price-grid { max-width:900px; margin:0 auto; padding:0 1rem 3rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.25rem; }
+.price-card { background:#0e0e1e; border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:1.75rem; text-align:center; position:relative; }
+.price-card.popular { border-color:rgba(251,191,36,0.4); box-shadow:0 0 40px rgba(251,191,36,0.08); }
+.price-tag { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:#fbbf24; color:#000; font-size:0.65rem; font-weight:800; padding:3px 12px; border-radius:99px; }
+.price-name { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; color:#fff; margin-bottom:0.5rem; }
+.price-amt { font-family:'Syne',sans-serif; font-size:2.2rem; font-weight:800; color:#fff; margin-bottom:1rem; }
+.price-amt span { font-size:0.9rem; color:rgba(255,255,255,0.3); font-weight:500; }
+.price-feats { list-style:none; text-align:left; margin-bottom:1.5rem; }
+.price-feats li { font-size:0.8rem; color:rgba(255,255,255,0.55); padding:0.4rem 0; display:flex; gap:8px; align-items:flex-start; }
+.price-buy { width:100%; background:#7c6af7; color:#fff; border:none; padding:0.75rem; border-radius:10px; font-size:0.85rem; font-weight:700; font-family:'Syne',sans-serif; cursor:pointer; }
+
+/* Preview modal */
+.pv-overlay { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.9); z-index:999; align-items:center; justify-content:center; padding:1.5rem; }
+.pv-overlay.open { display:flex; }
+.pv-box { background:#fff; max-width:600px; width:100%; max-height:85vh; overflow-y:auto; border-radius:12px; padding:2rem; color:#111; font-family:Georgia,serif; }
+.pv-close { position:fixed; top:1.5rem; right:1.5rem; background:rgba(255,255,255,0.1); border:none; color:#fff; width:38px; height:38px; border-radius:50%; font-size:1.2rem; cursor:pointer; }
+
+/* Pricing popup */
+.pp-overlay { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.85); z-index:999; align-items:center; justify-content:center; padding:1.5rem; }
+.pp-overlay.open { display:flex; }
+.pp-box { background:#0e0e1e; border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:2rem; max-width:900px; width:100%; position:relative; }
+.pp-close { position:absolute; top:1rem; right:1rem; background:rgba(255,255,255,0.06); border:none; color:#fff; width:32px; height:32px; border-radius:50%; font-size:1.1rem; cursor:pointer; }
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<nav class="navbar">
+  <div class="nav-logo"><a href="dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit"><span class="dot"></span> PlacementPro</a></div>
+  <ul class="nav-links"><li><a href="dashboard.html">Dashboard</a></li></ul>
+</nav>
+
+<div class="rm-hero">
+  <div class="rm-eyebrow"><span style="width:6px;height:6px;border-radius:50%;background:#a89df7"></span> New Feature</div>
+  <h1>Build Your Placement-Ready Resume</h1>
+  <p>ATS-friendly templates, instant PDF export, and AI-powered suggestions to land more interviews</p>
+</div>
+
+<div class="rm-tabs">
+  <button class="rm-tab on" id="tab-templates-btn" onclick="showRMTab('templates')">Templates</button>
+  <button class="rm-tab" id="tab-how-btn" onclick="showRMTab('how')">How it Works</button>
+  <button class="rm-tab" id="tab-pricing-btn" onclick="showRMTab('pricing')">Pricing</button>
+</div>
+
+<div id="rm-templates">
+  <div class="tpl-grid">
+    <div class="tpl-card">
+      <div class="tpl-thumb">
+        <div class="tpl-mini">
+          <div style="text-align:center;font-size:0.85rem;font-weight:bold;margin-bottom:0.3rem">RAHUL SHARMA</div>
+          <div style="text-align:center;font-size:0.4rem;color:#555;margin-bottom:0.5rem">rahul@email.com | +91 98765 43210 | LinkedIn | GitHub</div>
+          <div style="font-size:0.5rem;font-weight:bold;border-bottom:1px solid #333;margin-top:0.4rem">EDUCATION</div>
+          <div style="font-size:0.42rem;margin-top:0.2rem"><b>KIIT University</b> — B.Tech CSE, 2022-2026</div>
+          <div style="font-size:0.5rem;font-weight:bold;border-bottom:1px solid #333;margin-top:0.4rem">EXPERIENCE</div>
+          <div style="font-size:0.42rem;margin-top:0.2rem"><b>Company Name</b> — Intern<br>• Developed features using React and Node.js<br>• Improved performance by 20%</div>
+          <div style="font-size:0.5rem;font-weight:bold;border-bottom:1px solid #333;margin-top:0.4rem">PROJECTS</div>
+          <div style="font-size:0.42rem;margin-top:0.2rem"><b>Project Name</b><br>• Built a full-stack app using MERN</div>
+          <div style="font-size:0.5rem;font-weight:bold;border-bottom:1px solid #333;margin-top:0.4rem">SKILLS</div>
+          <div style="font-size:0.42rem;margin-top:0.2rem">Java, Python, React, Node.js</div>
+        </div>
+        <div class="tpl-overlay">
+          <button class="tpl-btn view" onclick="viewTemplate('modern')">👁️ View</button>
+          <button class="tpl-btn create" onclick="openPricing('modern')">Create Resume</button>
+        </div>
+      </div>
+      <div class="tpl-name">Modern</div>
+      <div class="tpl-desc">Clean single-column layout, ATS-friendly, ideal for tech roles</div>
+    </div>
+
+    <div class="tpl-card">
+      <div class="tpl-thumb">
+        <div class="tpl-mini">
+          <div style="font-size:0.9rem;font-weight:bold">RAHUL SHARMA</div>
+          <div style="font-size:0.4rem;color:#555">rahul@email.com · +91 98765 43210 · LinkedIn · GitHub</div>
+          <hr style="margin:0.35rem 0;border-color:#999">
+          <div style="font-size:0.48rem;letter-spacing:0.05em;color:#444">EDUCATION</div>
+          <div style="font-size:0.42rem;margin-top:0.15rem">KIIT University, B.Tech CSE — 2022-2026</div>
+          <div style="font-size:0.48rem;letter-spacing:0.05em;color:#444;margin-top:0.4rem">EXPERIENCE</div>
+          <div style="font-size:0.42rem;margin-top:0.15rem">Company — Intern<br>• Developed features using React & Node.js</div>
+          <div style="font-size:0.48rem;letter-spacing:0.05em;color:#444;margin-top:0.4rem">PROJECTS</div>
+          <div style="font-size:0.42rem;margin-top:0.15rem">Project Name — MERN Stack App</div>
+          <div style="font-size:0.48rem;letter-spacing:0.05em;color:#444;margin-top:0.4rem">SKILLS</div>
+          <div style="font-size:0.42rem;margin-top:0.15rem">Java, Python, React, Node.js</div>
+        </div>
+        <div class="tpl-overlay">
+          <button class="tpl-btn view" onclick="viewTemplate('classic')">👁️ View</button>
+          <button class="tpl-btn create" onclick="openPricing('classic')">Create Resume</button>
+        </div>
+      </div>
+      <div class="tpl-name">Classic</div>
+      <div class="tpl-desc">Traditional formal layout with subtle dividers, works everywhere</div>
+    </div>
+  </div>
+</div>
+
+
+<div id="rm-how" style="display:none">
+  <div style="max-width:900px;margin:0 auto;padding:0 1rem 3rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem">
+
+    <div style="background:#0e0e1e;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.5rem;text-align:center">
+      <div style="width:56px;height:56px;border-radius:14px;background:rgba(124,106,247,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 1rem">1️⃣</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:0.95rem;margin-bottom:0.5rem">Pick a Template</div>
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.6">Browse templates, hover to preview exactly how they'll look with real content</p>
+    </div>
+
+    <div style="background:#0e0e1e;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.5rem;text-align:center">
+      <div style="width:56px;height:56px;border-radius:14px;background:rgba(52,211,153,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 1rem">2️⃣</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:0.95rem;margin-bottom:0.5rem">Choose a Plan & Pay</div>
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.6">₹49 for resume only, ₹99 for 1 ATS analysis, ₹150 for unlimited analysis. Scan QR, submit payment proof.</p>
+    </div>
+
+    <div style="background:#0e0e1e;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.5rem;text-align:center">
+      <div style="width:56px;height:56px;border-radius:14px;background:rgba(251,191,36,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 1rem">3️⃣</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:0.95rem;margin-bottom:0.5rem">Fill Your Details</div>
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.6">Add Education, Experience, Projects & Skills on the left — watch your resume build live on the right</p>
+    </div>
+
+  </div>
+
+  <div style="max-width:900px;margin:0 auto 3rem;padding:0 1rem">
+    <div style="background:#0e0e1e;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.75rem">
+      <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:1rem">
+        <span style="font-size:1.3rem">🎯</span>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:1rem">If you bought ₹99 or ₹150 — here's what "Analysis" looks like</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:1.5rem;align-items:center">
+        <div>
+          <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:0.75rem">
+            Click <b style="color:#fbbf24">"ATS Analysis"</b> once your resume is filled. You'll instantly get:
+          </p>
+          <ul style="font-size:0.8rem;color:rgba(255,255,255,0.55);line-height:2;padding-left:1.1rem">
+            <li>An <b style="color:#fff">ATS Score out of 100</b> with a full breakdown</li>
+            <li>Bullet-by-bullet suggestions in your own words — no fake numbers added</li>
+            <li>₹99 = 1 analysis. ₹150 = analyze again anytime you edit.</li>
+          </ul>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:1.1rem;color:#111">
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;color:#16a34a">78</div>
+            <div><div style="font-weight:700;font-size:0.82rem">ATS Score</div><div style="font-size:0.68rem;color:#666">out of 100</div></div>
+          </div>
+          <div style="border-left:2px solid #f59e0b;padding:0.5rem 0.75rem;background:#fef9ee;border-radius:6px;font-size:0.72rem">
+            <div style="color:#b45309;font-weight:600;margin-bottom:0.2rem">Experience — Missing a measurable result</div>
+            <div style="color:#888;text-decoration:line-through;margin-bottom:0.15rem">Worked on backend APIs for the project</div>
+            <div style="color:#16a34a">→ Built and maintained backend APIs, handling [add: X requests/day or X endpoints]</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="rm-pricing" style="display:none">
+  <div class="price-grid">
+    <div class="price-card">
+      <div class="price-name">Basic</div>
+      <div class="price-amt">₹49</div>
+      <ul class="price-feats">
+        <li>✅ Full resume builder</li>
+        <li>✅ Download as PDF</li>
+        <li>❌ No ATS analysis</li>
+      </ul>
+      <button class="price-buy" onclick="buyPlan('49')">Buy Now</button>
+    </div>
+    <div class="price-card popular">
+      <div class="price-tag">MOST POPULAR</div>
+      <div class="price-name">Standard</div>
+      <div class="price-amt">₹99</div>
+      <ul class="price-feats">
+        <li>✅ Full resume builder</li>
+        <li>✅ Download as PDF</li>
+        <li>✅ 1 ATS Score + Analysis</li>
+        <li style="color:rgba(255,255,255,0.3)">(edits allowed after, re-analysis not)</li>
+      </ul>
+      <button class="price-buy" onclick="buyPlan('99')">Buy Now</button>
+    </div>
+    <div class="price-card">
+      <div class="price-name">Pro</div>
+      <div class="price-amt">₹150</div>
+      <ul class="price-feats">
+        <li>✅ Full resume builder</li>
+        <li>✅ Download as PDF</li>
+        <li>✅ Unlimited ATS Score + Analysis</li>
+      </ul>
+      <button class="price-buy" onclick="buyPlan('150')">Buy Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="pv-overlay" id="pv-overlay">
+  <button class="pv-close" onclick="closePreview()">×</button>
+  <div class="pv-box" id="pv-content"></div>
+</div>
+
+<!-- Pricing Popup (from "Create Resume") -->
+<div class="pp-overlay" id="pp-overlay">
+  <div class="pp-box">
+    <button class="pp-close" onclick="closePricingPopup()">×</button>
+    <h2 style="font-family:'Syne',sans-serif;color:#fff;text-align:center;margin-bottom:1.5rem">Choose Your Plan</h2>
+    <div class="price-grid" style="padding:0">
+      <div class="price-card">
+        <div class="price-name">Basic</div>
+        <div class="price-amt">₹49</div>
+        <ul class="price-feats"><li>✅ Full resume builder</li><li>✅ Download as PDF</li><li>❌ No ATS analysis</li></ul>
+        <button class="price-buy" onclick="buyPlan('49')">Buy Now</button>
+      </div>
+      <div class="price-card popular">
+        <div class="price-tag">MOST POPULAR</div>
+        <div class="price-name">Standard</div>
+        <div class="price-amt">₹99</div>
+        <ul class="price-feats"><li>✅ Full resume builder</li><li>✅ Download as PDF</li><li>✅ 1 ATS Score + Analysis</li></ul>
+        <button class="price-buy" onclick="buyPlan('99')">Buy Now</button>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Pro</div>
+        <div class="price-amt">₹150</div>
+        <ul class="price-feats"><li>✅ Full resume builder</li><li>✅ Download as PDF</li><li>✅ Unlimited Analysis</li></ul>
+        <button class="price-buy" onclick="buyPlan('150')">Buy Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+Auth.requireAuth();
+
+function showRMTab(tab) {
+  document.getElementById('rm-templates').style.display = tab === 'templates' ? 'block' : 'none';
+  document.getElementById('rm-how').style.display = tab === 'how' ? 'block' : 'none';
+  document.getElementById('rm-pricing').style.display = tab === 'pricing' ? 'block' : 'none';
+  document.getElementById('tab-templates-btn').classList.toggle('on', tab === 'templates');
+  document.getElementById('tab-how-btn').classList.toggle('on', tab === 'how');
+  document.getElementById('tab-pricing-btn').classList.toggle('on', tab === 'pricing');
+}
+
+let selectedTemplate = 'modern';
+
+function viewTemplate(tpl) {
+  document.getElementById('pv-content').innerHTML = document.querySelector(`#rm-templates .tpl-card:nth-child(${tpl === 'modern' ? 1 : 2}) .tpl-mini`).outerHTML.replace('tpl-mini','').replace('style="width:90%;transform:scale(0.95);','style="');
+  document.getElementById('pv-overlay').classList.add('open');
+}
+function closePreview() { document.getElementById('pv-overlay').classList.remove('open'); }
+
+function openPricing(tpl) {
+  selectedTemplate = tpl;
+  document.getElementById('pp-overlay').classList.add('open');
+}
+function closePricingPopup() { document.getElementById('pp-overlay').classList.remove('open'); }
+
+let currentResumePlan = '49';
+function buyPlan(plan) {
+  currentResumePlan = plan;
+  document.getElementById('pp-overlay').classList.remove('open');
+  document.getElementById('rpay-plan').textContent = '₹' + plan;
+  document.getElementById('rpay-amount').value = plan;
+  document.getElementById('rpay-err').textContent = '';
+  document.getElementById('rpay-overlay').classList.add('open');
+}
+function closeRPay() { document.getElementById('rpay-overlay').classList.remove('open'); }
+
+async function submitResumePayment() {
+  const btn = document.getElementById('rpay-submit-btn');
+  const amount = Number(document.getElementById('rpay-amount').value);
+  const utr = document.getElementById('rpay-utr').value.trim();
+  const errEl = document.getElementById('rpay-err');
+  errEl.textContent = '';
+
+  if (!amount || amount <= 0) { errEl.textContent = 'Amount daalo'; return; }
+  if (!utr) { errEl.textContent = 'Transaction ID daalo'; return; }
+
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  try {
+    await API.call('/payment/submit', {
+      method: 'POST',
+      body: JSON.stringify({
+        plan: 'resume' + currentResumePlan,
+        amountPaid: amount,
+        transactionId: utr
+      })
+    });
+    localStorage.setItem('resumeTemplate', selectedTemplate);
+    window.location.replace('activation-waiting.html');
+  } catch (e) {
+    errEl.textContent = e.message;
+    btn.disabled = false; btn.textContent = 'Submit Payment Details →';
+  }
+}
+</script>
+
+<!-- Resume Payment Form -->
+<div class="pp-overlay" id="rpay-overlay">
+  <div class="pp-box" style="max-width:420px">
+    <button class="pp-close" onclick="closeRPay()">×</button>
+    <h2 style="font-family:'Syne',sans-serif;color:#fff;text-align:center;margin-bottom:0.25rem">Complete Payment</h2>
+    <p style="color:rgba(255,255,255,0.4);font-size:0.82rem;text-align:center;margin-bottom:1.25rem">Plan: <span id="rpay-plan" style="color:#fbbf24;font-weight:700">₹49</span></p>
+
+    <div style="width:170px;height:170px;margin:0 auto 1rem;background:#fff;border-radius:14px;padding:10px;box-shadow:0 16px 40px rgba(0,0,0,0.4)">
+      <img src="images/payment-qr.jpg" style="width:100%;height:100%;object-fit:contain;border-radius:6px">
+    </div>
+    <div style="font-size:0.72rem;color:#a89df7;font-family:monospace;text-align:center;margin-bottom:1.25rem">UPI ID: yourid@upi</div>
+
+    <label style="font-size:0.76rem;color:rgba(255,255,255,0.5);margin-bottom:0.3rem;display:block">Amount Paid (₹)</label>
+    <input type="number" id="rpay-amount" class="rm-search-fake" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:0.65rem 0.9rem;color:#fff;font-size:0.85rem;margin-bottom:0.85rem;box-sizing:border-box" min="1">
+
+    <label style="font-size:0.76rem;color:rgba(255,255,255,0.5);margin-bottom:0.3rem;display:block">Transaction ID / UTR</label>
+    <input type="text" id="rpay-utr" placeholder="e.g. 234567891234" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:0.65rem 0.9rem;color:#fff;font-size:0.85rem;margin-bottom:1.1rem;box-sizing:border-box">
+
+    <button class="price-buy" onclick="submitResumePayment()" id="rpay-submit-btn">Submit Payment Details →</button>
+    <div id="rpay-err" style="color:#f87171;font-size:0.78rem;text-align:center;margin-top:0.6rem;min-height:1rem"></div>
+  </div>
+</div>
+
+</body>
+</html>
