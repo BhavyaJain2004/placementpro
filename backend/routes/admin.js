@@ -919,6 +919,18 @@ router.post('/import-companies2026', verifyToken, verifyAdmin, async (req, res) 
     res.status(500).json({ message: err.message, log: err.stdout?.toString() });
   }
 });
+
+router.get('/migrate-resume-field', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const result = await User.updateMany(
+      { resumePlan: { $exists: false } },
+      { $set: { resumePlan: '', resumeAnalysisUsed: false } }
+    );
+    res.json({ message: 'Done!', updated: result.modifiedCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 module.exports = router;
 
 
