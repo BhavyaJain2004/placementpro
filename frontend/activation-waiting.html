@@ -135,14 +135,16 @@ setInterval(renderFact, 4000);
 
 // Plan ke hisaab se sahi page pe bhejta hai — bilkul login/redirectIfLoggedIn jaisi logic
 function redirectToCorrectPage(u) {
-  if (u.isPaid && u.masterDsaAccess) {
+  if (u.resumePlan && localStorage.getItem('resumeTemplate')) {
+    window.location.href = 'resume-builder.html';
+  } else if (u.isPaid && u.masterDsaAccess) {
     window.location.href = 'choose.html';
   } else if (u.masterDsaAccess) {
     window.location.href = 'masterdsa-dashboard.html';
   } else if (u.isPaid) {
     window.location.href = 'dashboard.html';
   } else {
-    return false; // abhi tak activate nahi hua
+    return false;
   }
   return true;
 }
