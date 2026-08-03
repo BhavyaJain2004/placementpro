@@ -4,7 +4,7 @@ const paymentSchema = new mongoose.Schema({
   userId:        { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   name:          { type: String },
   email:         { type: String },
-  plan:          { type: String, enum: ['99', '1000'], required: true },
+ plan:          { type: String, enum: ['99', '1000', 'resume49', 'resume99', 'resume150'], required: true },
   amountPaid:    { type: Number, required: true },
   transactionId: { type: String, required: true },
   screenshot:    { type: String }, // base64 image, optional
