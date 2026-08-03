@@ -49,20 +49,26 @@ router.post('/activate-resume', verifyToken, verifyAdmin, async (req, res) => {
     if (!email || !['49','99','150'].includes(plan))
       return res.status(400).json({ message: 'Email aur valid plan (49/99/150) chahiye' });
 
+    const update = {
+      resume49: plan === '49',
+      resume99: plan === '99',
+      resume150: plan === '150',
+      resumeAnalysisUsed: false
+    };
+
     const user = await User.findOneAndUpdate(
       { email: email.toLowerCase().trim() },
-      { resumePlan: plan, resumeAnalysisUsed: false },
+      update,
       { new: true }
     );
 
     if (!user) return res.status(404).json({ message: 'Is email ka koi account nahi mila' });
 
-    res.json({ message: `✅ Resume plan ₹${plan} activate ho gaya ${user.name} (${user.email}) ke liye` });
+    res.json({ message: `✅ Resume${plan} activate ho gaya ${user.name} (${user.email}) ke liye` });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-
 // Kisi bhi user ka password reset karo — bina account delete kiye
 router.post('/reset-password', verifyToken, verifyAdmin, async (req, res) => {
   try {
@@ -874,7 +880,12 @@ router.post('/payment-submissions/:id/approve', verifyToken, verifyAdmin, async 
     else if (payment.plan === '99') { update = { isPaid: true, paidAt: new Date() }; accessLabel = 'Base'; }
     else if (['resume49','resume99','resume150'].includes(payment.plan)) {
       const resumePlanValue = payment.plan.replace('resume', '');
-      update = { resumePlan: resumePlanValue, resumeAnalysisUsed: false };
+      update = {
+        resume49: resumePlanValue === '49',
+        resume99: resumePlanValue === '99',
+        resume150: resumePlanValue === '150',
+        resumeAnalysisUsed: false
+      };
       accessLabel = `Resume ₹${resumePlanValue}`;
     } else { update = { isPaid: true, paidAt: new Date() }; accessLabel = 'Base'; }
 
@@ -923,8 +934,8 @@ router.post('/import-companies2026', verifyToken, verifyAdmin, async (req, res) 
 router.get('/migrate-resume-field', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const result = await User.updateMany(
-      { resumePlan: { $exists: false } },
-      { $set: { resumePlan: '', resumeAnalysisUsed: false } }
+      { resume49: { $exists: false } },
+      { $set: { resume49: false, resume99: false, resume150: false, resumeAnalysisUsed: false } }
     );
     res.json({ message: 'Done!', updated: result.modifiedCount });
   } catch (err) {
