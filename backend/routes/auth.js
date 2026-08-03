@@ -168,7 +168,7 @@ router.get('/me', verifyToken, async (req, res) => {
 
      const { token: newToken } = makeToken(user, req.user.sid);
 
-   res.json({
+  res.json({
   token: newToken,
   user: {
     id:              user._id,
@@ -178,10 +178,10 @@ router.get('/me', verifyToken, async (req, res) => {
     isAdmin:         user.isAdmin,
     hasTestAccess:   user.hasTestAccess   || false,
     masterDsaAccess: user.masterDsaAccess || false,
-     selectedPlan:    user.selectedPlan    || '99'
+    selectedPlan:    user.selectedPlan    || '99',
+    resumePlan:      user.resumePlan      || ''
   }
-});
-  } catch (err) {
+});  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
