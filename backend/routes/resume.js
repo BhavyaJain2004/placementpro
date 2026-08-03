@@ -4,6 +4,14 @@ const Resume  = require('../models/Resume');
 const User    = require('../models/User');
 const { verifyToken } = require('../middleware/auth');
 
+// User ke 3 boolean fields se effective plan nikalta hai (highest tier priority)
+function getResumePlan(user) {
+  if (user.resume150) return '150';
+  if (user.resume99) return '99';
+  if (user.resume49) return '49';
+  return '';
+}
+
 const STRONG_VERBS = ['developed','built','designed','implemented','created','led','managed','engineered',
   'architected','optimized','automated','collaborated','achieved','increased','reduced','streamlined',
   'deployed','analyzed','spearheaded','launched','improved','delivered','integrated','configured',
@@ -78,8 +86,8 @@ function calculateATSScore(resume) {
 router.get('/', verifyToken, async (req, res) => {
   try {
     const resume = await Resume.findOne({ userId: req.user.id });
-    const user = await User.findById(req.user.id).select('resumePlan resumeAnalysisUsed');
-    res.json({ resume: resume || null, resumePlan: user?.resumePlan || '', analysisUsed: user?.resumeAnalysisUsed || false });
+    const user = await User.findById(req.user.id).select('resume49 resume99 resume150 resumeAnalysisUsed');
+    res.json({ resume: resume || null, resumePlan: user ? getResumePlan(user) : '', analysisUsed: user?.resumeAnalysisUsed || false });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -88,8 +96,8 @@ router.get('/', verifyToken, async (req, res) => {
 // SAVE / UPDATE resume content
 router.post('/save', verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('resumePlan');
-    if (!user?.resumePlan) return res.status(403).json({ message: 'Pehle koi resume plan activate karo' });
+    const user = await User.findById(req.user.id).select('resume49 resume99 resume150');
+    if (!getResumePlan(user || {})) return res.status(403).json({ message: 'Pehle koi resume plan activate karo' });
 
     const data = req.body;
     const resume = await Resume.findOneAndUpdate(
@@ -106,10 +114,11 @@ router.post('/save', verifyToken, async (req, res) => {
 // ANALYZE — rule-based score + AI (Gemini, free) suggestions
 router.post('/analyze', verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('resumePlan resumeAnalysisUsed');
-    if (!user?.resumePlan) return res.status(403).json({ message: 'Pehle koi resume plan activate karo' });
-    if (user.resumePlan === '49') return res.status(403).json({ message: 'Analysis ₹99 ya ₹150 plan mein hi milta hai' });
-    if (user.resumePlan === '99' && user.resumeAnalysisUsed)
+    const user = await User.findById(req.user.id).select('resume49 resume99 resume150 resumeAnalysisUsed');
+    const plan = getResumePlan(user || {});
+    if (!plan) return res.status(403).json({ message: 'Pehle koi resume plan activate karo' });
+    if (plan === '49') return res.status(403).json({ message: 'Analysis ₹99 ya ₹150 plan mein hi milta hai' });
+    if (plan === '99' && user.resumeAnalysisUsed)
       return res.status(403).json({ message: 'Aapka 1 analysis already use ho chuka hai. ₹150 plan mein unlimited milta hai.' });
 
     const resume = await Resume.findOne({ userId: req.user.id });
@@ -145,7 +154,7 @@ router.post('/analyze', verifyToken, async (req, res) => {
       { atsScore: score, atsBreakdown: breakdown, suggestions, lastAnalyzedAt: new Date() }
     );
 
-    if (user.resumePlan === '99') {
+    if (plan === '99') {
       await User.findByIdAndUpdate(req.user.id, { resumeAnalysisUsed: true });
     }
 
