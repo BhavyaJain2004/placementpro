@@ -132,7 +132,7 @@ router.post('/analyze', verifyToken, async (req, res) => {
     }).slice(0, 10); // max 10 bullets per analysis, cost/rate-limit control
 
     let suggestions = [];
-    if (weakBullets.length && process.env.GEMINI_API_KEY) {
+    if (weakBullets.length && process.env.GROQ_API_KEY) {
       try {
         suggestions = await getAISuggestions(weakBullets);
       } catch (e) {
@@ -155,7 +155,7 @@ router.post('/analyze', verifyToken, async (req, res) => {
   }
 });
 
-// Gemini API se contextual suggestions (free tier)
+// Groq API se contextual suggestions (free tier, fast Llama models)
 async function getAISuggestions(bullets) {
   const prompt = `You are helping a B.Tech Computer Science fresher improve their resume bullet points to pass ATS (Applicant Tracking System) screening.
 
@@ -172,21 +172,27 @@ ${bullets.map((b, i) => `${i+1}. [${b.section}] "${b.text}"`).join('\n')}
 Return ONLY a valid JSON array, no markdown, no extra text, in this exact format:
 [{"section": "...", "original": "...", "issue": "short issue description", "suggestion": "improved bullet text"}]`;
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.4 }
-      })
-    }
-  );
+  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.4
+    })
+  });
 
   const data = await response.json();
-  let text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+  let text = data?.choices?.[0]?.message?.content || '[]';
   text = text.replace(/```json|```/g, '').trim();
+
+  // Kabhi kabhi model extra text ke saath JSON deta hai — array nikaal lete hain
+  const match = text.match(/\[[\s\S]*\]/);
+  if (match) text = match[0];
+
   return JSON.parse(text);
 }
 
