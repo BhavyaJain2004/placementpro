@@ -168,7 +168,8 @@ router.get('/me', verifyToken, async (req, res) => {
 
      const { token: newToken } = makeToken(user, req.user.sid);
 
-  res.json({
+ const resumePlan = user.resume150 ? '150' : user.resume99 ? '99' : user.resume49 ? '49' : '';
+   res.json({
   token: newToken,
   user: {
     id:              user._id,
@@ -179,9 +180,10 @@ router.get('/me', verifyToken, async (req, res) => {
     hasTestAccess:   user.hasTestAccess   || false,
     masterDsaAccess: user.masterDsaAccess || false,
     selectedPlan:    user.selectedPlan    || '99',
-    resumePlan:      user.resumePlan      || ''
+    resumePlan
   }
-});  } catch (err) {
+});
+  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
