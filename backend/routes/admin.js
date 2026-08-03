@@ -43,6 +43,25 @@ router.post('/make-admin', verifyToken, verifyAdmin, async (req, res) => {
   if (!user) return res.status(404).json({ error: 'User not found' });
   res.json({ success: true, message: `${email} is now admin` });
 });
+router.post('/activate-resume', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { email, plan } = req.body;
+    if (!email || !['49','99','150'].includes(plan))
+      return res.status(400).json({ message: 'Email aur valid plan (49/99/150) chahiye' });
+
+    const user = await User.findOneAndUpdate(
+      { email: email.toLowerCase().trim() },
+      { resumePlan: plan, resumeAnalysisUsed: false },
+      { new: true }
+    );
+
+    if (!user) return res.status(404).json({ message: 'Is email ka koi account nahi mila' });
+
+    res.json({ message: `✅ Resume plan ₹${plan} activate ho gaya ${user.name} (${user.email}) ke liye` });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 // Kisi bhi user ka password reset karo — bina account delete kiye
 router.post('/reset-password', verifyToken, verifyAdmin, async (req, res) => {
@@ -850,18 +869,22 @@ router.post('/payment-submissions/:id/approve', verifyToken, verifyAdmin, async 
     payment.reviewedAt = new Date();
     await payment.save();
 
-    const update = payment.plan === '1000'
-      ? { masterDsaAccess: true }
-      : { isPaid: true, paidAt: new Date() };
+    let update, accessLabel;
+    if (payment.plan === '1000') { update = { masterDsaAccess: true }; accessLabel = 'Master DSA'; }
+    else if (payment.plan === '99') { update = { isPaid: true, paidAt: new Date() }; accessLabel = 'Base'; }
+    else if (['resume49','resume99','resume150'].includes(payment.plan)) {
+      const resumePlanValue = payment.plan.replace('resume', '');
+      update = { resumePlan: resumePlanValue, resumeAnalysisUsed: false };
+      accessLabel = `Resume ₹${resumePlanValue}`;
+    } else { update = { isPaid: true, paidAt: new Date() }; accessLabel = 'Base'; }
 
     const user = await User.findByIdAndUpdate(payment.userId, update, { new: true });
 
-    res.json({ message: `✅ Approved & ${payment.plan === '1000' ? 'Master DSA' : 'Base'} access diya gaya`, user: { name: user?.name, email: user?.email } });
+    res.json({ message: `✅ Approved & ${accessLabel} access diya gaya`, user: { name: user?.name, email: user?.email } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-
 // Reject karo (galat/fake screenshot waghera)
 router.post('/payment-submissions/:id/reject', verifyToken, verifyAdmin, async (req, res) => {
   try {
