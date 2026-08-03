@@ -8,8 +8,9 @@ const { verifyToken } = require('../middleware/auth');
 router.post('/submit', verifyToken, async (req, res) => {
   try {
     const { plan, amountPaid, transactionId, screenshot } = req.body;
+    const validPlans = ['99', '1000', 'resume49', 'resume99', 'resume150'];
 
-    if (!plan || !['99','1000'].includes(plan))
+    if (!plan || !validPlans.includes(plan))
       return res.status(400).json({ message: 'Valid plan required' });
     if (!amountPaid || amountPaid <= 0)
       return res.status(400).json({ message: 'Amount paid required' });
@@ -30,9 +31,10 @@ router.post('/submit', verifyToken, async (req, res) => {
       referredBy:    user.referredBy || ''
     });
 
-    // User ka selectedPlan bhi sync kar do (agar unhone dropdown se badal diya ho)
-    await User.findByIdAndUpdate(user._id, { selectedPlan: plan });
-
+    // selectedPlan sirf base/master plans ke liye sync hota hai (resume plans alag field use karte hain)
+    if (plan === '99' || plan === '1000') {
+      await User.findByIdAndUpdate(user._id, { selectedPlan: plan });
+    }
     res.status(201).json({ message: 'Payment details submitted!', paymentId: payment._id });
   } catch (err) {
     res.status(500).json({ message: err.message });
