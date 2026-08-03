@@ -7,40 +7,50 @@
 <link rel="stylesheet" href="css/style.css">
 <style>
 body { font-family:'DM Sans',sans-serif; }
-.rb-wrap { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:1400px; margin:0 auto; padding:1.5rem; }
-@media(max-width:900px) { .rb-wrap { grid-template-columns:1fr; } }
+.rb-wrap { display:grid; grid-template-columns:0.85fr 1fr; gap:1.25rem; max-width:1200px; margin:0 auto; padding:1.25rem; }
+@media(max-width:900px) { .rb-wrap { grid-template-columns:1fr; } .rb-preview-col { order:-1; } }
+.rb-form { order:2; }
+.rb-preview-col { order:1; }
 
-.rb-form { background:#0e0e1e; border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:1.5rem; max-height:88vh; overflow-y:auto; }
+.rb-form { background:#0e0e1e; border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:1.35rem; max-height:88vh; overflow-y:auto; }
 .rb-preview-col { position:sticky; top:1rem; align-self:start; }
 
 .rb-section-title {
-  font-family:'Syne',sans-serif; font-weight:800; color:#fff; font-size:0.95rem;
-  margin:1.5rem 0 0.75rem; padding-bottom:0.4rem; border-bottom:1px solid rgba(255,255,255,0.08);
+  font-family:'Syne',sans-serif; font-weight:800; color:#fff; font-size:0.88rem;
+  margin:1.35rem 0 0.65rem; padding-bottom:0.4rem; border-bottom:1px solid rgba(255,255,255,0.08);
   display:flex; justify-content:space-between; align-items:center;
 }
 .rb-section-title:first-child { margin-top:0; }
-.rb-add-btn { background:rgba(124,106,247,0.12); border:1px solid rgba(124,106,247,0.3); color:#a89df7; padding:0.3rem 0.7rem; border-radius:7px; font-size:0.7rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+.rb-add-btn { background:rgba(124,106,247,0.12); border:1px solid rgba(124,106,247,0.3); color:#a89df7; padding:0.32rem 0.75rem; border-radius:7px; font-size:0.68rem; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.15s; }
+.rb-add-btn:hover { background:rgba(124,106,247,0.2); }
 
+.rb-flabel { font-size:0.68rem; color:rgba(255,255,255,0.4); margin-bottom:0.25rem; display:block; font-weight:600; }
 .rb-input, .rb-textarea {
-  width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:8px;
-  padding:0.55rem 0.75rem; color:#fff; font-size:0.82rem; font-family:'DM Sans',sans-serif; margin-bottom:0.5rem; box-sizing:border-box;
+  width:100%; background:rgba(255,255,255,0.035); border:1px solid rgba(255,255,255,0.09); border-radius:8px;
+  padding:0.5rem 0.7rem; color:#fff; font-size:0.78rem; font-family:'DM Sans',sans-serif; margin-bottom:0.5rem; box-sizing:border-box;
+  transition:border-color 0.15s, background 0.15s;
 }
-.rb-textarea { resize:vertical; min-height:44px; }
-.rb-input::placeholder, .rb-textarea::placeholder { color:rgba(255,255,255,0.28); }
-.rb-input:focus, .rb-textarea:focus { outline:none; border-color:rgba(124,106,247,0.4); }
+.rb-textarea { resize:vertical; min-height:42px; }
+.rb-input::placeholder, .rb-textarea::placeholder { color:rgba(255,255,255,0.25); }
+.rb-input:focus, .rb-textarea:focus { outline:none; border-color:rgba(124,106,247,0.5); background:rgba(124,106,247,0.03); }
 .rb-row { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; }
 
-.rb-entry { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:0.85rem; margin-bottom:0.75rem; position:relative; }
-.rb-entry-remove { position:absolute; top:0.6rem; right:0.6rem; background:rgba(248,113,113,0.1); border:none; color:#f87171; width:22px; height:22px; border-radius:6px; cursor:pointer; font-size:0.8rem; }
+.rb-entry { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:0.8rem; margin-bottom:0.65rem; position:relative; }
+.rb-entry-remove { position:absolute; top:0.55rem; right:0.55rem; background:rgba(248,113,113,0.1); border:none; color:#f87171; width:22px; height:22px; border-radius:6px; cursor:pointer; font-size:0.8rem; transition:background 0.15s; }
+.rb-entry-remove:hover { background:rgba(248,113,113,0.2); }
 .rb-bullet-row { display:flex; gap:0.4rem; align-items:flex-start; margin-bottom:0.35rem; }
 .rb-bullet-remove { background:rgba(255,255,255,0.05); border:none; color:rgba(255,255,255,0.4); width:24px; height:24px; border-radius:6px; cursor:pointer; flex-shrink:0; font-size:0.75rem; }
-.rb-add-bullet { background:none; border:1px dashed rgba(255,255,255,0.15); color:rgba(255,255,255,0.4); width:100%; padding:0.4rem; border-radius:6px; font-size:0.72rem; cursor:pointer; }
+.rb-add-bullet { background:none; border:1px dashed rgba(255,255,255,0.15); color:rgba(255,255,255,0.4); width:100%; padding:0.4rem; border-radius:6px; font-size:0.7rem; cursor:pointer; transition:all 0.15s; }
+.rb-add-bullet:hover { border-color:rgba(124,106,247,0.3); color:rgba(255,255,255,0.6); }
 
-.rb-actions { display:flex; gap:0.6rem; margin-bottom:1rem; flex-wrap:wrap; }
-.rb-btn { padding:0.65rem 1.1rem; border-radius:10px; font-size:0.82rem; font-weight:700; font-family:'Syne',sans-serif; cursor:pointer; border:none; }
+.rb-actions { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; position:sticky; top:-1.35rem; background:#0e0e1e; padding:0.25rem 0 0.75rem; z-index:5; }
+.rb-btn { padding:0.6rem 1rem; border-radius:10px; font-size:0.78rem; font-weight:700; font-family:'Syne',sans-serif; cursor:pointer; border:none; display:flex; align-items:center; gap:5px; transition:all 0.15s; flex:1; justify-content:center; min-width:110px; }
 .rb-btn.save { background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); color:#34d399; }
-.rb-btn.download { background:#7c6af7; color:#fff; }
+.rb-btn.save:hover { background:rgba(52,211,153,0.2); }
+.rb-btn.download { background:#7c6af7; color:#fff; box-shadow:0 4px 16px rgba(124,106,247,0.35); }
+.rb-btn.download:hover { box-shadow:0 6px 22px rgba(124,106,247,0.5); transform:translateY(-1px); }
 .rb-btn.analyze { background:rgba(251,191,36,0.12); border:1px solid rgba(251,191,36,0.3); color:#fbbf24; }
+.rb-btn.analyze:hover:not(:disabled) { background:rgba(251,191,36,0.2); }
 .rb-btn:disabled { opacity:0.4; cursor:not-allowed; }
 
 /* Preview paper */
@@ -200,8 +210,13 @@ async function init() {
 
 function updateAnalyzeButton() {
   const btn = document.getElementById('analyze-btn');
-  if (resumePlan === '49') { btn.disabled = true; btn.textContent = '🔒 Upgrade for Analysis'; }
-  else if (resumePlan === '99' && analysisUsed) { btn.disabled = true; btn.textContent = '✅ Analysis Used'; }
+  if (resumePlan === '49') {
+    btn.disabled = true; btn.textContent = '🔒 Upgrade for Analysis';
+  } else if (resumePlan === '99' && analysisUsed) {
+    btn.disabled = true; btn.textContent = '✅ Analysis Used';
+  } else {
+    btn.disabled = false; btn.textContent = '🎯 ATS Analysis';
+  }
 }
 
 // ── EDUCATION ──
@@ -397,8 +412,19 @@ async function analyzeResume() {
     updateAnalyzeButton();
   } catch (e) {
     alert(e.message);
-    btn.disabled = false; btn.textContent = '🎯 ATS Analysis';
+    updateAnalyzeButton(); // stuck "Analyzing…" state fix — hamesha sahi state pe wapas aaye
   }
+}
+
+function getStructuralNudges(d) {
+  // Rule-based nudges — bullet-level AI suggestions ke alawa, missing sections ke liye
+  const nudges = [];
+  if (!d.name) nudges.push('Apna naam daalo — resume ka sabse zaroori pehla field hai');
+  if (!d.email && !d.phone) nudges.push('Contact info missing — email ya phone number zaroor daalo');
+  if (!d.education?.length) nudges.push('Education section khali hai — college/degree details daalo');
+  if (!d.experience?.length && !d.projects?.length) nudges.push('Experience ya Projects mein se kam se kam ek section bharo — dono khali nahi rehne chahiye');
+  if (!d.skills?.length) nudges.push('Skills section khali hai — apni technical skills list karo');
+  return nudges;
 }
 
 function showATSResults(res) {
@@ -417,14 +443,30 @@ function showATSResults(res) {
   `;
 
   const sug = res.suggestions || [];
-  document.getElementById('ats-suggestions').innerHTML = sug.length ? `<div style="color:#fff;font-weight:700;font-size:0.82rem;margin:1rem 0 0.6rem">💡 Suggestions</div>` +
-    sug.map(s => `
+  const nudges = getStructuralNudges(collectFormData());
+
+  let html = '';
+  if (nudges.length) {
+    html += `<div style="color:#fff;font-weight:700;font-size:0.82rem;margin:1rem 0 0.6rem">⚠️ Pehle ye bharo</div>`;
+    html += nudges.map(n => `<div class="ats-sugg" style="border-left-color:#f87171"><div class="fix" style="color:#f87171">${n}</div></div>`).join('');
+  }
+  if (sug.length) {
+    html += `<div style="color:#fff;font-weight:700;font-size:0.82rem;margin:1rem 0 0.6rem">💡 Suggestions</div>`;
+    html += sug.map(s => `
       <div class="ats-sugg">
         <div class="issue">${s.section} — ${s.issue}</div>
         <div class="orig">${s.original}</div>
         <div class="fix">→ ${s.suggestion}</div>
       </div>
-    `).join('') : '<div style="color:rgba(255,255,255,0.3);font-size:0.78rem;margin-top:1rem">Bahut acha! Koi major issue nahi mila 🎉</div>';
+    `).join('');
+  }
+  if (!nudges.length && !sug.length) {
+    html = '<div style="color:rgba(255,255,255,0.3);font-size:0.78rem;margin-top:1rem">Bahut acha! Koi major issue nahi mila 🎉</div>';
+  }
+  document.getElementById('ats-suggestions').innerHTML = html;
+
+  // Analyze ke baad seedha ATS panel tak scroll karo
+  document.getElementById('ats-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function downloadPDF() {
