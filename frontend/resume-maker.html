@@ -297,6 +297,12 @@ function closePreview() { document.getElementById('pv-overlay').classList.remove
 
 function openPricing(tpl) {
   selectedTemplate = tpl;
+  if (existingPlan) {
+    // Already active hai — seedha builder khol do, payment mat pucho
+    localStorage.setItem('resumeTemplate', tpl);
+    window.location.href = 'resume-builder.html?template=' + tpl;
+    return;
+  }
   document.getElementById('pp-overlay').classList.add('open');
 }
 function closePricingPopup() { document.getElementById('pp-overlay').classList.remove('open'); }
