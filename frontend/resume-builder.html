@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Resume Builder — PlacementPro</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body { font-family:'DM Sans',sans-serif; }
+.rb-wrap { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:1400px; margin:0 auto; padding:1.5rem; }
+@media(max-width:900px) { .rb-wrap { grid-template-columns:1fr; } }
+
+.rb-form { background:#0e0e1e; border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:1.5rem; max-height:88vh; overflow-y:auto; }
+.rb-preview-col { position:sticky; top:1rem; align-self:start; }
+
+.rb-section-title {
+  font-family:'Syne',sans-serif; font-weight:800; color:#fff; font-size:0.95rem;
+  margin:1.5rem 0 0.75rem; padding-bottom:0.4rem; border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.rb-section-title:first-child { margin-top:0; }
+.rb-add-btn { background:rgba(124,106,247,0.12); border:1px solid rgba(124,106,247,0.3); color:#a89df7; padding:0.3rem 0.7rem; border-radius:7px; font-size:0.7rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+
+.rb-input, .rb-textarea {
+  width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:8px;
+  padding:0.55rem 0.75rem; color:#fff; font-size:0.82rem; font-family:'DM Sans',sans-serif; margin-bottom:0.5rem; box-sizing:border-box;
+}
+.rb-textarea { resize:vertical; min-height:44px; }
+.rb-input::placeholder, .rb-textarea::placeholder { color:rgba(255,255,255,0.28); }
+.rb-input:focus, .rb-textarea:focus { outline:none; border-color:rgba(124,106,247,0.4); }
+.rb-row { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; }
+
+.rb-entry { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:0.85rem; margin-bottom:0.75rem; position:relative; }
+.rb-entry-remove { position:absolute; top:0.6rem; right:0.6rem; background:rgba(248,113,113,0.1); border:none; color:#f87171; width:22px; height:22px; border-radius:6px; cursor:pointer; font-size:0.8rem; }
+.rb-bullet-row { display:flex; gap:0.4rem; align-items:flex-start; margin-bottom:0.35rem; }
+.rb-bullet-remove { background:rgba(255,255,255,0.05); border:none; color:rgba(255,255,255,0.4); width:24px; height:24px; border-radius:6px; cursor:pointer; flex-shrink:0; font-size:0.75rem; }
+.rb-add-bullet { background:none; border:1px dashed rgba(255,255,255,0.15); color:rgba(255,255,255,0.4); width:100%; padding:0.4rem; border-radius:6px; font-size:0.72rem; cursor:pointer; }
+
+.rb-actions { display:flex; gap:0.6rem; margin-bottom:1rem; flex-wrap:wrap; }
+.rb-btn { padding:0.65rem 1.1rem; border-radius:10px; font-size:0.82rem; font-weight:700; font-family:'Syne',sans-serif; cursor:pointer; border:none; }
+.rb-btn.save { background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); color:#34d399; }
+.rb-btn.download { background:#7c6af7; color:#fff; }
+.rb-btn.analyze { background:rgba(251,191,36,0.12); border:1px solid rgba(251,191,36,0.3); color:#fbbf24; }
+.rb-btn:disabled { opacity:0.4; cursor:not-allowed; }
+
+/* Preview paper */
+#resume-preview {
+  background:#fff; color:#111; padding:2.2rem 2rem; border-radius:4px; box-shadow:0 20px 50px rgba(0,0,0,0.4);
+  max-height:88vh; overflow-y:auto; font-family:'Georgia',serif; font-size:0.82rem; line-height:1.5;
+}
+#resume-preview h1 { font-size:1.5rem; text-align:center; margin-bottom:0.2rem; letter-spacing:0.02em; }
+#resume-preview .rp-contact { text-align:center; font-size:0.7rem; color:#444; margin-bottom:0.9rem; }
+#resume-preview .rp-sec-title { font-size:0.82rem; font-weight:bold; letter-spacing:0.04em; border-bottom:1.2px solid #222; margin:0.85rem 0 0.4rem; padding-bottom:2px; text-transform:uppercase; }
+#resume-preview .rp-entry-top { display:flex; justify-content:space-between; font-size:0.8rem; }
+#resume-preview .rp-entry-top b { font-weight:bold; }
+#resume-preview .rp-sub { font-size:0.75rem; font-style:italic; color:#333; margin-bottom:0.15rem; }
+#resume-preview ul { margin:0.2rem 0 0.6rem 1.1rem; padding:0; }
+#resume-preview li { font-size:0.76rem; margin-bottom:0.12rem; }
+#resume-preview.classic h1 { text-align:left; font-size:1.7rem; }
+#resume-preview.classic .rp-contact { text-align:left; }
+
+/* ATS panel */
+.ats-panel { background:#0e0e1e; border:1px solid rgba(251,191,36,0.25); border-radius:14px; padding:1.25rem; margin-top:1rem; }
+.ats-score-ring { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
+.ats-score-num { font-family:'Syne',sans-serif; font-size:2.2rem; font-weight:800; }
+.ats-breakdown { display:grid; grid-template-columns:repeat(2,1fr); gap:0.5rem; margin-bottom:1rem; }
+.ats-bd-item { background:rgba(255,255,255,0.03); border-radius:8px; padding:0.5rem 0.7rem; font-size:0.72rem; color:rgba(255,255,255,0.5); display:flex; justify-content:space-between; }
+.ats-sugg { background:rgba(255,255,255,0.02); border-left:2px solid #fbbf24; border-radius:6px; padding:0.7rem 0.85rem; margin-bottom:0.6rem; font-size:0.78rem; }
+.ats-sugg .issue { color:#fbbf24; font-size:0.7rem; font-weight:600; margin-bottom:0.3rem; }
+.ats-sugg .orig { color:rgba(255,255,255,0.4); text-decoration:line-through; font-size:0.73rem; margin-bottom:0.25rem; }
+.ats-sugg .fix { color:#34d399; font-size:0.76rem; }
+</style>
+</head>
+<body>
+<div id="toast"></div>
+
+<nav class="navbar">
+  <div class="nav-logo"><a href="dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit"><span class="dot"></span> PlacementPro</a></div>
+  <ul class="nav-links"><li><a href="resume-maker.html">← Templates</a></li></ul>
+</nav>
+
+<div class="rb-wrap">
+  <!-- FORM -->
+  <div class="rb-form">
+    <div class="rb-actions">
+      <button class="rb-btn save" onclick="saveResume()">💾 Save</button>
+      <button class="rb-btn analyze" id="analyze-btn" onclick="analyzeResume()">🎯 ATS Analysis</button>
+      <button class="rb-btn download" onclick="downloadPDF()">⬇️ Download PDF</button>
+    </div>
+    <div style="margin-bottom:1rem">
+      <label style="font-size:0.76rem;color:rgba(255,255,255,0.5);margin-bottom:0.3rem;display:block">Template Style (switch anytime — all unlocked)</label>
+      <select id="template-switcher" onchange="switchTemplate()" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.55rem 0.75rem;color:#fff;font-size:0.82rem;font-family:'DM Sans',sans-serif">
+        <option value="modern">Modern</option>
+        <option value="classic">Classic</option>
+      </select>
+    </div>
+
+    <div class="rb-section-title">Personal Info</div>
+    <input class="rb-input" id="f-name" placeholder="Full Name" oninput="updatePreview()">
+    <div class="rb-row">
+      <input class="rb-input" id="f-email" placeholder="Email" oninput="updatePreview()">
+      <input class="rb-input" id="f-phone" placeholder="Phone" oninput="updatePreview()">
+    </div>
+    <div class="rb-row">
+      <input class="rb-input" id="f-linkedin" placeholder="LinkedIn URL" oninput="updatePreview()">
+      <input class="rb-input" id="f-github" placeholder="GitHub URL" oninput="updatePreview()">
+    </div>
+
+    <div class="rb-section-title">Education <button class="rb-add-btn" onclick="addEducation()">+ Add</button></div>
+    <div id="education-list"></div>
+
+    <div class="rb-section-title">Experience <button class="rb-add-btn" onclick="addExperience()">+ Add</button></div>
+    <div id="experience-list"></div>
+
+    <div class="rb-section-title">Projects <button class="rb-add-btn" onclick="addProject()">+ Add</button></div>
+    <div id="projects-list"></div>
+
+    <div class="rb-section-title">Skills <button class="rb-add-btn" onclick="addSkill()">+ Add</button></div>
+    <div id="skills-list"></div>
+
+    <div class="rb-section-title">Achievements / Leadership <button class="rb-add-btn" onclick="addAchievement()">+ Add</button></div>
+    <div id="achievements-list"></div>
+
+    <div class="ats-panel" id="ats-panel" style="display:none">
+      <div class="ats-score-ring">
+        <div class="ats-score-num" id="ats-score-num">—</div>
+        <div>
+          <div style="color:#fff;font-weight:700;font-size:0.85rem">ATS Score</div>
+          <div style="color:rgba(255,255,255,0.4);font-size:0.72rem">out of 100</div>
+        </div>
+      </div>
+      <div class="ats-breakdown" id="ats-breakdown"></div>
+      <div id="ats-suggestions"></div>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="rb-preview-col">
+    <div id="resume-preview" class="modern"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+Auth.requireAuth();
+
+let resumeData = {
+  template: 'modern', name:'', email:'', phone:'', linkedin:'', github:'',
+  education: [], experience: [], projects: [], skills: [], achievements: []
+};
+let resumePlan = '';
+let analysisUsed = false;
+
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const tplFromUrl = params.get('template');
+
+  try {
+    const res = await API.call('/resume');
+    resumePlan = res.resumePlan;
+    analysisUsed = res.analysisUsed;
+
+    if (!resumePlan) {
+      alert('Pehle koi resume plan kharido — templates page pe wapas bhej rahe hain.');
+      window.location.href = 'resume-maker.html';
+      return;
+    }
+
+    if (res.resume) {
+      resumeData = res.resume;
+    } else if (tplFromUrl) {
+      resumeData.template = tplFromUrl;
+    }
+  } catch (e) {}
+
+  document.getElementById('resume-preview').className = resumeData.template || 'modern';
+  document.getElementById('template-switcher').value = resumeData.template || 'modern';
+  document.getElementById('f-name').value = resumeData.name || '';
+  document.getElementById('f-email').value = resumeData.email || '';
+  document.getElementById('f-phone').value = resumeData.phone || '';
+  document.getElementById('f-linkedin').value = resumeData.linkedin || '';
+  document.getElementById('f-github').value = resumeData.github || '';
+
+  (resumeData.education || []).forEach(e => addEducation(e));
+  (resumeData.experience || []).forEach(e => addExperience(e));
+  (resumeData.projects || []).forEach(p => addProject(p));
+  (resumeData.skills || []).forEach(s => addSkill(s));
+  (resumeData.achievements || []).forEach(a => addAchievement(a));
+
+  if (!resumeData.education?.length) addEducation();
+  if (!resumeData.skills?.length) addSkill();
+
+  updateAnalyzeButton();
+  updatePreview();
+
+  if (resumeData.atsScore != null) showATSResults({ score: resumeData.atsScore, breakdown: resumeData.atsBreakdown, suggestions: resumeData.suggestions });
+}
+
+function updateAnalyzeButton() {
+  const btn = document.getElementById('analyze-btn');
+  if (resumePlan === '49') { btn.disabled = true; btn.textContent = '🔒 Upgrade for Analysis'; }
+  else if (resumePlan === '99' && analysisUsed) { btn.disabled = true; btn.textContent = '✅ Analysis Used'; }
+}
+
+// ── EDUCATION ──
+function addEducation(data = {}) {
+  const div = document.createElement('div');
+  div.className = 'rb-entry';
+  div.innerHTML = `
+    <button class="rb-entry-remove" onclick="this.parentElement.remove(); updatePreview()">×</button>
+    <input class="rb-input edu-inst" placeholder="Institution (e.g. KIIT University)" value="${data.institution||''}" oninput="updatePreview()">
+    <div class="rb-row"><input class="rb-input edu-degree" placeholder="Degree (e.g. B.Tech CSE)" value="${data.degree||''}" oninput="updatePreview()"><input class="rb-input edu-loc" placeholder="Location" value="${data.location||''}" oninput="updatePreview()"></div>
+    <div class="rb-row"><input class="rb-input edu-start" placeholder="Start (2022)" value="${data.startDate||''}" oninput="updatePreview()"><input class="rb-input edu-end" placeholder="End (2026)" value="${data.endDate||''}" oninput="updatePreview()"></div>
+    <input class="rb-input edu-cgpa" placeholder="CGPA (optional)" value="${data.cgpa||''}" oninput="updatePreview()">
+  `;
+  document.getElementById('education-list').appendChild(div);
+}
+
+// ── EXPERIENCE ──
+function addExperience(data = {}) {
+  const div = document.createElement('div');
+  div.className = 'rb-entry';
+  div.innerHTML = `
+    <button class="rb-entry-remove" onclick="this.parentElement.remove(); updatePreview()">×</button>
+    <div class="rb-row"><input class="rb-input exp-company" placeholder="Company" value="${data.company||''}" oninput="updatePreview()"><input class="rb-input exp-role" placeholder="Role" value="${data.role||''}" oninput="updatePreview()"></div>
+    <div class="rb-row"><input class="rb-input exp-loc" placeholder="Location" value="${data.location||''}" oninput="updatePreview()"><input class="rb-input exp-dates" placeholder="Dates (Jun 2024 - Aug 2024)" value="${data.startDate ? data.startDate+' - '+(data.endDate||'') : ''}" oninput="updatePreview()"></div>
+    <div class="bullets-wrap"></div>
+    <button class="rb-add-bullet" onclick="addBulletTo(this)">+ Add bullet point</button>
+  `;
+  document.getElementById('experience-list').appendChild(div);
+  const wrap = div.querySelector('.bullets-wrap');
+  (data.bullets && data.bullets.length ? data.bullets : ['']).forEach(b => addBulletRow(wrap, b));
+}
+
+// ── PROJECTS ──
+function addProject(data = {}) {
+  const div = document.createElement('div');
+  div.className = 'rb-entry';
+  div.innerHTML = `
+    <button class="rb-entry-remove" onclick="this.parentElement.remove(); updatePreview()">×</button>
+    <input class="rb-input proj-title" placeholder="Project Title" value="${data.title||''}" oninput="updatePreview()">
+    <input class="rb-input proj-tech" placeholder="Tech Stack (React, Node.js, MongoDB)" value="${data.techStack||''}" oninput="updatePreview()">
+    <div class="bullets-wrap"></div>
+    <button class="rb-add-bullet" onclick="addBulletTo(this)">+ Add bullet point</button>
+  `;
+  document.getElementById('projects-list').appendChild(div);
+  const wrap = div.querySelector('.bullets-wrap');
+  (data.bullets && data.bullets.length ? data.bullets : ['']).forEach(b => addBulletRow(wrap, b));
+}
+
+// ── SKILLS ──
+function addSkill(data = {}) {
+  const div = document.createElement('div');
+  div.className = 'rb-entry';
+  div.innerHTML = `
+    <button class="rb-entry-remove" onclick="this.parentElement.remove(); updatePreview()">×</button>
+    <input class="rb-input skill-cat" placeholder="Category (e.g. Programming Languages)" value="${data.category||''}" oninput="updatePreview()">
+    <input class="rb-input skill-items" placeholder="Items (Java, Python, C, JavaScript)" value="${data.items||''}" oninput="updatePreview()">
+  `;
+  document.getElementById('skills-list').appendChild(div);
+}
+
+// ── ACHIEVEMENTS ──
+function addAchievement(data = {}) {
+  const div = document.createElement('div');
+  div.className = 'rb-entry';
+  div.innerHTML = `
+    <button class="rb-entry-remove" onclick="this.parentElement.remove(); updatePreview()">×</button>
+    <div class="rb-row"><input class="rb-input ach-title" placeholder="Title/Role" value="${data.title||''}" oninput="updatePreview()"><input class="rb-input ach-org" placeholder="Organization" value="${data.org||''}" oninput="updatePreview()"></div>
+    <div class="bullets-wrap"></div>
+    <button class="rb-add-bullet" onclick="addBulletTo(this)">+ Add bullet point</button>
+  `;
+  document.getElementById('achievements-list').appendChild(div);
+  const wrap = div.querySelector('.bullets-wrap');
+  (data.bullets && data.bullets.length ? data.bullets : ['']).forEach(b => addBulletRow(wrap, b));
+}
+
+function addBulletTo(btn) {
+  const wrap = btn.previousElementSibling;
+  addBulletRow(wrap, '');
+}
+function addBulletRow(wrap, text) {
+  const row = document.createElement('div');
+  row.className = 'rb-bullet-row';
+  row.innerHTML = `<textarea class="rb-textarea bullet-text" placeholder="Developed... / Built... / Led..." rows="2" oninput="updatePreview()">${text||''}</textarea><button class="rb-bullet-remove" onclick="this.parentElement.remove(); updatePreview()">×</button>`;
+  wrap.appendChild(row);
+}
+
+function collectFormData() {
+  const education = [...document.querySelectorAll('#education-list .rb-entry')].map(e => ({
+    institution: e.querySelector('.edu-inst').value, degree: e.querySelector('.edu-degree').value,
+    location: e.querySelector('.edu-loc').value, startDate: e.querySelector('.edu-start').value,
+    endDate: e.querySelector('.edu-end').value, cgpa: e.querySelector('.edu-cgpa').value
+  }));
+
+  const experience = [...document.querySelectorAll('#experience-list .rb-entry')].map(e => {
+    const dates = e.querySelector('.exp-dates').value.split(' - ');
+    return {
+      company: e.querySelector('.exp-company').value, role: e.querySelector('.exp-role').value,
+      location: e.querySelector('.exp-loc').value, startDate: dates[0]||'', endDate: dates[1]||'',
+      bullets: [...e.querySelectorAll('.bullet-text')].map(b => b.value).filter(Boolean)
+    };
+  });
+
+  const projects = [...document.querySelectorAll('#projects-list .rb-entry')].map(e => ({
+    title: e.querySelector('.proj-title').value, techStack: e.querySelector('.proj-tech').value,
+    bullets: [...e.querySelectorAll('.bullet-text')].map(b => b.value).filter(Boolean)
+  }));
+
+  const skills = [...document.querySelectorAll('#skills-list .rb-entry')].map(e => ({
+    category: e.querySelector('.skill-cat').value, items: e.querySelector('.skill-items').value
+  }));
+
+  const achievements = [...document.querySelectorAll('#achievements-list .rb-entry')].map(e => ({
+    title: e.querySelector('.ach-title').value, org: e.querySelector('.ach-org').value,
+    bullets: [...e.querySelectorAll('.bullet-text')].map(b => b.value).filter(Boolean)
+  }));
+
+  return {
+    template: resumeData.template,
+    name: document.getElementById('f-name').value, email: document.getElementById('f-email').value,
+    phone: document.getElementById('f-phone').value, linkedin: document.getElementById('f-linkedin').value,
+    github: document.getElementById('f-github').value,
+    education, experience, projects, skills, achievements
+  };
+}
+
+function switchTemplate() {
+  resumeData.template = document.getElementById('template-switcher').value;
+  document.getElementById('resume-preview').className = resumeData.template;
+}
+
+function updatePreview() {
+  const d = collectFormData();
+  const p = document.getElementById('resume-preview');
+
+  let html = `<h1>${d.name || 'Your Name'}</h1>`;
+  html += `<div class="rp-contact">${[d.email, d.phone, d.linkedin, d.github].filter(Boolean).join(' | ')}</div>`;
+
+  if (d.education.length) {
+    html += `<div class="rp-sec-title">Education</div>`;
+    d.education.forEach(e => {
+      html += `<div class="rp-entry-top"><b>${e.institution||''}</b><span>${e.location||''}</span></div>`;
+      html += `<div class="rp-sub">${e.degree||''}${e.cgpa?', CGPA: '+e.cgpa:''} — ${e.startDate||''} to ${e.endDate||''}</div>`;
+    });
+  }
+
+  if (d.experience.length) {
+    html += `<div class="rp-sec-title">Experience</div>`;
+    d.experience.forEach(e => {
+      html += `<div class="rp-entry-top"><b>${e.company||''} — ${e.role||''}</b><span>${e.startDate||''} to ${e.endDate||''}</span></div>`;
+      if (e.bullets.length) html += `<ul>${e.bullets.map(b => `<li>${b}</li>`).join('')}</ul>`;
+    });
+  }
+
+  if (d.projects.length) {
+    html += `<div class="rp-sec-title">Projects</div>`;
+    d.projects.forEach(p2 => {
+      html += `<div class="rp-entry-top"><b>${p2.title||''}</b><span>${p2.techStack||''}</span></div>`;
+      if (p2.bullets.length) html += `<ul>${p2.bullets.map(b => `<li>${b}</li>`).join('')}</ul>`;
+    });
+  }
+
+  if (d.skills.length) {
+    html += `<div class="rp-sec-title">Skills</div>`;
+    d.skills.forEach(s => { if (s.category || s.items) html += `<div style="font-size:0.76rem;margin-bottom:0.15rem"><b>${s.category}:</b> ${s.items}</div>`; });
+  }
+
+  if (d.achievements.length) {
+    html += `<div class="rp-sec-title">Achievements & Leadership</div>`;
+    d.achievements.forEach(a => {
+      html += `<div class="rp-entry-top"><b>${a.title||''}</b><span>${a.org||''}</span></div>`;
+      if (a.bullets.length) html += `<ul>${a.bullets.map(b => `<li>${b}</li>`).join('')}</ul>`;
+    });
+  }
+
+  p.innerHTML = html;
+}
+
+async function saveResume() {
+  try {
+    await API.call('/resume/save', { method: 'POST', body: JSON.stringify(collectFormData()) });
+    toast('Resume saved! 💾', 'success');
+  } catch (e) { alert(e.message); }
+}
+
+async function analyzeResume() {
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true; btn.textContent = 'Analyzing…';
+  try {
+    await API.call('/resume/save', { method: 'POST', body: JSON.stringify(collectFormData()) });
+    const res = await API.call('/resume/analyze', { method: 'POST' });
+    showATSResults(res);
+    analysisUsed = true;
+    updateAnalyzeButton();
+  } catch (e) {
+    alert(e.message);
+    btn.disabled = false; btn.textContent = '🎯 ATS Analysis';
+  }
+}
+
+function showATSResults(res) {
+  document.getElementById('ats-panel').style.display = 'block';
+  const scoreEl = document.getElementById('ats-score-num');
+  scoreEl.textContent = res.score;
+  scoreEl.style.color = res.score >= 70 ? '#34d399' : res.score >= 45 ? '#fbbf24' : '#f87171';
+
+  const bd = res.breakdown || {};
+  document.getElementById('ats-breakdown').innerHTML = `
+    <div class="ats-bd-item"><span>Contact Info</span><span>${bd.contact||0}/15</span></div>
+    <div class="ats-bd-item"><span>Sections</span><span>${bd.sections||0}/20</span></div>
+    <div class="ats-bd-item"><span>Action Verbs</span><span>${bd.actionVerbs||0}/30</span></div>
+    <div class="ats-bd-item"><span>Quantified Metrics</span><span>${bd.metrics||0}/25</span></div>
+    <div class="ats-bd-item"><span>Content Depth</span><span>${bd.length||0}/10</span></div>
+  `;
+
+  const sug = res.suggestions || [];
+  document.getElementById('ats-suggestions').innerHTML = sug.length ? `<div style="color:#fff;font-weight:700;font-size:0.82rem;margin:1rem 0 0.6rem">💡 Suggestions</div>` +
+    sug.map(s => `
+      <div class="ats-sugg">
+        <div class="issue">${s.section} — ${s.issue}</div>
+        <div class="orig">${s.original}</div>
+        <div class="fix">→ ${s.suggestion}</div>
+      </div>
+    `).join('') : '<div style="color:rgba(255,255,255,0.3);font-size:0.78rem;margin-top:1rem">Bahut acha! Koi major issue nahi mila 🎉</div>';
+}
+
+function downloadPDF() {
+  const el = document.getElementById('resume-preview');
+  const name = document.getElementById('f-name').value || 'resume';
+  html2pdf().set({
+    margin: 0.4,
+    filename: name.replace(/\s+/g,'_') + '_Resume.pdf',
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  }).from(el).save();
+}
+
+init();
+</script>
+</body>
+</html>
