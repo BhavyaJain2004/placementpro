@@ -29,10 +29,17 @@ body { font-family:'DM Sans',sans-serif; }
 .tpl-grid { max-width:800px; margin:0 auto; padding:0 1rem 3rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem; }
 .tpl-card { position:relative; border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); background:#0e0e1e; }
 .tpl-thumb {
-  height:340px; background:#fff; position:relative; overflow:hidden;
-  display:flex; align-items:center; justify-content:center;
+  height:420px; background:#fff; position:relative; overflow:hidden;
+  display:flex; align-items:flex-start; justify-content:center; padding-top:1.5rem;
 }
-.tpl-mini { width:90%; transform:scale(0.95); font-family:Georgia,serif; color:#111; padding:1rem; font-size:0.5rem; line-height:1.4; }
+.tpl-mini { width:88%; font-family:Georgia,serif; color:#111; padding:0; font-size:0.72rem; line-height:1.55; }
+.tpl-mini .m-name { font-size:1.15rem; font-weight:bold; }
+.tpl-mini .m-contact { font-size:0.6rem; color:#555; margin:0.2rem 0 0.6rem; }
+.tpl-mini .m-sec { font-size:0.72rem; font-weight:bold; border-bottom:1.2px solid #222; margin-top:0.55rem; padding-bottom:2px; text-transform:uppercase; letter-spacing:0.03em; }
+.tpl-mini .m-row { display:flex; justify-content:space-between; font-size:0.68rem; margin-top:0.3rem; }
+.tpl-mini .m-sub { font-size:0.62rem; font-style:italic; color:#333; margin-bottom:0.1rem; }
+.tpl-mini ul { margin:0.2rem 0 0.3rem 1rem; padding:0; }
+.tpl-mini li { font-size:0.64rem; margin-bottom:0.15rem; }
 .tpl-overlay {
   position:absolute; inset:0; background:rgba(10,10,20,0.88);
   display:flex; align-items:center; justify-content:center; gap:0.75rem;
@@ -63,7 +70,7 @@ body { font-family:'DM Sans',sans-serif; }
 /* Preview modal */
 .pv-overlay { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.9); z-index:999; align-items:center; justify-content:center; padding:1.5rem; }
 .pv-overlay.open { display:flex; }
-.pv-box { background:#fff; max-width:600px; width:100%; max-height:85vh; overflow-y:auto; border-radius:12px; padding:2rem; color:#111; font-family:Georgia,serif; }
+.pv-box { background:#fff; max-width:720px; width:100%; max-height:88vh; overflow-y:auto; border-radius:12px; padding:2.5rem 2.75rem; color:#111; font-family:Georgia,serif; }
 .pv-close { position:fixed; top:1.5rem; right:1.5rem; background:rgba(255,255,255,0.1); border:none; color:#fff; width:38px; height:38px; border-radius:50%; font-size:1.2rem; cursor:pointer; }
 
 /* Pricing popup */
@@ -97,17 +104,25 @@ body { font-family:'DM Sans',sans-serif; }
   <div class="tpl-grid">
     <div class="tpl-card">
       <div class="tpl-thumb">
-        <div class="tpl-mini">
-          <div style="text-align:center;font-size:0.85rem;font-weight:bold;margin-bottom:0.3rem">RAHUL SHARMA</div>
-          <div style="text-align:center;font-size:0.4rem;color:#555;margin-bottom:0.5rem">rahul@email.com | +91 98765 43210 | LinkedIn | GitHub</div>
-          <div style="font-size:0.5rem;font-weight:bold;border-bottom:1px solid #333;margin-top:0.4rem">EDUCATION</div>
-          <div style="font-size:0.42rem;margin-top:0.2rem"><b>KIIT University</b> — B.Tech CSE, 2022-2026</div>
-          <div style="font-size:0.5rem;font-weight:bold;border-bottom:1px solid #333;margin-top:0.4rem">EXPERIENCE</div>
-          <div style="font-size:0.42rem;margin-top:0.2rem"><b>Company Name</b> — Intern<br>• Developed features using React and Node.js<br>• Improved performance by 20%</div>
-          <div style="font-size:0.5rem;font-weight:bold;border-bottom:1px solid #333;margin-top:0.4rem">PROJECTS</div>
-          <div style="font-size:0.42rem;margin-top:0.2rem"><b>Project Name</b><br>• Built a full-stack app using MERN</div>
-          <div style="font-size:0.5rem;font-weight:bold;border-bottom:1px solid #333;margin-top:0.4rem">SKILLS</div>
-          <div style="font-size:0.42rem;margin-top:0.2rem">Java, Python, React, Node.js</div>
+        <div class="tpl-mini" style="text-align:center">
+          <div class="m-name">RAHUL SHARMA</div>
+          <div class="m-contact">rahul.sharma@email.com | +91 98765 43210 | LinkedIn | GitHub</div>
+          <div class="m-sec" style="text-align:left">Education</div>
+          <div class="m-row"><b>KIIT University</b><span>Bhubaneswar, Odisha</span></div>
+          <div class="m-sub" style="text-align:left">B.Tech in Computer Science and Engineering — 2022 to 2026</div>
+          <div class="m-sec" style="text-align:left">Experience</div>
+          <div class="m-row"><b>Tech Solutions Pvt Ltd — SDE Intern</b><span>Jun 2025 - Aug 2025</span></div>
+          <ul style="text-align:left">
+            <li>Developed 3 REST APIs using Node.js and Express, serving 500+ daily active users</li>
+            <li>Optimized database queries, reducing average response time by 35%</li>
+          </ul>
+          <div class="m-sec" style="text-align:left">Projects</div>
+          <div class="m-row"><b>Placement Prep Tracker</b><span>React, Node.js, MongoDB</span></div>
+          <ul style="text-align:left">
+            <li>Built a full-stack app used by 200+ students to track DSA progress</li>
+          </ul>
+          <div class="m-sec" style="text-align:left">Skills</div>
+          <div style="text-align:left;font-size:0.64rem;margin-top:0.25rem"><b>Languages:</b> Java, Python, C, JavaScript<br><b>Tools:</b> Git, MongoDB, SQL</div>
         </div>
         <div class="tpl-overlay">
           <button class="tpl-btn view" onclick="viewTemplate('modern')">👁️ View</button>
@@ -121,17 +136,25 @@ body { font-family:'DM Sans',sans-serif; }
     <div class="tpl-card">
       <div class="tpl-thumb">
         <div class="tpl-mini">
-          <div style="font-size:0.9rem;font-weight:bold">RAHUL SHARMA</div>
-          <div style="font-size:0.4rem;color:#555">rahul@email.com · +91 98765 43210 · LinkedIn · GitHub</div>
-          <hr style="margin:0.35rem 0;border-color:#999">
-          <div style="font-size:0.48rem;letter-spacing:0.05em;color:#444">EDUCATION</div>
-          <div style="font-size:0.42rem;margin-top:0.15rem">KIIT University, B.Tech CSE — 2022-2026</div>
-          <div style="font-size:0.48rem;letter-spacing:0.05em;color:#444;margin-top:0.4rem">EXPERIENCE</div>
-          <div style="font-size:0.42rem;margin-top:0.15rem">Company — Intern<br>• Developed features using React & Node.js</div>
-          <div style="font-size:0.48rem;letter-spacing:0.05em;color:#444;margin-top:0.4rem">PROJECTS</div>
-          <div style="font-size:0.42rem;margin-top:0.15rem">Project Name — MERN Stack App</div>
-          <div style="font-size:0.48rem;letter-spacing:0.05em;color:#444;margin-top:0.4rem">SKILLS</div>
-          <div style="font-size:0.42rem;margin-top:0.15rem">Java, Python, React, Node.js</div>
+          <div class="m-name">RAHUL SHARMA</div>
+          <div class="m-contact">rahul.sharma@email.com · +91 98765 43210 · LinkedIn · GitHub</div>
+          <hr style="margin:0.4rem 0;border-color:#bbb">
+          <div class="m-sec">Education</div>
+          <div class="m-row"><b>KIIT University</b><span>2022 - 2026</span></div>
+          <div class="m-sub">B.Tech in Computer Science and Engineering, Bhubaneswar</div>
+          <div class="m-sec">Experience</div>
+          <div class="m-row"><b>Tech Solutions Pvt Ltd — SDE Intern</b><span>Jun 2025 - Aug 2025</span></div>
+          <ul>
+            <li>Developed 3 REST APIs using Node.js and Express, serving 500+ daily active users</li>
+            <li>Optimized database queries, reducing average response time by 35%</li>
+          </ul>
+          <div class="m-sec">Projects</div>
+          <div class="m-row"><b>Placement Prep Tracker</b><span>React, Node.js, MongoDB</span></div>
+          <ul>
+            <li>Built a full-stack app used by 200+ students to track DSA progress</li>
+          </ul>
+          <div class="m-sec">Skills</div>
+          <div style="font-size:0.64rem;margin-top:0.25rem"><b>Languages:</b> Java, Python, C, JavaScript<br><b>Tools:</b> Git, MongoDB, SQL</div>
         </div>
         <div class="tpl-overlay">
           <button class="tpl-btn view" onclick="viewTemplate('classic')">👁️ View</button>
@@ -288,9 +311,24 @@ function showRMTab(tab) {
 }
 
 let selectedTemplate = 'modern';
+let existingPlan = '';
+
+(async function checkExistingPlan() {
+  try {
+    const res = await API.call('/resume');
+    existingPlan = res.resumePlan || '';
+  } catch (e) {}
+})();
 
 function viewTemplate(tpl) {
-  document.getElementById('pv-content').innerHTML = document.querySelector(`#rm-templates .tpl-card:nth-child(${tpl === 'modern' ? 1 : 2}) .tpl-mini`).outerHTML.replace('tpl-mini','').replace('style="width:90%;transform:scale(0.95);','style="');
+  const cardIndex = tpl === 'modern' ? 1 : 2;
+  const miniEl = document.querySelector(`#rm-templates .tpl-card:nth-child(${cardIndex}) .tpl-mini`);
+  const clone = miniEl.cloneNode(true);
+  clone.style.width = '100%';
+  clone.style.fontSize = '0.92rem'; // bada karke dikhao, thumbnail se zyada readable
+
+  document.getElementById('pv-content').innerHTML = '';
+  document.getElementById('pv-content').appendChild(clone);
   document.getElementById('pv-overlay').classList.add('open');
 }
 function closePreview() { document.getElementById('pv-overlay').classList.remove('open'); }
