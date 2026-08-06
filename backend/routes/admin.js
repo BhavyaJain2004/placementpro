@@ -749,85 +749,65 @@ router.get('/security/genuine-detection', verifyToken, verifyAdmin, async (req, 
   try {
     const SessionActivity = require('../models/SessionActivity');
 
-    const WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+    // JWT ki validity jitni window — 7 din. Isi window mein agar 2+ alag
+    // sessions se activity aayi hai, matlab account abhi 2+ jagah "logged in" hai.
+    const WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
     const cutoff = new Date(Date.now() - WINDOW_MS);
-    const OVERLAP_THRESHOLD_MS = 10 * 60 * 1000;
-    const HIGH_CHURN_LOGIN_COUNT = 8;
 
     const pings = await SessionActivity.find({ pingedAt: { $gte: cutoff } })
       .select('userId sessionId pingedAt')
-      .sort({ pingedAt: 1 });
+      .sort({ pingedAt: -1 });
 
     const byUser = {};
     for (const p of pings) {
       const uid = String(p.userId);
-      if (!byUser[uid]) byUser[uid] = {};
-      if (!byUser[uid][p.sessionId]) byUser[uid][p.sessionId] = [];
-      byUser[uid][p.sessionId].push(p.pingedAt);
+      if (!byUser[uid]) byUser[uid] = { sessions: {}, name: '', email: '' };
+      if (!byUser[uid].sessions[p.sessionId]) byUser[uid].sessions[p.sessionId] = [];
+      byUser[uid].sessions[p.sessionId].push(p.pingedAt);
     }
 
-    const allLogs = await LoginLog.find({}).select('userId name email loginAt').sort({ loginAt: -1 });
-    const loginsByUser = {};
-    for (const l of allLogs) {
-      const uid = String(l.userId);
-      if (!loginsByUser[uid]) loginsByUser[uid] = { name: l.name, email: l.email, all: [], recent: 0 };
-      loginsByUser[uid].all.push(l.loginAt);
-      if (new Date(l.loginAt) > cutoff) loginsByUser[uid].recent++;
+    const uids = Object.keys(byUser);
+    if (uids.length) {
+      const users = await User.find({ _id: { $in: uids } }).select('name email');
+      users.forEach(u => {
+        const uid = String(u._id);
+        if (byUser[uid]) { byUser[uid].name = u.name; byUser[uid].email = u.email; }
+      });
     }
+
+    const totalLoginsMap = {};
+    const allLogs = await LoginLog.find({ userId: { $in: uids } }).select('userId loginAt');
+    allLogs.forEach(l => {
+      const uid = String(l.userId);
+      totalLoginsMap[uid] = (totalLoginsMap[uid] || 0) + 1;
+    });
 
     const result = [];
+    for (const uid of uids) {
+      const sessionIds = Object.keys(byUser[uid].sessions);
+      if (sessionIds.length < 2) continue;
 
-    for (const uid of Object.keys(loginsByUser)) {
-      const sessions = byUser[uid] || {};
-      const sessionIds = Object.keys(sessions);
+      const lastActive = Math.max(...Object.values(byUser[uid].sessions).flat().map(t => new Date(t).getTime()));
 
-      const overlapDays = new Set();
-      for (let i = 0; i < sessionIds.length; i++) {
-        for (let j = i + 1; j < sessionIds.length; j++) {
-          const pingsA = sessions[sessionIds[i]];
-          const pingsB = sessions[sessionIds[j]];
-          for (const ta of pingsA) {
-            for (const tb of pingsB) {
-              if (Math.abs(new Date(ta) - new Date(tb)) <= OVERLAP_THRESHOLD_MS) {
-                overlapDays.add(new Date(ta).toISOString().split('T')[0]);
-              }
-            }
-          }
-        }
-      }
-
-      const totalLogins  = loginsByUser[uid].all.length;
-      const recentLogins = loginsByUser[uid].recent;
-
-      let status = null;
-      if (overlapDays.size >= 1) status = 'confirmed';
-      else if (recentLogins >= HIGH_CHURN_LOGIN_COUNT) status = 'suspicious';
-
-      if (status) {
-        result.push({
-          id: uid,
-          name: loginsByUser[uid].name,
-          email: loginsByUser[uid].email,
-          status,
-          overlapDayCount: overlapDays.size,
-          totalLogins,
-          recentLogins,
-          distinctSessions30d: sessionIds.length
-        });
-      }
+      result.push({
+        id: uid,
+        name: byUser[uid].name || 'Unknown',
+        email: byUser[uid].email || '',
+        status: 'confirmed',
+        reason: `Account abhi ${sessionIds.length} alag devices/sessions pe active hai`,
+        activeSessions: sessionIds.length,
+        totalLogins: totalLoginsMap[uid] || 0,
+        lastActive: new Date(lastActive)
+      });
     }
 
-    result.sort((a, b) => {
-      if (a.status !== b.status) return a.status === 'confirmed' ? -1 : 1;
-      return b.recentLogins - a.recentLogins;
-    });
+    result.sort((a, b) => b.activeSessions - a.activeSessions);
 
     res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-
 
 // ── PAYMENT SUBMISSIONS (real revenue tracking) ──
 const Payment = require('../models/Payment');
