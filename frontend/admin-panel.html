@@ -832,24 +832,18 @@ async function loadGenuineDetection() {
     const list = await API.call('/admin/security/genuine-detection');
 
     document.getElementById('genuine-list').innerHTML = list.length ? list.map(u => {
-      const isConfirmed = u.status === 'confirmed';
-      const color = isConfirmed ? '#f87171' : '#fbbf24';
-      const bg = isConfirmed ? 'rgba(248,113,113,0.12)' : 'rgba(251,191,36,0.12)';
-      const label = isConfirmed ? '🔴 Confirmed Sharing' : '🟡 Suspicious';
-
       return `
       <div style="border-bottom:1px solid rgba(255,255,255,0.06);padding:0.85rem 0">
         <div class="list-row" style="border:none;padding:0;cursor:pointer" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none' ? 'block' : 'none'">
-          <div class="avatar" style="background:${bg};color:${color}">${(u.name||'?').charAt(0).toUpperCase()}</div>
+          <div class="avatar" style="background:rgba(248,113,113,0.15);color:#f87171">${(u.name||'?').charAt(0).toUpperCase()}</div>
           <div style="flex:1">
             <div style="font-size:0.85rem;color:#fff">${u.name||'Unknown'}</div>
             <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email}</div>
+            <div style="font-size:0.68rem;color:#f87171;margin-top:2px">⚡ ${u.reason}</div>
           </div>
           <div style="display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:flex-end">
-            <span class="tag" style="background:${bg};color:${color}">${label}</span>
+            <span class="tag" style="background:rgba(248,113,113,0.12);color:#f87171">🔴 ${u.activeSessions} devices active</span>
             <span class="tag" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)">${u.totalLogins} total logins</span>
-            <span class="tag" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)">${u.recentLogins} in 30d</span>
-            ${isConfirmed ? `<span class="tag" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)">${u.overlapDayCount} overlap day(s)</span>` : ''}
           </div>
         </div>
         <div style="display:none;margin-top:0.6rem;padding-left:2.5rem">
@@ -859,12 +853,11 @@ async function loadGenuineDetection() {
           <div id="ghist-${u.id}" style="display:none;margin-top:0.6rem;max-height:280px;overflow-y:auto"></div>
         </div>
       </div>`;
-    }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">✅ Koi bhi account abhi flag nahi hui — data build ho raha hai</div>';
+    }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">✅ Koi bhi account abhi multiple devices pe active nahi hai</div>';
   } catch(e) {
     document.getElementById('genuine-list').innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load karne mein error aaya</div>';
   }
 }
-
 async function forceLogoutAll() {
   if (!confirm('Pakka? Isse SABHI users (admins ko chhodke agar setup ho) turant logout ho jayenge — unhe dobara login karna padega. Koi data delete nahi hoga.')) return;
   try {
