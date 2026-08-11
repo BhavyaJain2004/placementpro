@@ -148,8 +148,9 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; }
 
     <label class="field-label">Select Payment For</label>
     <select class="plan-select" id="plan-select" onchange="updatePlanUI()">
-      <option value="99">Completing Payment for Base Package — ₹99</option>
-      <option value="1000">Completing Payment for Complete Package — ₹1000</option>
+      <option value="99">Completing Payment for Base — ₹99</option>
+      <option value="199">Completing Payment for Plus (Base + Mock Tests) — ₹199</option>
+      <option value="299">Completing Payment for Complete Package — ₹299</option>
     </select>
 
     <form id="payment-form" onsubmit="handlePaymentSubmit(event)">
@@ -212,10 +213,13 @@ let screenshotBase64 = '';
     document.getElementById('pf-referral').textContent = saved.referredBy;
   }
 
-  // URL se plan pre-select karo agar diya ho (?plan=1000), warna saved plan use karo
+  // URL se plan pre-select karo agar diya ho (?plan=299), warna saved plan use karo
   const params = new URLSearchParams(window.location.search);
-  const initialPlan = params.get('plan') || saved.selectedPlan || '99';
-  document.getElementById('plan-select').value = initialPlan === '1000' ? '1000' : '99';
+  const validPlans = ['99', '199', '299'];
+  let initialPlan = params.get('plan') || saved.selectedPlan || '99';
+  if (initialPlan === '1000') initialPlan = '299'; // purana link ho toh bhi sahi kaam kare
+  if (!validPlans.includes(initialPlan)) initialPlan = '99';
+  document.getElementById('plan-select').value = initialPlan;
   updatePlanUI();
 })();
 
@@ -224,7 +228,7 @@ function updatePlanUI() {
   const plan = document.getElementById('plan-select').value;
   const amountInput = document.getElementById('pf-amount');
   if (!amountInput.value) {
-    amountInput.value = plan === '1000' ? 1000 : 99;
+    amountInput.value = plan;
   }
   updateAmountDisplay();
 }
