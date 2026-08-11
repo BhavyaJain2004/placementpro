@@ -99,52 +99,66 @@
   <h2 style="font-size:2rem; margin-bottom:0.5rem">Simple, one-time pricing</h2>
   <p style="color:var(--muted); margin-bottom:3rem">Pay once. Access forever. No renewals.</p>
 
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;max-width:700px;margin:0 auto;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;max-width:1050px;margin:0 auto;">
 
     <!-- ₹99 Base Card -->
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:2rem;position:relative;overflow:hidden;text-align:left;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.75rem;position:relative;overflow:hidden;text-align:left;">
       <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));"></div>
-      <span style="font-size:0.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Base Platform</span>
+      <span style="font-size:0.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Base</span>
       <div style="margin:1rem 0 1.5rem;">
-        <span style="font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;color:var(--text);">₹99</span>
-        <span style="color:var(--faint);text-decoration:line-through;margin-left:8px;font-size:1rem">₹499</span>
+        <span style="font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;color:var(--text);">₹99</span>
       </div>
       <ul style="list-style:none;margin-bottom:1.75rem;display:flex;flex-direction:column;gap:0.6rem;">
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>80+ Company profiles</li>
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>150+ DSA questions (Java + Python)</li>
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>Topic notes & cheatsheets</li>
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>Real interview experiences</li>
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--muted)"><span style="color:var(--green)">✓</span>Lifetime updates</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--muted)"><span style="color:var(--green)">✓</span>80+ Company profiles</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--faint)"><span style="color:var(--faint)">✕</span>DSA questions</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--faint)"><span style="color:var(--faint)">✕</span>Mock Tests</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--faint)"><span style="color:var(--faint)">✕</span>Notes</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--faint)"><span style="color:var(--faint)">✕</span>Resume Builder</li>
       </ul>
       <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="showAuth('signup','99')">Get Base Access</button>
       <p style="font-size:0.72rem;color:var(--faint);margin-top:0.75rem;text-align:center">One-time · Lifetime · No subscription</p>
     </div>
 
-    <!-- ₹150 Master DSA Card -->
-    <div style="background:#0d0d20;border:1px solid rgba(124,106,247,0.45);border-radius:var(--radius-xl);padding:2rem;position:relative;overflow:hidden;text-align:left;">
-      <!-- Top glow line -->
-      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#7c6af7,#06b6d4);"></div>
-      <!-- Popular badge -->
-      <div style="position:absolute;top:0;right:0;background:#7c6af7;color:white;font-size:0.62rem;font-weight:700;padding:4px 12px;border-radius:0 0 0 10px;text-transform:uppercase;letter-spacing:0.06em;">Most Popular</div>
-
-      <span style="font-size:0.72rem;color:#a89df7;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Master DSA</span>
+    <!-- ₹199 Plus Card -->
+    <div style="background:var(--surface);border:1px solid rgba(6,182,212,0.4);border-radius:var(--radius-xl);padding:1.75rem;position:relative;overflow:hidden;text-align:left;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#06b6d4,var(--accent));"></div>
+      <span style="font-size:0.72rem;color:#2dd4bf;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Plus</span>
       <div style="margin:1rem 0 1.5rem;">
-        <span style="font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;color:#fff;">₹1000</span>
-        <span style="color:rgba(255,255,255,0.2);text-decoration:line-through;margin-left:8px;font-size:1rem">₹1999</span>
+        <span style="font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;color:var(--text);">₹199</span>
       </div>
       <ul style="list-style:none;margin-bottom:1.75rem;display:flex;flex-direction:column;gap:0.6rem;">
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>Full DSA roadmap — 0 to Google level</li>
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>200+ topic-wise questions</li>
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>In-browser compiler (Java + Python)</li>
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>Hints + full solutions + explanations</li>
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>25+ patterns & tricks</li>
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>Daily problem + leaderboard</li>
-        <li style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>Curated video library</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--muted)"><span style="color:var(--green)">✓</span>80+ Company profiles</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--muted)"><span style="color:var(--green)">✓</span>150+ DSA questions</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--muted)"><span style="color:var(--green)">✓</span>50+ Mock Tests</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--muted)"><span style="color:var(--green)">✓</span>Topic notes & cheatsheets</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--muted)"><span style="color:var(--green)">✓</span>Resume Builder</li>
+      </ul>
+      <button style="width:100%;background:#06b6d4;color:white;border:none;padding:0.85rem;border-radius:10px;font-size:0.95rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity 0.2s"
+        onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"
+        onclick="showAuth('signup','199')">Get Plus Access</button>
+      <p style="font-size:0.72rem;color:var(--faint);margin-top:0.75rem;text-align:center">One-time · Lifetime · No subscription</p>
+    </div>
+
+    <!-- ₹299 Complete Card -->
+    <div style="background:#0d0d20;border:1px solid rgba(124,106,247,0.45);border-radius:var(--radius-xl);padding:1.75rem;position:relative;overflow:hidden;text-align:left;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#7c6af7,#06b6d4);"></div>
+      <div style="position:absolute;top:0;right:0;background:#7c6af7;color:white;font-size:0.62rem;font-weight:700;padding:4px 12px;border-radius:0 0 0 10px;text-transform:uppercase;letter-spacing:0.06em;">Most Popular</div>
+
+      <span style="font-size:0.72rem;color:#a89df7;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Complete</span>
+      <div style="margin:1rem 0 1.5rem;">
+        <span style="font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;color:#fff;">₹299</span>
+      </div>
+      <ul style="list-style:none;margin-bottom:1.75rem;display:flex;flex-direction:column;gap:0.6rem;">
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>80+ Company profiles</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>50+ Mock Tests + Notes</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>Master DSA — full roadmap, 200+ Qs</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>In-browser compiler + hints + solutions</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:rgba(255,255,255,0.7)"><span style="color:#a89df7">✓</span>Resume Builder with Lifetime Analysis</li>
       </ul>
       <button style="width:100%;background:#7c6af7;color:white;border:none;padding:0.85rem;border-radius:10px;font-size:0.95rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity 0.2s;"
         onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"
-        onclick="showAuth('signup','1000')">
-        🚀 Explore Master DSA — ₹1000
+        onclick="showAuth('signup','299')">
+        🚀 Get Complete Package
       </button>
       <p style="font-size:0.72rem;color:rgba(255,255,255,0.2);margin-top:0.75rem;text-align:center">One-time · Lifetime · No subscription</p>
     </div>
@@ -233,13 +247,30 @@
 <script>
   Auth.redirectIfLoggedIn();
 
+  // College/referral link se aaya ho to auto-fill + lock kar do (accurate tracking ke liye)
+  (function autoFillReferral() {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      const field = document.getElementById('reg-referral');
+      field.value = ref.toUpperCase();
+      field.readOnly = true;
+      field.style.background = 'rgba(52,211,153,0.08)';
+      field.style.borderColor = 'rgba(52,211,153,0.3)';
+    }
+  })();
+
   function showAuth(tab, plan = '99') {
   document.getElementById('auth-modal').classList.add('open');
   switchTab(tab);
   // Plan set karo
   document.getElementById('signup-plan').value = plan;
-  document.getElementById('signup-plan-label').textContent = 
-    plan === '1000' ? '🚀 Signing up for Master DSA — ₹1000' : '✅ Signing up for Base Platform — ₹99';
+  const labels = {
+    '99':  '✅ Signing up for Base — ₹99',
+    '199': '⚡ Signing up for Plus — ₹199',
+    '299': '🚀 Signing up for Complete Package — ₹299'
+  };
+  document.getElementById('signup-plan-label').textContent = labels[plan] || labels['99'];
 }
   function closeAuth() { document.getElementById('auth-modal').classList.remove('open'); }
   function switchTab(tab) {
@@ -316,7 +347,7 @@ async function handleSignup(e) {
     localStorage.setItem('pp_user', JSON.stringify(data.user));
 
     // Plan ke hisab se redirect
-   if (plan === '1000') {
+   if (plan === '299') {
       window.location.href = 'masterdsa.html';
     } else {
       window.location.href = 'dashboard.html';
