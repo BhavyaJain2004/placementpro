@@ -823,9 +823,17 @@ router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) =>
     // toh usko yahan khud approved mark kar do — panel aur DB hamesha sync rahein
     const pendingOnes = await Payment.find({ status: 'pending' });
     for (const p of pendingOnes) {
-      const u = await User.findById(p.userId).select('isPaid masterDsaAccess');
+      const u = await User.findById(p.userId).select('isPaid hasTestAccess masterDsaAccess resume49 resume99 resume150');
       if (!u) continue;
-      const nowHasAccess = p.plan === '1000' ? u.masterDsaAccess : u.isPaid;
+
+      let nowHasAccess = false;
+      if (p.plan === '99') nowHasAccess = u.isPaid;
+      else if (p.plan === '199') nowHasAccess = u.isPaid && u.hasTestAccess;
+      else if (p.plan === '299' || p.plan === '1000') nowHasAccess = u.isPaid && u.masterDsaAccess;
+      else if (p.plan === 'resume49') nowHasAccess = u.resume49;
+      else if (p.plan === 'resume99') nowHasAccess = u.resume99;
+      else if (p.plan === 'resume150') nowHasAccess = u.resume150;
+
       if (nowHasAccess) {
         p.status = 'approved';
         p.reviewedAt = new Date();
@@ -883,7 +891,7 @@ router.post('/payment-submissions/:id/approve', verifyToken, verifyAdmin, async 
   }
 });
 // Reject karo (galat/fake screenshot waghera)
-router.post('/payment-submissions/:id/reject', verifyToken, verifyAdmin, async (req, res) => {
+  router.post('/payment-submissions/:id/reject', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const payment = await Payment.findByIdAndUpdate(
       req.params.id,
@@ -892,6 +900,25 @@ router.post('/payment-submissions/:id/reject', verifyToken, verifyAdmin, async (
     );
     if (!payment) return res.status(404).json({ message: 'Submission not found' });
     res.json({ message: 'Rejected' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Amount Paid edit karo
+router.post('/payment-submissions/:id/edit-amount', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { amountPaid } = req.body;
+    if (!amountPaid || amountPaid <= 0)
+      return res.status(400).json({ message: 'Valid amount chahiye' });
+
+    const payment = await Payment.findByIdAndUpdate(
+      req.params.id,
+      { amountPaid },
+      { new: true }
+    );
+    if (!payment) return res.status(404).json({ message: 'Submission not found' });
+    res.json({ message: '✅ Amount updated', payment });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
