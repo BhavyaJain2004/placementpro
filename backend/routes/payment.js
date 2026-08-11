@@ -8,7 +8,7 @@ const { verifyToken } = require('../middleware/auth');
 router.post('/submit', verifyToken, async (req, res) => {
   try {
     const { plan, amountPaid, transactionId, screenshot } = req.body;
-    const validPlans = ['99', '1000', 'resume49', 'resume99', 'resume150'];
+   const validPlans = ['99', '199', '299', '1000', 'resume49', 'resume99', 'resume150'];
 
     if (!plan || !validPlans.includes(plan))
       return res.status(400).json({ message: 'Valid plan required' });
@@ -32,7 +32,7 @@ router.post('/submit', verifyToken, async (req, res) => {
     });
 
     // selectedPlan sirf base/master plans ke liye sync hota hai (resume plans alag field use karte hain)
-    if (plan === '99' || plan === '1000') {
+    if (['99', '199', '299'].includes(plan)) {
       await User.findByIdAndUpdate(user._id, { selectedPlan: plan });
     }
     res.status(201).json({ message: 'Payment details submitted!', paymentId: payment._id });
