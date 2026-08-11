@@ -500,7 +500,6 @@
 <script>
 const user = Auth.requireAuth();
 if (!user) throw new Error();
-if (!user.isPaid) { window.location.href = 'dashboard.html'; throw new Error(); }
 
 Auth.setNavUser(user.name || user.email);
 document.getElementById('dd-name').textContent  = user.name  || 'Student';
