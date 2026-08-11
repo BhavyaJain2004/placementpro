@@ -856,9 +856,16 @@ router.post('/payment-submissions/:id/approve', verifyToken, verifyAdmin, async 
     await payment.save();
 
     let update, accessLabel;
-    if (payment.plan === '1000') { update = { masterDsaAccess: true }; accessLabel = 'Master DSA'; }
-    else if (payment.plan === '99') { update = { isPaid: true, paidAt: new Date() }; accessLabel = 'Base'; }
-    else if (['resume49','resume99','resume150'].includes(payment.plan)) {
+    if (payment.plan === '99') {
+      update = { isPaid: true, paidAt: new Date(), selectedPlan: '99' };
+      accessLabel = 'Base (₹99)';
+    } else if (payment.plan === '199') {
+      update = { isPaid: true, paidAt: new Date(), hasTestAccess: true, resume49: true, selectedPlan: '199' };
+      accessLabel = 'Plus — Base + Mock Tests (₹199)';
+    } else if (payment.plan === '299' || payment.plan === '1000') {
+      update = { isPaid: true, paidAt: new Date(), hasTestAccess: true, masterDsaAccess: true, resume150: true, resumeAnalysisUsed: false, selectedPlan: '299' };
+      accessLabel = 'Complete — Master DSA (₹299)';
+    } else if (['resume49','resume99','resume150'].includes(payment.plan)) {
       const resumePlanValue = payment.plan.replace('resume', '');
       update = {
         resume49: resumePlanValue === '49',
@@ -871,8 +878,7 @@ router.post('/payment-submissions/:id/approve', verifyToken, verifyAdmin, async 
 
     const user = await User.findByIdAndUpdate(payment.userId, update, { new: true });
 
-    res.json({ message: `✅ Approved & ${accessLabel} access diya gaya`, user: { name: user?.name, email: user?.email } });
-  } catch (err) {
+    res.json({ message: `✅ Approved & ${accessLabel} access diya gaya`, user: { name: user?.name, email: user?.email } });  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
