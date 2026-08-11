@@ -939,7 +939,7 @@ async function loadPaymentSubmissions() {
             <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${s.email}</div>
           </div>
          <span class="tag" style="background:${planBadge(s.plan).bg};color:${planBadge(s.plan).color}">${planBadge(s.plan).label}</span>
-          <span class="tag" style="background:rgba(52,211,153,0.1);color:#34d399">₹${s.amountPaid}</span>
+          <span class="tag" id="amt-${s._id}" style="background:rgba(52,211,153,0.1);color:#34d399;cursor:pointer" onclick="editAmount('${s._id}', ${s.amountPaid})" title="Click to edit">₹${s.amountPaid} ✏️</span>
           <span class="tag" style="background:${st.bg};color:${st.color}">${st.label}</span>
         </div>
         <div style="margin-top:0.5rem;padding-left:2.5rem;font-size:0.75rem;color:rgba(255,255,255,0.4)">
@@ -973,6 +973,21 @@ async function rejectPayment(id) {
   if (!confirm('Reject karna hai? (fake/galat screenshot waghera)')) return;
   try {
     await API.call('/admin/payment-submissions/' + id + '/reject', { method: 'POST' });
+    loadPaymentSubmissions();
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+async function editAmount(id, currentAmount) {
+  const newAmount = prompt('Naya amount daalo (₹):', currentAmount);
+  if (newAmount === null) return;
+  const amt = Number(newAmount);
+  if (!amt || amt <= 0) { alert('Valid amount daalo'); return; }
+
+  try {
+    await API.call('/admin/payment-submissions/' + id + '/edit-amount', {
+      method: 'POST',
+      body: JSON.stringify({ amountPaid: amt })
+    });
     loadPaymentSubmissions();
   } catch(e) { alert('Error: ' + e.message); }
 }
