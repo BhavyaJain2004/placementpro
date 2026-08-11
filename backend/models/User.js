@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
   feedbackGiven: { type: Boolean, default: false },
   termsAcceptedAt: { type: Date, default: null },
   masterDsaAccess: { type: Boolean, default: false },
-  selectedPlan:    { type: String, enum: ['99', '199', '299'], default: '99' },
+  selectedPlan:    { type: String, enum: ['99', '199', '299', '1000'], default: '99' },
  resume49:        { type: Boolean, default: false },
   resume99:        { type: Boolean, default: false },
   resume150:       { type: Boolean, default: false },
