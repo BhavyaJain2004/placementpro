@@ -905,6 +905,16 @@ async function toggleFullHistory(userId, containerId) {
 }
 
 // ── PAYMENT SUBMISSIONS ──
+function planBadge(plan) {
+  const map = {
+    '99':  { label: 'Base (₹99)', bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)' },
+    '199': { label: 'Plus — Base + Mock Tests (₹199)', bg: 'rgba(6,182,212,0.12)', color: '#2dd4bf' },
+    '299': { label: 'Complete — Master DSA (₹299)', bg: 'rgba(124,106,247,0.12)', color: '#a89df7' },
+    '1000': { label: 'Complete — Master DSA (legacy ₹1000)', bg: 'rgba(124,106,247,0.12)', color: '#a89df7' }
+  };
+  return map[plan] || { label: plan, bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)' };
+}
+
 async function loadPaymentSubmissions() {
   try {
     const data = await API.call('/admin/payment-submissions');
@@ -928,7 +938,7 @@ async function loadPaymentSubmissions() {
             <div style="font-size:0.85rem;color:#fff">${s.name||'Unknown'}</div>
             <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${s.email}</div>
           </div>
-          <span class="tag" style="background:${s.plan==='1000'?'rgba(124,106,247,0.12)':'rgba(255,255,255,0.06)'};color:${s.plan==='1000'?'#a89df7':'rgba(255,255,255,0.5)'}">${s.plan==='1000'?'Master DSA':'Base'} plan</span>
+         <span class="tag" style="background:${planBadge(s.plan).bg};color:${planBadge(s.plan).color}">${planBadge(s.plan).label}</span>
           <span class="tag" style="background:rgba(52,211,153,0.1);color:#34d399">₹${s.amountPaid}</span>
           <span class="tag" style="background:${st.bg};color:${st.color}">${st.label}</span>
         </div>
