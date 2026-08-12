@@ -73,7 +73,7 @@ router.post('/register', async (req, res) => {
   mobile:     mobile ? mobile.trim() : '',
   referredBy: referredBy ? referredBy.toUpperCase().trim() : '',
   termsAcceptedAt: new Date(),
-      selectedPlan: plan === '1000' ? '1000' : '99',
+       selectedPlan: ['99','199','299'].includes(plan) ? plan : '99',
   sessions:   []
 });
 
