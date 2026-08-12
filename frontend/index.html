@@ -245,7 +245,19 @@
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script>
-  Auth.redirectIfLoggedIn();
+ Auth.redirectIfLoggedIn();
+
+  // Bfcache fix — jab back button se page restore ho (bina fresh reload ke),
+  // stuck button state reset karo aur dobara login-check chalao
+  window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+      const loginBtn = document.getElementById('login-btn');
+      if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'Log in'; }
+      const signupBtn = document.getElementById('signup-btn');
+      if (signupBtn) { signupBtn.disabled = false; signupBtn.textContent = 'Create account'; }
+      Auth.redirectIfLoggedIn();
+    }
+  });
 
   // College/referral link se aaya ho to auto-fill + lock kar do (accurate tracking ke liye)
   (function autoFillReferral() {
