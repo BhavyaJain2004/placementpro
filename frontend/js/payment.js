@@ -11,7 +11,7 @@
 //       key:         RAZORPAY_KEY,
 //       amount:      order.amount,
 //       currency:    order.currency,
-//       name:        'PlacementPro',
+//       name:        'PlacementSphere',
 //       description: 'Lifetime access — ₹99',
 //       image:       '/favicon.ico',
 //       order_id:    order.orderId,
@@ -27,7 +27,7 @@
 //           });
 //           if (result.success) {
 //             localStorage.setItem('pp_token', result.token);
-//             toast('Payment successful! Welcome to PlacementPro 🎉', 'success');
+//             toast('Payment successful! Welcome to PlacementSphere 🎉', 'success');
 //             setTimeout(() => window.location.href = '/dashboard.html', 1200);
 //           }
 //         } catch (err) {

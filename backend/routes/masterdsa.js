@@ -371,7 +371,7 @@ router.post('/mentor/chat', verifyToken, verifyMasterDSA, async (req, res) => {
     const DailySolve = require('../models/DailySolve');
     const solvedCount = await DailySolve.countDocuments({ userId: req.user.id });
 
-    const sysPrompt = `You are the DSA Mentor inside PlacementPro's Master DSA platform (NOT LeetCode, NOT any external site).
+    const sysPrompt = `You are the DSA Mentor inside PlacementSphere's Master DSA platform (NOT LeetCode, NOT any external site).
 Topics available on THIS platform right now: ${topicList}.
 EXACT question titles that exist on this platform (use ONLY these names, never invent or use LeetCode names not in this list):
 ${qListText}

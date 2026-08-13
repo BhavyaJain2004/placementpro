@@ -117,10 +117,10 @@ const setNavUser = (name) => {
           <div style="text-align:center; margin-bottom:1.5rem;">
             <div style="font-size:2rem; margin-bottom:0.5rem;">💬</div>
             <h3 style="color:#f0f0f8; font-family:'Syne',sans-serif; font-size:1.2rem; margin-bottom:0.35rem;">Quick Feedback</h3>
-            <p style="color:rgba(255,255,255,0.45); font-size:0.82rem;">2 minutes — help us improve PlacementPro</p>
+            <p style="color:rgba(255,255,255,0.45); font-size:0.82rem;">2 minutes — help us improve PlacementSphere</p>
           </div>
           <div style="margin-bottom:1.25rem;">
-            <p style="color:rgba(255,255,255,0.6); font-size:0.82rem; margin-bottom:0.5rem;">How would you rate PlacementPro?</p>
+            <p style="color:rgba(255,255,255,0.6); font-size:0.82rem; margin-bottom:0.5rem;">How would you rate PlacementSphere?</p>
             <div style="display:flex; gap:0.5rem; font-size:1.75rem; cursor:pointer;">
               <span onclick="setRating(1)" class="fb-star" style="opacity:0.3">⭐</span>
               <span onclick="setRating(2)" class="fb-star" style="opacity:0.3">⭐</span>

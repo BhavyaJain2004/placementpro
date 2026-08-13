@@ -37,7 +37,7 @@ app.use('/api/tests', require('./routes/tests'));
 app.use('/api/masterdsa', require('./routes/masterdsa'));
 app.use('/api/masterdsa', require('./routes/masterdsa'));
 
-app.get('/', (_req, res) => res.json({ status: 'PlacementPro API running ✅' }));
+app.get('/', (_req, res) => res.json({ status: 'PlacementSphere API running ✅' }));
 
 app.use((err, _req, res, _next) => {
   console.error(err);
