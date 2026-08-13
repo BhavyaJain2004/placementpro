@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard.html
+Disallow: /admin-panel.html
+Disallow: /payment.html
+Disallow: /activation-waiting.html
+Disallow: /resume-builder.html
+
+Sitemap: https://placementsphere.in/sitemap.xml
