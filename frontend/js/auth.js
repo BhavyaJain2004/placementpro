@@ -52,7 +52,7 @@ const logout = () => {
 // so every user gets a consistent, good-looking human illustration instead of a plain letter
 const avatarUrl = (seed) => {
   const s = encodeURIComponent(seed || 'user');
-  return `https://api.dicebear.com/9.x/avataaars/svg?seed=${s}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&radius=50`;
+  return `https://api.dicebear.com/9.x/notionists/svg?seed=${s}&backgroundColor=7c6af7,6c5ae7,5b4de8&backgroundType=gradientLinear`;
 };
 
 // Applies the avatar image to every "nav-avatar" element on the page (navbar + sidebar, etc.)
