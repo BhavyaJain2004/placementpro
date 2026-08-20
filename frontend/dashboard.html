@@ -68,20 +68,38 @@
   }
 
   .sidebar-logo {
-    height: 72px; min-height: 72px;
-    display: flex; align-items: center; gap: 12px;
-    padding: 0 19px;
+    height: 76px; min-height: 76px;
+    display: flex; align-items: center; gap: 13px;
+    padding: 0 18px;
     border-bottom: 1px solid rgba(255,255,255,0.055);
     overflow: hidden;
   }
 
   .sidebar-logo-img {
-    width: 34px; height: 34px; min-width: 34px;
-    border-radius: 10px; background: #fff;
+    width: 38px; height: 38px; min-width: 38px;
+    border-radius: 12px;
+    position: relative;
+    background: linear-gradient(150deg,#8f7ffb 0%,#7c6af7 45%,#5b4de8 100%);
     display: flex; align-items: center; justify-content: center;
     overflow: hidden; flex-shrink: 0;
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.08),
-                0 6px 18px rgba(124,106,247,0.12);
+    border: 1px solid rgba(255,255,255,.18);
+    box-shadow: 0 8px 22px rgba(124,106,247,.35),
+                inset 0 1px 0 rgba(255,255,255,.35);
+  }
+
+  .sidebar-logo-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,.35), transparent 55%);
+    pointer-events: none;
+  }
+
+  .sidebar-logo-img span {
+    position: relative;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem; font-weight: 900;
+    color: #fff; letter-spacing: -0.05em;
+    text-shadow: 0 2px 6px rgba(0,0,0,.15);
   }
 
   .sidebar-logo-img img {
@@ -89,8 +107,8 @@
   }
 
   .sidebar-logo-text {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 750; font-size: 1rem; color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.02rem; color: #fff;
     letter-spacing: -0.02em; white-space: nowrap;
     opacity: 0; transform: translateX(-8px);
     transition: opacity 0.18s ease, transform 0.28s ease;
@@ -108,31 +126,39 @@
   .sidebar-nav::-webkit-scrollbar { display: none; }
 
   .sidebar-section-label {
-    height: 28px; display: flex; align-items: center;
-    padding: 0 11px; margin-top: 7px;
-    font-size: 0.61rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.11em;
-    color: rgba(255,255,255,0.24); white-space: nowrap;
+    height: 30px; display: flex; align-items: center; gap: 7px;
+    padding: 0 11px; margin-top: 10px;
+    font-size: 0.6rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.13em;
+    color: rgba(255,255,255,0.22); white-space: nowrap;
     opacity: 0; transition: opacity 0.18s ease;
+  }
+
+  .sidebar-section-label::before {
+    content: '';
+    width: 12px; height: 1.5px; border-radius: 2px;
+    background: linear-gradient(90deg, rgba(124,106,247,.7), transparent);
+    flex-shrink: 0;
   }
 
   .sidebar:hover .sidebar-section-label { opacity: 1; }
 
   .sidebar-item {
-    position: relative; height: 44px;
-    display: flex; align-items: center; gap: 13px;
-    padding: 0 12px; margin-bottom: 4px;
-    border-radius: 11px; font-size: 0.82rem; font-weight: 500;
+    position: relative; height: 46px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 0 11px; margin-bottom: 5px;
+    border-radius: 12px; font-size: 0.83rem; font-weight: 550;
     color: var(--sb-text); text-decoration: none;
     white-space: nowrap; overflow: hidden;
     transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
   }
 
   .sidebar-item .si-icon {
-    width: 24px; min-width: 24px;
+    width: 30px; height: 30px; min-width: 30px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1rem;
-    transition: transform 0.18s ease, filter 0.18s ease;
+    font-size: 1rem; border-radius: 9px;
+    background: rgba(255,255,255,0.04);
+    transition: transform 0.18s ease, filter 0.18s ease, background 0.18s ease;
   }
 
   .sidebar-item > span:not(.si-icon) {
@@ -149,13 +175,17 @@
     color: #fff; transform: translateX(2px);
   }
 
-  .sidebar-item:hover .si-icon { transform: scale(1.08); filter: none; }
+  .sidebar-item:hover .si-icon { transform: scale(1.08); filter: none; background: rgba(255,255,255,0.08); }
 
   .sidebar-item.active {
     color: #fff; font-weight: 650;
     background: linear-gradient(90deg, rgba(124,106,247,0.24), rgba(124,106,247,0.09));
     box-shadow: inset 3px 0 0 #7c6af7,
                 0 5px 18px rgba(124,106,247,0.06);
+  }
+
+  .sidebar-item.active .si-icon {
+    background: rgba(124,106,247,0.22);
   }
 
   .sidebar-item.active::after {
@@ -390,29 +420,40 @@ body.sidebar-hovered .navbar{
 }
 
 .navbar-brand-mark{
-  width:36px;
-  height:36px;
-  flex:0 0 36px;
+  width:44px;
+  height:44px;
+  flex:0 0 44px;
   display:grid;
   place-items:center;
-  border-radius:11px;
+  border-radius:13px;
+  position:relative;
 
   background:
-    linear-gradient(145deg,#ffffff 0%,#f4f1ff 100%);
+    linear-gradient(150deg,#8f7ffb 0%,#7c6af7 45%,#5b4de8 100%);
 
-  border:1px solid rgba(255,255,255,.8);
+  border:1px solid rgba(255,255,255,.18);
 
   box-shadow:
-    0 5px 20px rgba(124,106,247,.16),
-    inset 0 0 0 1px rgba(124,106,247,.06);
+    0 8px 26px rgba(124,106,247,.38),
+    inset 0 1px 0 rgba(255,255,255,.35),
+    inset 0 -6px 12px rgba(0,0,0,.12);
+}
+
+.navbar-brand-mark::after{
+  content:'';
+  position:absolute; inset:0;
+  border-radius:13px;
+  background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.35),transparent 55%);
+  pointer-events:none;
 }
 
 .navbar-brand-mark span{
   font-family:'Syne',sans-serif;
-  font-size:1.05rem;
+  font-size:1.35rem;
   font-weight:900;
-  color:#7565f5;
+  color:#fff;
   letter-spacing:-.05em;
+  text-shadow:0 2px 6px rgba(0,0,0,.15);
 }
 
 .navbar-brand-copy{
@@ -425,11 +466,25 @@ body.sidebar-hovered .navbar{
 
 .navbar-brand-name{
   font-family:'Syne',sans-serif;
-  font-size:1rem;
+  font-size:1.35rem;
   font-weight:800;
-  color:rgba(255,255,255,.94);
-  letter-spacing:-.025em;
-  line-height:1;
+  letter-spacing:-.03em;
+  line-height:1.1;
+  white-space:nowrap;
+
+  background:linear-gradient(90deg,#ffffff 0%,#cfc7ff 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.navbar-brand-tagline{
+  font-family:'DM Sans',sans-serif;
+  font-size:.63rem;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(168,157,247,.65);
   white-space:nowrap;
 }
 
@@ -1011,8 +1066,15 @@ body.sidebar-hovered{
     display:none;
   }
 
-  .navbar-brand-sub{
+  .navbar-brand-tagline{
     display:none;
+  }
+
+  .navbar-brand-mark{
+    width:36px !important; height:36px !important; flex:0 0 36px !important;
+  }
+  .navbar-brand-mark span{
+    font-size:1.05rem !important;
   }
 
   .navbar-brand-name{
@@ -1098,6 +1160,7 @@ body.sidebar-hovered{
       </div>
       <div class="navbar-brand-copy">
         <span class="navbar-brand-name">PlacementSphere</span>
+        <span class="navbar-brand-tagline">Premium Placement Platform</span>
       </div>
     </div>
   </div>
