@@ -1098,15 +1098,7 @@ body.sidebar-hovered{
       </div>
       <div class="navbar-brand-copy">
         <span class="navbar-brand-name">PlacementSphere</span>
-        <span class="navbar-brand-sub">PLACEMENT HUB</span>
       </div>
-    </div>
-
-    <div class="navbar-context">
-      <span class="navbar-context-dot"></span>
-      <span>Dashboard</span>
-      <span class="navbar-context-separator">/</span>
-      <span class="navbar-context-muted">Overview</span>
     </div>
   </div>
 
@@ -1159,7 +1151,7 @@ body.sidebar-hovered{
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <div class="sidebar-logo-img"><img src="images/logo.png" alt="logo" onerror="this.parentElement.innerHTML='<span style=&quot;color:#7c6af7;font-weight:800&quot;>P</span>'"></div>
+    <div class="sidebar-logo-img"><span style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:900;color:#7565f5;letter-spacing:-0.05em">P</span></div>
     <span class="sidebar-logo-text">PlacementSphere</span>
   </div>
   <nav class="sidebar-nav">
@@ -1190,10 +1182,8 @@ body.sidebar-hovered{
     <div class="sidebar-profile-info">
       <div class="sidebar-profile-name-row">
         <div class="sidebar-profile-name" id="sidebar-user-name">—</div>
-        <span class="sidebar-profile-chevron">⌄</span>
       </div>
       <div class="sidebar-profile-role">
-        <span class="sidebar-role-dot"></span>
         Student
       </div>
     </div>
@@ -2130,8 +2120,7 @@ body.sidebar-hovered{
   if (!cachedUser) throw new Error();
   API.call('/auth/ping', { method: 'POST' }).catch(()=>{});
 
-  Auth.setNavUser(cachedUser.name || cachedUser.email);
-  document.getElementById('sidebar-avatar').textContent = (cachedUser.name || cachedUser.email || '?').charAt(0).toUpperCase();
+  Auth.setNavUser(cachedUser.name || cachedUser.email, cachedUser.email || cachedUser.name);
   document.getElementById('sidebar-user-name').textContent = cachedUser.name || cachedUser.email;
   document.getElementById('dd-name').textContent  = cachedUser.name  || 'Student';
   document.getElementById('dd-email').textContent = cachedUser.email || '';
