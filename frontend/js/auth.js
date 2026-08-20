@@ -48,12 +48,25 @@ const logout = () => {
   window.location.href = 'index.html';
 };
 
+// Generates a stable, friendly cartoon-style avatar for a given seed (name/email)
+// so every user gets a consistent, good-looking human illustration instead of a plain letter
+const avatarUrl = (seed) => {
+  const s = encodeURIComponent(seed || 'user');
+  return `https://api.dicebear.com/9.x/avataaars/svg?seed=${s}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&radius=50`;
+};
+
+// Applies the avatar image to every "nav-avatar" element on the page (navbar + sidebar, etc.)
+const applyAvatar = (seed) => {
+  document.querySelectorAll('.nav-avatar').forEach(el => {
+    el.innerHTML = `<img src="${avatarUrl(seed)}" alt="avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
+  });
+};
+
 // Set navbar user info
-const setNavUser = (name) => {
+const setNavUser = (name, seed) => {
   const el = document.getElementById('nav-user-name');
-  const av = document.getElementById('nav-avatar');
   if (el) el.textContent = name;
-  if (av) av.textContent = name?.charAt(0)?.toUpperCase() || '?';
+  applyAvatar(seed || name);
 };
 
 // Activity ping — page visit log
@@ -193,6 +206,4 @@ const getUser = () => {
   catch(e) { return null; }
 };
 
-window.Auth = { decodeToken, requireAuth, requirePaid, redirectIfLoggedIn, logout, setNavUser, getUser };
-
-
+window.Auth = { decodeToken, requireAuth, requirePaid, redirectIfLoggedIn, logout, setNavUser, getUser, avatarUrl, applyAvatar };
