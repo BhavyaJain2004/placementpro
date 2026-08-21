@@ -29,8 +29,14 @@ const call = async (endpoint, options = {}) => {
 
   // New Part over
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Something went wrong');
+  // 413 Payload Too Large (screenshot/image bahut bada) aksar server/proxy se plain text/HTML aata hai, JSON nahi —
+  // isliye .json() try karne se pehle status check karo taaki crash na ho aur user ko sahi message mile
+  if (res.status === 413) {
+    throw new Error('File bahut bada hai. Chhota screenshot/image try karo.');
+  }
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || data.error || 'Something went wrong. Please try again.');
   return data;
 };
 
