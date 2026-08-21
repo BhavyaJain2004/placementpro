@@ -203,7 +203,7 @@
 </label>
         <p class="form-error" id="signup-err"></p>
         <button type="submit" class="btn btn-primary" style="margin-top:1rem;width:100%;justify-content:center" id="signup-btn">Create account</button>
-        <p style="font-size:0.78rem;color:var(--muted);text-align:center;margin-top:1rem">After signup you'll be taken to unlock access for ₹99</p>
+        <p id="signup-footer-price" style="font-size:0.78rem;color:var(--muted);text-align:center;margin-top:1rem">After signup you'll be taken to unlock access for ₹99</p>
       </form>
     </div>
   </div>
@@ -307,6 +307,9 @@
   document.getElementById('signup-plan-label').textContent = pkg
     ? `✅ Signing up for ${pkg.name} — ₹${pkg.price}`
     : '✅ Signing up';
+  document.getElementById('signup-footer-price').textContent = pkg
+    ? `After signup you'll be taken to unlock access for ₹${pkg.price}`
+    : `After signup you'll be taken to the payment page`;
 }
   function closeAuth() { document.getElementById('auth-modal').classList.remove('open'); }
   function switchTab(tab) {
