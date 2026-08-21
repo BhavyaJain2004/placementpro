@@ -1316,7 +1316,7 @@ body.sidebar-hovered{
       <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:1.25rem;">
         <div style="background:rgba(255,255,255,0.04); border-radius:10px; padding:0.9rem 1rem;">
           <div style="color:#7c6af7; font-size:1.3rem; margin-bottom:0.4rem;">1️⃣</div>
-          <div style="color:rgba(255,255,255,0.85); font-size:0.85rem; font-weight:600; margin-bottom:0.25rem;">Pay Rs.99 on QR Given in the Form </div>
+          <div style="color:rgba(255,255,255,0.85); font-size:0.85rem; font-weight:600; margin-bottom:0.25rem;">Pay <span data-price-key="99" data-price-prefix="Rs.">Rs.99</span> on QR Given in the Form </div>
           <div style="color:rgba(255,255,255,0.45); font-size:0.78rem;">QR Code is in the form </div>
         </div>
         <div style="background:rgba(255,255,255,0.04); border-radius:10px; padding:0.9rem 1rem;">
@@ -1339,7 +1339,7 @@ body.sidebar-hovered{
         flex-wrap:wrap; gap:0.75rem; margin-bottom:1.25rem;
       ">
         <div>
-          <div style="color:rgba(255,255,255,0.4); font-size:0.72rem; margin-bottom:0.2rem;">UPI ID — ₹99 </div>
+          <div style="color:rgba(255,255,255,0.4); font-size:0.72rem; margin-bottom:0.2rem;">UPI ID — <span data-price-key="99">₹99</span> </div>
           <div id="upi-id-text" style="color:#4ade80; font-size:1.15rem; font-weight:700; font-family:'Syne',sans-serif; letter-spacing:0.02em;">
             UPI ID is in the Form 
           </div>
@@ -1361,7 +1361,7 @@ body.sidebar-hovered{
         width:100%; letter-spacing:0.02em;
         transition: opacity 0.2s;
       " onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-        💳 Complete Payment — ₹99
+        💳 Complete Payment — <span data-price-key="99">₹99</span>
       </button>
       <p style="color:rgba(255,255,255,0.3); font-size:0.73rem; text-align:center; margin-top:0.6rem;">
         ⚡ Same-day activation • 9 AM – 10 PM
@@ -1371,7 +1371,7 @@ body.sidebar-hovered{
     <!-- FEATURES CARD -->
     <div class="paywall-card" style="max-width:480px;margin:0 auto">
       <div class="lock-icon">🔒</div>
-      <h2>Full Access — ₹99</h2>
+      <h2>Full Access — <span data-price-key="99">₹99</span></h2>
       <p style="color:var(--muted);margin-bottom:2rem">Everything you need to crack placements at KIIT</p>
       <ul class="paywall-features">
         <li><span class="check">✓</span> 53+ Company profiles — full hiring process &amp; tips</li>
@@ -1380,9 +1380,9 @@ body.sidebar-hovered{
         <li><span class="check">✓</span> Real interview experiences from placed seniors</li>
         <li><span class="check">✓</span> Lifetime access + all future updates</li>
       </ul>
-      <span class="price-big"><sup>₹</sup>99 <span class="was">₹499</span></span>
+      <span class="price-big"><sup>₹</sup><span data-price-key="99" data-price-nosymbol>99</span> <span class="was" data-price-key="99-original">₹499</span></span>
       <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center" onclick="window.location.href='payment.html?plan=99'">
-        Pay ₹99 &amp; Get Access
+        Pay <span data-price-key="99">₹99</span> &amp; Get Access
       </button>
       <p style="font-size:0.75rem;color:var(--faint);text-align:center;margin-top:0.75rem">
         One-time payment · Lifetime access · No subscription
@@ -2085,6 +2085,7 @@ body.sidebar-hovered{
 </div>
 
 <script src="js/api.js"></script>
+<script src="js/pricing.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/payment.js"></script>
 <script>
