@@ -109,6 +109,9 @@ body{background:#06060f}
     <div class="as-section">Payments</div>
     <div class="as-item" onclick="showTab('paysubs',this)">💳 Payment Submissions</div>
 
+    <div class="as-section">Pricing</div>
+    <div class="as-item" onclick="showTab('packages',this)">📦 Packages</div>
+
     <div style="padding:1.5rem 1.25rem 0">
       <a href="dashboard.html" style="font-size:0.78rem;color:rgba(255,255,255,0.3);text-decoration:none">← Back to site</a>
     </div>
@@ -334,6 +337,89 @@ body{background:#06060f}
         <div id="notif-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">No active notifications</div></div>
       </div>
     </div>
+
+    <!-- PACKAGES -->
+    <div id="tab-packages" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">📦 Packages / Pricing Plans</h2>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.5rem">Control what shows on the landing page & payment page — price, description, on/off, and even add brand new plans</p>
+
+      <!-- Create / Edit Package -->
+      <div class="card">
+        <div class="card-title" id="pkg-form-title">✏️ Add New Package</div>
+        <div style="display:flex;flex-direction:column;gap:0.85rem">
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Plan Key <span style="color:rgba(255,255,255,0.25)">(unique, used internally — e.g. 99, diwali299)</span></div>
+              <input id="pkg-key" placeholder="e.g. 99" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Plan Name</div>
+              <input id="pkg-name" placeholder="e.g. Base, Plus, Complete" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.75rem">
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Price (₹)</div>
+              <input id="pkg-price" type="number" min="0" placeholder="99" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Strike-through Price</div>
+              <input id="pkg-original-price" type="number" min="0" placeholder="optional" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Tagline</div>
+              <input id="pkg-tagline" placeholder="e.g. BASE" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Badge Ribbon</div>
+              <input id="pkg-badge" placeholder="e.g. Most Popular" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem">
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Accent Color</div>
+              <select id="pkg-color" style="width:100%;background:#12121f;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.6rem;color:#fff;font-size:0.82rem;outline:none">
+                <option value="#7c6af7">Purple</option>
+                <option value="#06b6d4">Cyan</option>
+                <option value="#34d399">Green</option>
+                <option value="#fbbf24">Gold</option>
+                <option value="#f87171">Red</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Display Order</div>
+              <input id="pkg-order" type="number" placeholder="1" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+            </div>
+            <div style="display:flex;align-items:flex-end;padding-bottom:0.5rem">
+              <label style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.6);font-size:0.82rem;cursor:pointer">
+                <input type="checkbox" id="pkg-highlighted" style="width:16px;height:16px"> Highlighted (dark "popular" card style)
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Features — one per line. Start a line with <code style="color:#f87171">!</code> to show it crossed-out (not included)</div>
+            <textarea id="pkg-features" rows="5" placeholder="80+ Company profiles&#10;150+ DSA questions&#10;!Master DSA (not included in this plan)" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none;resize:vertical;font-family:'DM Sans',sans-serif"></textarea>
+          </div>
+
+          <p style="font-size:0.72rem;color:rgba(255,255,255,0.25);margin:0">ℹ️ Naya plan add karne ke baad, uska access (kya unlock karna hai) Payment Submissions mein approve karte waqt ya seedha DB se manually set karna hoga.</p>
+
+          <div style="display:flex;gap:0.75rem;align-items:center">
+            <button onclick="savePackage()" id="pkg-save-btn" style="background:#7c6af7;color:#fff;border:none;border-radius:8px;padding:0.6rem 1.25rem;font-size:0.82rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer">➕ Add Package</button>
+            <button onclick="resetPkgForm()" id="pkg-cancel-btn" style="display:none;background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.6rem 1.1rem;font-size:0.82rem;cursor:pointer">Cancel Edit</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Existing Packages -->
+      <div class="card">
+        <div class="card-title">📋 All Packages</div>
+        <div id="pkg-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
+      </div>
+    </div>
     <!-- SECURITY / PASSWORD SHARING -->
     <div id="tab-security" style="display:none">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">🚨 Password Sharing Detector</h2>
@@ -471,6 +557,126 @@ async function loadNotifList() {
     document.getElementById('notif-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Could not load</div>';
   }
 }
+// ── PACKAGES ──
+let editingPkgId = null;
+
+function parseFeaturesText(text) {
+  return text.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
+    if (line.startsWith('!')) return { text: line.slice(1).trim(), included: false };
+    return { text: line, included: true };
+  });
+}
+
+function featuresToText(features) {
+  return (features || []).map(f => f.included ? f.text : '!' + f.text).join('\n');
+}
+
+function resetPkgForm() {
+  editingPkgId = null;
+  ['pkg-key','pkg-name','pkg-tagline','pkg-badge','pkg-price','pkg-original-price','pkg-order','pkg-features']
+    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pkg-key').disabled = false;
+  document.getElementById('pkg-color').value = '#7c6af7';
+  document.getElementById('pkg-highlighted').checked = false;
+  document.getElementById('pkg-form-title').textContent = '✏️ Add New Package';
+  document.getElementById('pkg-save-btn').textContent = '➕ Add Package';
+  document.getElementById('pkg-cancel-btn').style.display = 'none';
+}
+
+function editPackage(id) {
+  const pkg = (window._pkgCache || []).find(p => p._id === id);
+  if (!pkg) return;
+  editingPkgId = id;
+  document.getElementById('pkg-key').value = pkg.key;
+  document.getElementById('pkg-key').disabled = true; // key kabhi change nahi hota — payment/user records isi se linked hain
+  document.getElementById('pkg-name').value = pkg.name;
+  document.getElementById('pkg-tagline').value = pkg.tagline || '';
+  document.getElementById('pkg-badge').value = pkg.badge || '';
+  document.getElementById('pkg-price').value = pkg.price;
+  document.getElementById('pkg-original-price').value = pkg.originalPrice || '';
+  document.getElementById('pkg-order').value = pkg.order || 0;
+  document.getElementById('pkg-color').value = pkg.accentColor || '#7c6af7';
+  document.getElementById('pkg-highlighted').checked = !!pkg.highlighted;
+  document.getElementById('pkg-features').value = featuresToText(pkg.features);
+  document.getElementById('pkg-form-title').textContent = `✏️ Editing "${pkg.name}"`;
+  document.getElementById('pkg-save-btn').textContent = '💾 Update Package';
+  document.getElementById('pkg-cancel-btn').style.display = 'inline-block';
+  document.getElementById('tab-packages').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function savePackage() {
+  const key = document.getElementById('pkg-key').value.trim();
+  const name = document.getElementById('pkg-name').value.trim();
+  const price = Number(document.getElementById('pkg-price').value);
+
+  if (!key || !name || !price) { alert('Plan Key, Name aur Price zaroori hain'); return; }
+
+  const body = {
+    name,
+    tagline: document.getElementById('pkg-tagline').value.trim(),
+    badge: document.getElementById('pkg-badge').value.trim(),
+    price,
+    originalPrice: Number(document.getElementById('pkg-original-price').value) || 0,
+    order: Number(document.getElementById('pkg-order').value) || 0,
+    accentColor: document.getElementById('pkg-color').value,
+    highlighted: document.getElementById('pkg-highlighted').checked,
+    features: parseFeaturesText(document.getElementById('pkg-features').value)
+  };
+
+  try {
+    if (editingPkgId) {
+      await API.call('/admin/package/' + editingPkgId, { method: 'PATCH', body: JSON.stringify(body) });
+    } else {
+      body.key = key;
+      await API.call('/admin/package', { method: 'POST', body: JSON.stringify(body) });
+    }
+    document.getElementById('pkg-key').disabled = false;
+    resetPkgForm();
+    loadPackages();
+    alert('Saved! Website pe turant reflect ho jayega.');
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+async function togglePackageActive(id, current) {
+  try {
+    await API.call('/admin/package/' + id, { method: 'PATCH', body: JSON.stringify({ isActive: !current }) });
+    loadPackages();
+  } catch(e) {}
+}
+
+async function deletePackage(id, name) {
+  if (!confirm(`"${name}" package permanently delete karna hai? Yeh sirf catalog listing delete karega — kisi existing user ka access nahi jayega.`)) return;
+  try {
+    await API.call('/admin/package/' + id, { method: 'DELETE' });
+    loadPackages();
+  } catch(e) {}
+}
+
+async function loadPackages() {
+  try {
+    const list = await API.call('/admin/packages');
+    window._pkgCache = list;
+    const el = document.getElementById('pkg-list');
+    if (!list.length) { el.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Koi package nahi hai — upar se add karo</div>'; return; }
+    el.innerHTML = list.map(p => `
+      <div class="notif-card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0.6rem">
+          <div style="flex:1">
+            <div style="font-size:0.92rem;color:#fff;font-weight:700">${p.name} <span style="color:${p.accentColor};font-weight:800">₹${p.price}</span>${p.originalPrice > p.price ? ` <span style="color:rgba(255,255,255,0.25);text-decoration:line-through;font-size:0.75rem">₹${p.originalPrice}</span>` : ''}</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:2px">key: ${p.key}${p.badge ? ' · ' + p.badge : ''}</div>
+          </div>
+          <span class="ntf-status ${p.isActive ? 'ntf-active' : 'ntf-paused'}">${p.isActive ? '● Live' : '⏸ Off'}</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button class="btn-sm" onclick="editPackage('${p._id}')">✏️ Edit</button>
+          <button class="btn-sm" onclick="togglePackageActive('${p._id}', ${p.isActive})">${p.isActive ? '⏸ Turn Off' : '▶ Turn On'}</button>
+          <button class="btn-sm btn-danger" onclick="deletePackage('${p._id}', '${p.name}')">🗑 Delete</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('pkg-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Could not load</div>';
+  }
+}
 // ── AUTH ──
 function checkPwd() {
   if (document.getElementById('gate-pwd').value === 'adminbhavya') {
@@ -483,12 +689,12 @@ function checkPwd() {
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
 // ── TAB ROUTING ──
-const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs'];
+const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages'];
 function showTab(tab, btn) {
   ALL_TABS.forEach(t => { const el = document.getElementById('tab-'+t); if(el) el.style.display = t===tab?'block':'none'; });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
-  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions };
+  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages };
   if (loaders[tab]) loaders[tab]();
 }
 
@@ -907,12 +1113,17 @@ async function toggleFullHistory(userId, containerId) {
 // ── PAYMENT SUBMISSIONS ──
 function planBadge(plan) {
   const map = {
-    '99':  { label: 'Base (₹99)', bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)' },
-    '199': { label: 'Plus — Base + Mock Tests (₹199)', bg: 'rgba(6,182,212,0.12)', color: '#2dd4bf' },
-    '299': { label: 'Complete — Master DSA (₹299)', bg: 'rgba(124,106,247,0.12)', color: '#a89df7' },
-    '1000': { label: 'Complete — Master DSA (legacy ₹1000)', bg: 'rgba(124,106,247,0.12)', color: '#a89df7' }
+    '99':  { label: 'Base', bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)' },
+    '199': { label: 'Plus — Base + Mock Tests', bg: 'rgba(6,182,212,0.12)', color: '#2dd4bf' },
+    '299': { label: 'Complete — Master DSA', bg: 'rgba(124,106,247,0.12)', color: '#a89df7' },
+    '1000': { label: 'Complete — Master DSA (legacy)', bg: 'rgba(124,106,247,0.12)', color: '#a89df7' }
   };
-  return map[plan] || { label: plan, bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)' };
+  if (map[plan]) return map[plan];
+  // Naya/custom plan jo upar map mein nahi hai — cached package list se naam dhoondo, warna raw key dikha do
+  const pkg = (window._pkgCache || []).find(p => p.key === plan);
+  return pkg
+    ? { label: pkg.name, bg: 'rgba(124,106,247,0.12)', color: '#a89df7' }
+    : { label: plan, bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)' };
 }
 
 async function loadPaymentSubmissions() {
