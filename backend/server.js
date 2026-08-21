@@ -74,7 +74,7 @@ app.use(cors({
   ],
   credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 app.use('/api/auth',        require('./routes/auth'));
 app.use('/api/payment',     require('./routes/payment'));
