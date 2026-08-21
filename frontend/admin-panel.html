@@ -559,6 +559,11 @@ async function loadNotifList() {
   }
 }
 // ── PACKAGES ──
+// Number inputs (Price/Order) badalte the agar scroll-wheel unke upar chal jaye
+// (browser ka default spinner-scroll behavior) — isse rokte hain taaki price galti se na badle
+document.querySelectorAll('#tab-packages input[type="number"]').forEach(el => {
+  el.addEventListener('wheel', () => el.blur());
+});
 let editingPkgId = null;
 
 function parseFeaturesText(text) {
