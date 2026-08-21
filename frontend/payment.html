@@ -148,9 +148,7 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; }
 
     <label class="field-label">Select Payment For</label>
     <select class="plan-select" id="plan-select" onchange="updatePlanUI()">
-      <option value="99">Completing Payment for Base — ₹99</option>
-      <option value="199">Completing Payment for Plus (Base + Mock Tests) — ₹199</option>
-      <option value="299">Completing Payment for Complete Package — ₹299</option>
+      <option value="">Loading plans...</option>
     </select>
 
     <form id="payment-form" onsubmit="handlePaymentSubmit(event)">
@@ -202,8 +200,9 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; }
 <script>
 const user = Auth.requireAuth();
 let screenshotBase64 = '';
+let pricingPackages = [];
 
-(function init() {
+(async function init() {
   const saved = Auth.getUser() || {};
   document.getElementById('pf-name').textContent = saved.name || user?.name || '—';
   document.getElementById('pf-email').textContent = saved.email || user?.email || '—';
@@ -213,22 +212,36 @@ let screenshotBase64 = '';
     document.getElementById('pf-referral').textContent = saved.referredBy;
   }
 
+  try {
+    pricingPackages = await API.call('/packages');
+  } catch (e) { pricingPackages = []; }
+
+  const select = document.getElementById('plan-select');
+  if (!pricingPackages.length) {
+    select.innerHTML = '<option value="">No plans available right now</option>';
+    return;
+  }
+  select.innerHTML = pricingPackages.map(p =>
+    `<option value="${p.key}">Completing Payment for ${p.name} — ₹${p.price}</option>`
+  ).join('');
+
   // URL se plan pre-select karo agar diya ho (?plan=299), warna saved plan use karo
   const params = new URLSearchParams(window.location.search);
-  const validPlans = ['99', '199', '299'];
-  let initialPlan = params.get('plan') || saved.selectedPlan || '99';
+  const validKeys = pricingPackages.map(p => p.key);
+  let initialPlan = params.get('plan') || saved.selectedPlan || validKeys[0];
   if (initialPlan === '1000') initialPlan = '299'; // purana link ho toh bhi sahi kaam kare
-  if (!validPlans.includes(initialPlan)) initialPlan = '99';
-  document.getElementById('plan-select').value = initialPlan;
+  if (!validKeys.includes(initialPlan)) initialPlan = validKeys[0];
+  select.value = initialPlan;
   updatePlanUI();
 })();
 
 function updatePlanUI() {
-  // Amount field ko bhi plan ke default se prefill kar do (editable rahega)
+  // Amount field ko bhi plan ke actual price se prefill kar do (editable rahega)
   const plan = document.getElementById('plan-select').value;
+  const pkg = pricingPackages.find(p => p.key === plan);
   const amountInput = document.getElementById('pf-amount');
-  if (!amountInput.value) {
-    amountInput.value = plan;
+  if (!amountInput.value && pkg) {
+    amountInput.value = pkg.price;
   }
   updateAmountDisplay();
 }
