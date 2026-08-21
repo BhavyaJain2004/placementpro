@@ -34,7 +34,7 @@ body { font-family:'DM Sans',sans-serif; }
 <div class="pl-hero">
   <div class="pl-eyebrow"><span style="width:6px;height:6px;border-radius:50%;background:#2dd4bf"></span> Plus Plan</div>
   <h1>Base access + <em>Mock Tests</em><br>+ Resume Builder</h1>
-  <p>Everything in Base, plus 50+ timed mock tests, notes, and a resume builder — all for ₹199</p>
+  <p>Everything in Base, plus 50+ timed mock tests, notes, and a resume builder — all for <span data-price-key="199">₹199</span></p>
 </div>
 
 <div class="pl-container">
@@ -72,12 +72,13 @@ body { font-family:'DM Sans',sans-serif; }
   <div class="pl-cta">
     <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#2dd4bf;margin-bottom:0.5rem">One-time · Lifetime access</div>
     <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.5rem">Get the Plus Plan</h2>
-    <div class="pl-price">₹199</div>
-    <button class="pl-btn" onclick="window.location.href='payment.html?plan=199'">Get Access — ₹199</button>
+    <div class="pl-price" data-price-key="199">₹199</div>
+    <button class="pl-btn" onclick="window.location.href='payment.html?plan=199'">Get Access — <span data-price-key="199">₹199</span></button>
   </div>
 </div>
 
 <script src="js/api.js"></script>
+<script src="js/pricing.js"></script>
 <script src="js/auth.js"></script>
 <script>
 (async function() {
