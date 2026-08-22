@@ -451,7 +451,7 @@ body{background:#06060f}
           </button>
         </div>
         <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-bottom:1rem">
-          IP/device pe depend nahi karta — real concurrent-use aur unusual login-frequency pe based hai. Sabko logout karne ke baad, jaise jaise log wapas login karenge, ye list accurate hoti jayegi.
+          Netflix-style pattern detection — 30 din ki window mein "kitne alag networks se, kitne alag dinon mein" login hua yeh dekhta hai (same-din simultaneous overlap ka intezaar nahi karta, isliye "aaj ek ne kiya, kal doosre ne" jaisa staggered sharing bhi pakad leta hai). Same campus/hostel WiFi ko ek hi network maanta hai — false-positive nahi aata. 🔴 Confirmed = strong recurring pattern, 🟡 Watch = mild signal (ho sakta hai genuine travel ho).
         </p>
        <div id="genuine-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
       </div>
@@ -1052,17 +1052,22 @@ async function loadGenuineDetection() {
     const list = await API.call('/admin/security/genuine-detection');
 
     document.getElementById('genuine-list').innerHTML = list.length ? list.map(u => {
+      const isConfirmed = u.status === 'confirmed';
+      const color = isConfirmed ? '#f87171' : '#fbbf24';
+      const bg = isConfirmed ? 'rgba(248,113,113,0.15)' : 'rgba(251,191,36,0.15)';
+      const icon = isConfirmed ? '🔴' : '🟡';
+      const label = isConfirmed ? 'Confirmed' : 'Watch';
       return `
       <div style="border-bottom:1px solid rgba(255,255,255,0.06);padding:0.85rem 0">
         <div class="list-row" style="border:none;padding:0;cursor:pointer" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none' ? 'block' : 'none'">
-          <div class="avatar" style="background:rgba(248,113,113,0.15);color:#f87171">${(u.name||'?').charAt(0).toUpperCase()}</div>
+          <div class="avatar" style="background:${bg};color:${color}">${(u.name||'?').charAt(0).toUpperCase()}</div>
           <div style="flex:1">
             <div style="font-size:0.85rem;color:#fff">${u.name||'Unknown'}</div>
             <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email}</div>
-            <div style="font-size:0.68rem;color:#f87171;margin-top:2px">⚡ ${u.reason}</div>
+            <div style="font-size:0.68rem;color:${color};margin-top:2px">${icon} ${u.reason}</div>
           </div>
           <div style="display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:flex-end">
-            <span class="tag" style="background:rgba(248,113,113,0.12);color:#f87171">🔴 ${u.activeSessions} devices active</span>
+            <span class="tag" style="background:${bg};color:${color}">${icon} ${label} · ${u.activeSessions} networks</span>
             <span class="tag" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)">${u.totalLogins} total logins</span>
           </div>
         </div>
