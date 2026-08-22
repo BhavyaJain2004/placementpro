@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema({
   paidAt:        { type: Date },
   sessions:      { type: [sessionSchema], default: [] },
   sessionVersion: { type: Number, default: 0 },
+  // Single-device login enforcement — jo bhi naya login hota hai uska sessionId yahan set hota hai,
+  // aur purana koi bhi token (kisi bhi device/IP se) turant invalid ho jata hai. IP/device pe depend
+  // nahi karta — isliye campus WiFi/hostel jaisi shared-IP situations mein galat false-positive nahi aata.
+  activeSessionId: { type: String, default: null },
   hasTestAccess: { type: Boolean, default: false },
   feedbackGiven: { type: Boolean, default: false },
   termsAcceptedAt: { type: Date, default: null },
