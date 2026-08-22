@@ -423,21 +423,29 @@ body{background:#06060f}
     <!-- SECURITY / PASSWORD SHARING -->
     <div id="tab-security" style="display:none">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">🚨 Password Sharing Detector</h2>
-      <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.5rem">Accounts currently active on 2 or more devices/IPs at once (last 7 days)</p>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:0.5rem">Single-device login ab enforce hota hai — naya login hote hi purana device turant logout ho jata hai. Neeche wali lists sirf jaankari/history ke liye hain.</p>
+      <div style="background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.2);border-radius:10px;padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:0.78rem;color:#6ee7b7">
+        ✅ Ab koi bhi account ek time pe sirf ek hi device pe active reh sakta hai — dusra login karte hi pehla wala turant kick ho jata hai.
+      </div>
 
       <div class="stat-grid" id="sec-stat-grid">
         <div class="stat-box"><div class="v" id="sec-total" style="color:#f87171">—</div><div class="l">Suspicious Accounts</div></div>
       </div>
 
       <div class="card">
-        <div class="card-title">🔴 Multi-Device Accounts</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.5rem">
+          <div class="card-title" style="margin-bottom:0">🔴 Multi-Device Accounts (by IP/device)</div>
+        </div>
+        <p style="color:#fbbf24;font-size:0.72rem;margin-bottom:1rem;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:8px;padding:0.6rem 0.85rem">
+          ⚠️ Yeh IP + device match pe based hai — campus WiFi/hostel jaise shared networks pe alag-alag genuine users bhi same IP se aate hain, isliye yahan false-positives ho sakte hain. Final decision ke liye neeche wali "Genuine Detection" list ko priority do.
+        </p>
         <div id="sec-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
       </div>
 
       <!-- GENUINE DETECTION (session-based, IP/device pe depend nahi karta) -->
       <div class="card" style="border-color:rgba(124,106,247,0.25)">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.5rem">
-          <div class="card-title" style="margin-bottom:0">🎯 Genuine Detection (Session-based)</div>
+          <div class="card-title" style="margin-bottom:0">🎯 Genuine Detection (Session-based) — ✅ Reliable signal</div>
           <button onclick="forceLogoutAll()" style="background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.3);color:#f87171;padding:0.5rem 1rem;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">
             🔌 Force Logout Everyone
           </button>
