@@ -757,7 +757,13 @@ router.get('/security/suspicious-devices', verifyToken, verifyAdmin, async (req,
 // Ek specific user ki poori login history (LoginLog se, saari purani entries)
 router.get('/security/history/:userId', verifyToken, verifyAdmin, async (req, res) => {
   try {
-    const logs = await LoginLog.find({ userId: req.params.userId })
+    const SystemConfig = require('../models/SystemConfig');
+    const config = await SystemConfig.findOne({ key: 'security' });
+    const filter = { userId: req.params.userId };
+    if (config?.lastForceLogoutAt) {
+      filter.loginAt = { $gte: config.lastForceLogoutAt };
+    }
+    const logs = await LoginLog.find(filter)
       .sort({ loginAt: -1 })
       .limit(200);
     res.json(logs);
@@ -803,67 +809,69 @@ router.post('/security/clear-session-activity', verifyToken, verifyAdmin, async 
 // 🟡 Suspicious: unusually zyada fresh-logins hue hain 30 din mein (turn-by-turn sharing ka signal)
 router.get('/security/genuine-detection', verifyToken, verifyAdmin, async (req, res) => {
   try {
-    const SessionActivity = require('../models/SessionActivity');
     const SystemConfig = require('../models/SystemConfig');
     const config = await SystemConfig.findOne({ key: 'security' });
 
-    // JWT ki validity jitni window — 7 din. Isi window mein agar 2+ alag
-    // sessions se activity aayi hai, matlab account abhi 2+ jagah "logged in" hai.
-    const WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+    // 30 din ki window — Netflix jaisa "recurring pattern over time" pakadne ke liye,
+    // sirf "abhi is second overlap hua" wala narrow check nahi (wo staggered sharing miss kar deta —
+    // "aaj ek ne kiya, kal doosre ne" jaisa case bilkul pakda nahi jata tha)
+    const WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
     let cutoff = new Date(Date.now() - WINDOW_MS);
     // Force-logout ke baad se hi dekhna hai — purana data (jo confusing tha) ab nahi dikhega
     if (config?.lastForceLogoutAt && config.lastForceLogoutAt > cutoff) {
       cutoff = config.lastForceLogoutAt;
     }
 
-    const pings = await SessionActivity.find({ pingedAt: { $gte: cutoff } })
-      .select('userId sessionId pingedAt')
-      .sort({ pingedAt: -1 });
+    const logs = await LoginLog.find({ loginAt: { $gte: cutoff } })
+      .select('userId ip loginAt name email')
+      .sort({ loginAt: 1 });
+
+    // IP ka pehla 3 octet = "network group" — same campus/hostel WiFi ek hi group maana jayega
+    // (isse shared-IP false-positive nahi aata), sirf genuinely ALAG network (ghar/friend/mobile-data) alag count hoga
+    const networkOf = (ip) => {
+      const parts = (ip || '').split('.');
+      return parts.length === 4 ? parts.slice(0, 3).join('.') : (ip || 'unknown');
+    };
 
     const byUser = {};
-    for (const p of pings) {
-      const uid = String(p.userId);
-      if (!byUser[uid]) byUser[uid] = { sessions: {}, name: '', email: '' };
-      if (!byUser[uid].sessions[p.sessionId]) byUser[uid].sessions[p.sessionId] = [];
-      byUser[uid].sessions[p.sessionId].push(p.pingedAt);
+    for (const log of logs) {
+      const uid = String(log.userId);
+      if (!byUser[uid]) byUser[uid] = { name: log.name, email: log.email, dayNetMap: {}, lastActive: 0, count: 0 };
+      const net = networkOf(log.ip);
+      const day = new Date(log.loginAt).toISOString().split('T')[0];
+      if (!byUser[uid].dayNetMap[day]) byUser[uid].dayNetMap[day] = new Set();
+      byUser[uid].dayNetMap[day].add(net);
+      byUser[uid].lastActive = Math.max(byUser[uid].lastActive, new Date(log.loginAt).getTime());
+      byUser[uid].count++;
     }
-
-    const uids = Object.keys(byUser);
-    if (uids.length) {
-      const users = await User.find({ _id: { $in: uids } }).select('name email');
-      users.forEach(u => {
-        const uid = String(u._id);
-        if (byUser[uid]) { byUser[uid].name = u.name; byUser[uid].email = u.email; }
-      });
-    }
-
-    const totalLoginsMap = {};
-    const allLogs = await LoginLog.find({ userId: { $in: uids } }).select('userId loginAt');
-    allLogs.forEach(l => {
-      const uid = String(l.userId);
-      totalLoginsMap[uid] = (totalLoginsMap[uid] || 0) + 1;
-    });
 
     const result = [];
-    for (const uid of uids) {
-      const sessionIds = Object.keys(byUser[uid].sessions);
-      if (sessionIds.length < 2) continue;
+    for (const [uid, u] of Object.entries(byUser)) {
+      const allNetworks = new Set();
+      Object.values(u.dayNetMap).forEach(set => set.forEach(n => allNetworks.add(n)));
+      if (allNetworks.size < 2) continue; // sirf ek hi network se aa raha hai — normal, skip
 
-      const lastActive = Math.max(...Object.values(byUser[uid].sessions).flat().map(t => new Date(t).getTime()));
+      const totalDistinctDays = Object.keys(u.dayNetMap).length;
+      // Kitne alag DIN aise the jab account ne 2+ networks dikhaye (ek hi din mein bhi possible)
+      const daysWithSwitch = Object.values(u.dayNetMap).filter(set => set.size >= 2).length;
+
+      // 🔴 Confirmed: 3+ alag networks total, YA recurring pattern 3+ alag dinon mein
+      // 🟡 Watch: sirf 2 network dikhe, ek-do baar — ho sakta hai genuine travel/mobile-data switch ho
+      const status = (allNetworks.size >= 3 || totalDistinctDays >= 3) ? 'confirmed' : 'watch';
 
       result.push({
         id: uid,
-        name: byUser[uid].name || 'Unknown',
-        email: byUser[uid].email || '',
-        status: 'confirmed',
-        reason: `Account abhi ${sessionIds.length} alag devices/sessions pe active hai`,
-        activeSessions: sessionIds.length,
-        totalLogins: totalLoginsMap[uid] || 0,
-        lastActive: new Date(lastActive)
+        name: u.name || 'Unknown',
+        email: u.email || '',
+        status,
+        reason: `${allNetworks.size} alag networks se login, ${totalDistinctDays} alag dinon mein${daysWithSwitch ? ` (${daysWithSwitch} din mein same-din switch bhi hua)` : ''}`,
+        activeSessions: allNetworks.size,
+        totalLogins: u.count,
+        lastActive: new Date(u.lastActive)
       });
     }
 
-    result.sort((a, b) => b.activeSessions - a.activeSessions);
+    result.sort((a, b) => (b.status === 'confirmed') - (a.status === 'confirmed') || b.activeSessions - a.activeSessions);
 
     res.json(result);
   } catch (err) {
