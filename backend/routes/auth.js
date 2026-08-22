@@ -1,6 +1,3 @@
-
-
-
 const express = require('express');
 const router  = express.Router();
 const bcrypt  = require('bcryptjs');
@@ -77,13 +74,14 @@ router.post('/register', async (req, res) => {
   sessions:   []
 });
 
-     const { token } = makeToken(user);
+     const { token, sessionId } = makeToken(user);
     user.sessions = addSession(user.sessions, {
       token,
       ip:      getIP(req),
       device:  getDevice(req),
       loginAt: new Date()
     });
+    user.activeSessionId = sessionId; // sirf yahi session ab valid hai
     await user.save();
 
     res.status(201).json({
@@ -120,15 +118,16 @@ router.post('/login', async (req, res) => {
     if (!match)
       return res.status(400).json({ message: 'Invalid credentials' });
 
-const { token } = makeToken(user);
+const { token, sessionId } = makeToken(user);
 
-    // Multiple devices ek saath track honge ab (overwrite nahi, add hoga)
+    // Naya login hamesha "current" ban jata hai — purana kahin bhi (kisi bhi device/IP) turant invalid ho jata hai
     user.sessions = addSession(user.sessions, {
       token,
       ip:      getIP(req),
       device:  getDevice(req),
       loginAt: new Date()
     });
+    user.activeSessionId = sessionId;
     await user.save();
 
     // LoginLog — save ke baad, alag try-catch mein
@@ -203,6 +202,7 @@ router.post('/change-password', verifyToken, async (req, res) => {
 
     user.password = await bcrypt.hash(newPassword, 10);
     user.sessions = [];
+    user.activeSessionId = null; // sab devices se turant logout — jaisa message neeche keh raha hai
     await user.save();
 
     res.json({ message: 'Password updated. Please login again.' });
