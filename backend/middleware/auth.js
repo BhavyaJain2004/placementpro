@@ -86,10 +86,22 @@ const verifyToken = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    const user = await User.findById(decoded.id).select('sessionVersion activeSessionId');
+    if (!user) return res.status(401).json({ message: 'User not found' });
+
     // Force-logout check — agar admin ne "logout everyone" chalaya hai uske baad
     // ka token nahi hai ye, toh reject karo (purana token, naya login chahiye)
-    const user = await User.findById(decoded.id).select('sessionVersion');
-    if (user && (user.sessionVersion || 0) > (decoded.sv || 0)) {
+    if ((user.sessionVersion || 0) > (decoded.sv || 0)) {
+      return res.status(401).json({ message: 'SESSION_EXPIRED' });
+    }
+
+    // Single-device enforcement — sirf sabse latest login hi valid session hai.
+    // Agar kisi bhi doosre device/IP se naya login hua hai uske baad se, yeh purana
+    // token turant reject ho jayega — IP/device match pe depend nahi karta, isliye
+    // shared campus WiFi jaisi jagah pe koi galat false-positive nahi aata.
+    // (activeSessionId null hone ka matlab purana user hai jisne abhi tak naya
+    //  login nahi kiya — usko graceful allow karo, agla login se enforce ho jayega)
+    if (user.activeSessionId && decoded.sid !== user.activeSessionId) {
       return res.status(401).json({ message: 'SESSION_EXPIRED' });
     }
 
