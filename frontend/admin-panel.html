@@ -1041,7 +1041,7 @@ async function loadSecurity() {
         </div>
       </div>`;
    }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">✅ Koi bhi account abhi multiple devices pe active nahi hai</div>';  } catch(e) {
-    document.getElementById('sec-list').innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load karne mein error aaya</div>';
+    document.getElementById('sec-list').innerHTML = `<div style="color:#f87171;text-align:center;padding:1rem">Error: ${e.message || 'Unknown error'}</div>`;
   }
   loadGenuineDetection();
 }
@@ -1067,7 +1067,7 @@ async function loadGenuineDetection() {
             <div style="font-size:0.68rem;color:${color};margin-top:2px">${icon} ${u.reason}</div>
           </div>
           <div style="display:flex;gap:0.4rem;flex-wrap:wrap;justify-content:flex-end">
-            <span class="tag" style="background:${bg};color:${color}">${icon} ${label} · ${u.activeSessions} networks</span>
+            <span class="tag" style="background:${bg};color:${color}">${icon} ${label} · ${u.activeSessions} devices</span>
             <span class="tag" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)">${u.totalLogins} total logins</span>
           </div>
         </div>
@@ -1080,7 +1080,7 @@ async function loadGenuineDetection() {
       </div>`;
     }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">✅ Koi bhi account abhi multiple devices pe active nahi hai</div>';
   } catch(e) {
-    document.getElementById('genuine-list').innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load karne mein error aaya</div>';
+    document.getElementById('genuine-list').innerHTML = `<div style="color:#f87171;text-align:center;padding:1rem">Error: ${e.message || 'Unknown error'}</div>`;
   }
 }
 async function forceLogoutAll() {
