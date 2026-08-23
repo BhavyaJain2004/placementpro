@@ -718,7 +718,7 @@ router.post('/seed-notes', verifyToken, verifyAdmin, async (req, res) => {
 router.get('/security/suspicious-devices', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const SystemConfig = require('../models/SystemConfig');
-    const config = await SystemConfig.findOne({ key: 'security' });
+    const config = await SystemConfig.findOne({ key: 'security' }).catch(() => null);
 
     const WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
     let cutoff = new Date(Date.now() - WINDOW_MS);
@@ -807,65 +807,63 @@ router.post('/security/clear-session-activity', verifyToken, verifyAdmin, async 
 // ── GENUINE SHARING DETECTION (session-based, IP/device pe depend nahi karta) ──
 // 🔴 Confirmed: 2 alag login-sessions ki activity overlap hui hai (real concurrent use)
 // 🟡 Suspicious: unusually zyada fresh-logins hue hain 30 din mein (turn-by-turn sharing ka signal)
+// ── GENUINE SHARING DETECTION (device-based, 30-din recurring pattern) ──
+// IP-based grouping college WiFi ke liye kaam ka nahi tha — sab students ek hi campus
+// network se aate hain, isliye IP kabhi kisi ko differentiate nahi karta. Device (User-Agent
+// string — phone vs laptop ka OS/browser) yahan zyada reliable signal hai.
+// Limitation: agar 2 log EXACT same phone model + same browser version use karein,
+// unka User-Agent identical ho sakta hai — us edge case mein differentiate nahi kar payega.
 router.get('/security/genuine-detection', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const SystemConfig = require('../models/SystemConfig');
-    const config = await SystemConfig.findOne({ key: 'security' });
+    const config = await SystemConfig.findOne({ key: 'security' }).catch(() => null);
 
     // 30 din ki window — Netflix jaisa "recurring pattern over time" pakadne ke liye,
-    // sirf "abhi is second overlap hua" wala narrow check nahi (wo staggered sharing miss kar deta —
-    // "aaj ek ne kiya, kal doosre ne" jaisa case bilkul pakda nahi jata tha)
+    // sirf "abhi is second overlap hua" wala narrow check nahi
     const WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
     let cutoff = new Date(Date.now() - WINDOW_MS);
-    // Force-logout ke baad se hi dekhna hai — purana data (jo confusing tha) ab nahi dikhega
     if (config?.lastForceLogoutAt && config.lastForceLogoutAt > cutoff) {
       cutoff = config.lastForceLogoutAt;
     }
 
     const logs = await LoginLog.find({ loginAt: { $gte: cutoff } })
-      .select('userId ip loginAt name email')
+      .select('userId device loginAt name email')
       .sort({ loginAt: 1 });
 
-    // IP ka pehla 3 octet = "network group" — same campus/hostel WiFi ek hi group maana jayega
-    // (isse shared-IP false-positive nahi aata), sirf genuinely ALAG network (ghar/friend/mobile-data) alag count hoga
-    const networkOf = (ip) => {
-      const parts = (ip || '').split('.');
-      return parts.length === 4 ? parts.slice(0, 3).join('.') : (ip || 'unknown');
-    };
+    const deviceOf = (d) => (d || 'Unknown').trim();
 
     const byUser = {};
     for (const log of logs) {
       const uid = String(log.userId);
-      if (!byUser[uid]) byUser[uid] = { name: log.name, email: log.email, dayNetMap: {}, lastActive: 0, count: 0 };
-      const net = networkOf(log.ip);
+      if (!byUser[uid]) byUser[uid] = { name: log.name, email: log.email, dayDeviceMap: {}, lastActive: 0, count: 0 };
+      const dev = deviceOf(log.device);
       const day = new Date(log.loginAt).toISOString().split('T')[0];
-      if (!byUser[uid].dayNetMap[day]) byUser[uid].dayNetMap[day] = new Set();
-      byUser[uid].dayNetMap[day].add(net);
+      if (!byUser[uid].dayDeviceMap[day]) byUser[uid].dayDeviceMap[day] = new Set();
+      byUser[uid].dayDeviceMap[day].add(dev);
       byUser[uid].lastActive = Math.max(byUser[uid].lastActive, new Date(log.loginAt).getTime());
       byUser[uid].count++;
     }
 
     const result = [];
     for (const [uid, u] of Object.entries(byUser)) {
-      const allNetworks = new Set();
-      Object.values(u.dayNetMap).forEach(set => set.forEach(n => allNetworks.add(n)));
-      if (allNetworks.size < 2) continue; // sirf ek hi network se aa raha hai — normal, skip
+      const allDevices = new Set();
+      Object.values(u.dayDeviceMap).forEach(set => set.forEach(d => allDevices.add(d)));
+      if (allDevices.size < 2) continue; // sirf ek hi device se aa raha hai — normal, skip
 
-      const totalDistinctDays = Object.keys(u.dayNetMap).length;
-      // Kitne alag DIN aise the jab account ne 2+ networks dikhaye (ek hi din mein bhi possible)
-      const daysWithSwitch = Object.values(u.dayNetMap).filter(set => set.size >= 2).length;
+      const totalDistinctDays = Object.keys(u.dayDeviceMap).length;
+      const daysWithSwitch = Object.values(u.dayDeviceMap).filter(set => set.size >= 2).length;
 
-      // 🔴 Confirmed: 3+ alag networks total, YA recurring pattern 3+ alag dinon mein
-      // 🟡 Watch: sirf 2 network dikhe, ek-do baar — ho sakta hai genuine travel/mobile-data switch ho
-      const status = (allNetworks.size >= 3 || totalDistinctDays >= 3) ? 'confirmed' : 'watch';
+      // 🔴 Confirmed: 3+ alag devices total, YA recurring pattern 3+ alag dinon mein
+      // 🟡 Watch: sirf 2 device dikhe, ek-do baar — ho sakta hai genuine naya phone/laptop ho
+      const status = (allDevices.size >= 3 || totalDistinctDays >= 3) ? 'confirmed' : 'watch';
 
       result.push({
         id: uid,
         name: u.name || 'Unknown',
         email: u.email || '',
         status,
-        reason: `${allNetworks.size} alag networks se login, ${totalDistinctDays} alag dinon mein${daysWithSwitch ? ` (${daysWithSwitch} din mein same-din switch bhi hua)` : ''}`,
-        activeSessions: allNetworks.size,
+        reason: `${allDevices.size} alag devices se login, ${totalDistinctDays} alag dinon mein${daysWithSwitch ? ` (${daysWithSwitch} din mein same-din switch bhi hua)` : ''}`,
+        activeSessions: allDevices.size,
         totalLogins: u.count,
         lastActive: new Date(u.lastActive)
       });
