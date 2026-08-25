@@ -361,36 +361,39 @@ router.post('/panel-login', verifyToken, verifyAdmin, async (req, res) => {
 // MAIN STATS — totals, overlaps, growth
 router.get('/analytics/overview', verifyToken, verifyAdmin, async (req, res) => {
   try {
-    const totalUsers   = await User.countDocuments({});
-    const basePaid     = await User.countDocuments({ isPaid: true });
-    const masterDsa    = await User.countDocuments({ masterDsaAccess: true });
-    const bothAccess   = await User.countDocuments({ isPaid: true, masterDsaAccess: true });
-    const freeUsers    = await User.countDocuments({ isPaid: false, masterDsaAccess: false });
-
-    // New users today (with names)
     const todayStart = new Date(); todayStart.setHours(0,0,0,0);
-    const newToday = await User.countDocuments({ createdAt: { $gte: todayStart } });
-    const newTodayList = await User.find({ createdAt: { $gte: todayStart } }).select('name email createdAt').sort({ createdAt: -1 }).lean();
 
-    // DAU — users with activity ping today (assuming Activity model exists with userId+date)
-    let dau = 0;
-    try {
-      const Activity = require('../models/Activity');
-      dau = await Activity.distinct('userId', { createdAt: { $gte: todayStart } }).then(arr => arr.length);
-    } catch(e) {}
-
-    // 7-day signup growth
-    const days = [];
+    // 7-din ke date-ranges pehle bana lo, phir sab counts ek saath (parallel) chalao
+    const dayRanges = [];
     for (let i = 6; i >= 0; i--) {
       const start = new Date(); start.setDate(start.getDate() - i); start.setHours(0,0,0,0);
       const end = new Date(start); end.setDate(end.getDate() + 1);
-      const count = await User.countDocuments({ createdAt: { $gte: start, $lt: end } });
-      days.push({ date: start.toISOString().split('T')[0], count });
+      dayRanges.push({ date: start.toISOString().split('T')[0], start, end });
     }
+
+    let Activity;
+    try { Activity = require('../models/Activity'); } catch(e) {}
+
+    const [
+      totalUsers, basePaid, masterDsa, bothAccess, freeUsers,
+      newToday, newTodayList, dauArr, weeklyCounts
+    ] = await Promise.all([
+      User.countDocuments({}),
+      User.countDocuments({ isPaid: true }),
+      User.countDocuments({ masterDsaAccess: true }),
+      User.countDocuments({ isPaid: true, masterDsaAccess: true }),
+      User.countDocuments({ isPaid: false, masterDsaAccess: false }),
+      User.countDocuments({ createdAt: { $gte: todayStart } }),
+      User.find({ createdAt: { $gte: todayStart } }).select('name email createdAt').sort({ createdAt: -1 }).lean(),
+      Activity ? Activity.distinct('userId', { createdAt: { $gte: todayStart } }) : Promise.resolve([]),
+      Promise.all(dayRanges.map(d => User.countDocuments({ createdAt: { $gte: d.start, $lt: d.end } })))
+    ]);
+
+    const weeklyGrowth = dayRanges.map((d, i) => ({ date: d.date, count: weeklyCounts[i] }));
 
     res.json({
       totalUsers, basePaid, masterDsa, bothAccess, freeUsers,
-      newToday, newTodayList, dau, weeklyGrowth: days
+      newToday, newTodayList, dau: dauArr.length, weeklyGrowth
     });
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
@@ -889,14 +892,15 @@ const Payment = require('../models/Payment');
 // sirf 199 diya toh sirf Plus diya gaya — asli access hi asli truth hai) ──
 router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
   try {
-    const approvedPayments = await Payment.find({ status: 'approved' })
-      .select('userId name email plan amountPaid createdAt')
-      .sort({ createdAt: -1 })
-      .lean();
-
-    const allUsers = await User.find()
-      .select('name email mobile createdAt isPaid hasTestAccess masterDsaAccess')
-      .lean();
+    const [approvedPayments, allUsers] = await Promise.all([
+      Payment.find({ status: 'approved' })
+        .select('userId name email plan amountPaid createdAt')
+        .sort({ createdAt: -1 })
+        .lean(),
+      User.find()
+        .select('name email mobile createdAt isPaid hasTestAccess masterDsaAccess')
+        .lean()
+    ]);
 
     // Mobile number Payment mein store nahi hota, User se le lo (search ke liye)
     const userMap = {};
