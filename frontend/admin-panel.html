@@ -766,32 +766,49 @@ function showTab(tab, btn) {
 
 // ── OVERVIEW ──
 async function loadOverview() {
+  // Cached data turant dikhao (agar pehle kabhi load hua tha) — isse numbers turant dikhte hain,
+  // background mein fresh data aake replace kar dega
+  const cacheKey = 'admin_overview_cache';
+  try {
+    const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+    if (cached) renderOverview(cached, true);
+  } catch(e) {}
+
   try {
     const d = await API.call('/admin/analytics/overview');
-    document.getElementById('stat-grid').innerHTML = `
-      <div class="stat-box"><div class="v">${d.totalUsers}</div><div class="l">Total Users</div></div>
-      <div class="stat-box"><div class="v" style="color:#34d399">${d.basePaid}</div><div class="l">Base Paid</div></div>
-      <div class="stat-box"><div class="v" style="color:#a89df7">${d.masterDsa}</div><div class="l">Master DSA</div></div>
-      <div class="stat-box"><div class="v" style="color:#fbbf24">${d.bothAccess}</div><div class="l">Both</div></div>
-      <div class="stat-box"><div class="v" style="color:#06b6d4">${d.newToday}</div><div class="l">New Today</div></div>
-      <div class="stat-box"><div class="v" style="color:#f87171">${d.dau}</div><div class="l">DAU</div></div>`;
-
-    if (d.newTodayList?.length) {
-      document.getElementById('stat-grid').insertAdjacentHTML('afterend', `
-        <div class="card" style="margin-top:1.25rem">
-          <div class="card-title">🆕 Today's Signups (${d.newTodayList.length})</div>
-          ${d.newTodayList.map(u => `<div class="list-row"><div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div><div style="flex:1"><div style="color:#fff;font-size:0.85rem">${u.name||'—'}</div><div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email}</div></div>${u.isPaid?'<span class="tag" style="background:rgba(52,211,153,0.12);color:#34d399">Paid</span>':''}</div>`).join('')}
-        </div>`);
-    }
-
-    const max = Math.max(...d.weeklyGrowth.map(x=>x.count), 1);
-    document.getElementById('growth-chart').innerHTML = d.weeklyGrowth.map(day => {
-      const h = Math.max((day.count/max)*100, 4);
-      const lbl = new Date(day.date).toLocaleDateString('en-IN',{weekday:'short'});
-      return `<div class="bar-col"><div class="bar-val">${day.count}</div><div class="bar" style="height:${h}%"></div><div class="bar-lbl">${lbl}</div></div>`;
-    }).join('');
-    drawDonut(d);
+    localStorage.setItem(cacheKey, JSON.stringify(d));
+    renderOverview(d, false);
   } catch(e) { console.error(e); }
+}
+
+function renderOverview(d, isStale) {
+  const staleNote = isStale ? '<span style="font-size:0.6rem;color:rgba(255,255,255,0.25);margin-left:6px">(refreshing…)</span>' : '';
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-box"><div class="v">${d.totalUsers}</div><div class="l">Total Users${staleNote}</div></div>
+    <div class="stat-box"><div class="v" style="color:#34d399">${d.basePaid}</div><div class="l">Base Paid</div></div>
+    <div class="stat-box"><div class="v" style="color:#a89df7">${d.masterDsa}</div><div class="l">Master DSA</div></div>
+    <div class="stat-box"><div class="v" style="color:#fbbf24">${d.bothAccess}</div><div class="l">Both</div></div>
+    <div class="stat-box"><div class="v" style="color:#06b6d4">${d.newToday}</div><div class="l">New Today</div></div>
+    <div class="stat-box"><div class="v" style="color:#f87171">${d.dau}</div><div class="l">DAU</div></div>`;
+
+  const existingCard = document.getElementById('todays-signups-card');
+  if (existingCard) existingCard.remove();
+
+  if (d.newTodayList?.length) {
+    document.getElementById('stat-grid').insertAdjacentHTML('afterend', `
+      <div class="card" id="todays-signups-card" style="margin-top:1.25rem">
+        <div class="card-title">🆕 Today's Signups (${d.newTodayList.length})</div>
+        ${d.newTodayList.map(u => `<div class="list-row"><div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div><div style="flex:1"><div style="color:#fff;font-size:0.85rem">${u.name||'—'}</div><div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${u.email}</div></div>${u.isPaid?'<span class="tag" style="background:rgba(52,211,153,0.12);color:#34d399">Paid</span>':''}</div>`).join('')}
+      </div>`);
+  }
+
+  const max = Math.max(...d.weeklyGrowth.map(x=>x.count), 1);
+  document.getElementById('growth-chart').innerHTML = d.weeklyGrowth.map(day => {
+    const h = Math.max((day.count/max)*100, 4);
+    const lbl = new Date(day.date).toLocaleDateString('en-IN',{weekday:'short'});
+    return `<div class="bar-col"><div class="bar-val">${day.count}</div><div class="bar" style="height:${h}%"></div><div class="bar-lbl">${lbl}</div></div>`;
+  }).join('');
+  drawDonut(d);
 }
 
 function drawDonut(d) {
