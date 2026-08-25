@@ -1,8 +1,8 @@
 // ── CONFIG ── change this after backend deploy
 // const API_BASE = 'http://localhost:5000/api';
 // const API_BASE = 'https://PlacementSphere-production-e168.up.railway.app/api';
-// const API_BASE = 'https://PlacementSphere-4tbr.onrender.com/api';
-const API_BASE = 'https://placementpro-4tbr.onrender.com/api';
+// const API_BASE = 'https://placementpro-4tbr.onrender.com/api'; // OLD — Render (usage limit khatam ho gaya tha)
+const API_BASE = 'https://placementpro-production-1864.up.railway.app/api';
 
 const getToken = () => localStorage.getItem('pp_token');
 
