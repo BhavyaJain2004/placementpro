@@ -14,4 +14,7 @@ plan:          { type: String, enum: ['99', '199', '299', '1000', 'resume49', 'r
   reviewedAt:    { type: Date }
 });
 
+paymentSchema.index({ status: 1, createdAt: -1 });
+paymentSchema.index({ userId: 1 });
+
 module.exports = mongoose.model('Payment', paymentSchema);
