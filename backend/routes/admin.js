@@ -882,6 +882,139 @@ const Payment = require('../models/Payment');
 
 // Sabhi submissions — real amountPaid ke saath, actual revenue calculate karta hai
 // Sabhi submissions — real amountPaid ke saath, actual revenue calculate karta hai
+// ── ACTUAL REVENUE (naya dedicated section — real payments pe based, wrong/mismatched
+// plan-signup se disconnect. Package-tier count actual granted access (isPaid/hasTestAccess/
+// masterDsaAccess) se nikalta hai, Payment.plan se nahi — kyunki kabhi kabhi user ne 99 mein
+// signup kiya par 199 diya toh usko Plus (Base+Test) diya gaya, ya 299 mein signup kiya par
+// sirf 199 diya toh sirf Plus diya gaya — asli access hi asli truth hai) ──
+router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const approvedPayments = await Payment.find({ status: 'approved' })
+      .select('userId name email plan amountPaid createdAt')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const allUsers = await User.find()
+      .select('name email mobile createdAt isPaid hasTestAccess masterDsaAccess')
+      .lean();
+
+    // Mobile number Payment mein store nahi hota, User se le lo (search ke liye)
+    const userMap = {};
+    allUsers.forEach(u => { userMap[String(u._id)] = u; });
+
+    const dayKey = (d) => new Date(d).toISOString().split('T')[0];
+    const monthKey = (d) => new Date(d).toISOString().slice(0, 7); // YYYY-MM
+
+    // ── Totals ──
+    const totalRevenue = approvedPayments.reduce((s, p) => s + (p.amountPaid || 0), 0);
+    const nowMonthKey = monthKey(new Date());
+    const todayKey = dayKey(new Date());
+
+    // ── Day-wise (pichle 30 din) ──
+    const dayMap = {};
+    approvedPayments.forEach(p => {
+      const k = dayKey(p.createdAt);
+      if (!dayMap[k]) dayMap[k] = { date: k, revenue: 0, count: 0 };
+      dayMap[k].revenue += (p.amountPaid || 0);
+      dayMap[k].count++;
+    });
+    const dayWise = Object.values(dayMap).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 30);
+
+    // ── Week-wise (pichle 12 hafte, Monday-start) ──
+    const weekKeyOf = (d) => {
+      const dt = new Date(d);
+      const day = dt.getUTCDay();
+      const diff = (day === 0 ? -6 : 1) - day; // Monday tak wapas jao
+      const monday = new Date(dt);
+      monday.setUTCDate(dt.getUTCDate() + diff);
+      return monday.toISOString().split('T')[0];
+    };
+    const weekMap = {};
+    approvedPayments.forEach(p => {
+      const k = weekKeyOf(p.createdAt);
+      if (!weekMap[k]) weekMap[k] = { weekStart: k, revenue: 0, count: 0 };
+      weekMap[k].revenue += (p.amountPaid || 0);
+      weekMap[k].count++;
+    });
+    const weekWise = Object.values(weekMap).sort((a, b) => b.weekStart.localeCompare(a.weekStart)).slice(0, 12);
+
+    // ── Month-wise (sab mahine) ──
+    const monthMap = {};
+    approvedPayments.forEach(p => {
+      const k = monthKey(p.createdAt);
+      if (!monthMap[k]) monthMap[k] = { month: k, revenue: 0, count: 0 };
+      monthMap[k].revenue += (p.amountPaid || 0);
+      monthMap[k].count++;
+    });
+    const monthWise = Object.values(monthMap).sort((a, b) => b.month.localeCompare(a.month));
+    const currentMonthRevenue = monthMap[nowMonthKey]?.revenue || 0;
+    const todayRevenue = dayMap[todayKey]?.revenue || 0;
+
+    // ── Signups per month (sab users) ──
+    const signupMonthMap = {};
+    allUsers.forEach(u => {
+      const k = monthKey(u.createdAt);
+      signupMonthMap[k] = (signupMonthMap[k] || 0) + 1;
+    });
+    const signupsByMonth = Object.entries(signupMonthMap)
+      .map(([month, count]) => ({ month, count }))
+      .sort((a, b) => b.month.localeCompare(a.month));
+
+    // ── Converted per month (jis mahine user ka PEHLA approved payment hua) ──
+    const firstPaymentByUser = {};
+    approvedPayments.forEach(p => {
+      const uid = String(p.userId);
+      if (!firstPaymentByUser[uid] || new Date(p.createdAt) < new Date(firstPaymentByUser[uid]))
+        firstPaymentByUser[uid] = p.createdAt;
+    });
+    const convertedMonthMap = {};
+    Object.values(firstPaymentByUser).forEach(d => {
+      const k = monthKey(d);
+      convertedMonthMap[k] = (convertedMonthMap[k] || 0) + 1;
+    });
+    const convertedByMonth = Object.entries(convertedMonthMap)
+      .map(([month, count]) => ({ month, count }))
+      .sort((a, b) => b.month.localeCompare(a.month));
+
+    // ── Package-tier counts — ASLI granted access se (Payment.plan se nahi) ──
+    let baseOnly = 0, plusTests = 0, complete = 0, unpaid = 0;
+    allUsers.forEach(u => {
+      if (!u.isPaid) { unpaid++; return; }
+      if (u.masterDsaAccess) complete++;
+      else if (u.hasTestAccess) plusTests++;
+      else baseOnly++;
+    });
+
+    // ── Search list (approved transactions, mobile enriched) ──
+    const transactions = approvedPayments.map(p => ({
+      id: p._id,
+      name: p.name,
+      email: p.email,
+      mobile: userMap[String(p.userId)]?.mobile || '',
+      plan: p.plan,
+      amountPaid: p.amountPaid,
+      createdAt: p.createdAt
+    }));
+
+    res.json({
+      totalRevenue,
+      currentMonthRevenue,
+      todayRevenue,
+      totalSignups: allUsers.length,
+      totalConverted: Object.keys(firstPaymentByUser).length,
+      dayWise,
+      weekWise,
+      monthWise,
+      signupsByMonth,
+      convertedByMonth,
+      packageTiers: { baseOnly, plusTests, complete, unpaid },
+      transactions
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const { status } = req.query;
