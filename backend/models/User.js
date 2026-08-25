@@ -51,6 +51,14 @@ const userSchema = new mongoose.Schema({
   
 }, { timestamps: true });
 
+// Admin panel ki analytics queries (Overview, Revenue, Signups History waghera) bahut
+// baar isPaid / masterDsaAccess / createdAt pe filter karti hain — index ke bina har
+// query poori collection scan karti thi. Isse queries kaafi fast ho jayengi.
+userSchema.index({ isPaid: 1 });
+userSchema.index({ masterDsaAccess: 1 });
+userSchema.index({ createdAt: -1 });
+userSchema.index({ isPaid: 1, masterDsaAccess: 1 }); // "both access" wale count ke liye combo
+
 
 
 
