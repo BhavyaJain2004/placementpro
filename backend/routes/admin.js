@@ -359,6 +359,61 @@ router.post('/panel-login', verifyToken, verifyAdmin, async (req, res) => {
 });
 
 // MAIN STATS — totals, overlaps, growth
+// ── SITE VISITS (apna khud ka lightweight visitor counter — Google Analytics ka wait
+// nahi karna, turant real numbers) ──
+router.get('/analytics/visits', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const PageView = require('../models/PageView');
+    const range = req.query.range || 'week'; // day | week | month
+
+    const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+    const weekStart = new Date(); weekStart.setDate(weekStart.getDate() - 7);
+    const liveStart = new Date(Date.now() - 2 * 60 * 1000); // pichle 2 min = "abhi active"
+
+    const [todayCount, weekCount, liveCount] = await Promise.all([
+      PageView.countDocuments({ createdAt: { $gte: todayStart } }),
+      PageView.countDocuments({ createdAt: { $gte: weekStart } }),
+      PageView.countDocuments({ createdAt: { $gte: liveStart } })
+    ]);
+
+    // Graph series — range ke hisaab se bucket size
+    let series = [];
+    if (range === 'day') {
+      const raw = await PageView.find({ createdAt: { $gte: todayStart } }).select('createdAt').lean();
+      const buckets = Array(24).fill(0);
+      raw.forEach(v => buckets[new Date(v.createdAt).getHours()]++);
+      series = buckets.map((count, h) => ({ label: `${h}:00`, count }));
+    } else if (range === 'month') {
+      const monthStart = new Date(); monthStart.setDate(monthStart.getDate() - 30);
+      const raw = await PageView.find({ createdAt: { $gte: monthStart } }).select('createdAt').lean();
+      const map = {};
+      raw.forEach(v => {
+        const k = new Date(v.createdAt).toISOString().split('T')[0];
+        map[k] = (map[k] || 0) + 1;
+      });
+      for (let i = 29; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const k = d.toISOString().split('T')[0];
+        series.push({ label: d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }), count: map[k] || 0 });
+      }
+    } else { // week (default)
+      const raw = await PageView.find({ createdAt: { $gte: weekStart } }).select('createdAt').lean();
+      const map = {};
+      raw.forEach(v => {
+        const k = new Date(v.createdAt).toISOString().split('T')[0];
+        map[k] = (map[k] || 0) + 1;
+      });
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const k = d.toISOString().split('T')[0];
+        series.push({ label: d.toLocaleDateString('en-IN', { weekday: 'short' }), count: map[k] || 0 });
+      }
+    }
+
+    res.json({ live: liveCount, todayCount, weekCount, series, range });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
 router.get('/analytics/overview', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const todayStart = new Date(); todayStart.setHours(0,0,0,0);
