@@ -6,15 +6,39 @@ const API_BASE = 'https://placementpro-production-1864.up.railway.app/api';
 
 const getToken = () => localStorage.getItem('pp_token');
 
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+// fetch ko timeout dete hain — warna agar network hang ho jaye, request kabhi khatam hi na ho
+const fetchWithTimeout = (url, options, timeoutMs = 12000) => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
+};
+
 const call = async (endpoint, options = {}) => {
   const token = getToken();
-  const res = await fetch(`${API_BASE}${endpoint}`, {
+  const fetchOptions = {
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {})
     },
     ...options
-  });
+  };
+
+  // Network blip (mobile data switch, backend cold-start, DNS hiccup) ke liye 3 attempts —
+  // pehli 2 baar chup-chaap retry, sirf teesri baar fail hone pe hi error dikhega
+  let res, lastErr;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      res = await fetchWithTimeout(`${API_BASE}${endpoint}`, fetchOptions);
+      lastErr = null;
+      break;
+    } catch (err) {
+      lastErr = err;
+      if (attempt < 3) await sleep(attempt * 700); // 0.7s, phir 1.4s ruk ke retry
+    }
+  }
+  if (lastErr) throw new Error('Network issue — dobara try karo, ya kuch der baad refresh karo.');
 
   // Added new part 
    if (res.status === 401) {
