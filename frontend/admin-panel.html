@@ -123,6 +123,37 @@ body{background:#06060f}
     <!-- OVERVIEW -->
     <div id="tab-overview">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1.25rem">📊 Platform Overview</h2>
+
+      <div class="card" style="margin-bottom:1.25rem;background:linear-gradient(135deg,rgba(6,182,212,0.05),rgba(124,106,247,0.05));border-color:rgba(6,182,212,0.2)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="position:relative;width:10px;height:10px;display:inline-block">
+              <span style="position:absolute;inset:0;border-radius:50%;background:#34d399;animation:livePulse 1.5s ease-out infinite"></span>
+              <span style="position:absolute;inset:0;border-radius:50%;background:#34d399"></span>
+            </span>
+            <span style="font-size:0.8rem;color:#34d399;font-weight:700;text-transform:uppercase;letter-spacing:0.05em">Live Now</span>
+            <span id="visits-live" style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin-left:6px">—</span>
+          </div>
+          <div style="display:flex;gap:6px;background:rgba(255,255,255,0.04);padding:4px;border-radius:9px">
+            <button class="vr-btn" data-range="day" onclick="setVisitRange('day')" style="padding:0.4rem 0.9rem;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,0.5);font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Today</button>
+            <button class="vr-btn" data-range="week" onclick="setVisitRange('week')" style="padding:0.4rem 0.9rem;border-radius:6px;border:none;background:#0891b2;color:#fff;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Week</button>
+            <button class="vr-btn" data-range="month" onclick="setVisitRange('month')" style="padding:0.4rem 0.9rem;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,0.5);font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">30 Days</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">
+          <div class="stat-box"><div class="v" id="visits-today" style="color:#06b6d4">—</div><div class="l">Visits Today</div></div>
+          <div class="stat-box"><div class="v" id="visits-week" style="color:#a89df7">—</div><div class="l">Visits (7 days)</div></div>
+        </div>
+        <div id="visits-chart" style="display:flex;align-items:flex-end;gap:4px;height:110px"></div>
+      </div>
+      <style>
+        @keyframes livePulse { 0%{transform:scale(1);opacity:0.7} 100%{transform:scale(2.8);opacity:0} }
+        .vr-chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+        .vr-bar{width:100%;border-radius:3px 3px 0 0;background:linear-gradient(180deg,#06b6d4,#0891b2);min-height:2px;transition:height 0.3s ease}
+        .vr-lbl{font-size:0.6rem;color:rgba(255,255,255,0.35);white-space:nowrap}
+        .vr-val{font-size:0.62rem;color:rgba(255,255,255,0.6);font-weight:600}
+      </style>
+
       <div class="stat-grid" id="stat-grid">
         <div class="stat-box"><div class="v">—</div><div class="l">Total Users</div></div>
         <div class="stat-box"><div class="v">—</div><div class="l">Base Paid</div></div>
@@ -779,6 +810,48 @@ async function loadOverview() {
     localStorage.setItem(cacheKey, JSON.stringify(d));
     renderOverview(d, false);
   } catch(e) { console.error(e); }
+
+  try {
+    await loadVisits('week');
+    if (!window._liveInterval) {
+      window._liveInterval = setInterval(refreshLiveCount, 10000); // har 10 sec live count refresh
+    }
+  } catch(e) {}
+}
+
+let _currentVisitRange = 'week';
+
+async function loadVisits(range) {
+  _currentVisitRange = range;
+  try {
+    const v = await API.call(`/admin/analytics/visits?range=${range}`);
+    document.getElementById('visits-live').textContent  = v.live;
+    document.getElementById('visits-today').textContent = v.todayCount;
+    document.getElementById('visits-week').textContent  = v.weekCount;
+
+    const max = Math.max(...v.series.map(s => s.count), 1);
+    document.getElementById('visits-chart').innerHTML = v.series.map(s => `
+      <div class="vr-chart-col">
+        <div class="vr-val">${s.count || ''}</div>
+        <div class="vr-bar" style="height:${Math.max((s.count/max)*100, 2)}%"></div>
+        <div class="vr-lbl">${s.label}</div>
+      </div>`).join('');
+
+    document.querySelectorAll('.vr-btn').forEach(b => {
+      const active = b.dataset.range === range;
+      b.style.background = active ? '#0891b2' : 'transparent';
+      b.style.color = active ? '#fff' : 'rgba(255,255,255,0.5)';
+    });
+  } catch(e) {}
+}
+
+function setVisitRange(range) { loadVisits(range); }
+
+async function refreshLiveCount() {
+  try {
+    const v = await API.call(`/admin/analytics/visits?range=${_currentVisitRange}`);
+    document.getElementById('visits-live').textContent = v.live;
+  } catch(e) {}
 }
 
 function renderOverview(d, isStale) {
@@ -1415,5 +1488,6 @@ async function resetUserPassword() {
   }
 }
 </script>
+<script src="js/track.js"></script>
 </body>
 </html>
