@@ -2,7 +2,8 @@
 // const API_BASE = 'http://localhost:5000/api';
 // const API_BASE = 'https://PlacementSphere-production-e168.up.railway.app/api';
 // const API_BASE = 'https://placementpro-4tbr.onrender.com/api'; // OLD — Render (usage limit khatam ho gaya tha)
-const API_BASE = 'https://placementpro-production-1864.up.railway.app/api';
+// const API_BASE = 'https://placementpro-production-1864.up.railway.app/api'; // OLD — generic Railway URL (ISP block issue tha)
+const API_BASE = 'https://api.placementsphere.in/api';
 
 const getToken = () => localStorage.getItem('pp_token');
 
