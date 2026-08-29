@@ -73,6 +73,7 @@
     <li><a href="#about">About</a></li>
     <li><a href="#process">Process</a></li>
     <li><a href="#features">Features</a></li>
+    <li><a href="#reviews">Reviews</a></li>
     <li><a href="#pricing">Pricing</a></li>
   </ul>
   <div class="nav-right">
@@ -199,6 +200,74 @@
     <div class="stats-banner-item">
       <span class="sb-num">300+</span>
       <span class="sb-label">Companies Covered</span>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews" class="reviews-section">
+  <div class="reviews-heading">
+    <span class="about-badge">💬 Loved by students</span>
+    <h2>What KIITians are saying</h2>
+    <p class="process-sub">Real feedback from students who used PlacementSphere to prep.</p>
+  </div>
+
+  <div class="marquee-row">
+    <div class="marquee-track" id="marquee-track-1"></div>
+  </div>
+  <div class="marquee-row">
+    <div class="marquee-track reverse" id="marquee-track-2"></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="faq-section">
+  <span class="about-badge">❓ Got questions?</span>
+  <h2 style="text-align:center;margin-bottom:0.5rem">Frequently Asked Questions</h2>
+  <p class="process-sub" style="text-align:center">Everything you need to know before you get access.</p>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>How fast does my account get activated after payment?</span>
+        <span class="faq-arrow">⌄</span>
+      </button>
+      <div class="faq-a"><p>Usually within 1-2 hours during the day (9 AM – 10 PM). You'll get a confirmation once it's done — just log out and log back in.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>Do you offer refunds?</span>
+        <span class="faq-arrow">⌄</span>
+      </button>
+      <div class="faq-a"><p>No — since this is digital content that's unlocked instantly and priced affordably as a one-time payment, we don't offer refunds once access is activated. We'd recommend checking the free preview and features list before purchasing.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>Is this a one-time payment or a subscription?</span>
+        <span class="faq-arrow">⌄</span>
+      </button>
+      <div class="faq-a"><p>One-time payment only. Pay once, get lifetime access — no renewals, no hidden charges, no subscription.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>Is the content updated regularly?</span>
+        <span class="faq-arrow">⌄</span>
+      </button>
+      <div class="faq-a"><p>Yes. Company profiles, DSA questions, and notes are updated every placement season, and it's included free as part of your lifetime access.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>Can I use my account on multiple devices?</span>
+        <span class="faq-arrow">⌄</span>
+      </button>
+      <div class="faq-a"><p>Your account works on any device, but only one session stays active at a time for security — logging in on a new device signs you out of the old one automatically.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span>What if my payment doesn't get approved?</span>
+        <span class="faq-arrow">⌄</span>
+      </button>
+      <div class="faq-a"><p>Double-check your transaction ID and screenshot were submitted correctly on the payment page. If it's been more than a few hours, reach out to us via the Contact link in the footer.</p></div>
     </div>
   </div>
 </section>
@@ -412,6 +481,52 @@
   }
 
   loadPricing();
+
+  // ── REVIEWS (floating marquee) ──
+  const REVIEWS = [
+    { name: 'Ankit Sharma', branch: 'CSE, 4th Year', rating: 5, text: "It's a genuine platform. The company-wise DSA questions saved me so much time before my TCS interview." },
+    { name: 'Priya Nair', branch: 'IT, 3rd Year', rating: 5, text: 'This is really helping me prepare for my placements. The interview experiences section is gold — real seniors, real rounds.' },
+    { name: 'Rohit Verma', branch: 'CSE, 4th Year', rating: 4, text: 'Paid ₹99 not expecting much honestly, but the company profiles are super detailed. Worth every rupee.' },
+    { name: 'Sneha Patil', branch: 'ECE, 3rd Year', rating: 5, text: "Best ₹99 I've spent this year. Everything is organized so well, no more searching random WhatsApp groups." },
+    { name: 'Kunal Desai', branch: 'CSE, 4th Year', rating: 5, text: 'The mock tests actually match the real company patterns. Cracked my Infosys test because of the practice here.' },
+    { name: 'Ayesha Khan', branch: 'IT, 4th Year', rating: 4, text: 'Resume builder alone is worth it, got 3 shortlists after using their AI suggestions to fix my resume.' },
+    { name: 'Devansh Rao', branch: 'CSE, 3rd Year', rating: 5, text: 'Genuinely surprised how updated everything is. New companies keep getting added every season.' },
+    { name: 'Ishita Mehta', branch: 'IT, 3rd Year', rating: 5, text: "Was skeptical at first but it's legit. Support responded fast when my payment took time to activate." },
+  ];
+
+  function renderStars(n) {
+    return '★'.repeat(n) + '☆'.repeat(5 - n);
+  }
+
+  function reviewCard(r) {
+    return `<div class="review-card">
+      <div class="review-stars">${renderStars(r.rating)}</div>
+      <p class="review-text">"${r.text}"</p>
+      <div class="review-author">
+        <div class="review-avatar">${r.name.charAt(0)}</div>
+        <div>
+          <div class="review-name">${r.name}</div>
+          <div class="review-branch">${r.branch}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  (function initReviews() {
+    const row1 = REVIEWS.slice(0, 4);
+    const row2 = REVIEWS.slice(4, 8);
+    // Content ko 2x duplicate karte hain taaki loop seamless dikhe (marquee animation)
+    document.getElementById('marquee-track-1').innerHTML = [...row1, ...row1].map(reviewCard).join('');
+    document.getElementById('marquee-track-2').innerHTML = [...row2, ...row2].map(reviewCard).join('');
+  })();
+
+  // ── FAQ accordion ──
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
 
   function showAuth(tab, plan = '99') {
   document.getElementById('auth-modal').classList.add('open');
