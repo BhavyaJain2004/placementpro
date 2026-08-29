@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="shortcut icon" href="favicon.ico">
+<meta name="theme-color" content="#10142c">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Page Not Found — PlacementSphere</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(124,106,247,0.08), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(6,182,212,0.05), transparent 40%),
+      var(--bg);
+    overflow: hidden;
+  }
+
+  .nf-logo {
+    position: absolute; top: 28px; left: 32px;
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; color: #fff;
+    text-decoration: none;
+  }
+
+  .nf-404 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(4.5rem, 14vw, 8rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: -0.5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .nf-monster-wrap {
+    width: 220px; height: 220px;
+    margin: 0.5rem 0 1rem;
+    animation: nfBob 3s ease-in-out infinite;
+  }
+  @keyframes nfBob {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50%      { transform: translateY(-14px) rotate(1deg); }
+  }
+
+  .nf-eye { animation: nfBlink 4.2s ease-in-out infinite; transform-origin: center; }
+  @keyframes nfBlink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95%           { transform: scaleY(0.1); }
+  }
+
+  .nf-arm-left  { animation: nfWaveL 2.6s ease-in-out infinite; transform-origin: 78px 150px; }
+  .nf-arm-right { animation: nfWaveR 2.6s ease-in-out infinite 0.3s; transform-origin: 222px 150px; }
+  @keyframes nfWaveL { 0%,100%{transform:rotate(0deg)} 50%{transform:rotate(-8deg)} }
+  @keyframes nfWaveR { 0%,100%{transform:rotate(0deg)} 50%{transform:rotate(8deg)} }
+
+  .nf-title { font-size: 1.35rem; margin-bottom: 0.6rem; color: var(--text); }
+  .nf-sub   { color: var(--muted); font-size: 0.92rem; max-width: 420px; margin-bottom: 2rem; line-height: 1.6; }
+
+  .nf-shadow {
+    width: 140px; height: 18px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.35), transparent 70%);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    animation: nfShadow 3s ease-in-out infinite;
+  }
+  @keyframes nfShadow {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50%      { transform: scale(0.75); opacity: 0.3; }
+  }
+</style>
+</head>
+<body>
+
+  <a href="index.html" class="nf-logo">
+    <span class="nav-logo-mark" style="width:30px;height:30px;flex:0 0 30px"><span style="font-size:0.9rem">P</span></span>
+    PlacementSphere
+  </a>
+
+  <div class="nf-404">404</div>
+
+  <div class="nf-monster-wrap">
+    <svg viewBox="0 0 300 300" width="100%" height="100%">
+      <defs>
+        <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#8f7ffb"/>
+          <stop offset="100%" stop-color="#4433c4"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Legs -->
+      <ellipse cx="118" cy="235" rx="16" ry="10" fill="#3a2e9e"/>
+      <ellipse cx="182" cy="235" rx="16" ry="10" fill="#3a2e9e"/>
+
+      <!-- Arms -->
+      <g class="nf-arm-left">
+        <ellipse cx="78" cy="165" rx="16" ry="34" fill="url(#bodyGrad)" transform="rotate(18 78 165)"/>
+      </g>
+      <g class="nf-arm-right">
+        <ellipse cx="222" cy="165" rx="16" ry="34" fill="url(#bodyGrad)" transform="rotate(-18 222 165)"/>
+      </g>
+
+      <!-- Body (rounded blob) -->
+      <path d="M150 60
+               C 210 60 240 105 240 155
+               C 240 205 205 232 150 232
+               C 95 232 60 205 60 155
+               C 60 105 90 60 150 60 Z"
+            fill="url(#bodyGrad)"/>
+
+      <!-- Belly patch -->
+      <ellipse cx="150" cy="175" rx="48" ry="38" fill="#ffffff" opacity="0.12"/>
+
+      <!-- Little horns -->
+      <path d="M118 62 L110 30 L128 55 Z" fill="#a89df7"/>
+      <path d="M182 62 L190 30 L172 55 Z" fill="#a89df7"/>
+
+      <!-- Spots -->
+      <circle cx="95" cy="130" r="7" fill="#ffffff" opacity="0.15"/>
+      <circle cx="205" cy="150" r="10" fill="#ffffff" opacity="0.1"/>
+
+      <!-- Eyes -->
+      <g class="nf-eye">
+        <circle cx="122" cy="140" r="22" fill="#ffffff"/>
+        <circle cx="126" cy="143" r="11" fill="#1a1130"/>
+        <circle cx="130" cy="139" r="3.5" fill="#ffffff"/>
+      </g>
+      <g class="nf-eye">
+        <circle cx="178" cy="140" r="22" fill="#ffffff"/>
+        <circle cx="182" cy="143" r="11" fill="#1a1130"/>
+        <circle cx="186" cy="139" r="3.5" fill="#ffffff"/>
+      </g>
+
+      <!-- Confused mouth -->
+      <path d="M132 190 Q 150 178 168 190" stroke="#2a1f66" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+      <!-- Blush -->
+      <ellipse cx="100" cy="170" rx="9" ry="6" fill="#ff8fb3" opacity="0.35"/>
+      <ellipse cx="200" cy="170" rx="9" ry="6" fill="#ff8fb3" opacity="0.35"/>
+    </svg>
+  </div>
+  <div class="nf-shadow"></div>
+
+  <div class="nf-title">Oops! This page wandered off.</div>
+  <p class="nf-sub">Even our study-monster couldn't find what you're looking for. The page may have moved, or the link might be broken.</p>
+
+  <div style="display:flex;gap:0.85rem;flex-wrap:wrap;justify-content:center">
+    <button class="btn btn-primary btn-lg" onclick="window.location.href='index.html'">← Back to Home</button>
+    <button class="btn btn-outline btn-lg" onclick="window.location.href='dashboard.html'">Go to Dashboard</button>
+  </div>
+
+</body>
+</html>
