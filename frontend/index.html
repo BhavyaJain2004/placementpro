@@ -85,14 +85,102 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-glow"></div>
-  <div class="hero-eyebrow">🎓 Built for campus placements</div>
-  <h1>Everything you need to<br><span class="highlight">crack placements</span></h1>
-  <p>Company processes, DSA questions across every language, notes, and real interview experiences — all in one place.</p>
-  <div class="hero-cta">
-    <button class="btn btn-primary btn-lg" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Get Access →</button>
-    <button class="btn btn-outline btn-lg" onclick="showAuth('login')">Already a member</button>
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <div class="hero-eyebrow">🎓 Built for campus placements</div>
+      <h1>Everything you need to<br><span class="highlight">crack placements</span></h1>
+      <p>Company processes, DSA questions across every language, notes, and real interview experiences — all in one place.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Get Access →</button>
+        <button class="btn btn-outline btn-lg" onclick="showAuth('login')">Already a member</button>
+      </div>
+      <p class="hero-note">One-time payment · Lifetime access · No subscription</p>
+    </div>
+
+    <div class="hero-illustration">
+      <div class="hi-particles">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+
+      <svg class="hi-scene" viewBox="0 0 420 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="hiGlow" cx="55%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="#7c6af7" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#7c6af7" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="hiDesk" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#2a2350"/>
+            <stop offset="100%" stop-color="#181432"/>
+          </linearGradient>
+          <linearGradient id="hiScreen" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4433c4"/>
+            <stop offset="100%" stop-color="#06b6d4"/>
+          </linearGradient>
+        </defs>
+
+        <ellipse cx="230" cy="180" rx="190" ry="190" fill="url(#hiGlow)"/>
+
+        <!-- Monitor -->
+        <rect x="205" y="130" width="150" height="100" rx="8" fill="#100c26" stroke="#3a2e9e" stroke-width="2"/>
+        <rect x="215" y="140" width="130" height="80" rx="4" fill="url(#hiScreen)" opacity="0.85"/>
+        <rect x="225" y="150" width="60" height="6" rx="3" fill="#ffffff" opacity="0.5"/>
+        <rect x="225" y="163" width="90" height="5" rx="2.5" fill="#ffffff" opacity="0.3"/>
+        <rect x="225" y="174" width="75" height="5" rx="2.5" fill="#ffffff" opacity="0.3"/>
+        <rect x="270" y="230" width="20" height="16" fill="#100c26"/>
+        <rect x="250" y="246" width="60" height="6" rx="3" fill="#100c26"/>
+
+        <!-- Plant -->
+        <rect x="60" y="235" width="26" height="22" rx="3" fill="#3a2e9e"/>
+        <path d="M73 235 Q60 210 50 215 Q60 225 73 220 Q80 200 90 208 Q85 225 73 225" fill="#34d399" opacity="0.85"/>
+
+        <!-- Coffee cup -->
+        <rect x="345" y="240" width="16" height="18" rx="3" fill="#f4f1ff" opacity="0.9"/>
+        <path d="M361 245 Q370 245 368 253 Q366 258 361 256" stroke="#f4f1ff" stroke-width="2" fill="none" opacity="0.9"/>
+
+        <!-- Desk -->
+        <rect x="20" y="256" width="380" height="14" rx="3" fill="url(#hiDesk)"/>
+        <rect x="40" y="270" width="10" height="70" fill="#181432"/>
+        <rect x="370" y="270" width="10" height="70" fill="#181432"/>
+
+        <!-- Chair -->
+        <path d="M175 200 Q175 165 215 165 Q255 165 255 200 L255 245 Q215 258 175 245 Z" fill="#100c26"/>
+
+        <!-- Person (side silhouette, sitting) -->
+        <g>
+          <circle cx="215" cy="148" r="25" fill="#231c4a"/>
+          <path d="M191 145 Q191 116 215 114 Q239 116 239 145 Q239 128 215 126 Q191 128 191 145 Z" fill="#181432"/>
+          <path d="M193 170 Q193 154 215 154 Q243 154 248 190 L250 245 L180 245 L182 190 Q184 167 193 170 Z" fill="#2a2350"/>
+          <path d="M243 188 Q262 194 268 208" stroke="#2a2350" stroke-width="15" fill="none" stroke-linecap="round"/>
+          <path d="M193 170 Q172 180 168 205" stroke="#2a2350" stroke-width="15" fill="none" stroke-linecap="round"/>
+        </g>
+
+        <!-- Floating code brackets -->
+        <text x="330" y="90" font-family="monospace" font-size="22" fill="#a89df7" opacity="0.5">&lt;/&gt;</text>
+        <text x="70" y="110" font-family="monospace" font-size="18" fill="#06b6d4" opacity="0.4">{ }</text>
+      </svg>
+
+      <div class="hi-card hi-card-1">
+        <span class="hi-card-label">DSA Questions</span>
+        <span class="hi-card-value" style="color:#34d399">500+</span>
+        <span class="hi-card-sub">Company-wise</span>
+      </div>
+      <div class="hi-card hi-card-2">
+        <span class="hi-card-label">Mock Tests</span>
+        <span class="hi-card-value" style="color:#a89df7">50+</span>
+        <span class="hi-card-sub">Full-length</span>
+      </div>
+      <div class="hi-card hi-card-3">
+        <span class="hi-card-label">Companies</span>
+        <span class="hi-card-value" style="color:#06b6d4">300+</span>
+        <span class="hi-card-sub">Verified</span>
+      </div>
+      <div class="hi-card hi-card-4">
+        <span class="hi-card-label">Experiences</span>
+        <span class="hi-card-value" style="color:#fbbf24">100+</span>
+        <span class="hi-card-sub">Real & genuine</span>
+      </div>
+    </div>
   </div>
-  <p class="hero-note">One-time payment · Lifetime access · No subscription</p>
 
   <div class="stat-row">
     <div class="stat-item">
