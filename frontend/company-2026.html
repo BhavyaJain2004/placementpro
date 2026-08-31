@@ -99,16 +99,7 @@ body { font-family:'DM Sans',sans-serif; }
 <body>
 <div id="toast"></div>
 
-<nav class="navbar">
-  <div class="nav-logo">
-    <a href="dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit">
-      <span class="dot"></span> PlacementSphere
-    </a>
-  </div>
-  <ul class="nav-links">
-    <li><a href="dashboard.html">Dashboard</a></li>
-  </ul>
-</nav>
+<div id="app-layout-mount"></div>
 
 <div class="c26-hero">
   <div class="c26-eyebrow"><span style="width:6px;height:6px;border-radius:50%;background:#fbbf24"></span> Live Placement Data</div>
@@ -134,6 +125,7 @@ body { font-family:'DM Sans',sans-serif; }
 <button class="c26-loadmore" id="loadmore-btn" onclick="loadMore()" style="display:none">Load More Companies</button>
 
 <script src="js/api.js"></script>
+<script src="js/layout.js"></script>
 <script src="js/auth.js"></script>
 <script>
 Auth.requireAuth();
