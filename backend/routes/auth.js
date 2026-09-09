@@ -51,7 +51,7 @@ function addSession(existingSessions, newSession) {
 router.post('/register', async (req, res) => {
   try {
     // const { name, email, password, mobile } = req.body;
-    const { name, email, password, mobile, referredBy , plan } = req.body;
+    const { name, email, password, mobile, referredBy , plan, college } = req.body;
 
     if (!name || !email || !password || !mobile)
       return res.status(400).json({ message: 'Name, email and password required' });
@@ -62,15 +62,25 @@ router.post('/register', async (req, res) => {
     if (exists)
       return res.status(400).json({ message: 'Email already registered' });
 
+    // College sirf yahin set hota hai, signup ke waqt — koi bhi doosri jagah se
+    // change nahi ho sakta. Sirf 'active' status wale college hi valid hain.
+    const College = require('../models/College');
+    let userCollege = 'kiit';
+    if (college) {
+      const c = await College.findOne({ slug: String(college).toLowerCase().trim(), status: 'active' });
+      if (c) userCollege = c.slug;
+    }
+
     const hashed = await bcrypt.hash(password, 10);
     const user = await User.create({
   name:       name.trim(),
   email:      email.toLowerCase().trim(),
   password:   hashed,
   mobile:     mobile ? mobile.trim() : '',
+  college:    userCollege,
   referredBy: referredBy ? referredBy.toUpperCase().trim() : '',
   termsAcceptedAt: new Date(),
-       selectedPlan: ['99','199','299'].includes(plan) ? plan : '99',
+       selectedPlan: plan || '499',
   sessions:   []
 });
 
@@ -90,10 +100,11 @@ router.post('/register', async (req, res) => {
         id:      user._id,
         name:    user.name,
         email:   user.email,
+        college: user.college,
         isPaid:  user.isPaid,
         isAdmin: user.isAdmin,
         masterDsaAccess: user.masterDsaAccess || false,
-        selectedPlan:    user.selectedPlan    || '99'
+        selectedPlan:    user.selectedPlan    || '499'
       }
     });
   } catch (err) {
