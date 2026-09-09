@@ -82,6 +82,7 @@ app.use('/api/companies2026', require('./routes/companies2026'));
 app.use('/api/resume', require('./routes/resume'));
 app.use('/api/companies',   require('./routes/companies'));
 app.use('/api/packages',    require('./routes/packages'));
+app.use('/api/colleges',    require('./routes/colleges'));
 app.use('/api/dsa',         require('./routes/dsa'));
 app.use('/api/notes',       require('./routes/notes'));
 app.use('/api/experiences', require('./routes/experiences'));
