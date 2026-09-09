@@ -25,6 +25,9 @@ const sessionSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   name:          { type: String, required: true, trim: true },
   email:         { type: String, required: true, unique: true, lowercase: true, trim: true },
+  // Sirf signup ke waqt set hota hai — kahin bhi 'edit profile' route isko change nahi karta,
+  // isliye user khud se doosre college mein switch nahi kar sakta (leak-proof by design)
+  college:       { type: String, default: 'kiit', lowercase: true, trim: true },
   mobile:        { type: String, default: '' },
   referredBy:    { type: String, default: '', trim: true },
   password:      { type: String, required: true },
