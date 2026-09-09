@@ -729,10 +729,72 @@ router.get('/packages', verifyToken, verifyAdmin, async (req, res) => {
 });
 
 // Admin — create a new package (fully custom — can add a 4th, 5th plan etc, no code change needed)
+// ── COLLEGES ──
+const College = require('../models/College');
+
+router.get('/colleges', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const list = await College.find().sort({ order: 1 });
+    res.json(list);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+router.post('/college', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    if (req.body.slug) {
+      const existing = await College.findOne({ slug: req.body.slug.toLowerCase().trim() });
+      if (existing) return res.status(400).json({ message: `Slug "${req.body.slug}" pehle se exist karta hai.` });
+    }
+    const c = await College.create(req.body);
+    res.json(c);
+  } catch(err) { res.status(400).json({ message: err.message }); }
+});
+
+router.patch('/college/:id', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    delete req.body.slug; // slug kabhi change nahi hona chahiye — companies/packages isi se linked hain
+    const c = await College.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!c) return res.status(404).json({ message: 'College not found' });
+    res.json(c);
+  } catch(err) { res.status(400).json({ message: err.message }); }
+});
+
+router.delete('/college/:id', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    await College.findByIdAndDelete(req.params.id);
+    res.json({ ok: true });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
+// Students count + revenue, college-wise (Actual Revenue tab ke liye)
+router.get('/colleges/breakdown', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const Payment = require('../models/Payment');
+    const [userCounts, revenueAgg] = await Promise.all([
+      User.aggregate([{ $group: { _id: '$college', count: { $sum: 1 } } }]),
+      Payment.aggregate([
+        { $match: { status: 'approved' } },
+        { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'u' } },
+        { $unwind: { path: '$u', preserveNullAndEmptyArrays: true } },
+        { $group: { _id: { $ifNull: ['$u.college', 'kiit'] }, revenue: { $sum: '$amountPaid' }, count: { $sum: 1 } } }
+      ])
+    ]);
+    const revenueMap = {};
+    revenueAgg.forEach(r => { revenueMap[r._id || 'kiit'] = r; });
+    const result = userCounts.map(u => ({
+      college: u._id || 'kiit',
+      students: u.count,
+      revenue: revenueMap[u._id]?.revenue || 0,
+      payments: revenueMap[u._id]?.count || 0
+    }));
+    res.json(result);
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
+
 router.post('/package', verifyToken, verifyAdmin, async (req, res) => {
   try {
     if (req.body.key) {
-      const existing = await Package.findOne({ key: req.body.key });
+      const existing = await Package.findOne({ key: req.body.key, college: req.body.college || 'kiit' });
       if (existing) {
         return res.status(400).json({ message: `Plan Key "${req.body.key}" pehle se exist karti hai (package: "${existing.name}"). Naya banane ke liye alag key do, ya "Edit" use karo.` });
       }
