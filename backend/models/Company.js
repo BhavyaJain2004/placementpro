@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const companySchema = new mongoose.Schema({
+  college:     { type: String, default: 'kiit', lowercase: true, trim: true, index: true },
   name:        { type: String, required: true },
   domain:      String,
   type:        { type: String, enum: ['Product','Service','Startup'], default: 'Service' },
