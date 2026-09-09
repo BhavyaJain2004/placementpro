@@ -73,6 +73,7 @@
     <li><a href="#about">About</a></li>
     <li><a href="#process">Process</a></li>
     <li><a href="#features">Features</a></li>
+    <li><a href="#colleges">Colleges</a></li>
     <li><a href="#reviews">Reviews</a></li>
     <li><a href="#pricing">Pricing</a></li>
   </ul>
@@ -373,12 +374,24 @@
   </div>
 </section>
 
+<!-- COLLEGE SELECTOR -->
+<section id="colleges" class="colleges-section">
+  <span class="about-badge">🎓 Choose your campus</span>
+  <h2 style="text-align:center;margin-bottom:0.5rem">Select your college</h2>
+  <p class="process-sub" style="text-align:center">Pricing and companies shown below will be specific to your campus.</p>
+
+  <div id="college-grid" class="college-grid">
+    <p style="color:var(--faint)">Loading colleges...</p>
+  </div>
+</section>
+
 <section id="pricing" class="container" style="padding-bottom:6rem; text-align:center;">
   <h2 style="font-size:2rem; margin-bottom:0.5rem">Simple, one-time pricing</h2>
-  <p style="color:var(--muted); margin-bottom:3rem">Pay once. Access forever. No renewals.</p>
+  <p style="color:var(--muted); margin-bottom:1rem">Pay once. Access forever. No renewals.</p>
+  <p id="pricing-college-label" style="color:var(--accent2); font-size:0.85rem; font-weight:600; margin-bottom:2rem"></p>
 
   <div id="pricing-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;max-width:1050px;margin:0 auto;">
-    <p style="color:var(--faint);grid-column:1/-1">Loading plans...</p>
+    <p style="color:var(--faint);grid-column:1/-1">Select a college above to see pricing...</p>
   </div>
 </section>
 
@@ -462,6 +475,7 @@
 ">✅ Signing up for Base Platform — ₹99</div>
 
 <input type="hidden" id="signup-plan" value="99">
+<input type="hidden" id="signup-college" value="kiit">
         <div class="input-group">
           <label>Email ( Please Use Personal Mail ID only !!!!! )</label>
           <input class="input-field" type="email" id="s-email" placeholder="you@example.com" required>
@@ -527,12 +541,18 @@
   // ── PRICING — fetched from admin-controlled Package API ──
   let loadedPackages = [];
 
-  async function loadPricing() {
+  let selectedCollege = 'kiit';
+
+  async function loadPricing(college) {
+    college = college || selectedCollege;
     const grid = document.getElementById('pricing-grid');
+    const label = document.getElementById('pricing-college-label');
     try {
-      loadedPackages = await API.call('/packages');
+      loadedPackages = await API.call(`/packages?college=${encodeURIComponent(college)}`);
+      const collegeObj = (window._collegesCache || []).find(c => c.slug === college);
+      if (label) label.textContent = collegeObj ? `Showing pricing for ${collegeObj.name}` : '';
       if (!loadedPackages.length) {
-        grid.innerHTML = '<p style="color:var(--faint);grid-column:1/-1">Plans coming soon.</p>';
+        grid.innerHTML = '<p style="color:var(--faint);grid-column:1/-1">Plans coming soon for this college.</p>';
         return;
       }
       grid.innerHTML = loadedPackages.map(renderPricingCard).join('');
@@ -574,14 +594,81 @@
       <ul style="list-style:none;margin-bottom:1.25rem;display:flex;flex-direction:column;gap:0.5rem;">${featuresHtml}</ul>
       <button style="width:100%;padding:0.65rem;border-radius:9px;font-size:0.85rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity 0.2s;${btnStyle}"
         onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"
-        onclick="showAuth('signup','${pkg.key}')">
+        onclick="showAuth('signup','${pkg.key}','${pkg.college || selectedCollege}')">
         Get ${pkg.name} Access
       </button>
       <p style="font-size:0.72rem;color:var(--faint);margin-top:0.75rem;text-align:center">One-time · Lifetime · No subscription</p>
     </div>`;
   }
 
-  loadPricing();
+  // ── COLLEGE SELECTOR ──
+  const BUILDING_COLORS = [
+    ['#8f7ffb', '#4433c4'], ['#5ec8ff', '#0891b2'], ['#fbbf24', '#d97706'],
+    ['#34d399', '#059669'], ['#ff8fb3', '#db2777'], ['#a78bfa', '#6d28d9']
+  ];
+
+  function buildingIcon(seedIndex) {
+    const [top, bottom] = BUILDING_COLORS[seedIndex % BUILDING_COLORS.length];
+    const gid = 'cbg' + seedIndex;
+    return `
+    <svg viewBox="0 0 160 160" class="college-building-svg">
+      <defs>
+        <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${top}"/><stop offset="100%" stop-color="${bottom}"/>
+        </linearGradient>
+      </defs>
+      <!-- ground shadow -->
+      <ellipse cx="80" cy="138" rx="52" ry="8" fill="#000" opacity="0.25"/>
+      <!-- isometric building block -->
+      <polygon points="80,30 130,55 130,105 80,130 30,105 30,55" fill="url(#${gid})"/>
+      <polygon points="80,30 130,55 80,80 30,55" fill="#ffffff" opacity="0.18"/>
+      <polygon points="30,55 80,80 80,130 30,105" fill="#000000" opacity="0.12"/>
+      <!-- windows -->
+      <rect x="45" y="68" width="10" height="14" rx="1.5" fill="#fff" opacity="0.55"/>
+      <rect x="62" y="78" width="10" height="14" rx="1.5" fill="#fff" opacity="0.4"/>
+      <rect x="88" y="78" width="10" height="14" rx="1.5" fill="#fff" opacity="0.4"/>
+      <rect x="105" y="68" width="10" height="14" rx="1.5" fill="#fff" opacity="0.55"/>
+      <rect x="45" y="88" width="10" height="14" rx="1.5" fill="#fff" opacity="0.4"/>
+      <rect x="105" y="88" width="10" height="14" rx="1.5" fill="#fff" opacity="0.4"/>
+      <!-- flag / spire -->
+      <line x1="80" y1="30" x2="80" y2="14" stroke="#fff" stroke-width="2" opacity="0.7"/>
+      <path d="M80 14 L94 19 L80 24 Z" fill="#fff" opacity="0.7"/>
+    </svg>`;
+  }
+
+  async function loadColleges() {
+    const grid = document.getElementById('college-grid');
+    try {
+      const colleges = await API.call('/colleges');
+      window._collegesCache = colleges;
+      if (!colleges.length) { grid.innerHTML = '<p style="color:var(--faint)">Colleges coming soon.</p>'; return; }
+
+      grid.innerHTML = colleges.map((c, i) => `
+        <div class="college-card ${c.slug === selectedCollege ? 'selected' : ''}" data-slug="${c.slug}" onclick="selectCollege('${c.slug}')">
+          <div class="college-building-wrap">${buildingIcon(i)}</div>
+          <div class="college-card-name">${c.name}</div>
+          <div class="college-card-loc">${c.location || ''}</div>
+          <div class="college-card-check">✓</div>
+        </div>`).join('');
+
+      // Default: pehla college select karo agar KIIT list mein hai, warna pehla jo bhi ho
+      if (colleges.some(c => c.slug === selectedCollege)) selectCollege(selectedCollege, true);
+      else if (colleges[0]) selectCollege(colleges[0].slug, true);
+    } catch (e) {
+      grid.innerHTML = '<p style="color:var(--faint)">Could not load colleges.</p>';
+    }
+  }
+
+  function selectCollege(slug, skipScroll) {
+    selectedCollege = slug;
+    document.getElementById('signup-college').value = slug;
+    document.querySelectorAll('.college-card').forEach(el => {
+      el.classList.toggle('selected', el.dataset.slug === slug);
+    });
+    loadPricing(slug);
+  }
+
+  loadColleges();
 
   // ── REVIEWS (floating marquee) ──
   const REVIEWS = [
@@ -629,11 +716,12 @@
     if (!wasOpen) item.classList.add('open');
   }
 
-  function showAuth(tab, plan = '99') {
+  function showAuth(tab, plan = '99', college) {
   document.getElementById('auth-modal').classList.add('open');
   switchTab(tab);
   // Plan set karo
   document.getElementById('signup-plan').value = plan;
+  document.getElementById('signup-college').value = college || selectedCollege || 'kiit';
   const pkg = loadedPackages.find(p => p.key === plan);
   document.getElementById('signup-plan-label').textContent = pkg
     ? `✅ Signing up for ${pkg.name} — ₹${pkg.price}`
@@ -701,6 +789,7 @@ async function handleSignup(e) {
   }
   const btn  = document.getElementById('signup-btn');
   const plan = document.getElementById('signup-plan').value;
+  const college = document.getElementById('signup-college').value;
   btn.disabled = true; btn.textContent = 'Creating account…';
   document.getElementById('signup-err').textContent = '';
   try {
@@ -712,14 +801,18 @@ async function handleSignup(e) {
         password:   document.getElementById('s-pass').value,
         mobile:     document.getElementById('reg-mobile').value.trim(),
         referredBy: document.getElementById('reg-referral').value.trim().toUpperCase(),
-         plan:       plan
+         plan:       plan,
+         college:    college
       })
     });
     localStorage.setItem('pp_token', data.token);
     localStorage.setItem('pp_user', JSON.stringify(data.user));
 
-    // Plan ke hisab se redirect
-    if (plan === '299') {
+    // Plan ke hisab se redirect — sirf KIIT ke paas alag plus/masterdsa pages hain,
+    // naye colleges (jaise Bennett) ke liye seedha dashboard
+    if (college !== 'kiit') {
+      window.location.replace('dashboard.html');
+    } else if (plan === '299') {
       window.location.replace('masterdsa.html');
     } else if (plan === '199') {
       window.location.replace('plus.html');
