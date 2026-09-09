@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 // 'key' hi wahi plan identifier hai jo Payment/User.selectedPlan mein use hota hai —
 // naya package add karne pe bas naya unique key do (jaise 'diwali299'), koi code change nahi chahiye.
 const packageSchema = new mongoose.Schema({
-  key:           { type: String, required: true, unique: true, trim: true },
+  college:       { type: String, default: 'kiit', lowercase: true, trim: true, index: true },
+  key:           { type: String, required: true, trim: true },
   name:          { type: String, required: true },        // e.g. "Base", "Plus", "Complete"
   tagline:       { type: String, default: '' },            // small label above price e.g. "BASE"
   badge:         { type: String, default: '' },             // e.g. "Most Popular" ribbon, empty = no ribbon
