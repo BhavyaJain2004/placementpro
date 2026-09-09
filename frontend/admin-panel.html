@@ -111,6 +111,7 @@ body{background:#06060f}
     <div class="as-item" onclick="showTab('actualrevenue',this)">📈 Actual Revenue</div>
 
     <div class="as-section">Pricing</div>
+    <div class="as-item" onclick="showTab('colleges',this)">🎓 Colleges</div>
     <div class="as-item" onclick="showTab('packages',this)">📦 Packages</div>
 
     <div style="padding:1.5rem 1.25rem 0">
@@ -371,6 +372,54 @@ body{background:#06060f}
     </div>
 
     <!-- PACKAGES -->
+    <!-- COLLEGES -->
+    <div id="tab-colleges" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">🎓 Colleges</h2>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.5rem">Naya college onboard karo — signup dropdown, landing page selector, aur companies/packages sab isi slug se link hote hain</p>
+
+      <div class="card">
+        <div class="card-title" id="college-form-title">✏️ Add New College</div>
+        <div style="display:flex;flex-direction:column;gap:0.85rem">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Slug <span style="color:rgba(255,255,255,0.25)">(permanent, e.g. bennett)</span></div>
+              <input id="col-slug" placeholder="e.g. bennett" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">College Name</div>
+              <input id="col-name" placeholder="e.g. Bennett University" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem">
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Location</div>
+              <input id="col-location" placeholder="e.g. Greater Noida, UP" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Status</div>
+              <select id="col-status" style="width:100%;background:#12121f;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem;color:#fff;font-size:0.85rem;outline:none">
+                <option value="coming_soon">Coming Soon</option>
+                <option value="active">Active (live for signups)</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Display Order</div>
+              <input id="col-order" type="number" placeholder="2" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
+            </div>
+          </div>
+          <div style="display:flex;gap:0.75rem;align-items:center">
+            <button onclick="saveCollege()" id="col-save-btn" style="background:#7c6af7;color:#fff;border:none;border-radius:8px;padding:0.6rem 1.25rem;font-size:0.82rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer">➕ Add College</button>
+            <button onclick="resetCollegeForm()" id="col-cancel-btn" style="display:none;background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.6rem 1.1rem;font-size:0.82rem;cursor:pointer">Cancel Edit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📋 All Colleges</div>
+        <div id="college-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
+      </div>
+    </div>
+
     <div id="tab-packages" style="display:none">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">📦 Packages / Pricing Plans</h2>
       <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.5rem">Control what shows on the landing page & payment page — price, description, on/off, and even add brand new plans</p>
@@ -380,9 +429,16 @@ body{background:#06060f}
         <div class="card-title" id="pkg-form-title">✏️ Add New Package</div>
         <div style="display:flex;flex-direction:column;gap:0.85rem">
 
+          <div>
+            <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">College</div>
+            <select id="pkg-college" style="width:100%;background:#12121f;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem;color:#fff;font-size:0.85rem;outline:none">
+              <option value="kiit">KIIT University</option>
+            </select>
+          </div>
+
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
             <div>
-              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Plan Key <span style="color:rgba(255,255,255,0.25)">(unique, used internally — e.g. 99, diwali299)</span></div>
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-bottom:0.4rem">Plan Key <span style="color:rgba(255,255,255,0.25)">(unique per college — e.g. 99, 499)</span></div>
               <input id="pkg-key" placeholder="e.g. 99" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.65rem 0.85rem;color:#fff;font-size:0.85rem;outline:none">
             </div>
             <div>
@@ -675,6 +731,8 @@ function resetPkgForm() {
   document.getElementById('pkg-key').disabled = false;
   document.getElementById('pkg-color').value = '#7c6af7';
   document.getElementById('pkg-highlighted').checked = false;
+  document.getElementById('pkg-college').value = 'kiit';
+  document.getElementById('pkg-college').disabled = false;
   document.getElementById('pkg-form-title').textContent = '✏️ Add New Package';
   document.getElementById('pkg-save-btn').textContent = '➕ Add Package';
   document.getElementById('pkg-cancel-btn').style.display = 'none';
@@ -684,6 +742,8 @@ function editPackage(id) {
   const pkg = (window._pkgCache || []).find(p => p._id === id);
   if (!pkg) return;
   editingPkgId = id;
+  document.getElementById('pkg-college').value = pkg.college || 'kiit';
+  document.getElementById('pkg-college').disabled = true; // college bhi kabhi change nahi hona chahiye ek baar package ban jaye
   document.getElementById('pkg-key').value = pkg.key;
   document.getElementById('pkg-key').disabled = true; // key kabhi change nahi hota — payment/user records isi se linked hain
   document.getElementById('pkg-name').value = pkg.name;
@@ -705,10 +765,12 @@ async function savePackage() {
   const key = document.getElementById('pkg-key').value.trim();
   const name = document.getElementById('pkg-name').value.trim();
   const price = Number(document.getElementById('pkg-price').value);
+  const college = document.getElementById('pkg-college').value;
 
   if (!key || !name || !price) { alert('Plan Key, Name aur Price zaroori hain'); return; }
 
   const body = {
+    college,
     name,
     tagline: document.getElementById('pkg-tagline').value.trim(),
     badge: document.getElementById('pkg-badge').value.trim(),
@@ -728,6 +790,7 @@ async function savePackage() {
       await API.call('/admin/package', { method: 'POST', body: JSON.stringify(body) });
     }
     document.getElementById('pkg-key').disabled = false;
+    document.getElementById('pkg-college').disabled = false;
     resetPkgForm();
     loadPackages();
     alert('Saved! Website pe turant reflect ho jayega.');
@@ -751,6 +814,15 @@ async function deletePackage(id, name) {
 
 async function loadPackages() {
   try {
+    // College dropdown ko live colleges se populate karo (naya college add ho toh yahan bhi turant dikhe)
+    try {
+      const colleges = await API.call('/admin/colleges');
+      const sel = document.getElementById('pkg-college');
+      const currentVal = sel.value;
+      sel.innerHTML = colleges.map(c => `<option value="${c.slug}">${c.name}</option>`).join('') || '<option value="kiit">KIIT University</option>';
+      if ([...sel.options].some(o => o.value === currentVal)) sel.value = currentVal;
+    } catch(e) {}
+
     const list = await API.call('/admin/packages');
     window._pkgCache = list;
     const el = document.getElementById('pkg-list');
@@ -760,7 +832,7 @@ async function loadPackages() {
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0.6rem">
           <div style="flex:1">
             <div style="font-size:0.92rem;color:#fff;font-weight:700">${p.name} <span style="color:${p.accentColor};font-weight:800">₹${p.price}</span>${p.originalPrice > p.price ? ` <span style="color:rgba(255,255,255,0.25);text-decoration:line-through;font-size:0.75rem">₹${p.originalPrice}</span>` : ''}</div>
-            <div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:2px">key: ${p.key}${p.badge ? ' · ' + p.badge : ''}</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:2px">🎓 ${(p.college || 'kiit').toUpperCase()} · key: ${p.key}${p.badge ? ' · ' + p.badge : ''}</div>
           </div>
           <span class="ntf-status ${p.isActive ? 'ntf-active' : 'ntf-paused'}">${p.isActive ? '● Live' : '⏸ Off'}</span>
         </div>
@@ -772,6 +844,102 @@ async function loadPackages() {
       </div>`).join('');
   } catch(e) {
     document.getElementById('pkg-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Could not load</div>';
+  }
+}
+
+// ── COLLEGES ──
+let editingCollegeId = null;
+
+function resetCollegeForm() {
+  editingCollegeId = null;
+  ['col-slug','col-name','col-location','col-order'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('col-slug').disabled = false;
+  document.getElementById('col-status').value = 'coming_soon';
+  document.getElementById('college-form-title').textContent = '✏️ Add New College';
+  document.getElementById('col-save-btn').textContent = '➕ Add College';
+  document.getElementById('col-cancel-btn').style.display = 'none';
+}
+
+function editCollege(id) {
+  const c = (window._collegeCache || []).find(x => x._id === id);
+  if (!c) return;
+  editingCollegeId = id;
+  document.getElementById('col-slug').value = c.slug;
+  document.getElementById('col-slug').disabled = true; // slug permanent — companies/packages isi se linked
+  document.getElementById('col-name').value = c.name;
+  document.getElementById('col-location').value = c.location || '';
+  document.getElementById('col-status').value = c.status;
+  document.getElementById('col-order').value = c.order || 0;
+  document.getElementById('college-form-title').textContent = `✏️ Editing "${c.name}"`;
+  document.getElementById('col-save-btn').textContent = '💾 Update College';
+  document.getElementById('col-cancel-btn').style.display = 'inline-block';
+  document.getElementById('tab-colleges').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function saveCollege() {
+  const slug = document.getElementById('col-slug').value.trim().toLowerCase();
+  const name = document.getElementById('col-name').value.trim();
+  if (!slug || !name) { alert('Slug aur Name zaroori hain'); return; }
+
+  const body = {
+    name,
+    location: document.getElementById('col-location').value.trim(),
+    status: document.getElementById('col-status').value,
+    order: Number(document.getElementById('col-order').value) || 0
+  };
+
+  try {
+    if (editingCollegeId) {
+      await API.call('/admin/college/' + editingCollegeId, { method: 'PATCH', body: JSON.stringify(body) });
+    } else {
+      body.slug = slug;
+      await API.call('/admin/college', { method: 'POST', body: JSON.stringify(body) });
+    }
+    document.getElementById('col-slug').disabled = false;
+    resetCollegeForm();
+    loadColleges();
+    alert('Saved! Signup dropdown aur landing page pe turant reflect ho jayega.');
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+async function toggleCollegeActive(id, current) {
+  try {
+    await API.call('/admin/college/' + id, { method: 'PATCH', body: JSON.stringify({ status: current === 'active' ? 'coming_soon' : 'active' }) });
+    loadColleges();
+  } catch(e) {}
+}
+
+async function deleteCollege(id, name) {
+  if (!confirm(`"${name}" college permanently delete karna hai? Uske students/companies/packages database mein safe rahenge, sirf listing delete hogi.`)) return;
+  try {
+    await API.call('/admin/college/' + id, { method: 'DELETE' });
+    loadColleges();
+  } catch(e) {}
+}
+
+async function loadColleges() {
+  try {
+    const list = await API.call('/admin/colleges');
+    window._collegeCache = list;
+    const el = document.getElementById('college-list');
+    if (!list.length) { el.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Koi college nahi hai — upar se add karo</div>'; return; }
+    el.innerHTML = list.map(c => `
+      <div class="notif-card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:0.6rem">
+          <div style="flex:1">
+            <div style="font-size:0.92rem;color:#fff;font-weight:700">${c.name}</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:2px">slug: ${c.slug}${c.location ? ' · ' + c.location : ''}</div>
+          </div>
+          <span class="ntf-status ${c.status === 'active' ? 'ntf-active' : 'ntf-paused'}">${c.status === 'active' ? '● Active' : '⏳ Coming Soon'}</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button class="btn-sm" onclick="editCollege('${c._id}')">✏️ Edit</button>
+          <button class="btn-sm" onclick="toggleCollegeActive('${c._id}', '${c.status}')">${c.status === 'active' ? '⏸ Mark Coming Soon' : '▶ Make Active'}</button>
+          <button class="btn-sm btn-danger" onclick="deleteCollege('${c._id}', '${c.name}')">🗑 Delete</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('college-list').innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Could not load</div>';
   }
 }
 // ── AUTH ──
@@ -786,12 +954,12 @@ function checkPwd() {
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
 // ── TAB ROUTING ──
-const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue'];
+const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue','colleges'];
 function showTab(tab, btn) {
   ALL_TABS.forEach(t => { const el = document.getElementById('tab-'+t); if(el) el.style.display = t===tab?'block':'none'; });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
-  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue };
+  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue, colleges: loadColleges };
   if (loaders[tab]) loaders[tab]();
 }
 
