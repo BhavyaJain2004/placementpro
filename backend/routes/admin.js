@@ -37,6 +37,35 @@ router.get('/users', ...guard, async (req, res) => {
 
 // Make a user admin (run once for yourself)
 // Make a user admin (run once for yourself)
+// ── ONE-TIME MIGRATION (college architecture rollout) ──
+// Existing Users/Companies/Packages ko college:"kiit" tag karta hai, aur KIIT ko active
+// college banata hai. SAFE — kisi document ko delete/overwrite nahi karta, sirf missing
+// field fill karta hai. Ek baar chalane ke baad isko hata sakte ho.
+router.post('/run-college-migration', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const College = require('../models/College');
+    const Company = require('../models/Company');
+    const Package = require('../models/Package');
+
+    await College.findOneAndUpdate(
+      { slug: 'kiit' },
+      { slug: 'kiit', name: 'KIIT University', location: 'Bhubaneswar, Odisha', status: 'active', order: 1 },
+      { upsert: true }
+    );
+
+    const u = await User.updateMany({ college: { $exists: false } }, { college: 'kiit' });
+    const c = await Company.updateMany({ college: { $exists: false } }, { college: 'kiit' });
+    const p = await Package.updateMany({ college: { $exists: false } }, { college: 'kiit' });
+
+    res.json({
+      message: 'Migration done — koi purana data delete/overwrite nahi hua',
+      usersUpdated: u.modifiedCount,
+      companiesUpdated: c.modifiedCount,
+      packagesUpdated: p.modifiedCount
+    });
+  } catch (err) { res.status(500).json({ message: err.message }); }
+});
+
 router.post('/make-admin', verifyToken, verifyAdmin, async (req, res) => {
   const { email } = req.body;
   const user = await User.findOneAndUpdate({ email }, { isAdmin: true }, { new: true });
