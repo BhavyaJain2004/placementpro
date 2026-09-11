@@ -609,30 +609,49 @@
 
   function buildingIcon(seedIndex) {
     const [top, bottom] = BUILDING_COLORS[seedIndex % BUILDING_COLORS.length];
-    const gid = 'cbg' + seedIndex;
+    const gWall = 'cwall' + seedIndex, gSide = 'cside' + seedIndex;
     return `
     <svg viewBox="0 0 160 160" class="college-building-svg">
       <defs>
-        <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <linearGradient id="${gWall}" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stop-color="${top}"/><stop offset="100%" stop-color="${bottom}"/>
         </linearGradient>
+        <linearGradient id="${gSide}" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="${bottom}"/><stop offset="100%" stop-color="#1a1440"/>
+        </linearGradient>
       </defs>
-      <!-- ground shadow -->
-      <ellipse cx="80" cy="138" rx="52" ry="8" fill="#000" opacity="0.25"/>
-      <!-- isometric building block -->
-      <polygon points="80,30 130,55 130,105 80,130 30,105 30,55" fill="url(#${gid})"/>
-      <polygon points="80,30 130,55 80,80 30,55" fill="#ffffff" opacity="0.18"/>
-      <polygon points="30,55 80,80 80,130 30,105" fill="#000000" opacity="0.12"/>
-      <!-- windows -->
-      <rect x="45" y="68" width="10" height="14" rx="1.5" fill="#fff" opacity="0.55"/>
-      <rect x="62" y="78" width="10" height="14" rx="1.5" fill="#fff" opacity="0.4"/>
-      <rect x="88" y="78" width="10" height="14" rx="1.5" fill="#fff" opacity="0.4"/>
-      <rect x="105" y="68" width="10" height="14" rx="1.5" fill="#fff" opacity="0.55"/>
-      <rect x="45" y="88" width="10" height="14" rx="1.5" fill="#fff" opacity="0.4"/>
-      <rect x="105" y="88" width="10" height="14" rx="1.5" fill="#fff" opacity="0.4"/>
-      <!-- flag / spire -->
-      <line x1="80" y1="30" x2="80" y2="14" stroke="#fff" stroke-width="2" opacity="0.7"/>
-      <path d="M80 14 L94 19 L80 24 Z" fill="#fff" opacity="0.7"/>
+      <ellipse cx="80" cy="146" rx="46" ry="7" fill="#000" opacity="0.3"/>
+
+      <!-- steps -->
+      <polygon points="50,120 110,120 118,125 42,125" fill="#241c52"/>
+      <polygon points="45,125 115,125 122,130 38,130" fill="#1c1642"/>
+
+      <!-- front face -->
+      <polygon points="50,60 105,60 105,120 50,120" fill="url(#${gWall})"/>
+      <!-- side face (depth) -->
+      <polygon points="105,60 122,68 122,128 105,120" fill="url(#${gSide})"/>
+
+      <!-- pediment / triangular roof -->
+      <polygon points="50,60 105,60 96,38 59,38" fill="#f4f1ff"/>
+      <polygon points="105,60 122,68 111,46 96,38" fill="${top}" opacity="0.85"/>
+
+      <!-- columns -->
+      <rect x="56" y="66" width="6" height="52" fill="#e8e4ff" opacity="0.9"/>
+      <rect x="70" y="66" width="6" height="52" fill="#e8e4ff" opacity="0.9"/>
+      <rect x="84" y="66" width="6" height="52" fill="#e8e4ff" opacity="0.9"/>
+      <rect x="98" y="66" width="6" height="52" fill="#e8e4ff" opacity="0.75"/>
+
+      <!-- entrance -->
+      <rect x="72" y="98" width="12" height="22" rx="1" fill="#1c1642"/>
+
+      <!-- side windows -->
+      <rect x="109" y="76" width="6" height="9" fill="#fff" opacity="0.4"/>
+      <rect x="109" y="92" width="6" height="9" fill="#fff" opacity="0.4"/>
+      <rect x="109" y="108" width="6" height="9" fill="#fff" opacity="0.4"/>
+
+      <!-- flag -->
+      <line x1="77" y1="38" x2="77" y2="20" stroke="#e8e4ff" stroke-width="2"/>
+      <path d="M77 20 L91 25 L77 30 Z" fill="${top}"/>
     </svg>`;
   }
 
