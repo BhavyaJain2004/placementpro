@@ -11,6 +11,18 @@ const TestAttempt = require('../models/TestAttempt');
 const guard = [verifyToken, verifyAdmin];
 
 // ── Companies ──
+// Bulk import — kisi bhi college ke liye reusable. Body: { college: 'bennett', companies: [{...}] }
+router.post('/companies/bulk-import', ...guard, async (req, res) => {
+  try {
+    const { college, companies } = req.body;
+    if (!college || !Array.isArray(companies) || !companies.length)
+      return res.status(400).json({ message: 'college aur companies array zaroori hain' });
+    const docs = companies.map(c => ({ ...c, college: college.toLowerCase().trim() }));
+    const inserted = await Company.insertMany(docs);
+    res.json({ message: `${inserted.length} companies imported for ${college}`, count: inserted.length });
+  } catch (e) { res.status(400).json({ message: e.message }); }
+});
+
 router.post('/companies',      ...guard, async (req, res) => { try { res.json(await Company.create(req.body)); }                                       catch(e){ res.status(400).json({error:e.message}); }});
 router.put('/companies/:id',   ...guard, async (req, res) => { res.json(await Company.findByIdAndUpdate(req.params.id, req.body, {new:true,runValidators:true})); });
 router.delete('/companies/:id',...guard, async (req, res) => { await Company.findByIdAndDelete(req.params.id); res.json({success:true}); });
@@ -1181,6 +1193,7 @@ router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) =>
       if (p.plan === '99') nowHasAccess = u.isPaid;
       else if (p.plan === '199') nowHasAccess = u.isPaid && u.hasTestAccess;
       else if (p.plan === '299' || p.plan === '1000') nowHasAccess = u.isPaid && u.masterDsaAccess;
+      else if (p.plan === '499') nowHasAccess = u.isPaid && u.masterDsaAccess;
       else if (p.plan === 'resume49') nowHasAccess = u.resume49;
       else if (p.plan === 'resume99') nowHasAccess = u.resume99;
       else if (p.plan === 'resume150') nowHasAccess = u.resume150;
@@ -1224,6 +1237,10 @@ router.post('/payment-submissions/:id/approve', verifyToken, verifyAdmin, async 
     } else if (payment.plan === '299' || payment.plan === '1000') {
       update = { isPaid: true, paidAt: new Date(), hasTestAccess: true, masterDsaAccess: true, resume150: true, resumeAnalysisUsed: false, selectedPlan: '299' };
       accessLabel = 'Complete — Master DSA (₹299)';
+    } else if (payment.plan === '499') {
+      // Naye colleges (Bennett waghera) ka single all-inclusive plan — approve hote hi poora access
+      update = { isPaid: true, paidAt: new Date(), hasTestAccess: true, masterDsaAccess: true, resume150: true, resumeAnalysisUsed: false, selectedPlan: '499' };
+      accessLabel = 'Complete — All Access (₹499)';
     } else if (['resume49','resume99','resume150'].includes(payment.plan)) {
       const resumePlanValue = payment.plan.replace('resume', '');
       update = {
