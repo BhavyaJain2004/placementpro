@@ -19,8 +19,12 @@ function renderAppLayout() {
   if (!mount) return;
 
   const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
+  const cachedUser = (window.Auth && Auth.getUser) ? Auth.getUser() : JSON.parse(localStorage.getItem('pp_user') || 'null');
+  const isKiit = !cachedUser || !cachedUser.college || cachedUser.college === 'kiit';
 
-  const linksHtml = SIDEBAR_LINKS.map(l => {
+  const links = isKiit ? SIDEBAR_LINKS : SIDEBAR_LINKS.filter(l => l.href !== 'company-2026.html');
+
+  const linksHtml = links.map(l => {
     const active = l.href === currentPage ? ' active' : '';
     const badge = l.badge ? `<span class="si-badge">${l.badge}</span>` : '';
     return `<a href="${l.href}" class="sidebar-item${active}"><span class="si-icon">${l.icon}</span><span>${l.label}</span>${badge}</a>`;
