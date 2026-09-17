@@ -953,6 +953,17 @@ body.sidebar-hovered{
   font-size:.62rem !important;
 }
 
+.college-tag{
+  display:inline-flex !important;
+  align-items:center;
+  padding:1px 7px;
+  border-radius:99px;
+  font-size:.58rem !important;
+  font-weight:700;
+  letter-spacing:0.02em;
+  line-height:1.5;
+}
+
 .sidebar-role-dot{
   width:5px;
   height:5px;
@@ -1166,6 +1177,7 @@ body.sidebar-hovered{
       </div>
       <div class="sidebar-profile-role">
         Student
+        <span id="college-tag" class="college-tag" style="display:none"></span>
       </div>
     </div>
   </div>
@@ -2106,6 +2118,7 @@ body.sidebar-hovered{
   document.getElementById('sidebar-user-name').textContent = cachedUser.name || cachedUser.email;
   document.getElementById('dd-name').textContent  = cachedUser.name  || 'Student';
   document.getElementById('dd-email').textContent = cachedUser.email || '';
+  renderCollegeTag(cachedUser.college);
 
   // (async function() {
   //   let u = cachedUser;
@@ -2152,6 +2165,8 @@ body.sidebar-hovered{
     } catch(e) {
       console.error("Auth fetch failed, using cached user data", e);
     }
+
+    renderCollegeTag(u.college);
 
     // Explicit Conditional Rendering Based on Paid Status
     if (u && u.isPaid) {
@@ -2218,6 +2233,29 @@ loadStats();
 
   function toggleDropdown() {
     document.getElementById('profile-dropdown').classList.toggle('open');
+  }
+
+  // College identity badge — sirf non-KIIT users ke liye dikhta hai, taaki lage jaise
+  // unke apne college ke liye customized platform hai. Naya college admin panel se
+  // add ho jaaye toh bhi generic fallback style se badge dikh jayega, code change nahi chahiye.
+  const COLLEGE_THEMES = {
+    bennett: { name: 'Bennett University', bg: 'linear-gradient(90deg,rgba(220,38,38,0.18),rgba(29,78,216,0.18))', color: '#f87171', border: '1px solid rgba(96,165,250,0.35)' }
+  };
+  function renderCollegeTag(collegeSlug) {
+    const tag = document.getElementById('college-tag');
+    if (!tag) return;
+    const slug = (collegeSlug || 'kiit').toLowerCase();
+    if (slug === 'kiit') { tag.style.display = 'none'; return; }
+
+    const theme = COLLEGE_THEMES[slug] || {
+      name: slug.charAt(0).toUpperCase() + slug.slice(1),
+      bg: 'rgba(124,106,247,0.15)', color: '#a89df7', border: '1px solid rgba(124,106,247,0.3)'
+    };
+    tag.textContent = theme.name;
+    tag.style.background = theme.bg;
+    tag.style.color = theme.color;
+    tag.style.border = theme.border;
+    tag.style.display = 'inline-flex';
   }
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.profile-wrap'))
