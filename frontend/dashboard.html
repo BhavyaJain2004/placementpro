@@ -2197,6 +2197,10 @@ loadStats();
         });
         document.querySelectorAll('[data-price-key="99"]').forEach(el => el.setAttribute('data-price-key', '499'));
         document.querySelectorAll('[data-price-key="99-original"]').forEach(el => el.setAttribute('data-price-key', '499-original'));
+
+        // pricing.js ka syncPrices() DOMContentLoaded pe pehle hi chal chuka hota hai (jab keys abhi "99" thin),
+        // isliye keys badalne ke baad dobara sync karna zaroori hai warna text ₹99 hi dikhta reh jaata hai
+        if (window.syncPrices) window.syncPrices();
       }
     }
   })();
