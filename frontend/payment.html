@@ -220,8 +220,9 @@ let pricingPackages = [];
     document.getElementById('pf-referral').textContent = saved.referredBy;
   }
 
+  const college = saved.college || user?.college || 'kiit';
   try {
-    pricingPackages = await API.call('/packages');
+    pricingPackages = await API.call(`/packages?college=${encodeURIComponent(college)}`);
   } catch (e) { pricingPackages = []; }
 
   const select = document.getElementById('plan-select');
