@@ -2187,6 +2187,17 @@ loadStats();
       // Show free payment screen
       document.getElementById('free-section').style.display = 'block';
       document.getElementById('free-name').textContent      = u.name || 'Student';
+
+      // Non-KIIT colleges (Bennett waghera) ka single plan ₹499 hai, ₹99 nahi —
+      // paywall ke saare hardcoded ₹99/plan=99 references ko dynamically badal do
+      if (u.college && u.college !== 'kiit') {
+        document.querySelectorAll('a[href^="payment.html?plan=99"], button[onclick*="plan=99"]').forEach(el => {
+          if (el.hasAttribute('onclick')) el.setAttribute('onclick', el.getAttribute('onclick').replace('plan=99', 'plan=499'));
+          if (el.hasAttribute('href')) el.setAttribute('href', el.getAttribute('href').replace('plan=99', 'plan=499'));
+        });
+        document.querySelectorAll('[data-price-key="99"]').forEach(el => el.setAttribute('data-price-key', '499'));
+        document.querySelectorAll('[data-price-key="99-original"]').forEach(el => el.setAttribute('data-price-key', '499-original'));
+      }
     }
   })();
 
