@@ -6,7 +6,13 @@
 
   async function syncPrices() {
     try {
-      const packages = await API.call('/packages');
+      let college = 'kiit';
+      try {
+        const u = JSON.parse(localStorage.getItem('pp_user') || 'null');
+        if (u && u.college) college = u.college;
+      } catch (e) {}
+
+      const packages = await API.call(`/packages?college=${encodeURIComponent(college)}`);
       packages.forEach(p => { window._livePackages[p.key] = p; });
 
       document.querySelectorAll('[data-price-key]').forEach(el => {
