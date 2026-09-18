@@ -1188,6 +1188,7 @@ body.sidebar-hovered{
   <!-- PAID CONTENT -->
   <div id="paid-section" style="display:none">
     <div class="welcome-hero">
+      <div id="welcome-college-tag" class="college-tag" style="display:none; margin-bottom:0.6rem; font-size:0.68rem !important; padding:3px 11px;"></div>
       <h1>Welcome back, <span id="welcome-name" style="color:var(--accent2)">Student</span> 👋</h1>
       <p>You have full lifetime access. Everything is unlocked.</p>
     </div>
@@ -2239,23 +2240,42 @@ loadStats();
   // unke apne college ke liye customized platform hai. Naya college admin panel se
   // add ho jaaye toh bhi generic fallback style se badge dikh jayega, code change nahi chahiye.
   const COLLEGE_THEMES = {
-    bennett: { name: 'Bennett University', bg: 'linear-gradient(90deg,rgba(220,38,38,0.18),rgba(29,78,216,0.18))', color: '#f87171', border: '1px solid rgba(96,165,250,0.35)' }
+    bennett: { name: 'Bennett University', bg: 'linear-gradient(90deg,rgba(220,38,38,0.18),rgba(29,78,216,0.18))', color: '#f87171', border: '1px solid rgba(96,165,250,0.35)', accent: '#ef4444', accent2: '#3b82f6' }
   };
   function renderCollegeTag(collegeSlug) {
     const tag = document.getElementById('college-tag');
-    if (!tag) return;
     const slug = (collegeSlug || 'kiit').toLowerCase();
-    if (slug === 'kiit') { tag.style.display = 'none'; return; }
+
+    if (slug !== 'kiit') {
+      // Poore dashboard ka accent color badal do taaki sirf ek chhota badge nahi,
+      // poora page us college ke brand jaisa feel de (buttons, highlights, welcome text sab)
+      const theme = COLLEGE_THEMES[slug];
+      if (theme) {
+        document.documentElement.style.setProperty('--accent', theme.accent);
+        document.documentElement.style.setProperty('--accent2', theme.accent2);
+      }
+    }
+
+    if (!tag) return;
+    if (slug === 'kiit') {
+      tag.style.display = 'none';
+      const wTag = document.getElementById('welcome-college-tag');
+      if (wTag) wTag.style.display = 'none';
+      return;
+    }
 
     const theme = COLLEGE_THEMES[slug] || {
       name: slug.charAt(0).toUpperCase() + slug.slice(1),
       bg: 'rgba(124,106,247,0.15)', color: '#a89df7', border: '1px solid rgba(124,106,247,0.3)'
     };
-    tag.textContent = theme.name;
-    tag.style.background = theme.bg;
-    tag.style.color = theme.color;
-    tag.style.border = theme.border;
-    tag.style.display = 'inline-flex';
+    [tag, document.getElementById('welcome-college-tag')].forEach(el => {
+      if (!el) return;
+      el.textContent = '🎓 ' + theme.name;
+      el.style.background = theme.bg;
+      el.style.color = theme.color;
+      el.style.border = theme.border;
+      el.style.display = 'inline-flex';
+    });
   }
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.profile-wrap'))
