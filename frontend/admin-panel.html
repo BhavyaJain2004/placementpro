@@ -107,6 +107,7 @@ body{background:#06060f}
    <div class="as-item" onclick="showTab('security',this)">🚨 Password Sharing</div>
 
     <div class="as-section">Payments</div>
+    <div class="as-item" onclick="showTab('growth',this)">🚀 Growth &amp; Strategy</div>
     <div class="as-item" onclick="showTab('paysubs',this)">💳 Payment Submissions</div>
     <div class="as-item" onclick="showTab('actualrevenue',this)">📈 Actual Revenue</div>
 
@@ -563,6 +564,19 @@ body{background:#06060f}
     </div>
 
     <!-- ACTUAL REVENUE -->
+    <div id="tab-growth" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.2rem">🚀 Growth &amp; Strategy</h2>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.78rem;margin-bottom:1rem">Ek jagah pe poora status — signups, actual approved payments aur revenue, month-wise. Sab kuch real submissions se, estimate se nahi.</p>
+
+      <!-- compact strip, giant boxes nahi -->
+      <div id="gr-strip" style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem"></div>
+
+      <div class="card" style="padding:0.9rem 1rem">
+        <div class="card-title" style="margin-bottom:0.6rem">📊 Month-wise (actual approved submissions)</div>
+        <div id="gr-table" style="overflow-x:auto"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem;font-size:0.8rem">Loading…</div></div>
+      </div>
+    </div>
+
     <div id="tab-actualrevenue" style="display:none">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">📈 Actual Revenue</h2>
       <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.5rem">Sirf real approved payments pe based — koi bhi galat/mismatched plan-signup se disconnect. Package split asli granted access se nikalta hai, jo user ne signup pe select kiya tha usse nahi.</p>
@@ -954,12 +968,12 @@ function checkPwd() {
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
 // ── TAB ROUTING ──
-const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue','colleges'];
+const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue','colleges','growth'];
 function showTab(tab, btn) {
   ALL_TABS.forEach(t => { const el = document.getElementById('tab-'+t); if(el) el.style.display = t===tab?'block':'none'; });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
-  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue, colleges: loadColleges };
+  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue, colleges: loadColleges, growth: loadGrowthReport };
   if (loaders[tab]) loaders[tab]();
 }
 
@@ -1508,6 +1522,64 @@ function monthLabel(ym) {
 }
 function dayLabel(ymd) {
   return new Date(ymd).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', weekday: 'short' });
+}
+
+// ── GROWTH & STRATEGY (compact, single-section, actual submissions se) ──
+const PLAN_LABELS = { '99':'₹99','199':'₹199','299':'₹299','499':'₹499','1000':'₹1000','resume49':'Resume ₹49','resume99':'Resume ₹99','resume150':'Resume ₹150' };
+
+async function loadGrowthReport() {
+  const stripEl  = document.getElementById('gr-strip');
+  const tableEl  = document.getElementById('gr-table');
+  try {
+    const data = await API.call('/admin/actual-revenue');
+    const gm = data.growthByMonth || [];
+    const thisMonthKey = new Date().toISOString().slice(0,7);
+    const thisMonth = gm.find(m => m.month === thisMonthKey);
+
+    // compact pill strip — chhote, ek line mein sab kuch
+    const pill = (label, val, color) => `
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:0.5rem 0.85rem;min-width:110px">
+        <div style="font-size:0.62rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:2px">${label}</div>
+        <div style="font-size:1rem;font-weight:800;font-family:'Syne',sans-serif;color:${color}">${val}</div>
+      </div>`;
+    stripEl.innerHTML =
+      pill('This Month Revenue', '₹' + (thisMonth?.revenue || 0).toLocaleString('en-IN'), '#34d399') +
+      pill('This Month Signups', thisMonth?.signups || 0, '#a89df7') +
+      pill('This Month Payments', thisMonth?.paymentsCount || 0, '#06b6d4') +
+      pill('All-time Revenue', '₹' + data.totalRevenue.toLocaleString('en-IN'), '#fbbf24') +
+      pill('All-time Signups', data.totalSignups, '#f87171');
+
+    if (!gm.length) {
+      tableEl.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem;font-size:0.8rem">Abhi koi data nahi hai</div>';
+      return;
+    }
+
+    tableEl.innerHTML = `
+      <table style="width:100%;border-collapse:collapse;font-size:0.76rem;white-space:nowrap">
+        <tr style="color:rgba(255,255,255,0.4);font-size:0.64rem;text-transform:uppercase">
+          <th style="text-align:left;padding:0.4rem 0.5rem">Month</th>
+          <th style="text-align:right;padding:0.4rem 0.5rem">Signups</th>
+          <th style="text-align:right;padding:0.4rem 0.5rem">Payments</th>
+          <th style="text-align:right;padding:0.4rem 0.5rem;color:#34d399">Revenue</th>
+          <th style="text-align:left;padding:0.4rem 0.5rem">Package Breakdown</th>
+        </tr>
+        ${gm.map(m => `
+        <tr style="border-top:1px solid rgba(255,255,255,0.05)">
+          <td style="padding:0.45rem 0.5rem;color:#fff;font-weight:700">${m.month}</td>
+          <td style="padding:0.45rem 0.5rem;text-align:right;color:rgba(255,255,255,0.6)">${m.signups}</td>
+          <td style="padding:0.45rem 0.5rem;text-align:right;color:rgba(255,255,255,0.6)">${m.paymentsCount}</td>
+          <td style="padding:0.45rem 0.5rem;text-align:right;color:#34d399;font-weight:700">₹${m.revenue.toLocaleString('en-IN')}</td>
+          <td style="padding:0.45rem 0.5rem;white-space:normal">
+            ${Object.keys(m.packages).length ? Object.entries(m.packages).map(([plan,count]) => `
+              <span style="display:inline-block;background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);color:#c9c2ff;border-radius:99px;padding:1px 8px;font-size:0.68rem;margin:1px 3px 1px 0">${PLAN_LABELS[plan] || plan} × ${count}</span>
+            `).join('') : '<span style="color:rgba(255,255,255,0.25)">—</span>'}
+          </td>
+        </tr>`).join('')}
+      </table>`;
+  } catch(e) {
+    console.error(e);
+    tableEl.innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem;font-size:0.8rem">Load nahi ho paaya, refresh karke try karo</div>';
+  }
 }
 
 async function loadActualRevenue() {
