@@ -1,7 +1,27 @@
+// const mongoose = require('mongoose');
+
+// const paymentSchema = new mongoose.Schema({
+//   userId:        { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+//   name:          { type: String },
+//   email:         { type: String },
+// plan:          { type: String, enum: ['99', '199', '299', '499', '1000', 'resume49', 'resume99', 'resume150'], required: true },
+//   amountPaid:    { type: Number, required: true },
+//   transactionId: { type: String, required: true },
+//   screenshot:    { type: String }, // base64 image, optional
+//   referredBy:    { type: String, default: '' },
+//   status:        { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+//   createdAt:     { type: Date, default: Date.now },
+//   reviewedAt:    { type: Date }
+// });
+
+// paymentSchema.index({ status: 1, createdAt: -1 });
+// paymentSchema.index({ userId: 1 });
+
+// module.exports = mongoose.model('Payment', paymentSchema);
 const mongoose = require('mongoose');
 
 const paymentSchema = new mongoose.Schema({
-  userId:        { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  userId:        { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // legacy imports jinke email match nahi hue unke liye optional
   name:          { type: String },
   email:         { type: String },
 plan:          { type: String, enum: ['99', '199', '299', '499', '1000', 'resume49', 'resume99', 'resume150'], required: true },
@@ -11,7 +31,10 @@ plan:          { type: String, enum: ['99', '199', '299', '499', '1000', 'resume
   referredBy:    { type: String, default: '' },
   status:        { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
   createdAt:     { type: Date, default: Date.now },
-  reviewedAt:    { type: Date }
+  reviewedAt:    { type: Date },
+  // ── Google Form se purana data import karne ke liye ──
+  isLegacyImport: { type: Boolean, default: false }, // Google Form se import kiya gaya record hai
+  legacyMatched:  { type: Boolean, default: true }   // false = platform pe koi matching account nahi mila (email typo/missing)
 });
 
 paymentSchema.index({ status: 1, createdAt: -1 });
