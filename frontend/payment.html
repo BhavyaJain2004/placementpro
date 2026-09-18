@@ -231,8 +231,21 @@ let pricingPackages = [];
     return;
   }
   select.innerHTML = pricingPackages.map(p =>
-    `<option value="${p.key}">Completing Payment for ${p.name} — ₹${p.price}</option>`
+    `<option value="${p.key}">${p.name} — ₹${p.price}</option>`
   ).join('');
+
+  // Sirf ek hi package ho (jaise Bennett ka single ₹499 plan) toh dropdown dikhana hi
+  // ajeeb lagta hai — uski jagah ek clean static plan-card dikhao. Select hidden rehta
+  // hai form submission logic ke liye, bas visually replace kar diya.
+  if (pricingPackages.length === 1) {
+    const only = pricingPackages[0];
+    select.style.display = 'none';
+    const staticCard = document.createElement('div');
+    staticCard.className = 'plan-select';
+    staticCard.style.cssText = 'display:flex;align-items:center;justify-content:space-between;cursor:default;';
+    staticCard.innerHTML = `<span>${only.name}</span><span style="color:var(--accent2,#a78bfa);font-weight:700">₹${only.price}</span>`;
+    select.insertAdjacentElement('afterend', staticCard);
+  }
 
   // URL se plan pre-select karo agar diya ho (?plan=299), warna saved plan use karo
   const params = new URLSearchParams(window.location.search);
