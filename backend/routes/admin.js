@@ -1201,19 +1201,21 @@ router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) =>
     // ── AUTO-SYNC ── Agar kisi pending submission ke user ko DB se seedha
     // access diya gaya hai (isPaid/masterDsaAccess manually true kiya gaya),
     // toh usko yahan khud approved mark kar do — panel aur DB hamesha sync rahein
+    //
+    // NOTE: pehle yeh EXACT tier match maangta tha (jaise plan='299' ho toh
+    // masterDsaAccess bhi zaroor true chahiye) — isliye mismatched cases
+    // (299 select karke signup, lekin admin ne sirf 199-level access diya)
+    // kabhi approve nahi hote the, hamesha pending reh jaate the. Ab sirf
+    // "koi bhi paid access mil chuka hai" check hota hai — Payment.plan
+    // asli granted access se match karna zaroori nahi hai.
     const pendingOnes = await Payment.find({ status: 'pending' });
     for (const p of pendingOnes) {
       const u = await User.findById(p.userId).select('isPaid hasTestAccess masterDsaAccess resume49 resume99 resume150');
       if (!u) continue;
 
-      let nowHasAccess = false;
-      if (p.plan === '99') nowHasAccess = u.isPaid;
-      else if (p.plan === '199') nowHasAccess = u.isPaid && u.hasTestAccess;
-      else if (p.plan === '299' || p.plan === '1000') nowHasAccess = u.isPaid && u.masterDsaAccess;
-      else if (p.plan === '499') nowHasAccess = u.isPaid && u.masterDsaAccess;
-      else if (p.plan === 'resume49') nowHasAccess = u.resume49;
-      else if (p.plan === 'resume99') nowHasAccess = u.resume99;
-      else if (p.plan === 'resume150') nowHasAccess = u.resume150;
+      const nowHasAccess = ['resume49','resume99','resume150'].includes(p.plan)
+        ? !!u[p.plan]
+        : !!u.isPaid;
 
       if (nowHasAccess) {
         p.status = 'approved';
