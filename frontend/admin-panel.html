@@ -1525,7 +1525,6 @@ function dayLabel(ymd) {
 }
 
 // ── GROWTH & STRATEGY (compact, single-section, actual submissions se) ──
-const PLAN_LABELS = { '99':'₹99','199':'₹199','299':'₹299','499':'₹499','1000':'₹1000 (old price)','resume49':'Resume ₹49','resume99':'Resume ₹99','resume150':'Resume ₹150' };
 
 async function loadGrowthReport() {
   const stripEl  = document.getElementById('gr-strip');
@@ -1570,8 +1569,10 @@ async function loadGrowthReport() {
           <td style="padding:0.45rem 0.5rem;text-align:right;color:rgba(255,255,255,0.6)">${m.paymentsCount}</td>
           <td style="padding:0.45rem 0.5rem;text-align:right;color:#34d399;font-weight:700">₹${m.revenue.toLocaleString('en-IN')}</td>
           <td style="padding:0.45rem 0.5rem;white-space:normal">
-            ${Object.keys(m.packages).length ? Object.entries(m.packages).map(([plan,count]) => `
-              <span style="display:inline-block;background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);color:#c9c2ff;border-radius:99px;padding:1px 8px;font-size:0.68rem;margin:1px 3px 1px 0">${PLAN_LABELS[plan] || plan} × ${count}</span>
+            ${Object.keys(m.packages).length ? Object.entries(m.packages)
+              .sort((a,b) => Number(b[0]) - Number(a[0]))
+              .map(([amount,count]) => `
+              <span style="display:inline-block;background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);color:#c9c2ff;border-radius:99px;padding:1px 8px;font-size:0.68rem;margin:1px 3px 1px 0">₹${Number(amount).toLocaleString('en-IN')} × ${count}</span>
             `).join('') : '<span style="color:rgba(255,255,255,0.25)">—</span>'}
           </td>
         </tr>`).join('')}
