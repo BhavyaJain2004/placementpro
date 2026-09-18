@@ -606,9 +606,15 @@
     ['#8f7ffb', '#4433c4'], ['#5ec8ff', '#0891b2'], ['#fbbf24', '#d97706'],
     ['#34d399', '#059669'], ['#ff8fb3', '#db2777'], ['#a78bfa', '#6d28d9']
   ];
+  // Kuch colleges ke apne real brand colors hain — inhe pehchano toh generic palette
+  // ki jagah wahi use karo, taaki card unke actual institute jaisa dikhe
+  const COLLEGE_BRANDS = {
+    bennett: { top: '#ef4444', bottom: '#1d4ed8', accent: '#ef4444', soft: 'rgba(239,68,68,0.12)' } // red-blue, Bennett University
+  };
 
-  function buildingIcon(seedIndex) {
-    const [top, bottom] = BUILDING_COLORS[seedIndex % BUILDING_COLORS.length];
+  function buildingIcon(seedIndex, slug) {
+    const brand = COLLEGE_BRANDS[(slug || '').toLowerCase()];
+    const [top, bottom] = brand ? [brand.top, brand.bottom] : BUILDING_COLORS[seedIndex % BUILDING_COLORS.length];
     const gWall = 'cwall' + seedIndex, gSide = 'cside' + seedIndex;
     return `
     <svg viewBox="0 0 160 160" class="college-building-svg">
@@ -662,13 +668,20 @@
       window._collegesCache = colleges;
       if (!colleges.length) { grid.innerHTML = '<p style="color:var(--faint)">Colleges coming soon.</p>'; return; }
 
-      grid.innerHTML = colleges.map((c, i) => `
-        <div class="college-card ${c.slug === selectedCollege ? 'selected' : ''}" data-slug="${c.slug}" onclick="selectCollege('${c.slug}')">
-          <div class="college-building-wrap">${buildingIcon(i)}</div>
+      grid.innerHTML = colleges.map((c, i) => {
+        const brand = COLLEGE_BRANDS[(c.slug || '').toLowerCase()];
+        const accentStyle = brand ? `--card-accent:${brand.accent};--card-accent-soft:${brand.soft}` : '';
+        const visual = c.logo
+          ? `<img src="${c.logo}" alt="${c.name} logo" class="college-logo-img">`
+          : buildingIcon(i, c.slug);
+        return `
+        <div class="college-card ${c.slug === selectedCollege ? 'selected' : ''}" data-slug="${c.slug}" ${accentStyle ? `style="${accentStyle}"` : ''} onclick="selectCollege('${c.slug}')">
+          <div class="college-building-wrap">${visual}</div>
           <div class="college-card-name">${c.name}</div>
           <div class="college-card-loc">${c.location || ''}</div>
           <div class="college-card-check">✓</div>
-        </div>`).join('');
+        </div>`;
+      }).join('');
 
       // Default: pehla college select karo agar KIIT list mein hai, warna pehla jo bhi ho
       if (colleges.some(c => c.slug === selectedCollege)) selectCollege(selectedCollege, true);
