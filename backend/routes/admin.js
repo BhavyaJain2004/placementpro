@@ -1052,7 +1052,7 @@ router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const [approvedPayments, allUsers] = await Promise.all([
       Payment.find({ status: 'approved' })
-        .select('userId name email plan amountPaid createdAt')
+        .select('userId name email plan amountPaid createdAt isLegacyImport legacyMatched')
         .sort({ createdAt: -1 })
         .lean(),
       User.find()
@@ -1122,6 +1122,17 @@ router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
       .map(([month, count]) => ({ month, count }))
       .sort((a, b) => b.month.localeCompare(a.month));
 
+    // ── Legacy import (Google Form se aaya purana data) jinke email/number kisi
+    // platform account se match nahi hue — inka koi real User doc nahi hai, lekin
+    // growth report mein inhe bhi ek "user" ki tarah gina jaana hai (paisa toh diya tha)
+    const growthSignupMonthMap = { ...signupMonthMap };
+    approvedPayments.forEach(p => {
+      if (p.isLegacyImport && p.legacyMatched === false) {
+        const k = monthKey(p.createdAt);
+        growthSignupMonthMap[k] = (growthSignupMonthMap[k] || 0) + 1;
+      }
+    });
+
     // ── Converted per month (jis mahine user ka PEHLA approved payment hua) ──
     const firstPaymentByUser = {};
     approvedPayments.forEach(p => {
@@ -1154,15 +1165,16 @@ router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
     // hamesha amountPaid se banao, taaki counts revenue total se reconcile hon.
     const monthPkgMap = {};
     approvedPayments.forEach(p => {
+      if (p.isLegacyImport) return; // purana Google Form data — bas amount/revenue mein count ho, package breakdown mein nahi
       const k = monthKey(p.createdAt);
       const amt = p.amountPaid || 0;
       if (!monthPkgMap[k]) monthPkgMap[k] = {};
       monthPkgMap[k][amt] = (monthPkgMap[k][amt] || 0) + 1;
     });
-    const allMonthKeys = new Set([...Object.keys(signupMonthMap), ...Object.keys(monthMap)]);
+    const allMonthKeys = new Set([...Object.keys(growthSignupMonthMap), ...Object.keys(monthMap)]);
     const growthByMonth = Array.from(allMonthKeys).map(month => ({
       month,
-      signups: signupMonthMap[month] || 0,
+      signups: growthSignupMonthMap[month] || 0,
       paymentsCount: monthMap[month]?.count || 0,
       revenue: monthMap[month]?.revenue || 0,
       packages: monthPkgMap[month] || {}
@@ -1229,7 +1241,7 @@ router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) =>
       }
     }
 
-    const filter = status ? { status } : {};
+    const filter = status ? { status, isLegacyImport: { $ne: true } } : { isLegacyImport: { $ne: true } };
     const submissions = await Payment.find(filter).sort({ createdAt: -1 }).lean();
 
     const approved = submissions.filter(s => s.status === 'approved');
@@ -1347,4 +1359,93 @@ router.get('/migrate-resume-field', verifyToken, verifyAdmin, async (req, res) =
     res.status(500).json({ message: err.message });
   }
 });
+
+// ── Legacy Google Form payment data import (one-time) ──
+// Purana payment data jo automation banne se pehle Google Form se collect hota
+// tha, ab yahan se Payment collection mein import ho jaata hai. Safe to re-run —
+// transactionId + isLegacyImport se duplicate check hoti hai.
+router.get('/import-legacy-payments', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { SHEET_99, SHEET_199_TESTSERIES } = require('../data/legacy-payments-data');
+
+    const parseTimestamp = (str) => {
+      const [datePart, timePart] = str.split(' ');
+      const [d, m, y] = datePart.split('/').map(Number);
+      const [hh, mm, ss] = (timePart || '0:0:0').split(':').map(Number);
+      return new Date(y, m - 1, d, hh, mm, ss || 0);
+    };
+    const extractEmails = (raw) => {
+      const matches = raw.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
+      return matches ? matches.map(e => e.toLowerCase()) : [];
+    };
+    const normalizePhone = (p) => {
+      const digits = (p || '').replace(/\D/g, '');
+      return digits.length >= 10 ? digits.slice(-10) : null;
+    };
+
+    const allUsers = await User.find().select('email mobile').lean();
+    const emailIndex = {}, phoneIndex = {};
+    allUsers.forEach(u => {
+      if (u.email) emailIndex[u.email.toLowerCase()] = u._id;
+      const ph = normalizePhone(u.mobile);
+      if (ph) phoneIndex[ph] = u._id;
+    });
+
+    const rows = [
+      ...SHEET_99.map(r => ({ cols: r, plan: '99' })),
+      ...SHEET_199_TESTSERIES.map(r => ({ cols: r, plan: '199' })), // dono sheets ke rows jinke amount 99 se zyada hain, unme bhi plan '199' hi rahega — package wahi tha
+    ];
+
+    let inserted = 0, skippedDupe = 0, matched = 0, unmatched = 0;
+    const unmatchedList = [];
+
+    for (const { cols, plan } of rows) {
+      const [ts, name, emailRaw, phone, txnId, amount] = cols;
+
+      const exists = await Payment.findOne({ transactionId: txnId, isLegacyImport: true });
+      if (exists) { skippedDupe++; continue; }
+
+      const emails = extractEmails(emailRaw);
+      let userId = emails.map(e => emailIndex[e]).find(Boolean);
+      if (!userId) {
+        const ph = normalizePhone(phone);
+        if (ph && phoneIndex[ph]) userId = phoneIndex[ph];
+      }
+
+      const createdAt = parseTimestamp(ts);
+      // amount 99 se zyada hai toh actual package '199' hi maano (base+test), chahe form '99' wala ho ya test-series wala
+      const actualPlan = Number(amount) > 99 ? '199' : plan;
+
+      await Payment.create({
+        userId: userId || undefined,
+        name,
+        email: emails[0] || emailRaw,
+        plan: actualPlan,
+        amountPaid: amount,
+        transactionId: txnId,
+        status: 'approved',
+        createdAt,
+        reviewedAt: createdAt,
+        isLegacyImport: true,
+        legacyMatched: !!userId
+      });
+      inserted++;
+
+      if (userId) {
+        matched++;
+        const update = { isPaid: true };
+        if (actualPlan === '199') update.hasTestAccess = true;
+        await User.updateOne({ _id: userId, isPaid: { $ne: true } }, { $set: update });
+      } else {
+        unmatched++;
+        unmatchedList.push({ name, email: emails[0] || emailRaw, phone, amount, plan: actualPlan });
+      }
+    }
+
+    res.json({ message: 'Legacy import done', inserted, skippedDupe, matched, unmatched, unmatchedList });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
