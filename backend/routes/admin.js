@@ -1147,6 +1147,22 @@ router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
       else baseOnly++;
     });
 
+    // ── Growth & Strategy: month-wise package breakdown, ASLI approved payment submissions se ──
+    const monthPkgMap = {};
+    approvedPayments.forEach(p => {
+      const k = monthKey(p.createdAt);
+      if (!monthPkgMap[k]) monthPkgMap[k] = {};
+      monthPkgMap[k][p.plan] = (monthPkgMap[k][p.plan] || 0) + 1;
+    });
+    const allMonthKeys = new Set([...Object.keys(signupMonthMap), ...Object.keys(monthMap)]);
+    const growthByMonth = Array.from(allMonthKeys).map(month => ({
+      month,
+      signups: signupMonthMap[month] || 0,
+      paymentsCount: monthMap[month]?.count || 0,
+      revenue: monthMap[month]?.revenue || 0,
+      packages: monthPkgMap[month] || {}
+    })).sort((a, b) => b.month.localeCompare(a.month));
+
     // ── Search list (approved transactions, mobile enriched) ──
     const transactions = approvedPayments.map(p => ({
       id: p._id,
@@ -1170,6 +1186,7 @@ router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
       signupsByMonth,
       convertedByMonth,
       packageTiers: { baseOnly, plusTests, complete, unpaid },
+      growthByMonth,
       transactions
     });
   } catch (err) {
