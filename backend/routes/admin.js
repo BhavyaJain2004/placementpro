@@ -1147,12 +1147,17 @@ router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
       else baseOnly++;
     });
 
-    // ── Growth & Strategy: month-wise package breakdown, ASLI approved payment submissions se ──
+    // ── Growth & Strategy: month-wise ACTUAL amount breakdown, approved payment submissions se ──
+    // Payment.plan sirf yeh batata hai user ne SIGNUP pe kya select kiya tha —
+    // asal mein kitna diya woh amountPaid field mein hai (mismatch ho sakta hai,
+    // jaise 299 select kiya but sirf 199 actually pay kiya). Isliye breakdown
+    // hamesha amountPaid se banao, taaki counts revenue total se reconcile hon.
     const monthPkgMap = {};
     approvedPayments.forEach(p => {
       const k = monthKey(p.createdAt);
+      const amt = p.amountPaid || 0;
       if (!monthPkgMap[k]) monthPkgMap[k] = {};
-      monthPkgMap[k][p.plan] = (monthPkgMap[k][p.plan] || 0) + 1;
+      monthPkgMap[k][amt] = (monthPkgMap[k][amt] || 0) + 1;
     });
     const allMonthKeys = new Set([...Object.keys(signupMonthMap), ...Object.keys(monthMap)]);
     const growthByMonth = Array.from(allMonthKeys).map(month => ({
