@@ -432,15 +432,16 @@
 </footer>
 <!-- AUTH MODAL -->
 <div id="auth-modal" class="modal-overlay">
-  <div class="modal" style="max-width:420px">
-    <div class="modal-header">
+  <div class="modal auth-modal-card" style="max-width:436px">
+    <div class="auth-modal-glow" aria-hidden="true"></div>
+    <div class="modal-header auth-modal-header">
       <div>
         <div class="nav-logo" style="font-size:1rem"><span class="nav-logo-mark" style="width:26px;height:26px;flex:0 0 26px;border-radius:8px"><span style="font-size:0.8rem">P</span></span> PlacementSphere</div>
       </div>
       <button class="modal-close" onclick="closeAuth()">×</button>
     </div>
 
-    <div class="modal-body">
+    <div class="modal-body auth-modal-body">
       <div class="auth-tabs">
         <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Log in</button>
         <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Sign up</button>
@@ -450,63 +451,83 @@
       <form id="login-form" onsubmit="handleLogin(event)" style="display:flex;flex-direction:column;gap:0">
         <div class="input-group">
           <label>Email</label>
-          <input class="input-field" type="email" id="l-email" placeholder="you@example.com" required>
+          <div class="auth-input-wrap">
+            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg>
+            <input class="input-field auth-input" type="email" id="l-email" placeholder="you@example.com" required>
+          </div>
         </div>
         <div class="input-group">
           <label>Password</label>
-          <input class="input-field" type="password" id="l-pass" placeholder="Your password" required>
+          <div class="auth-input-wrap">
+            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            <input class="input-field auth-input" type="password" id="l-pass" placeholder="Your password" required>
+            <button type="button" class="auth-pass-toggle" onclick="toggleAuthPass('l-pass', this)" tabindex="-1" aria-label="Show password">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
         <p class="form-error" id="login-err"></p>
-        <button type="submit" class="btn btn-primary" style="margin-top:1rem;width:100%;justify-content:center" id="login-btn">Log in</button>
+        <button type="submit" class="btn btn-primary auth-submit-btn" style="margin-top:0.5rem;width:100%;justify-content:center" id="login-btn">Log in</button>
       </form>
 
       <!-- SIGNUP -->
       <form id="signup-form" style="display:none;flex-direction:column;gap:0" onsubmit="handleSignup(event)">
         <div class="input-group">
           <label>Full name</label>
-          <input class="input-field" type="text" id="s-name" placeholder="Your name" required>
+          <div class="auth-input-wrap">
+            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input class="input-field auth-input" type="text" id="s-name" placeholder="Your name" required>
+          </div>
         </div>
-        <div id="signup-plan-label" style="
-  background:rgba(124,106,247,0.08);
-  border:1px solid rgba(124,106,247,0.2);
-  border-radius:10px; padding:0.65rem 1rem;
-  font-size:0.82rem; font-weight:600; color:#a89df7;
-  margin-bottom:1rem; text-align:center;
-">✅ Signing up for Base Platform — ₹99</div>
+        <div id="signup-plan-label" class="auth-plan-badge">✅ Signing up for Base Platform — ₹99</div>
 
 <input type="hidden" id="signup-plan" value="99">
 <input type="hidden" id="signup-college" value="kiit">
         <div class="input-group">
-          <label>Email ( Please Use Personal Mail ID only !!!!! )</label>
-          <input class="input-field" type="email" id="s-email" placeholder="you@example.com" required>
+          <label>Email <span class="auth-label-note">(use your personal mail ID)</span></label>
+          <div class="auth-input-wrap">
+            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg>
+            <input class="input-field auth-input" type="email" id="s-email" placeholder="you@example.com" required>
+          </div>
         </div>
         <div class="input-group">
-  <label>Mobile Number <span style="color:var(--muted);font-weight:400">(Mandatory)</span></label>
-  <input class="input-field" type="tel" id="reg-mobile"
-         placeholder="10-digit mobile number" maxlength="10">
+  <label>Mobile Number <span class="auth-label-note">(mandatory)</span></label>
+  <div class="auth-input-wrap">
+    <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    <input class="input-field auth-input" type="tel" id="reg-mobile" placeholder="10-digit mobile number" maxlength="10">
+  </div>
 </div>
 
 <div class="input-group">
-  <label>Referral Code <span style="color:var(--muted);font-weight:400">(optional)</span></label>
-  <input class="input-field" type="text" id="reg-referral"
-         placeholder="Enter referral code if you have one"
-         style="text-transform:uppercase">
+  <label>Referral Code <span class="auth-label-note">(optional)</span></label>
+  <div class="auth-input-wrap">
+    <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg>
+    <input class="input-field auth-input" type="text" id="reg-referral" placeholder="Enter referral code if you have one" style="text-transform:uppercase">
+  </div>
 </div>
         <div class="input-group">
           <label>Password</label>
-          <input class="input-field" type="password" id="s-pass" placeholder="Min 6 characters" minlength="6" required>
+          <div class="auth-input-wrap">
+            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            <input class="input-field auth-input" type="password" id="s-pass" placeholder="Min 6 characters" minlength="6" required>
+            <button type="button" class="auth-pass-toggle" onclick="toggleAuthPass('s-pass', this)" tabindex="-1" aria-label="Show password">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
-        <label style="display:flex;align-items:flex-start;gap:8px;font-size:0.75rem;color:rgba(255,255,255,0.5);margin:0.75rem 0">
-  <input type="checkbox" id="terms-check" required style="margin-top:2px">
-  <span>I agree to the <a href="terms.html" target="_blank" style="color:#a89df7">Terms</a> & <a href="privacy.html" target="_blank" style="color:#a89df7">Privacy Policy</a></span>
+        <label class="auth-terms-row">
+  <input type="checkbox" id="terms-check" required>
+  <span class="auth-checkbox-box"></span>
+  <span>I agree to the <a href="terms.html" target="_blank">Terms</a> &amp; <a href="privacy.html" target="_blank">Privacy Policy</a></span>
 </label>
         <p class="form-error" id="signup-err"></p>
-        <button type="submit" class="btn btn-primary" style="margin-top:1rem;width:100%;justify-content:center" id="signup-btn">Create account</button>
-        <p id="signup-footer-price" style="font-size:0.78rem;color:var(--muted);text-align:center;margin-top:1rem">After signup you'll be taken to unlock access for ₹99</p>
+        <button type="submit" class="btn btn-primary auth-submit-btn" style="margin-top:0.5rem;width:100%;justify-content:center" id="signup-btn">Create account</button>
+        <p id="signup-footer-price" class="auth-footer-note">After signup you'll be taken to unlock access for ₹99</p>
       </form>
     </div>
   </div>
 </div>
+
 
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
@@ -763,6 +784,12 @@
     : `After signup you'll be taken to the payment page`;
 }
   function closeAuth() { document.getElementById('auth-modal').classList.remove('open'); }
+  function toggleAuthPass(id, btn) {
+    const input = document.getElementById(id);
+    const showing = input.type === 'text';
+    input.type = showing ? 'password' : 'text';
+    btn.classList.toggle('is-visible', !showing);
+  }
   function switchTab(tab) {
     document.getElementById('login-form').style.display  = tab === 'login'  ? 'flex' : 'none';
     document.getElementById('signup-form').style.display = tab === 'signup' ? 'flex' : 'none';
