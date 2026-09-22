@@ -442,24 +442,30 @@
     </div>
 
     <div class="modal-body auth-modal-body">
+      <div class="auth-heading-wrap">
+        <h3 id="auth-heading" class="auth-heading">Welcome back</h3>
+        <p id="auth-subheading" class="auth-subheading">Log in to continue your prep</p>
+      </div>
+
       <div class="auth-tabs">
+        <span class="auth-tab-indicator" aria-hidden="true"></span>
         <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Log in</button>
         <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Sign up</button>
       </div>
 
       <!-- LOGIN -->
-      <form id="login-form" onsubmit="handleLogin(event)" style="display:flex;flex-direction:column;gap:0">
+      <form id="login-form" class="auth-form-anim" onsubmit="handleLogin(event)" style="display:flex;flex-direction:column;gap:0">
         <div class="input-group">
           <label>Email</label>
           <div class="auth-input-wrap">
-            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg>
+            <span class="auth-input-icon-chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg></span>
             <input class="input-field auth-input" type="email" id="l-email" placeholder="you@example.com" required>
           </div>
         </div>
         <div class="input-group">
           <label>Password</label>
           <div class="auth-input-wrap">
-            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            <span class="auth-input-icon-chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
             <input class="input-field auth-input" type="password" id="l-pass" placeholder="Your password" required>
             <button type="button" class="auth-pass-toggle" onclick="toggleAuthPass('l-pass', this)" tabindex="-1" aria-label="Show password">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -471,11 +477,11 @@
       </form>
 
       <!-- SIGNUP -->
-      <form id="signup-form" style="display:none;flex-direction:column;gap:0" onsubmit="handleSignup(event)">
+      <form id="signup-form" class="auth-form-anim" style="display:none;flex-direction:column;gap:0" onsubmit="handleSignup(event)">
         <div class="input-group">
           <label>Full name</label>
           <div class="auth-input-wrap">
-            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="auth-input-icon-chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
             <input class="input-field auth-input" type="text" id="s-name" placeholder="Your name" required>
           </div>
         </div>
@@ -486,14 +492,14 @@
         <div class="input-group">
           <label>Email <span class="auth-label-note">(use your personal mail ID)</span></label>
           <div class="auth-input-wrap">
-            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg>
+            <span class="auth-input-icon-chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg></span>
             <input class="input-field auth-input" type="email" id="s-email" placeholder="you@example.com" required>
           </div>
         </div>
         <div class="input-group">
   <label>Mobile Number <span class="auth-label-note">(mandatory)</span></label>
   <div class="auth-input-wrap">
-    <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    <span class="auth-input-icon-chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
     <input class="input-field auth-input" type="tel" id="reg-mobile" placeholder="10-digit mobile number" maxlength="10">
   </div>
 </div>
@@ -501,14 +507,14 @@
 <div class="input-group">
   <label>Referral Code <span class="auth-label-note">(optional)</span></label>
   <div class="auth-input-wrap">
-    <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg>
+    <span class="auth-input-icon-chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg></span>
     <input class="input-field auth-input" type="text" id="reg-referral" placeholder="Enter referral code if you have one" style="text-transform:uppercase">
   </div>
 </div>
         <div class="input-group">
           <label>Password</label>
           <div class="auth-input-wrap">
-            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            <span class="auth-input-icon-chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
             <input class="input-field auth-input" type="password" id="s-pass" placeholder="Min 6 characters" minlength="6" required>
             <button type="button" class="auth-pass-toggle" onclick="toggleAuthPass('s-pass', this)" tabindex="-1" aria-label="Show password">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -795,6 +801,16 @@
     document.getElementById('signup-form').style.display = tab === 'signup' ? 'flex' : 'none';
     document.getElementById('tab-login').classList.toggle('active',  tab === 'login');
     document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+    document.querySelector('#auth-modal .auth-tabs').classList.toggle('state-signup', tab === 'signup');
+
+    document.getElementById('auth-heading').textContent = tab === 'login' ? 'Welcome back' : 'Create your account';
+    document.getElementById('auth-subheading').textContent = tab === 'login' ? 'Log in to continue your prep' : 'Start prepping in under a minute';
+
+    // Visible form ko dobara animate karo — class hata ke reflow force karo, phir wapas laga do
+    const activeForm = document.getElementById(tab === 'login' ? 'login-form' : 'signup-form');
+    activeForm.classList.remove('auth-form-anim');
+    void activeForm.offsetWidth;
+    activeForm.classList.add('auth-form-anim');
   }
 
 async function handleLogin(e) {
