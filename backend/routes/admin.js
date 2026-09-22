@@ -1056,7 +1056,7 @@ router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
         .sort({ createdAt: -1 })
         .lean(),
       User.find()
-        .select('name email mobile createdAt isPaid hasTestAccess masterDsaAccess')
+        .select('name email mobile createdAt isPaid hasTestAccess masterDsaAccess college')
         .lean()
     ]);
 
@@ -1191,6 +1191,16 @@ router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
       createdAt: p.createdAt
     }));
 
+    // ── College-wise breakdown: kitne signup, kitne convert (paid) hue ──
+    const collegeMap = {};
+    allUsers.forEach(u => {
+      const c = (u.college || 'kiit').toLowerCase();
+      if (!collegeMap[c]) collegeMap[c] = { college: c, signups: 0, converted: 0 };
+      collegeMap[c].signups++;
+      if (u.isPaid) collegeMap[c].converted++;
+    });
+    const collegeBreakdown = Object.values(collegeMap).sort((a, b) => b.signups - a.signups);
+
     res.json({
       totalRevenue,
       currentMonthRevenue,
@@ -1204,6 +1214,7 @@ router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
       convertedByMonth,
       packageTiers: { baseOnly, plusTests, complete, unpaid },
       growthByMonth,
+      collegeBreakdown,
       transactions
     });
   } catch (err) {
