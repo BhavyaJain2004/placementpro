@@ -575,6 +575,11 @@ body{background:#06060f}
         <div class="card-title" style="margin-bottom:0.6rem">📊 Month-wise (actual approved submissions)</div>
         <div id="gr-table" style="overflow-x:auto"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem;font-size:0.8rem">Loading…</div></div>
       </div>
+
+      <div class="card" style="padding:0.9rem 1rem;margin-top:1rem">
+        <div class="card-title" style="margin-bottom:0.6rem">🎓 College-wise</div>
+        <div id="gr-college-table" style="overflow-x:auto"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem;font-size:0.8rem">Loading…</div></div>
+      </div>
     </div>
 
     <div id="tab-actualrevenue" style="display:none">
@@ -1577,6 +1582,33 @@ async function loadGrowthReport() {
           </td>
         </tr>`).join('')}
       </table>`;
+
+    // ── College-wise: simple list — signups, converted ──
+    const collegeTableEl = document.getElementById('gr-college-table');
+    const cb = data.collegeBreakdown || [];
+    if (!cb.length) {
+      collegeTableEl.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem;font-size:0.8rem">Abhi koi data nahi hai</div>';
+    } else {
+      collegeTableEl.innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+          <tr style="color:rgba(255,255,255,0.4);font-size:0.64rem;text-transform:uppercase">
+            <th style="text-align:left;padding:0.45rem 0.5rem">College</th>
+            <th style="text-align:right;padding:0.45rem 0.5rem">Signups</th>
+            <th style="text-align:right;padding:0.45rem 0.5rem;color:#34d399">Converted</th>
+          </tr>
+          ${cb.map(c => `
+          <tr style="border-top:1px solid rgba(255,255,255,0.05)">
+            <td style="padding:0.5rem;color:#fff;font-weight:700;text-transform:capitalize">${c.college}</td>
+            <td style="padding:0.5rem;text-align:right;color:rgba(255,255,255,0.6)">${c.signups}</td>
+            <td style="padding:0.5rem;text-align:right;color:#34d399;font-weight:700">${c.converted}</td>
+          </tr>`).join('')}
+          <tr style="border-top:1px solid rgba(255,255,255,0.15)">
+            <td style="padding:0.5rem;color:#fff;font-weight:800">Total</td>
+            <td style="padding:0.5rem;text-align:right;color:#fff;font-weight:800">${cb.reduce((s,c)=>s+c.signups,0)}</td>
+            <td style="padding:0.5rem;text-align:right;color:#34d399;font-weight:800">${cb.reduce((s,c)=>s+c.converted,0)}</td>
+          </tr>
+        </table>`;
+    }
   } catch(e) {
     console.error(e);
     tableEl.innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem;font-size:0.8rem">Load nahi ho paaya, refresh karke try karo</div>';
