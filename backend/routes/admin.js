@@ -1394,7 +1394,11 @@ router.get('/import-legacy-payments', verifyToken, verifyAdmin, async (req, res)
       return digits.length >= 10 ? digits.slice(-10) : null;
     };
 
-    const allUsers = await User.find().select('email mobile').lean();
+    // KRITICAL: yeh saara legacy data Bennett launch se PEHLE ka hai — sirf KIIT
+    // students ke against match karo. Kisi bhi non-KIIT user se match hona
+    // coincidental hai (galat email/phone overlap) aur access wrongly grant
+    // kar dega — isliye sirf KIIT users ko index mein daalo.
+    const allUsers = await User.find({ college: 'kiit' }).select('email mobile').lean();
     const emailIndex = {}, phoneIndex = {};
     allUsers.forEach(u => {
       if (u.email) emailIndex[u.email.toLowerCase()] = u._id;
@@ -1454,6 +1458,58 @@ router.get('/import-legacy-payments', verifyToken, verifyAdmin, async (req, res)
     }
 
     res.json({ message: 'Legacy import done', inserted, skippedDupe, matched, unmatched, unmatchedList });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── Fix karo: legacy import ne galti se kisi non-KIIT (jaise Bennett) account
+// ko access de diya ho toh usko dhoondo aur revert karo. Safe hai — sirf tabhi
+// isPaid/hasTestAccess hataega jab us user ke paas koi aur legitimate approved
+// payment na ho (matlab access sirf isi galat legacy match se aaya tha).
+router.get('/fix-legacy-import-leak', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const badPayments = await Payment.find({ isLegacyImport: true, userId: { $ne: null } })
+      .select('userId plan amountPaid name email transactionId')
+      .lean();
+
+    const affected = [];
+
+    for (const p of badPayments) {
+      const user = await User.findById(p.userId).select('name email college isPaid hasTestAccess masterDsaAccess');
+      if (!user) continue;
+      if ((user.college || 'kiit').toLowerCase() === 'kiit') continue; // yeh sahi match hai, isko chhodo
+
+      // Is user ke paas koi aur (non-legacy) approved payment hai kya? Agar hai,
+      // toh unka access legitimate hai apni khud ki payment se — usse mat chhedo
+      const ownPayment = await Payment.findOne({
+        userId: user._id,
+        status: 'approved',
+        isLegacyImport: { $ne: true }
+      });
+
+      const revertUpdate = {};
+      if (!ownPayment) {
+        revertUpdate.isPaid = false;
+        revertUpdate.hasTestAccess = false;
+        if (p.plan !== '299' && p.plan !== '499') revertUpdate.masterDsaAccess = false;
+        await User.updateOne({ _id: user._id }, { $set: revertUpdate });
+      }
+
+      // Galat match wali Payment record ko unlink kar do (revenue/growth stats se hata do)
+      await Payment.updateOne(
+        { _id: p._id },
+        { $set: { userId: null, legacyMatched: false }, $unset: {} }
+      );
+
+      affected.push({
+        name: user.name, email: user.email, college: user.college,
+        accessReverted: !ownPayment, hadOwnPayment: !!ownPayment,
+        legacyTxnId: p.transactionId
+      });
+    }
+
+    res.json({ message: 'Legacy import leak check done', affectedCount: affected.length, affected });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
