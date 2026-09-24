@@ -1245,7 +1245,7 @@ body.sidebar-hovered{
 @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 </style>
 
-<div style="background:linear-gradient(135deg,#1a1a2e,#0d0822);border:1px solid rgba(124,106,247,0.3);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;cursor:pointer" onclick="window.location.href='resume-maker.html'">
+<div id="resume-upsell-banner" style="background:linear-gradient(135deg,#1a1a2e,#0d0822);border:1px solid rgba(124,106,247,0.3);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;cursor:pointer" onclick="window.location.href='resume-maker.html'">
   <div>
     <div style="font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:1rem">✨ Create Your Placement-Ready Resume</div>
     <div style="font-size:0.78rem;color:rgba(255,255,255,0.4);margin-top:0.2rem">ATS-friendly templates + AI-powered suggestions</div>
@@ -2108,6 +2108,84 @@ body.sidebar-hovered{
   </div>
 </div>
 
+<!-- ── MASTER DSA UPGRADE NUDGE (periodic, only for paid users without masterDsaAccess) ── -->
+<style>
+#upgrade-dsa-modal .modal { max-width: 440px; overflow: visible; position: relative; }
+.updsa-glow {
+  position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  width: 300px; height: 130px;
+  background: radial-gradient(closest-side, rgba(124,106,247,0.4), transparent);
+  filter: blur(24px); pointer-events: none; z-index: 0;
+}
+.updsa-body { position: relative; z-index: 1; padding: 1.75rem 1.75rem 1.5rem; }
+.updsa-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(90deg, rgba(251,191,36,0.15), rgba(245,158,11,0.08));
+  border: 1px solid rgba(251,191,36,0.3);
+  color: #fbbf24; font-size: 0.7rem; font-weight: 800;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 0.3rem 0.7rem; border-radius: 99px;
+  margin-bottom: 0.9rem;
+}
+.updsa-title {
+  font-family: 'Syne', sans-serif; font-size: 1.45rem; font-weight: 800;
+  color: #fff; line-height: 1.25; margin-bottom: 0.5rem; letter-spacing: -0.01em;
+}
+.updsa-title span { color: #a89df7; }
+.updsa-sub { font-size: 0.86rem; color: rgba(255,255,255,0.5); margin-bottom: 1.3rem; line-height: 1.5; }
+.updsa-benefits { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.5rem; }
+.updsa-benefit { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; color: rgba(255,255,255,0.82); }
+.updsa-check {
+  flex-shrink: 0; width: 20px; height: 20px; border-radius: 6px;
+  background: linear-gradient(135deg, #7c6af7, #6a5ae8);
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+}
+.updsa-actions { display: flex; gap: 0.6rem; }
+.updsa-apply {
+  flex: 1; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #7c6af7, #6a5ae8);
+  color: #fff; border: none; height: 48px; border-radius: 12px;
+  font-size: 0.92rem; font-weight: 700; font-family: 'Syne', sans-serif;
+  cursor: pointer; box-shadow: 0 8px 24px rgba(124,106,247,0.35);
+  transition: box-shadow 0.25s, transform 0.15s;
+}
+.updsa-apply::before {
+  content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.28), transparent);
+  transform: skewX(-20deg); transition: left 0.55s ease;
+}
+.updsa-apply:hover::before { left: 130%; }
+.updsa-apply:hover { box-shadow: 0 10px 30px rgba(124,106,247,0.45); }
+.updsa-apply:active { transform: scale(0.98); }
+.updsa-later {
+  background: none; border: 1px solid var(--border2); color: var(--muted);
+  height: 48px; padding: 0 1.1rem; border-radius: 12px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: color 0.2s, border-color 0.2s;
+}
+.updsa-later:hover { color: var(--text); border-color: var(--border2); }
+</style>
+<div id="upgrade-dsa-modal" class="modal-overlay">
+  <div class="modal">
+    <div class="updsa-glow"></div>
+    <div class="updsa-body">
+      <div class="updsa-badge">⚡ Limited spots this batch</div>
+      <div class="updsa-title">Unlock <span>Master DSA</span><br>and get placement-ready faster</div>
+      <div class="updsa-sub">You're currently on a base plan. Upgrade once and get lifetime access to the full DSA mastery track.</div>
+      <div class="updsa-benefits">
+        <div class="updsa-benefit"><span class="updsa-check">✓</span> 450+ curated DSA questions with video solutions</div>
+        <div class="updsa-benefit"><span class="updsa-check">✓</span> Daily problem tracker + structured roadmap</div>
+        <div class="updsa-benefit"><span class="updsa-check">✓</span> Built-in code compiler, no setup needed</div>
+        <div class="updsa-benefit"><span class="updsa-check">✓</span> Leaderboard + streaks to keep you consistent</div>
+      </div>
+      <div class="updsa-actions">
+        <button class="updsa-later" onclick="dismissUpgradeDsaNudge()">Maybe later</button>
+        <button class="updsa-apply" onclick="applyMasterDsaUpgrade()">Apply Now →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="js/api.js"></script>
 <script src="js/pricing.js"></script>
 <script src="js/auth.js"></script>
@@ -2195,6 +2273,15 @@ if (u.isAdmin) {
   document.getElementById('admin-section-label').style.display = 'block';
 }
 
+// Resume banner sirf unhe dikhao jinhone koi bhi resume plan nahi liya
+if (u.resume49 || u.resume99 || u.resume150) {
+  const rb = document.getElementById('resume-upsell-banner');
+  if (rb) rb.style.display = 'none';
+}
+
+// Master DSA upgrade nudge — sirf paid users jinke paas masterDsaAccess nahi hai
+setupMasterDsaUpgradeNudge(u);
+
 loadStats();
     } else {
       // Hide paid elements for free users
@@ -2237,6 +2324,41 @@ loadStats();
 
   function toggleDropdown() {
     document.getElementById('profile-dropdown').classList.toggle('open');
+  }
+
+  // ── Master DSA upgrade nudge ──
+  // Paid users jinke paas masterDsaAccess nahi hai unhe periodically (har kuch
+  // ghanton mein, session ke dauraan bhi dobara) yeh popup dikhta hai. "Maybe
+  // later" dabane pe agle 6 ghante ke liye snooze ho jaata hai — spam nahi karta.
+  const DSA_NUDGE_COOLDOWN_MS = 6 * 60 * 60 * 1000; // 6 hours
+  let dsaNudgeUser = null;
+
+  function setupMasterDsaUpgradeNudge(u) {
+    if (!u || !u.isPaid || u.masterDsaAccess) return; // Bennett users (jinka single plan already DSA include karta hai) yahan naturally skip ho jaate hain
+    dsaNudgeUser = u;
+
+    const tryShow = () => {
+      const lastShown = Number(localStorage.getItem('pp_dsa_nudge_last_shown') || 0);
+      const modalOpen = document.getElementById('upgrade-dsa-modal').classList.contains('open');
+      if (!modalOpen && Date.now() - lastShown > DSA_NUDGE_COOLDOWN_MS) {
+        document.getElementById('upgrade-dsa-modal').classList.add('open');
+        localStorage.setItem('pp_dsa_nudge_last_shown', String(Date.now()));
+      }
+    };
+
+    setTimeout(tryShow, 8000); // pehli baar thoda delay ke baad, taaki landing par turant popup na aaye
+    setInterval(tryShow, 2 * 60 * 1000); // uske baad har 2 min check karta rahega, cooldown khud control karta hai frequency
+  }
+
+  function dismissUpgradeDsaNudge() {
+    document.getElementById('upgrade-dsa-modal').classList.remove('open');
+    localStorage.setItem('pp_dsa_nudge_last_shown', String(Date.now()));
+  }
+
+  function applyMasterDsaUpgrade() {
+    const college = (dsaNudgeUser && dsaNudgeUser.college) || 'kiit';
+    const plan = college.toLowerCase() === 'kiit' ? '299' : '499';
+    window.location.href = `payment.html?plan=${plan}`;
   }
 
   // College identity badge — sirf non-KIIT users ke liye dikhta hai, taaki lage jaise
