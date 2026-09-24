@@ -112,10 +112,15 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-const verifyPaid = (req, res, next) => {
-  if (!req.user.isPaid)
-    return res.status(403).json({ message: 'Payment required' });
-  next();
+const verifyPaid = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select('isPaid');
+    if (!user || !user.isPaid)
+      return res.status(403).json({ message: 'Payment required' });
+    next();
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 const verifyAdmin = async (req, res, next) => {
