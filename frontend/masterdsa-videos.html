@@ -45,21 +45,19 @@
 
 const VIDEOS = [
   // ── ALL TOPICS ──
-  {id:'0K_eZGS5NsU',title:"Striver's A2Z DSA Full Course",ch:'takeUforward',lang:'English',topic:'All Topics'},
+  {id:'PLgUwDviBIf0oF6QL8m22w1hIDC1vJ_BHz',title:"Striver's A2Z DSA Full Course",ch:'takeUforward',lang:'English',topic:'All Topics'},
   {id:'VTLCoHnyACE',title:'DSA Full Course in C++ — Apna College',ch:'Apna College',lang:'Hindi',topic:'All Topics'},
   {id:'PLDzeHZWIZsTryvtXdMr6rPh4IDexB5NIA',title:'Complete C++ DSA Placement Course',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'All Topics'},
-  {id:'ERYmGGaUHqs',title:'DSA Roadmap for Beginners 2024',ch:'takeUforward',lang:'English',topic:'All Topics'},
 
   // ── ARRAYS ──
   {id:'kBhDZbbA8WI',title:'Sliding Window Technique — Complete',ch:'takeUforward',lang:'English',topic:'Arrays'},
   {id:'37E9ckMDdTk',title:'Arrays Complete Tutorial in Hindi',ch:'Apna College',lang:'Hindi',topic:'Arrays'},
-  {id:'eXFSaQR28cY',title:'Two Pointer Technique Explained',ch:'takeUforward',lang:'English',topic:'Arrays'},
   {id:'75jGy3xAhVs',title:'Arrays in Hindi — One Shot',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Arrays'},
 
   // ── LINKED LIST ──
   {id:'58YbpRDc4yw',title:'Linked List One Shot — Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Linked List'},
   {id:'WwfhLC16bis',title:'Linked List Complete — NeetCode',ch:'NeetCode',lang:'English',topic:'Linked List'},
-  {id:'Nq7ok-OyEpk',title:'Linked List in Hindi — Apna College',ch:'Apna College',lang:'Hindi',topic:'Linked List'},
+  {id:'Nq7ok-OyEpg',title:'Linked List in Hindi — Apna College',ch:'Apna College',lang:'Hindi',topic:'Linked List'},
 
   // ── STACKS & QUEUES ──
   {id:'O1KeVERSZoQ',title:'Stack & Queue One Shot — Hindi',ch:'CodeHelp - Love Babbar',lang:'Hindi',topic:'Stacks & Queues'},
@@ -120,15 +118,25 @@ function filterVids(t, btn){
 
 function render(){
   const list = active==='All' ? VIDEOS : VIDEOS.filter(v=>v.topic===active);
-  document.getElementById('vid-grid').innerHTML = list.map(v=>`
+  document.getElementById('vid-grid').innerHTML = list.map(v=>{
+    // Playlist IDs (jaise Love Babbar ka poora course) "PL" se start hote hain —
+    // inko normal video embed se nahi, videoseries format se embed karna padta hai
+    const isPlaylist = v.id.startsWith('PL');
+    const embedSrc = isPlaylist
+      ? `https://www.youtube.com/embed/videoseries?list=${v.id}`
+      : `https://www.youtube.com/embed/${v.id}`;
+    const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(v.title + ' ' + v.ch)}`;
+    return `
     <div class="vid-card">
-      <iframe class="vid-frame" src="https://www.youtube.com/embed/${v.id}" loading="lazy" allowfullscreen></iframe>
+      <iframe class="vid-frame" src="${embedSrc}" loading="lazy" allowfullscreen></iframe>
       <div class="vid-info">
         <div class="vid-title">${v.title}</div>
         <div class="vid-meta">${v.ch} · ${v.topic}</div>
         <span class="vid-tag" style="background:${v.lang==='Hindi'?'rgba(251,191,36,0.1)':'rgba(52,211,153,0.1)'};color:${v.lang==='Hindi'?'#fbbf24':'#34d399'}">${v.lang}</span>
+        <a href="${ytSearchUrl}" target="_blank" style="display:block;margin-top:0.4rem;font-size:0.72rem;color:rgba(255,255,255,0.35);text-decoration:none">Video not loading? Open on YouTube ↗</a>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 render();
  let shownNotifs = JSON.parse(sessionStorage.getItem('shown_notifs') || '[]');
