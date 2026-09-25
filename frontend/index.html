@@ -50,8 +50,8 @@
 <style>
   .stat-row { display:flex; gap:2rem; justify-content:center; margin-top:2.5rem; flex-wrap:wrap; animation: fadeUp 0.6s ease 0.45s both; }
   .stat-item { text-align:center; max-width:150px; }
-  .stat-num { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:700; color:var(--text); display:block; }
-  .stat-label { font-size:0.72rem; color:var(--faint); }
+  .stat-num { font-family:'Syne',sans-serif; font-size:1.85rem; font-weight:700; color:var(--text); display:block; }
+  .stat-label { font-size:0.78rem; color:var(--faint); }
   .divider-line { width:1px; height:28px; background:var(--border); align-self:center; }
   @media (max-width:600px){
     .stat-row{ gap:1.25rem 1.5rem; }
@@ -103,75 +103,43 @@
         <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
 
-      <svg class="hi-scene" viewBox="0 0 420 400" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="hiGlow" cx="55%" cy="35%" r="60%">
-            <stop offset="0%" stop-color="#7c6af7" stop-opacity="0.35"/>
-            <stop offset="100%" stop-color="#7c6af7" stop-opacity="0"/>
-          </radialGradient>
-          <linearGradient id="hiDesk" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#2a2350"/>
-            <stop offset="100%" stop-color="#181432"/>
-          </linearGradient>
-          <linearGradient id="hiScreen" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#4433c4"/>
-            <stop offset="100%" stop-color="#06b6d4"/>
-          </linearGradient>
-        </defs>
-
-        <ellipse cx="230" cy="180" rx="190" ry="190" fill="url(#hiGlow)"/>
-
-        <!-- Monitor -->
-        <rect x="205" y="130" width="150" height="100" rx="8" fill="#100c26" stroke="#3a2e9e" stroke-width="2"/>
-        <rect x="215" y="140" width="130" height="80" rx="4" fill="url(#hiScreen)" opacity="0.85"/>
-        <rect x="225" y="150" width="60" height="6" rx="3" fill="#ffffff" opacity="0.5"/>
-        <rect x="225" y="163" width="90" height="5" rx="2.5" fill="#ffffff" opacity="0.3"/>
-        <rect x="225" y="174" width="75" height="5" rx="2.5" fill="#ffffff" opacity="0.3"/>
-        <rect x="270" y="230" width="20" height="16" fill="#100c26"/>
-        <rect x="250" y="246" width="60" height="6" rx="3" fill="#100c26"/>
-
-        <!-- Plant -->
-        <rect x="60" y="235" width="26" height="22" rx="3" fill="#3a2e9e"/>
-        <path d="M73 235 Q60 210 50 215 Q60 225 73 220 Q80 200 90 208 Q85 225 73 225" fill="#34d399" opacity="0.85"/>
-
-        <!-- Coffee cup -->
-        <rect x="345" y="240" width="16" height="18" rx="3" fill="#f4f1ff" opacity="0.9"/>
-        <path d="M361 245 Q370 245 368 253 Q366 258 361 256" stroke="#f4f1ff" stroke-width="2" fill="none" opacity="0.9"/>
-
-        <!-- Desk -->
-        <rect x="20" y="256" width="380" height="14" rx="3" fill="url(#hiDesk)"/>
-        <rect x="40" y="270" width="10" height="70" fill="#181432"/>
-        <rect x="370" y="270" width="10" height="70" fill="#181432"/>
-
-        <!-- Chair -->
-        <path d="M175 200 Q175 165 215 165 Q255 165 255 200 L255 245 Q215 258 175 245 Z" fill="#100c26"/>
-
-        <!-- Student (side view, sitting, coding) -->
-        <g>
-          <!-- Hair -->
-          <path d="M188 118 Q188 90 215 88 Q242 90 242 118 Q242 108 232 102 Q222 96 215 96 Q208 96 198 102 Q188 108 188 118 Z" fill="#181432"/>
-          <!-- Head -->
-          <circle cx="215" cy="128" r="22" fill="#3a2e6b"/>
-          <!-- Ear -->
-          <circle cx="236" cy="130" r="4" fill="#3a2e6b"/>
-          <!-- Neck -->
-          <rect x="208" y="146" width="14" height="10" fill="#3a2e6b"/>
-          <!-- Hoodie body -->
-          <path d="M188 240 L182 190 Q186 160 215 158 Q244 160 248 190 L242 240 Z" fill="#4433c4"/>
-          <path d="M215 158 Q244 160 248 190 L246 205 Q222 195 215 195 Q208 195 184 205 L182 190 Q186 160 215 158 Z" fill="#5b4de8"/>
-          <!-- Arm to keyboard -->
-          <path d="M244 192 Q262 198 266 212 Q267 218 260 220 Q252 216 248 205 Z" fill="#4433c4"/>
-          <!-- Hand -->
-          <circle cx="262" cy="216" r="7" fill="#3a2e6b"/>
-          <!-- Other arm resting on desk -->
-          <path d="M186 200 Q172 208 168 224 Q167 230 174 231 Q182 226 188 212 Z" fill="#4433c4"/>
-          <circle cx="171" cy="227" r="7" fill="#3a2e6b"/>
-        </g>
-
-        <!-- Floating code brackets -->
-        <text x="330" y="90" font-family="monospace" font-size="22" fill="#a89df7" opacity="0.5">&lt;/&gt;</text>
-        <text x="70" y="110" font-family="monospace" font-size="18" fill="#06b6d4" opacity="0.4">{ }</text>
-      </svg>
+      <div class="hi-scene hi-mockup">
+        <div class="hi-mockup-glow"></div>
+        <div class="hi-mockup-card">
+          <div class="hi-mockup-bar">
+            <span class="hi-dot" style="background:#f87171"></span>
+            <span class="hi-dot" style="background:#fbbf24"></span>
+            <span class="hi-dot" style="background:#34d399"></span>
+            <span class="hi-mockup-bar-title">placementsphere.in</span>
+          </div>
+          <div class="hi-mockup-body">
+            <div class="hi-mrow">
+              <span class="hi-mrow-icon" style="background:rgba(6,182,212,0.15);color:#06b6d4">🏢</span>
+              <div class="hi-mrow-text">
+                <span class="hi-mrow-title">Google — Round 3</span>
+                <span class="hi-mrow-sub">Interview process unlocked</span>
+              </div>
+              <span class="hi-mrow-check">✓</span>
+            </div>
+            <div class="hi-mrow">
+              <span class="hi-mrow-icon" style="background:rgba(124,106,247,0.15);color:#a89df7">💻</span>
+              <div class="hi-mrow-text">
+                <span class="hi-mrow-title">DSA Sheet</span>
+                <div class="hi-progress-track"><div class="hi-progress-fill" style="width:78%;background:linear-gradient(90deg,#7c6af7,#a89df7)"></div></div>
+              </div>
+              <span class="hi-mrow-pct">78%</span>
+            </div>
+            <div class="hi-mrow">
+              <span class="hi-mrow-icon" style="background:rgba(52,211,153,0.15);color:#34d399">📝</span>
+              <div class="hi-mrow-text">
+                <span class="hi-mrow-title">Mock Test — Amazon SDE</span>
+                <span class="hi-mrow-sub">Scored 91 / 100</span>
+              </div>
+              <span class="hi-mrow-badge">Top 5%</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="hi-card hi-card-1">
         <span class="hi-card-label">DSA Questions</span>
@@ -228,24 +196,42 @@
   </div>
   <div class="features">
     <div class="feature-item" style="--fc: #06b6d4">
-      <span class="feature-icon" style="background:rgba(6,182,212,0.14)">🏢</span>
+      <span class="feature-icon" style="background:rgba(6,182,212,0.12);color:#06b6d4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M6 21V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v14"/><path d="M14 21V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v17"/><path d="M9 9h.01M9 12h.01M9 15h.01M17 8h.01M17 11h.01M17 14h.01"/></svg></span>
       <h3>Company Profiles</h3>
       <p>Full hiring process, test patterns, eligibility, tips — for every company that visits campus.</p>
     </div>
     <div class="feature-item" style="--fc: #7c6af7">
-      <span class="feature-icon" style="background:rgba(124,106,247,0.14)">💻</span>
+      <span class="feature-icon" style="background:rgba(124,106,247,0.12);color:#a89df7"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 9l-4 3 4 3"/><path d="M16 9l4 3-4 3"/><path d="M13 5l-2 14"/></svg></span>
       <h3>DSA Practice</h3>
       <p>Company-wise questions with solutions in every major language — Java, Python, C, C++ and more.</p>
     </div>
     <div class="feature-item" style="--fc: #34d399">
-      <span class="feature-icon" style="background:rgba(52,211,153,0.14)">📄</span>
+      <span class="feature-icon" style="background:rgba(52,211,153,0.12);color:#34d399"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/><path d="M9 9h1"/></svg></span>
       <h3>Notes & PDFs</h3>
       <p>Crisp notes for Java, Python, C, C++, DSA theory, and aptitude. Cheatsheets you'll actually use.</p>
     </div>
     <div class="feature-item" style="--fc: #f87171">
-      <span class="feature-icon" style="background:rgba(248,113,113,0.14)">🗣️</span>
+      <span class="feature-icon" style="background:rgba(248,113,113,0.12);color:#f87171"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
       <h3>Interview Experiences</h3>
       <p>Real stories from seniors who got placed. Round-by-round breakdown and honest tips.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BANNER -->
+<section class="stats-banner">
+  <div class="stats-banner-inner">
+    <div class="stats-banner-item">
+      <span class="sb-num">5,000+</span>
+      <span class="sb-label">Active Students</span>
+    </div>
+    <div class="stats-banner-item">
+      <span class="sb-num">1,500+</span>
+      <span class="sb-label">Study Materials</span>
+    </div>
+    <div class="stats-banner-item">
+      <span class="sb-num">300+</span>
+      <span class="sb-label">Companies Covered</span>
     </div>
   </div>
 </section>
@@ -287,24 +273,6 @@
       <div class="process-circle">3</div>
       <h3>Start Preparing</h3>
       <p>Companies, DSA, notes, mock tests — everything unlocked, right away.</p>
-    </div>
-  </div>
-</section>
-
-<!-- STATS BANNER -->
-<section class="stats-banner">
-  <div class="stats-banner-inner">
-    <div class="stats-banner-item">
-      <span class="sb-num">5,000+</span>
-      <span class="sb-label">Active Students</span>
-    </div>
-    <div class="stats-banner-item">
-      <span class="sb-num">1,500+</span>
-      <span class="sb-label">Study Materials</span>
-    </div>
-    <div class="stats-banner-item">
-      <span class="sb-num">300+</span>
-      <span class="sb-label">Companies Covered</span>
     </div>
   </div>
 </section>
