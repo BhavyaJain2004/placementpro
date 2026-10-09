@@ -1021,6 +1021,7 @@ textarea.input-field { resize: vertical; min-height: 90px; }
 .hero-copy { text-align: left; }
 .hero-copy .hero-cta { justify-content: flex-start; }
 .hero-copy .hero-note { text-align: left; }
+.hero-copy p { margin-left: 0; margin-right: 0; }
 
 /* ── Hero illustration ── */
 .hero-illustration {
@@ -1152,6 +1153,8 @@ textarea.input-field { resize: vertical; min-height: 90px; }
   .hero-copy { text-align: center; }
   .hero-copy .hero-cta { justify-content: center; }
   .hero-copy .hero-note { text-align: center; }
+  .hero-copy p { margin-left: auto; margin-right: auto; }
+  .hero-copy .hero-trust-row { justify-content: center; }
   .hero-illustration { max-width: 340px; }
   .hi-card { padding: 0.45rem 0.65rem; }
   .hi-card-value { font-size: 0.95rem; }
@@ -1192,15 +1195,26 @@ textarea.input-field { resize: vertical; min-height: 90px; }
 
 .hero h1 {
   font-size: clamp(2.3rem, 4.2vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
   color: var(--text);
   max-width: 800px;
   animation: fadeUp 0.6s ease 0.1s both;
 }
 
 .hero h1 .highlight {
-  color: var(--accent2);
   position: relative;
   display: inline-block;
+  background: linear-gradient(90deg, #a78bfa, #06b6d4, #a78bfa);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: heroGradientMove 5s linear infinite;
+}
+@keyframes heroGradientMove {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 
 .hero p {
@@ -1227,6 +1241,27 @@ textarea.input-field { resize: vertical; min-height: 90px; }
   margin-top: 1rem;
   animation: fadeUp 0.6s ease 0.4s both;
 }
+
+.hero-trust-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 1.4rem;
+  animation: fadeUp 0.6s ease 0.5s both;
+}
+.hero-avatar-stack { display: flex; }
+.hero-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.8rem; color: #fff;
+  border: 2px solid var(--bg);
+  margin-left: -10px;
+}
+.hero-avatar:first-child { margin-left: 0; }
+.hero-trust-text {
+  display: flex; flex-direction: column; gap: 1px;
+  font-size: 0.78rem; color: var(--muted);
+  text-align: left;
+}
+.hero-stars { color: #fbbf24; font-size: 0.72rem; letter-spacing: 1px; }
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
