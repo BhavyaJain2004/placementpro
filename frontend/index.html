@@ -96,6 +96,18 @@
         <button class="btn btn-outline btn-lg" onclick="showAuth('login')">Already a member</button>
       </div>
       <p class="hero-note">One-time payment · Lifetime access · No subscription</p>
+      <div class="hero-trust-row">
+        <div class="hero-avatar-stack">
+          <span class="hero-avatar" style="background:linear-gradient(135deg,#f87171,#fbbf24)">R</span>
+          <span class="hero-avatar" style="background:linear-gradient(135deg,#34d399,#06b6d4)">A</span>
+          <span class="hero-avatar" style="background:linear-gradient(135deg,#7c6af7,#a89df7)">S</span>
+          <span class="hero-avatar" style="background:linear-gradient(135deg,#06b6d4,#4433c4)">K</span>
+        </div>
+        <div class="hero-trust-text">
+          <span class="hero-stars">★★★★★</span>
+          <span>Joined by 5,000+ students this year</span>
+        </div>
+      </div>
     </div>
 
     <div class="hero-illustration">
@@ -103,43 +115,93 @@
         <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
 
-      <div class="hi-scene hi-mockup">
-        <div class="hi-mockup-glow"></div>
-        <div class="hi-mockup-card">
-          <div class="hi-mockup-bar">
-            <span class="hi-dot" style="background:#f87171"></span>
-            <span class="hi-dot" style="background:#fbbf24"></span>
-            <span class="hi-dot" style="background:#34d399"></span>
-            <span class="hi-mockup-bar-title">placementsphere.in</span>
-          </div>
-          <div class="hi-mockup-body">
-            <div class="hi-mrow">
-              <span class="hi-mrow-icon" style="background:rgba(6,182,212,0.15);color:#06b6d4">🏢</span>
-              <div class="hi-mrow-text">
-                <span class="hi-mrow-title">Google — Round 3</span>
-                <span class="hi-mrow-sub">Interview process unlocked</span>
-              </div>
-              <span class="hi-mrow-check">✓</span>
-            </div>
-            <div class="hi-mrow">
-              <span class="hi-mrow-icon" style="background:rgba(124,106,247,0.15);color:#a89df7">💻</span>
-              <div class="hi-mrow-text">
-                <span class="hi-mrow-title">DSA Sheet</span>
-                <div class="hi-progress-track"><div class="hi-progress-fill" style="width:78%;background:linear-gradient(90deg,#7c6af7,#a89df7)"></div></div>
-              </div>
-              <span class="hi-mrow-pct">78%</span>
-            </div>
-            <div class="hi-mrow">
-              <span class="hi-mrow-icon" style="background:rgba(52,211,153,0.15);color:#34d399">📝</span>
-              <div class="hi-mrow-text">
-                <span class="hi-mrow-title">Mock Test — Amazon SDE</span>
-                <span class="hi-mrow-sub">Scored 91 / 100</span>
-              </div>
-              <span class="hi-mrow-badge">Top 5%</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <svg class="hi-scene" viewBox="0 0 420 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="hiGlow2" cx="50%" cy="38%" r="60%">
+            <stop offset="0%" stop-color="#7c6af7" stop-opacity="0.38"/>
+            <stop offset="100%" stop-color="#7c6af7" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="hiHoodie" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8f7ffb"/>
+            <stop offset="100%" stop-color="#5b4de8"/>
+          </linearGradient>
+          <linearGradient id="hiScreen2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4433c4"/>
+            <stop offset="100%" stop-color="#06b6d4"/>
+          </linearGradient>
+          <linearGradient id="hiCushion" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#2d2558"/>
+            <stop offset="100%" stop-color="#181432"/>
+          </linearGradient>
+        </defs>
+
+        <ellipse cx="210" cy="180" rx="195" ry="195" fill="url(#hiGlow2)"/>
+
+        <!-- Floor shadow -->
+        <ellipse cx="205" cy="338" rx="135" ry="14" fill="#000" opacity="0.28"/>
+
+        <!-- Floating code brackets + sparkle -->
+        <text x="325" y="78" font-family="monospace" font-weight="bold" font-size="24" fill="#06b6d4" opacity="0.55">&lt;/&gt;</text>
+        <text x="55" y="95" font-family="monospace" font-weight="bold" font-size="19" fill="#a89df7" opacity="0.5">{ }</text>
+        <circle cx="345" cy="135" r="3.5" fill="#fbbf24" opacity="0.8"/>
+        <circle cx="70" cy="150" r="2.5" fill="#34d399" opacity="0.7"/>
+
+        <!-- Floating checkmark badge -->
+        <g transform="translate(330,205)">
+          <circle r="19" fill="#181432" stroke="#34d399" stroke-width="1.5"/>
+          <path d="M-7 0 L-2 6 L8 -7" stroke="#34d399" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+
+        <!-- Plant -->
+        <rect x="55" y="290" width="28" height="24" rx="4" fill="#3a2e9e"/>
+        <path d="M69 290 Q55 262 44 268 Q55 280 69 274 Q77 252 88 260 Q82 280 69 280" fill="#34d399" opacity="0.9"/>
+
+        <!-- Coffee cup -->
+        <rect x="335" y="298" width="18" height="20" rx="3" fill="#f4f1ff" opacity="0.92"/>
+        <path d="M353 303 Q363 303 361 312 Q359 317 353 315" stroke="#f4f1ff" stroke-width="2" fill="none" opacity="0.92"/>
+        <path d="M340 294 q3 -6 0 -10 M347 294 q3 -6 0 -10" stroke="#fff" stroke-width="1.4" opacity="0.4" stroke-linecap="round"/>
+
+        <!-- Cushion/seat -->
+        <ellipse cx="205" cy="312" rx="108" ry="26" fill="url(#hiCushion)"/>
+
+        <!-- Legs crossed, sitting on floor -->
+        <path d="M150 300 Q170 320 210 316 Q250 320 268 298 Q255 312 210 310 Q168 312 150 300Z" fill="url(#hiHoodie)" opacity="0.92"/>
+
+        <!-- Body / hoodie -->
+        <path d="M160 300 L155 232 Q160 192 210 190 Q260 192 265 232 L260 300 Q210 312 160 300Z" fill="url(#hiHoodie)"/>
+        <!-- Hoodie front pocket -->
+        <path d="M188 258 Q210 268 232 258 L230 280 Q210 288 190 280 Z" fill="#4433c4" opacity="0.55"/>
+        <!-- Hoodie pocket stitch -->
+        <path d="M188 258 Q210 268 232 258" stroke="#a89df7" stroke-width="1.2" fill="none" opacity="0.5"/>
+
+        <!-- Arms reaching to laptop -->
+        <path d="M172 240 Q150 255 150 278 Q150 286 158 286 Q166 284 168 272 Q172 256 184 244Z" fill="url(#hiHoodie)"/>
+        <path d="M248 240 Q270 255 270 278 Q270 286 262 286 Q254 284 252 272 Q248 256 236 244Z" fill="url(#hiHoodie)"/>
+        <!-- Hands -->
+        <circle cx="156" cy="282" r="8" fill="#3a2e6b"/>
+        <circle cx="264" cy="282" r="8" fill="#3a2e6b"/>
+
+        <!-- Neck -->
+        <rect x="200" y="178" width="20" height="16" fill="#3a2e6b"/>
+        <!-- Head -->
+        <circle cx="210" cy="158" r="26" fill="#3a2e6b"/>
+        <!-- Hoodie hood framing the face -->
+        <path d="M181 158 Q181 122 210 118 Q239 122 239 158 Q239 144 226 136 Q214 130 210 130 Q206 130 194 136 Q181 144 181 158Z" fill="url(#hiHoodie)"/>
+        <!-- Simple friendly face: closed-eye focus look + soft smile -->
+        <path d="M199 157 q4 -4 8 0" stroke="#181432" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M213 157 q4 -4 8 0" stroke="#181432" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M202 170 Q210 175 218 170" stroke="#181432" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <!-- Laptop base -->
+        <path d="M150 284 L270 284 L278 298 L142 298 Z" fill="#100c26"/>
+        <!-- Laptop screen -->
+        <rect x="172" y="232" width="76" height="54" rx="4" fill="#100c26" stroke="#3a2e9e" stroke-width="2"/>
+        <rect x="178" y="238" width="64" height="42" rx="2" fill="url(#hiScreen2)" opacity="0.9"/>
+        <rect x="184" y="246" width="32" height="4.5" rx="2.25" fill="#ffffff" opacity="0.55"/>
+        <rect x="184" y="256" width="46" height="4" rx="2" fill="#ffffff" opacity="0.32"/>
+        <rect x="184" y="265" width="38" height="4" rx="2" fill="#ffffff" opacity="0.32"/>
+        <rect x="184" y="274" width="24" height="4" rx="2" fill="#34d399" opacity="0.7"/>
+      </svg>
 
       <div class="hi-card hi-card-1">
         <span class="hi-card-label">DSA Questions</span>
