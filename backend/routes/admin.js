@@ -1222,6 +1222,18 @@ router.get('/actual-revenue', verifyToken, verifyAdmin, async (req, res) => {
   }
 });
 
+// Screenshot sirf tab load hoti hai jab admin specifically kisi ek submission
+// ki screenshot dekhna chahta hai — bulk list mein kabhi nahi aati (memory fix)
+router.get('/payment-submissions/:id/screenshot', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const p = await Payment.findById(req.params.id).select('screenshot');
+    if (!p || !p.screenshot) return res.status(404).json({ message: 'No screenshot found' });
+    res.json({ screenshot: p.screenshot });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const { status } = req.query;
@@ -1236,7 +1248,7 @@ router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) =>
     // kabhi approve nahi hote the, hamesha pending reh jaate the. Ab sirf
     // "koi bhi paid access mil chuka hai" check hota hai — Payment.plan
     // asli granted access se match karna zaroori nahi hai.
-    const pendingOnes = await Payment.find({ status: 'pending' });
+    const pendingOnes = await Payment.find({ status: 'pending' }).select('userId plan amountPaid status reviewedAt');
     for (const p of pendingOnes) {
       const u = await User.findById(p.userId).select('isPaid hasTestAccess masterDsaAccess resume49 resume99 resume150');
       if (!u) continue;
@@ -1253,7 +1265,7 @@ router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) =>
     }
 
     const filter = status ? { status, isLegacyImport: { $ne: true } } : { isLegacyImport: { $ne: true } };
-    const submissions = await Payment.find(filter).sort({ createdAt: -1 }).lean();
+    const submissions = await Payment.find(filter).select('-screenshot').sort({ createdAt: -1 }).lean();
 
     const approved = submissions.filter(s => s.status === 'approved');
     const actualRevenue = approved.reduce((sum, s) => sum + (s.amountPaid || 0), 0);
@@ -1513,6 +1525,21 @@ router.get('/fix-legacy-import-leak', verifyToken, verifyAdmin, async (req, res)
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+});
+
+// ── System memory snapshot ── Sirf process.memoryUsage() padhta hai, koi DB
+// query nahi — ispe khud ka load bhi negligible hai. Admin panel isse sirf
+// tab khulne par call karta hai, auto-refresh/poll nahi karta.
+router.get('/system-memory', verifyToken, verifyAdmin, async (req, res) => {
+  const m = process.memoryUsage();
+  const mb = (bytes) => Math.round(bytes / 1024 / 1024 * 10) / 10;
+  res.json({
+    rss: mb(m.rss),          // poora process memory footprint
+    heapUsed: mb(m.heapUsed),
+    heapTotal: mb(m.heapTotal),
+    external: mb(m.external),
+    uptimeHours: Math.round(process.uptime() / 3600 * 10) / 10
+  });
 });
 
 module.exports = router;
