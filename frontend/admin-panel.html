@@ -108,6 +108,7 @@ body{background:#06060f}
 
     <div class="as-section">Payments</div>
     <div class="as-item" onclick="showTab('growth',this)">🚀 Growth &amp; Strategy</div>
+    <div class="as-item" onclick="showTab('system',this)">🖥️ System</div>
     <div class="as-item" onclick="showTab('paysubs',this)">💳 Payment Submissions</div>
     <div class="as-item" onclick="showTab('actualrevenue',this)">📈 Actual Revenue</div>
 
@@ -582,6 +583,15 @@ body{background:#06060f}
       </div>
     </div>
 
+    <div id="tab-system" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.2rem">🖥️ System Health</h2>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.78rem;margin-bottom:1rem">Server memory snapshot — sirf iss tab ko kholne par refresh hoti hai, background mein poll nahi hoti (yeh khud load nahi daalti).</p>
+      <div id="sys-strip" style="display:flex;gap:0.6rem;flex-wrap:wrap">
+        <div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem;font-size:0.8rem">Loading…</div>
+      </div>
+      <button onclick="loadSystemMemory()" style="margin-top:1rem;background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);color:#a89df7;padding:0.5rem 1rem;border-radius:8px;font-size:0.76rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">🔄 Refresh now</button>
+    </div>
+
     <div id="tab-actualrevenue" style="display:none">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.25rem">📈 Actual Revenue</h2>
       <p style="color:rgba(255,255,255,0.35);font-size:0.82rem;margin-bottom:1.5rem">Sirf real approved payments pe based — koi bhi galat/mismatched plan-signup se disconnect. Package split asli granted access se nikalta hai, jo user ne signup pe select kiya tha usse nahi.</p>
@@ -973,12 +983,12 @@ function checkPwd() {
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
 // ── TAB ROUTING ──
-const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue','colleges','growth'];
+const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue','colleges','growth','system'];
 function showTab(tab, btn) {
   ALL_TABS.forEach(t => { const el = document.getElementById('tab-'+t); if(el) el.style.display = t===tab?'block':'none'; });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
-  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue, colleges: loadColleges, growth: loadGrowthReport };
+  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue, colleges: loadColleges, growth: loadGrowthReport, system: loadSystemMemory };
   if (loaders[tab]) loaders[tab]();
 }
 
@@ -1506,7 +1516,9 @@ async function loadPaymentSubmissions() {
           · ${new Date(s.createdAt).toLocaleString('en-IN')}
           ${s.referredBy ? ' · Referred by: ' + s.referredBy : ''}
         </div>
-        ${s.screenshot ? `<div style="padding-left:2.5rem;margin-top:0.5rem"><img src="${s.screenshot}" style="max-width:160px;border-radius:8px;cursor:pointer" onclick="window.open('${s.screenshot}','_blank')"></div>` : ''}
+        <div style="padding-left:2.5rem;margin-top:0.5rem" id="ss-wrap-${s._id}">
+          <button onclick="viewScreenshot('${s._id}')" style="background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);color:#a89df7;padding:0.3rem 0.7rem;border-radius:8px;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">🖼️ View Screenshot</button>
+        </div>
         ${s.status === 'pending' ? `
         <div style="padding-left:2.5rem;margin-top:0.6rem;display:flex;gap:0.5rem">
           <button onclick="approvePayment('${s._id}')" style="background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);color:#34d399;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">✅ Approve</button>
@@ -1527,6 +1539,27 @@ function monthLabel(ym) {
 }
 function dayLabel(ymd) {
   return new Date(ymd).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', weekday: 'short' });
+}
+
+// ── SYSTEM MEMORY (sirf tab-open/manual-refresh par call hota hai, koi auto-poll nahi) ──
+async function loadSystemMemory() {
+  const el = document.getElementById('sys-strip');
+  try {
+    const m = await API.call('/admin/system-memory');
+    const pill = (label, val, color) => `
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:0.6rem 1rem;min-width:130px">
+        <div style="font-size:0.62rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:2px">${label}</div>
+        <div style="font-size:1.1rem;font-weight:800;font-family:'Syne',sans-serif;color:${color}">${val}</div>
+      </div>`;
+    el.innerHTML =
+      pill('RSS (total process)', m.rss + ' MB', '#a89df7') +
+      pill('Heap used', m.heapUsed + ' MB', '#34d399') +
+      pill('Heap total', m.heapTotal + ' MB', '#06b6d4') +
+      pill('External (buffers)', m.external + ' MB', '#fbbf24') +
+      pill('Server uptime', m.uptimeHours + ' hrs', 'rgba(255,255,255,0.7)');
+  } catch (e) {
+    el.innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem;font-size:0.8rem">Load nahi ho paaya</div>';
+  }
 }
 
 // ── GROWTH & STRATEGY (compact, single-section, actual submissions se) ──
@@ -1716,6 +1749,21 @@ async function rejectPayment(id) {
     await API.call('/admin/payment-submissions/' + id + '/reject', { method: 'POST' });
     loadPaymentSubmissions();
   } catch(e) { alert('Error: ' + e.message); }
+}
+
+async function viewScreenshot(id) {
+  const wrap = document.getElementById(`ss-wrap-${id}`);
+  wrap.innerHTML = `<span style="font-size:0.7rem;color:rgba(255,255,255,0.4)">Loading…</span>`;
+  try {
+    const data = await API.call(`/admin/payment-submissions/${id}/screenshot`);
+    if (!data.screenshot) {
+      wrap.innerHTML = `<span style="font-size:0.7rem;color:rgba(255,255,255,0.3)">No screenshot available</span>`;
+      return;
+    }
+    wrap.innerHTML = `<img src="${data.screenshot}" style="max-width:160px;border-radius:8px;cursor:pointer" onclick="window.open('${data.screenshot}','_blank')">`;
+  } catch (e) {
+    wrap.innerHTML = `<span style="font-size:0.7rem;color:#f87171">Could not load screenshot</span>`;
+  }
 }
 
 async function editAmount(id, currentAmount) {
