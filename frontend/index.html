@@ -125,82 +125,39 @@
             <stop offset="0%" stop-color="#8f7ffb"/>
             <stop offset="100%" stop-color="#5b4de8"/>
           </linearGradient>
-          <linearGradient id="hiScreen2" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#4433c4"/>
-            <stop offset="100%" stop-color="#06b6d4"/>
-          </linearGradient>
-          <linearGradient id="hiCushion" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#2d2558"/>
-            <stop offset="100%" stop-color="#181432"/>
-          </linearGradient>
         </defs>
 
         <ellipse cx="210" cy="180" rx="195" ry="195" fill="url(#hiGlow2)"/>
+        <ellipse cx="210" cy="330" rx="130" ry="13" fill="#000" opacity="0.25"/>
 
-        <!-- Floor shadow -->
-        <ellipse cx="205" cy="338" rx="135" ry="14" fill="#000" opacity="0.28"/>
+        <!-- Study table -->
+        <rect x="55" y="238" width="310" height="12" rx="3" fill="#2a2350"/>
+        <rect x="70" y="250" width="10" height="78" fill="#181432"/>
+        <rect x="340" y="250" width="10" height="78" fill="#181432"/>
 
-        <!-- Floating code brackets + sparkle -->
-        <text x="325" y="78" font-family="monospace" font-weight="bold" font-size="24" fill="#06b6d4" opacity="0.55">&lt;/&gt;</text>
-        <text x="55" y="95" font-family="monospace" font-weight="bold" font-size="19" fill="#a89df7" opacity="0.5">{ }</text>
-        <circle cx="345" cy="135" r="3.5" fill="#fbbf24" opacity="0.8"/>
-        <circle cx="70" cy="150" r="2.5" fill="#34d399" opacity="0.7"/>
+        <!-- Chair back, visible behind person -->
+        <path d="M160 190 Q160 150 210 148 Q260 150 260 190 L255 240 Q210 252 165 240 Z" fill="#100c26"/>
 
-        <!-- Floating checkmark badge -->
-        <g transform="translate(330,205)">
-          <circle r="19" fill="#181432" stroke="#34d399" stroke-width="1.5"/>
-          <path d="M-7 0 L-2 6 L8 -7" stroke="#34d399" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Student from behind: hoodie back + hood, focused posture leaning in -->
+        <path d="M172 238 L168 178 Q172 140 210 138 Q248 140 252 178 L248 238 Z" fill="url(#hiHoodie)"/>
+        <path d="M184 150 Q188 122 210 120 Q232 122 236 150 Q236 136 224 128 Q216 124 210 124 Q204 124 196 128 Q184 136 184 150Z" fill="#5b4de8"/>
+        <!-- Shoulders/arms toward keyboard -->
+        <path d="M172 196 Q152 206 148 226 L160 230 Q168 214 178 204Z" fill="url(#hiHoodie)"/>
+        <path d="M248 196 Q268 206 272 226 L260 230 Q252 214 242 204Z" fill="url(#hiHoodie)"/>
+
+        <!-- Laptop, angled slightly so the screen reads to the viewer -->
+        <path d="M150 232 L270 232 L278 244 L142 244 Z" fill="#100c26"/>
+        <g transform="skewX(-6)">
+          <rect x="174" y="176" width="72" height="56" rx="4" fill="#100c26" stroke="#3a2e9e" stroke-width="2"/>
+          <rect x="180" y="182" width="60" height="44" rx="2" fill="#15123a"/>
+          <text x="210" y="201" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="800" font-size="9" fill="#a89df7">Placement</text>
+          <text x="210" y="212" text-anchor="middle" font-family="'Syne',sans-serif" font-weight="800" font-size="9" fill="#06b6d4">Sphere</text>
+          <rect x="188" y="217" width="44" height="3.5" rx="1.75" fill="#34d399" opacity="0.65"/>
         </g>
 
-        <!-- Plant -->
-        <rect x="55" y="290" width="28" height="24" rx="4" fill="#3a2e9e"/>
-        <path d="M69 290 Q55 262 44 268 Q55 280 69 274 Q77 252 88 260 Q82 280 69 280" fill="#34d399" opacity="0.9"/>
-
-        <!-- Coffee cup -->
-        <rect x="335" y="298" width="18" height="20" rx="3" fill="#f4f1ff" opacity="0.92"/>
-        <path d="M353 303 Q363 303 361 312 Q359 317 353 315" stroke="#f4f1ff" stroke-width="2" fill="none" opacity="0.92"/>
-        <path d="M340 294 q3 -6 0 -10 M347 294 q3 -6 0 -10" stroke="#fff" stroke-width="1.4" opacity="0.4" stroke-linecap="round"/>
-
-        <!-- Cushion/seat -->
-        <ellipse cx="205" cy="312" rx="108" ry="26" fill="url(#hiCushion)"/>
-
-        <!-- Legs crossed, sitting on floor -->
-        <path d="M150 300 Q170 320 210 316 Q250 320 268 298 Q255 312 210 310 Q168 312 150 300Z" fill="url(#hiHoodie)" opacity="0.92"/>
-
-        <!-- Body / hoodie -->
-        <path d="M160 300 L155 232 Q160 192 210 190 Q260 192 265 232 L260 300 Q210 312 160 300Z" fill="url(#hiHoodie)"/>
-        <!-- Hoodie front pocket -->
-        <path d="M188 258 Q210 268 232 258 L230 280 Q210 288 190 280 Z" fill="#4433c4" opacity="0.55"/>
-        <!-- Hoodie pocket stitch -->
-        <path d="M188 258 Q210 268 232 258" stroke="#a89df7" stroke-width="1.2" fill="none" opacity="0.5"/>
-
-        <!-- Arms reaching to laptop -->
-        <path d="M172 240 Q150 255 150 278 Q150 286 158 286 Q166 284 168 272 Q172 256 184 244Z" fill="url(#hiHoodie)"/>
-        <path d="M248 240 Q270 255 270 278 Q270 286 262 286 Q254 284 252 272 Q248 256 236 244Z" fill="url(#hiHoodie)"/>
-        <!-- Hands -->
-        <circle cx="156" cy="282" r="8" fill="#3a2e6b"/>
-        <circle cx="264" cy="282" r="8" fill="#3a2e6b"/>
-
-        <!-- Neck -->
-        <rect x="200" y="178" width="20" height="16" fill="#3a2e6b"/>
-        <!-- Head -->
-        <circle cx="210" cy="158" r="26" fill="#3a2e6b"/>
-        <!-- Hoodie hood framing the face -->
-        <path d="M181 158 Q181 122 210 118 Q239 122 239 158 Q239 144 226 136 Q214 130 210 130 Q206 130 194 136 Q181 144 181 158Z" fill="url(#hiHoodie)"/>
-        <!-- Simple friendly face: closed-eye focus look + soft smile -->
-        <path d="M199 157 q4 -4 8 0" stroke="#181432" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <path d="M213 157 q4 -4 8 0" stroke="#181432" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <path d="M202 170 Q210 175 218 170" stroke="#181432" stroke-width="2" fill="none" stroke-linecap="round"/>
-
-        <!-- Laptop base -->
-        <path d="M150 284 L270 284 L278 298 L142 298 Z" fill="#100c26"/>
-        <!-- Laptop screen -->
-        <rect x="172" y="232" width="76" height="54" rx="4" fill="#100c26" stroke="#3a2e9e" stroke-width="2"/>
-        <rect x="178" y="238" width="64" height="42" rx="2" fill="url(#hiScreen2)" opacity="0.9"/>
-        <rect x="184" y="246" width="32" height="4.5" rx="2.25" fill="#ffffff" opacity="0.55"/>
-        <rect x="184" y="256" width="46" height="4" rx="2" fill="#ffffff" opacity="0.32"/>
-        <rect x="184" y="265" width="38" height="4" rx="2" fill="#ffffff" opacity="0.32"/>
-        <rect x="184" y="274" width="24" height="4" rx="2" fill="#34d399" opacity="0.7"/>
+        <!-- Lamp -->
+        <path d="M90 248 L90 215 L112 200" stroke="#3a2e9e" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M100 196 L126 206 L104 214Z" fill="#fbbf24" opacity="0.85"/>
       </svg>
 
       <div class="hi-card hi-card-1">
