@@ -56,6 +56,8 @@ require('dotenv').config();
 const express  = require('express');
 const mongoose = require('mongoose');
 const cors     = require('cors');
+const cron     = require('node-cron');
+const { sendDailyReport } = require('./services/dailyReport');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -105,5 +107,11 @@ mongoose.connect(process.env.MONGO_URI)
     console.log('✅ MongoDB connected');
     app.listen(process.env.PORT || 5000, () =>
       console.log(`🚀 Server on port ${process.env.PORT || 5000}`));
+
+    // Har roj raat 8 baje (IST) daily report email bhej do
+    cron.schedule('0 20 * * *', () => {
+      sendDailyReport().catch(err => console.error('❌ Daily report failed:', err));
+    }, { timezone: 'Asia/Kolkata' });
+    console.log('📅 Daily report scheduled for 8:00 PM IST');
   })
   .catch(err => { console.error('❌ DB error:', err); process.exit(1); });
