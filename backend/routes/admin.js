@@ -1542,4 +1542,15 @@ router.get('/system-memory', verifyToken, verifyAdmin, async (req, res) => {
   });
 });
 
+// ── Daily report ko abhi turant chala ke dekho (testing ke liye, 8 PM ka wait nahi karna) ──
+router.get('/send-test-report', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { sendDailyReport } = require('../services/dailyReport');
+    await sendDailyReport();
+    res.json({ message: 'Test report bhej diya — apna inbox check karo' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
