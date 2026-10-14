@@ -209,12 +209,35 @@ async function sendDailyReport() {
   const data = await collectReportData(windowStart, windowEnd);
   const pdfBuffer = await generateReportPDF({ ...data, windowStart, windowEnd });
 
+  // Debug: Railway logs mein dikhega ki env vars actually set hain ya nahi
+  // (password kabhi print nahi hota, sirf uski length — safe hai)
+  console.log('📧 SMTP config check:', {
+    host: process.env.SMTP_HOST || '❌ MISSING',
+    port: process.env.SMTP_PORT || '❌ MISSING',
+    user: process.env.SMTP_USER || '❌ MISSING',
+    passLength: process.env.SMTP_PASS ? process.env.SMTP_PASS.length : '❌ MISSING',
+    adminEmail: process.env.ADMIN_REPORT_EMAIL || '❌ MISSING'
+  });
+
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT || 587),
     secure: Number(process.env.SMTP_PORT) === 465,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    connectionTimeout: 15000, // 15 sec — jaldi fail ho jaye, hang na ho
+    greetingTimeout: 15000,
+    socketTimeout: 15000
   });
+
+  // Pehle connection verify karo — isse pata chalega exact wajah
+  // (galat host/port/auth/firewall block — sab alag error dete hain)
+  try {
+    await transporter.verify();
+    console.log('✅ SMTP connection verified');
+  } catch (verifyErr) {
+    console.error('❌ SMTP verify failed:', verifyErr.message);
+    throw new Error(`SMTP connection failed: ${verifyErr.message}`);
+  }
 
   const dateStr = formatDate(windowEnd).replace(/ /g, '-');
 
