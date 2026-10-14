@@ -1544,35 +1544,33 @@ router.get('/system-memory', verifyToken, verifyAdmin, async (req, res) => {
 
 // ── Sirf SMTP connection check karo, poora report banaye bina (fast diagnostic) ──
 router.get('/check-smtp', verifyToken, verifyAdmin, async (req, res) => {
-  const nodemailer = require('nodemailer');
   const envCheck = {
-    SMTP_HOST: process.env.SMTP_HOST || null,
-    SMTP_PORT: process.env.SMTP_PORT || null,
-    SMTP_USER: process.env.SMTP_USER || null,
-    SMTP_PASS_set: !!process.env.SMTP_PASS,
-    SMTP_PASS_length: process.env.SMTP_PASS ? process.env.SMTP_PASS.length : 0,
+    RESEND_API_KEY_set: !!process.env.RESEND_API_KEY,
+    RESEND_FROM: process.env.RESEND_FROM || '(default: onboarding@resend.dev)',
     ADMIN_REPORT_EMAIL: process.env.ADMIN_REPORT_EMAIL || null
   };
 
-  const missing = Object.entries(envCheck).filter(([k, v]) => !v && k !== 'SMTP_PASS_length').map(([k]) => k);
-  if (missing.length) {
-    return res.json({ ok: false, step: 'env-check', missing, envCheck });
+  if (!process.env.RESEND_API_KEY || !process.env.ADMIN_REPORT_EMAIL) {
+    return res.json({ ok: false, step: 'env-check', envCheck });
   }
 
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT || 587),
-      secure: Number(process.env.SMTP_PORT) === 465,
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-      connectionTimeout: 15000,
-      greetingTimeout: 15000,
-      socketTimeout: 15000
+    const axios = require('axios');
+    // Resend ka /domains ping — sirf yeh verify karta hai ki API key valid hai
+    // aur Resend tak pahunch ho rahi hai, koi real email nahi bhejta
+    await axios.get('https://api.resend.com/domains', {
+      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}` },
+      timeout: 15000
     });
-    await transporter.verify();
-    res.json({ ok: true, message: 'SMTP connection successful', envCheck });
+    res.json({ ok: true, message: 'Resend API reachable aur key valid hai', envCheck });
   } catch (err) {
-    res.json({ ok: false, step: 'smtp-connect', error: err.message, code: err.code, envCheck });
+    res.json({
+      ok: false,
+      step: 'resend-connect',
+      error: err.response?.data?.message || err.message,
+      status: err.response?.status,
+      envCheck
+    });
   }
 });
 
