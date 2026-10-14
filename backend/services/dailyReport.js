@@ -7,7 +7,6 @@
 // ke report mein aayega.
 
 const PDFDocument = require('pdfkit');
-const nodemailer  = require('nodemailer');
 const User        = require('../models/User');
 const Payment     = require('../models/Payment');
 const Package     = require('../models/Package');
@@ -201,6 +200,39 @@ function buildEmailHtml({ signups, payments, totalRevenue, windowStart, windowEn
   </div>`;
 }
 
+// ── Email bhejo Resend ke HTTP API se (SMTP nahi — Railway SMTP ports block
+// karta hai, lekin HTTPS/443 kabhi block nahi hota) ──
+async function sendViaResend({ subject, html, pdfBuffer, filename }) {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY env var missing');
+  }
+  if (!process.env.ADMIN_REPORT_EMAIL) {
+    throw new Error('ADMIN_REPORT_EMAIL env var missing');
+  }
+
+  const axios = require('axios');
+  const fromAddress = process.env.RESEND_FROM || 'PlacementSphere Reports <onboarding@resend.dev>';
+
+  const resp = await axios.post('https://api.resend.com/emails', {
+    from: fromAddress,
+    to: [process.env.ADMIN_REPORT_EMAIL],
+    subject,
+    html,
+    attachments: [{
+      filename,
+      content: pdfBuffer.toString('base64')
+    }]
+  }, {
+    headers: {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    timeout: 20000
+  });
+
+  return resp.data;
+}
+
 // ── Main entry point ──
 async function sendDailyReport() {
   const windowEnd = new Date();
@@ -209,50 +241,21 @@ async function sendDailyReport() {
   const data = await collectReportData(windowStart, windowEnd);
   const pdfBuffer = await generateReportPDF({ ...data, windowStart, windowEnd });
 
-  // Debug: Railway logs mein dikhega ki env vars actually set hain ya nahi
-  // (password kabhi print nahi hota, sirf uski length — safe hai)
-  console.log('📧 SMTP config check:', {
-    host: process.env.SMTP_HOST || '❌ MISSING',
-    port: process.env.SMTP_PORT || '❌ MISSING',
-    user: process.env.SMTP_USER || '❌ MISSING',
-    passLength: process.env.SMTP_PASS ? process.env.SMTP_PASS.length : '❌ MISSING',
+  console.log('📧 Email config check:', {
+    resendKeySet: !!process.env.RESEND_API_KEY,
     adminEmail: process.env.ADMIN_REPORT_EMAIL || '❌ MISSING'
   });
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: Number(process.env.SMTP_PORT) === 465,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-    connectionTimeout: 15000, // 15 sec — jaldi fail ho jaye, hang na ho
-    greetingTimeout: 15000,
-    socketTimeout: 15000
-  });
-
-  // Pehle connection verify karo — isse pata chalega exact wajah
-  // (galat host/port/auth/firewall block — sab alag error dete hain)
-  try {
-    await transporter.verify();
-    console.log('✅ SMTP connection verified');
-  } catch (verifyErr) {
-    console.error('❌ SMTP verify failed:', verifyErr.message);
-    throw new Error(`SMTP connection failed: ${verifyErr.message}`);
-  }
-
   const dateStr = formatDate(windowEnd).replace(/ /g, '-');
 
-  await transporter.sendMail({
-    from: `"PlacementSphere Reports" <${process.env.SMTP_USER}>`,
-    to: process.env.ADMIN_REPORT_EMAIL,
+  await sendViaResend({
     subject: `📊 Daily Report — ${formatDate(windowEnd)} | ${data.signups.length} signups · ${formatMoney(data.totalRevenue)} collected`,
     html: buildEmailHtml({ ...data, windowStart, windowEnd }),
-    attachments: [{
-      filename: `PlacementSphere-Report-${dateStr}.pdf`,
-      content: pdfBuffer
-    }]
+    pdfBuffer,
+    filename: `PlacementSphere-Report-${dateStr}.pdf`
   });
 
   console.log(`✅ Daily report sent — ${data.signups.length} signups, ${formatMoney(data.totalRevenue)} revenue`);
 }
 
-module.exports = { sendDailyReport, collectReportData, generateReportPDF };
+module.exports = { sendDailyReport, collectReportData, generateReportPDF, sendViaResend };
