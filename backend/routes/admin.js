@@ -1542,6 +1542,40 @@ router.get('/system-memory', verifyToken, verifyAdmin, async (req, res) => {
   });
 });
 
+// ── Sirf SMTP connection check karo, poora report banaye bina (fast diagnostic) ──
+router.get('/check-smtp', verifyToken, verifyAdmin, async (req, res) => {
+  const nodemailer = require('nodemailer');
+  const envCheck = {
+    SMTP_HOST: process.env.SMTP_HOST || null,
+    SMTP_PORT: process.env.SMTP_PORT || null,
+    SMTP_USER: process.env.SMTP_USER || null,
+    SMTP_PASS_set: !!process.env.SMTP_PASS,
+    SMTP_PASS_length: process.env.SMTP_PASS ? process.env.SMTP_PASS.length : 0,
+    ADMIN_REPORT_EMAIL: process.env.ADMIN_REPORT_EMAIL || null
+  };
+
+  const missing = Object.entries(envCheck).filter(([k, v]) => !v && k !== 'SMTP_PASS_length').map(([k]) => k);
+  if (missing.length) {
+    return res.json({ ok: false, step: 'env-check', missing, envCheck });
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT || 587),
+      secure: Number(process.env.SMTP_PORT) === 465,
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 15000
+    });
+    await transporter.verify();
+    res.json({ ok: true, message: 'SMTP connection successful', envCheck });
+  } catch (err) {
+    res.json({ ok: false, step: 'smtp-connect', error: err.message, code: err.code, envCheck });
+  }
+});
+
 // ── Daily report ko abhi turant chala ke dekho (testing ke liye, 8 PM ka wait nahi karna) ──
 router.get('/send-test-report', verifyToken, verifyAdmin, async (req, res) => {
   try {
