@@ -1575,11 +1575,14 @@ router.get('/check-smtp', verifyToken, verifyAdmin, async (req, res) => {
 });
 
 // ── Daily report ko abhi turant chala ke dekho (testing ke liye, 8 PM ka wait nahi karna) ──
+// ?start=2026-10-13T00:00:00&end=2026-10-15T15:00:00 jaise query params se
+// custom date-range test kar sakte ho. Kuch na do toh normal 24-hour wala
+// chalega (jaisa daily 8 PM cron bhi karta hai).
 router.get('/send-test-report', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const { sendDailyReport } = require('../services/dailyReport');
-    await sendDailyReport();
-    res.json({ message: 'Test report bhej diya — apna inbox check karo' });
+    await sendDailyReport(req.query.start, req.query.end);
+    res.json({ message: 'Test report bhej diya — apna inbox check karo', range: { start: req.query.start || '(default 24hr)', end: req.query.end || '(default now)' } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
