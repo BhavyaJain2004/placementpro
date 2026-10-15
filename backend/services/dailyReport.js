@@ -310,9 +310,12 @@ async function sendViaResend({ subject, html, pdfBuffer, filename }) {
 }
 
 // ── Main entry point ──
-async function sendDailyReport() {
-  const windowEnd = new Date();
-  const windowStart = new Date(windowEnd.getTime() - 24 * 60 * 60 * 1000);
+async function sendDailyReport(customStart, customEnd) {
+  // Testing ke liye custom date-range diya ja sakta hai — daily 8 PM cron
+  // isko bina kisi argument ke call karta hai, toh woh hamesha normal
+  // 24-ghante wala rolling window hi use karega, isme koi change nahi
+  const windowEnd = customEnd ? new Date(customEnd) : new Date();
+  const windowStart = customStart ? new Date(customStart) : new Date(windowEnd.getTime() - 24 * 60 * 60 * 1000);
 
   const data = await collectReportData(windowStart, windowEnd);
   const pdfBuffer = await generateReportPDF({ ...data, windowStart, windowEnd });
