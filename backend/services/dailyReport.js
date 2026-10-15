@@ -11,14 +11,23 @@ const User        = require('../models/User');
 const Payment     = require('../models/Payment');
 const Package     = require('../models/Package');
 
+// IMPORTANT: timeZone explicitly 'Asia/Kolkata' diya hai — warna server UTC
+// mein chalta hai (Railway), aur raat 8 PM IST ka time UTC mein 2:30 PM hota
+// hai, jo galat dikh raha tha (4:23 AM wala bug isi wajah se tha).
 function formatDate(d) {
-  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
 }
 function formatTime(d) {
-  return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+  return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
 }
+// Email (HTML, browsers render ₹ fine)
 function formatMoney(n) {
   return '₹' + Number(n || 0).toLocaleString('en-IN');
+}
+// PDF (PDFKit ke standard Helvetica font mein ₹ glyph nahi hota, isliye
+// garbled dikhta tha — PDF ke andar hamesha "Rs." use karo)
+function formatMoneyPDF(n) {
+  return 'Rs. ' + Number(n || 0).toLocaleString('en-IN');
 }
 
 // ── Data collect karo ek time-window ke liye ──
@@ -131,40 +140,51 @@ function generateReportPDF({ signups, payments, planNameMap, totalRevenue, windo
 
     const pageW = doc.page.width - 96; // usable width (margins already removed)
 
-    // ── Header ──
+    // ── Header: title + subtitle normal auto-flow mein (overlap se bachne ke liye) ──
     doc.font('Helvetica-Bold').fontSize(22).fillColor('#4433c4').text('PlacementSphere');
+    doc.moveDown(0.15);
     doc.font('Helvetica').fontSize(10).fillColor('#888').text('Daily Business Report');
-    doc.moveDown(0.5);
-    doc.roundedRect(48, doc.y, pageW, 36, 6).fill('#f7f6ff');
-    doc.font('Helvetica-Bold').fontSize(9).fillColor('#4433c4')
-      .text('REPORT PERIOD', 60, doc.y - 28);
+    doc.moveDown(0.8);
+
+    // ── Report period box — fixed box height, text explicit offsets isi box
+    // ke andar (doc.y pe depend nahi karta, isliye overlap nahi hoga) ──
+    const periodBoxY = doc.y;
+    const periodBoxH = 46;
+    doc.roundedRect(48, periodBoxY, pageW, periodBoxH, 6).fill('#f7f6ff');
+    doc.font('Helvetica-Bold').fontSize(8).fillColor('#4433c4')
+      .text('REPORT PERIOD', 62, periodBoxY + 10, { lineBreak: false });
     doc.font('Helvetica').fontSize(10).fillColor('#333')
-      .text(`${formatDateTimeFull(windowStart)}   →   ${formatDateTimeFull(windowEnd)}`, 60, doc.y + 1);
-    doc.y += 16;
-    doc.moveDown(1.2);
+      .text(`${formatDateTimeFull(windowStart)}   to   ${formatDateTimeFull(windowEnd)}`, 62, periodBoxY + 25, { width: pageW - 28, lineBreak: false });
+    doc.y = periodBoxY + periodBoxH + 22;
+    doc.x = 48;
 
     // ── Summary cards (3 boxes, revenue gets more width since it has longer text) ──
     const gap = 12;
-    const revW = pageW * 0.38;
+    const revW = pageW * 0.4;
     const otherW = (pageW - revW - gap * 2) / 2;
     const boxY = doc.y;
+    const boxH = 60;
     const summary = [
       { label: 'NEW SIGNUPS', value: String(signups.length), color: '#7c6af7', w: otherW },
       { label: 'PAYMENTS COLLECTED', value: String(payments.length), color: '#06b6d4', w: otherW },
-      { label: 'REVENUE TODAY', value: formatMoney(totalRevenue), color: '#34d399', w: revW }
+      { label: 'REVENUE TODAY', value: formatMoneyPDF(totalRevenue), color: '#34d399', w: revW }
     ];
     let bx = 48;
     summary.forEach(s => {
-      doc.roundedRect(bx, boxY, s.w, 62, 6).fillAndStroke('#f7f6ff', '#e5e2fb');
-      doc.font('Helvetica').fontSize(8).fillColor('#888').text(s.label, bx + 14, boxY + 12, { width: s.w - 28 });
-      doc.font('Helvetica-Bold').fontSize(16).fillColor(s.color).text(s.value, bx + 14, boxY + 30, { width: s.w - 28, lineBreak: false });
+      doc.roundedRect(bx, boxY, s.w, boxH, 6).fillAndStroke('#f7f6ff', '#e5e2fb');
+      doc.font('Helvetica').fontSize(7.5).fillColor('#888')
+        .text(s.label, bx + 12, boxY + 11, { width: s.w - 24, lineBreak: false });
+      doc.font('Helvetica-Bold').fontSize(15).fillColor(s.color)
+        .text(s.value, bx + 12, boxY + 28, { width: s.w - 24, lineBreak: false });
       bx += s.w + gap;
     });
-    doc.y = boxY + 62 + 26;
+    doc.y = boxY + boxH + 26;
     doc.x = 48;
 
     // ── 1) Payments Collected (bill-style, with total row) — ab sabse upar ──
-    doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a1a2e').text('💰 Payments Collected');
+    // Note: PDF ke standard fonts emoji render nahi karte, isliye yahan plain
+    // text headings hain (emoji sirf email HTML mein use hoti hai)
+    doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a1a2e').text('Payments Collected');
     doc.moveDown(0.4);
     if (!payments.length) {
       doc.font('Helvetica').fontSize(10).fillColor('#999').text('No payments collected in this period.');
@@ -177,19 +197,19 @@ function generateReportPDF({ signups, payments, planNameMap, totalRevenue, windo
           p.name || '—',
           (p.college || 'kiit').toUpperCase(),
           planNameMap[p.plan] || `Plan ${p.plan}`,
-          formatMoney(p.amountPaid)
+          formatMoneyPDF(p.amountPaid)
         ]),
         [150, 75, 139, 135],
         {
           alignRight: [3],
-          totalRow: ['', '', 'Total Collected', formatMoney(totalRevenue)]
+          totalRow: ['', '', 'Total Collected', formatMoneyPDF(totalRevenue)]
         }
       );
       doc.moveDown(0.6);
     }
 
     // ── 2) New Signups — neeche, package + amount paid (agar hai) ke saath ──
-    doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a1a2e').text('🆕 New Signups');
+    doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a1a2e').text('New Signups');
     doc.moveDown(0.4);
     if (!signups.length) {
       doc.font('Helvetica').fontSize(10).fillColor('#999').text('No new signups in this period.');
@@ -202,7 +222,7 @@ function generateReportPDF({ signups, payments, planNameMap, totalRevenue, windo
           s.email || '—',
           (s.college || 'kiit').toUpperCase(),
           s.planName,
-          s.amountPaid != null ? formatMoney(s.amountPaid) : 'Pending'
+          s.amountPaid != null ? formatMoneyPDF(s.amountPaid) : 'Pending'
         ]),
         [95, 150, 55, 90, 109],
         { alignRight: [4] }
@@ -211,7 +231,7 @@ function generateReportPDF({ signups, payments, planNameMap, totalRevenue, windo
 
     doc.moveDown(1.5);
     doc.font('Helvetica').fontSize(8).fillColor('#aaa')
-      .text('Generated automatically by PlacementSphere · This is an internal business report.', { align: 'center' });
+      .text('Generated automatically by PlacementSphere - This is an internal business report.', { align: 'center' });
 
     doc.end();
   });
