@@ -23,19 +23,42 @@ function formatMoney(n) {
 
 // ── Data collect karo ek time-window ke liye ──
 async function collectReportData(windowStart, windowEnd) {
-  const [signups, payments, packages] = await Promise.all([
+  const [rawSignups, payments, packages] = await Promise.all([
     User.find({ createdAt: { $gte: windowStart, $lt: windowEnd } })
-      .select('name email college createdAt').sort({ createdAt: 1 }).lean(),
+      .select('name email college createdAt selectedPlan').sort({ createdAt: 1 }).lean(),
     Payment.find({
       status: 'approved',
       isLegacyImport: { $ne: true },
       createdAt: { $gte: windowStart, $lt: windowEnd }
-    }).select('name email plan amountPaid createdAt').sort({ createdAt: 1 }).lean(),
+    }).select('userId name email college plan amountPaid createdAt').sort({ createdAt: 1 }).lean(),
     Package.find().lean()
   ]);
 
   const planNameMap = {};
   packages.forEach(p => { planNameMap[p.key] = p.name; });
+
+  // Har signup ke liye uski koi bhi (kisi bhi date ki) approved payment dhoondo,
+  // taaki signup table mein "kaunsa package liya + kitna paid kiya" bhi dikhe
+  let signupPaymentMap = {};
+  if (rawSignups.length) {
+    const ids = rawSignups.map(u => u._id);
+    const theirPayments = await Payment.find({
+      userId: { $in: ids }, status: 'approved'
+    }).select('userId plan amountPaid').sort({ createdAt: -1 }).lean();
+    theirPayments.forEach(p => {
+      const key = String(p.userId);
+      if (!signupPaymentMap[key]) signupPaymentMap[key] = p; // sabse latest wali rakho
+    });
+  }
+
+  const signups = rawSignups.map(u => {
+    const pay = signupPaymentMap[String(u._id)];
+    return {
+      name: u.name, email: u.email, college: u.college, createdAt: u.createdAt,
+      planName: planNameMap[u.selectedPlan] || (u.selectedPlan ? `Plan ${u.selectedPlan}` : '—'),
+      amountPaid: pay ? pay.amountPaid : null
+    };
+  });
 
   const totalRevenue = payments.reduce((sum, p) => sum + (p.amountPaid || 0), 0);
 
@@ -43,41 +66,58 @@ async function collectReportData(windowStart, windowEnd) {
 }
 
 // ── Simple table drawer (pdfkit has no built-in tables) ──
-function drawTable(doc, headers, rows, colWidths) {
+// alignRight: column indices jo right-align hone chahiye (jaise Amount)
+// totalRow: agar diya ho toh bottom mein ek highlighted bill-style total row aata hai
+function drawTable(doc, headers, rows, colWidths, { alignRight = [], totalRow = null } = {}) {
   const startX = doc.x;
   let y = doc.y;
   const rowHeight = 22;
+  const tableWidth = colWidths.reduce((a, b) => a + b, 0);
 
-  // Header row
-  doc.font('Helvetica-Bold').fontSize(9.5).fillColor('#ffffff');
-  doc.rect(startX, y, colWidths.reduce((a, b) => a + b, 0), rowHeight).fill('#4433c4');
-  let x = startX;
-  headers.forEach((h, i) => {
-    doc.fillColor('#ffffff').text(h, x + 8, y + 6, { width: colWidths[i] - 12 });
-    x += colWidths[i];
-  });
-  y += rowHeight;
-
-  // Data rows
-  doc.font('Helvetica').fontSize(9.5);
-  rows.forEach((row, rIdx) => {
-    const bg = rIdx % 2 === 0 ? '#f7f6ff' : '#ffffff';
-    doc.rect(startX, y, colWidths.reduce((a, b) => a + b, 0), rowHeight).fill(bg);
-    x = startX;
-    row.forEach((cell, i) => {
-      doc.fillColor('#2a2550').text(String(cell), x + 8, y + 6, { width: colWidths[i] - 12, ellipsis: true });
+  const drawRow = (cells, { bg, color, font, size, border }) => {
+    doc.rect(startX, y, tableWidth, rowHeight).fill(bg);
+    let x = startX;
+    doc.font(font).fontSize(size);
+    cells.forEach((cell, i) => {
+      doc.fillColor(color).text(String(cell), x + 8, y + 6, {
+        width: colWidths[i] - 16,
+        align: alignRight.includes(i) ? 'right' : 'left',
+        ellipsis: true
+      });
       x += colWidths[i];
     });
-    y += rowHeight;
-
-    // Naya page agar bottom ke paas pahunch gaye
-    if (y > doc.page.height - 100) {
-      doc.addPage();
-      y = doc.y;
+    if (border) {
+      doc.rect(startX, y, tableWidth, rowHeight).strokeColor('#e5e2fb').lineWidth(1).stroke();
     }
+    y += rowHeight;
+  };
+
+  // Header row
+  drawRow(headers, { bg: '#4433c4', color: '#ffffff', font: 'Helvetica-Bold', size: 9.5 });
+
+  // Data rows
+  rows.forEach((row, rIdx) => {
+    if (y > doc.page.height - 120) { doc.addPage(); y = doc.y; }
+    drawRow(row, {
+      bg: rIdx % 2 === 0 ? '#f7f6ff' : '#ffffff',
+      color: '#2a2550', font: 'Helvetica', size: 9.5
+    });
   });
 
+  // Bill-style total row
+  if (totalRow) {
+    if (y > doc.page.height - 120) { doc.addPage(); y = doc.y; }
+    drawRow(totalRow, { bg: '#e8e4fd', color: '#4433c4', font: 'Helvetica-Bold', size: 10.5, border: true });
+  }
+
   doc.y = y + 10;
+  doc.x = startX;
+}
+
+function formatDateTimeFull(d) {
+  // "Wed, 14 Oct 2026, 08:00 PM" — pura clear format
+  const weekday = d.toLocaleDateString('en-IN', { weekday: 'short' });
+  return `${weekday}, ${formatDate(d)}, ${formatTime(d)}`;
 }
 
 // ── Poora PDF banao ──
@@ -89,69 +129,85 @@ function generateReportPDF({ signups, payments, planNameMap, totalRevenue, windo
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
 
+    const pageW = doc.page.width - 96; // usable width (margins already removed)
+
     // ── Header ──
     doc.font('Helvetica-Bold').fontSize(22).fillColor('#4433c4').text('PlacementSphere');
     doc.font('Helvetica').fontSize(10).fillColor('#888').text('Daily Business Report');
-    doc.moveDown(0.3);
-    doc.fontSize(9.5).fillColor('#555')
-      .text(`Report period: ${formatDate(windowStart)} ${formatTime(windowStart)}  →  ${formatDate(windowEnd)} ${formatTime(windowEnd)}`);
-    doc.moveDown(1);
-    doc.moveTo(48, doc.y).lineTo(doc.page.width - 48, doc.y).strokeColor('#e5e2fb').lineWidth(1).stroke();
-    doc.moveDown(1);
+    doc.moveDown(0.5);
+    doc.roundedRect(48, doc.y, pageW, 36, 6).fill('#f7f6ff');
+    doc.font('Helvetica-Bold').fontSize(9).fillColor('#4433c4')
+      .text('REPORT PERIOD', 60, doc.y - 28);
+    doc.font('Helvetica').fontSize(10).fillColor('#333')
+      .text(`${formatDateTimeFull(windowStart)}   →   ${formatDateTimeFull(windowEnd)}`, 60, doc.y + 1);
+    doc.y += 16;
+    doc.moveDown(1.2);
 
-    // ── Summary cards (3 boxes in a row) ──
-    const boxW = (doc.page.width - 96 - 24) / 3;
+    // ── Summary cards (3 boxes, revenue gets more width since it has longer text) ──
+    const gap = 12;
+    const revW = pageW * 0.38;
+    const otherW = (pageW - revW - gap * 2) / 2;
     const boxY = doc.y;
     const summary = [
-      { label: 'New Signups', value: String(signups.length), color: '#7c6af7' },
-      { label: 'Payments Collected', value: String(payments.length), color: '#06b6d4' },
-      { label: 'Revenue Today', value: formatMoney(totalRevenue), color: '#34d399' }
+      { label: 'NEW SIGNUPS', value: String(signups.length), color: '#7c6af7', w: otherW },
+      { label: 'PAYMENTS COLLECTED', value: String(payments.length), color: '#06b6d4', w: otherW },
+      { label: 'REVENUE TODAY', value: formatMoney(totalRevenue), color: '#34d399', w: revW }
     ];
-    summary.forEach((s, i) => {
-      const bx = 48 + i * (boxW + 12);
-      doc.roundedRect(bx, boxY, boxW, 58, 6).fillAndStroke('#f7f6ff', '#e5e2fb');
-      doc.font('Helvetica').fontSize(8.5).fillColor('#888').text(s.label, bx + 12, boxY + 10, { width: boxW - 24 });
-      doc.font('Helvetica-Bold').fontSize(17).fillColor(s.color).text(s.value, bx + 12, boxY + 26, { width: boxW - 24 });
+    let bx = 48;
+    summary.forEach(s => {
+      doc.roundedRect(bx, boxY, s.w, 62, 6).fillAndStroke('#f7f6ff', '#e5e2fb');
+      doc.font('Helvetica').fontSize(8).fillColor('#888').text(s.label, bx + 14, boxY + 12, { width: s.w - 28 });
+      doc.font('Helvetica-Bold').fontSize(16).fillColor(s.color).text(s.value, bx + 14, boxY + 30, { width: s.w - 28, lineBreak: false });
+      bx += s.w + gap;
     });
-    doc.y = boxY + 58 + 24;
+    doc.y = boxY + 62 + 26;
     doc.x = 48;
 
-    // ── New Signups table ──
-    doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a1a2e').text('New Signups');
+    // ── 1) Payments Collected (bill-style, with total row) — ab sabse upar ──
+    doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a1a2e').text('💰 Payments Collected');
+    doc.moveDown(0.4);
+    if (!payments.length) {
+      doc.font('Helvetica').fontSize(10).fillColor('#999').text('No payments collected in this period.');
+      doc.moveDown(1);
+    } else {
+      drawTable(
+        doc,
+        ['Name', 'College', 'Package', 'Amount Paid'],
+        payments.map(p => [
+          p.name || '—',
+          (p.college || 'kiit').toUpperCase(),
+          planNameMap[p.plan] || `Plan ${p.plan}`,
+          formatMoney(p.amountPaid)
+        ]),
+        [150, 75, 139, 135],
+        {
+          alignRight: [3],
+          totalRow: ['', '', 'Total Collected', formatMoney(totalRevenue)]
+        }
+      );
+      doc.moveDown(0.6);
+    }
+
+    // ── 2) New Signups — neeche, package + amount paid (agar hai) ke saath ──
+    doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a1a2e').text('🆕 New Signups');
     doc.moveDown(0.4);
     if (!signups.length) {
       doc.font('Helvetica').fontSize(10).fillColor('#999').text('No new signups in this period.');
     } else {
       drawTable(
         doc,
-        ['Name', 'Email', 'College'],
-        signups.map(s => [s.name || '—', s.email || '—', (s.college || 'kiit').toUpperCase()]),
-        [160, 250, 90]
+        ['Name', 'Email', 'College', 'Package', 'Amount Paid'],
+        signups.map(s => [
+          s.name || '—',
+          s.email || '—',
+          (s.college || 'kiit').toUpperCase(),
+          s.planName,
+          s.amountPaid != null ? formatMoney(s.amountPaid) : 'Pending'
+        ]),
+        [95, 150, 55, 90, 109],
+        { alignRight: [4] }
       );
     }
-    doc.moveDown(0.8);
-
-    // ── Payments table ──
-    doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a1a2e').text('Payments Collected');
-    doc.moveDown(0.4);
-    if (!payments.length) {
-      doc.font('Helvetica').fontSize(10).fillColor('#999').text('No payments collected in this period.');
-    } else {
-      drawTable(
-        doc,
-        ['Name', 'Package', 'Amount'],
-        payments.map(p => [p.name || '—', planNameMap[p.plan] || `Plan ${p.plan}`, formatMoney(p.amountPaid)]),
-        [200, 200, 100]
-      );
-    }
-
-    // ── Total footer ──
-    doc.moveDown(1);
-    if (doc.y > doc.page.height - 100) doc.addPage();
-    doc.moveTo(48, doc.y).lineTo(doc.page.width - 48, doc.y).strokeColor('#e5e2fb').lineWidth(1).stroke();
-    doc.moveDown(0.6);
-    doc.font('Helvetica-Bold').fontSize(14).fillColor('#4433c4')
-      .text(`Total Amount Collected Today: ${formatMoney(totalRevenue)}`, { align: 'right' });
 
     doc.moveDown(1.5);
     doc.font('Helvetica').fontSize(8).fillColor('#aaa')
@@ -171,7 +227,7 @@ function buildEmailHtml({ signups, payments, totalRevenue, windowStart, windowEn
     </div>
     <div style="padding:28px 32px;border:1px solid #eee;border-top:none;border-radius:0 0 12px 12px">
       <p style="color:#333;font-size:14px;line-height:1.6;margin:0 0 20px">
-        Here's your snapshot for <b>${formatDate(windowStart)}</b> (${formatTime(windowStart)} → ${formatTime(windowEnd)}).
+        Here's your snapshot for <b>${formatDateTimeFull(windowStart)} → ${formatDateTimeFull(windowEnd)}</b>.
         Full details are in the attached PDF.
       </p>
       <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;border-spacing:8px 0;margin:0 -8px">
