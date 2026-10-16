@@ -38,8 +38,8 @@ async function collectReportData(windowStart, windowEnd) {
     Payment.find({
       status: 'approved',
       isLegacyImport: { $ne: true },
-      createdAt: { $gte: windowStart, $lt: windowEnd }
-    }).select('userId name email college plan amountPaid createdAt').sort({ createdAt: 1 }).lean(),
+      reviewedAt: { $gte: windowStart, $lt: windowEnd }
+    }).select('userId name email college plan amountPaid createdAt').sort({ reviewedAt: 1 }).lean(),
     Package.find().lean()
   ]);
 
