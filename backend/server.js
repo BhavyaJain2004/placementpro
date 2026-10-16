@@ -110,7 +110,12 @@ mongoose.connect(process.env.MONGO_URI)
 
     // Har roj raat 8 baje (IST) daily report email bhej do
     cron.schedule('0 20 * * *', () => {
-      sendDailyReport().catch(err => console.error('❌ Daily report failed:', err));
+      sendDailyReport().catch(err => {
+        console.error('❌ Daily report failed, retrying once:', err.message);
+        setTimeout(() => {
+          sendDailyReport().catch(e => console.error('❌ Retry also failed:', e.message));
+        }, 60000);
+      });
     }, { timezone: 'Asia/Kolkata' });
     console.log('📅 Daily report scheduled for 8:00 PM IST');
   })
