@@ -58,6 +58,7 @@ const mongoose = require('mongoose');
 const cors     = require('cors');
 const cron     = require('node-cron');
 const { sendDailyReport } = require('./services/dailyReport');
+const { cutoffOldManualResumeUsers } = require('./services/resumeMonthlyCutoff');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -76,12 +77,17 @@ app.use(cors({
   ],
   credentials: true
 }));
+// IMPORTANT: webhook route ko raw body chahiye signature verify karne ke liye —
+// isliye global express.json() se PEHLE, sirf isi path ke liye raw parser
+app.use('/api/webhooks', express.raw({ type: 'application/json' }), require('./routes/razorpayWebhook'));
+
 app.use(express.json({ limit: '10mb' }));
 
 app.use('/api/auth',        require('./routes/auth'));
 app.use('/api/payment',     require('./routes/payment'));
 app.use('/api/companies2026', require('./routes/companies2026'));
 app.use('/api/resume', require('./routes/resume'));
+app.use('/api/resume-subscription', require('./routes/resumeSubscription'));
 app.use('/api/companies',   require('./routes/companies'));
 app.use('/api/packages',    require('./routes/packages'));
 app.use('/api/colleges',    require('./routes/colleges'));
@@ -118,5 +124,11 @@ mongoose.connect(process.env.MONGO_URI)
       });
     }, { timezone: 'Asia/Kolkata' });
     console.log('📅 Daily report scheduled for 8:00 PM IST');
+
+    // Har mahine ke pehle din — purane manual resume users ka access band karo
+    cron.schedule('5 0 1 * *', () => {
+      cutoffOldManualResumeUsers().catch(err => console.error('❌ Resume cutoff failed:', err));
+    }, { timezone: 'Asia/Kolkata' });
+    console.log('📅 Resume monthly cutoff scheduled for 1st of month, 12:05 AM IST');
   })
   .catch(err => { console.error('❌ DB error:', err); process.exit(1); });
