@@ -148,7 +148,6 @@ body { font-family:'DM Sans',sans-serif; }
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="js/api.js"></script>
 <script src="js/layout.js"></script>
 <script src="js/auth.js"></script>
@@ -483,82 +482,5 @@ function downloadPDF() {
 init();
 </script>
 
-<!-- ── RESUME SUBSCRIPTION MODAL ── -->
-<div id="resume-sub-modal" class="modal-overlay">
-  <div class="modal" style="max-width:420px">
-    <div class="modal-header">
-      <h3 style="font-size:1rem">Choose a Resume Plan</h3>
-      <button class="modal-close" onclick="document.getElementById('resume-sub-modal').classList.remove('open')">×</button>
-    </div>
-    <div class="modal-body" style="display:flex;flex-direction:column;gap:0.75rem">
-      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:0.25rem">Monthly subscription — auto-renews, cancel anytime and access stops immediately.</p>
-      <div class="rsub-card" onclick="startResumeSubscription('49')">
-        <div><b>Basic</b><div style="font-size:0.75rem;color:var(--faint)">Resume builder only</div></div>
-        <div style="font-weight:800">₹49<span style="font-size:0.7rem;color:var(--faint)">/mo</span></div>
-      </div>
-      <div class="rsub-card" onclick="startResumeSubscription('99')">
-        <div><b>Pro</b><div style="font-size:0.75rem;color:var(--faint)">Builder + 1 ATS analysis/month</div></div>
-        <div style="font-weight:800">₹99<span style="font-size:0.7rem;color:var(--faint)">/mo</span></div>
-      </div>
-      <div class="rsub-card" onclick="startResumeSubscription('150')">
-        <div><b>Unlimited</b><div style="font-size:0.75rem;color:var(--faint)">Builder + unlimited ATS analysis</div></div>
-        <div style="font-weight:800">₹149<span style="font-size:0.7rem;color:var(--faint)">/mo</span></div>
-      </div>
-      <p id="rsub-error" class="form-error"></p>
-    </div>
-  </div>
-</div>
-<style>
-.rsub-card { display:flex; align-items:center; justify-content:space-between; padding:0.9rem 1rem; border:1px solid var(--border2); border-radius:12px; cursor:pointer; transition:border-color .2s,background .2s; }
-.rsub-card:hover { border-color: var(--accent); background: rgba(124,106,247,0.06); }
-</style>
-<script>
-function openResumeSubModal() {
-  document.getElementById('resume-sub-modal').classList.add('open');
-}
-
-async function startResumeSubscription(tier) {
-  const errEl = document.getElementById('rsub-error');
-  errEl.textContent = '';
-  try {
-    const data = await API.call('/resume-subscription/create', {
-      method: 'POST',
-      body: JSON.stringify({ tier })
-    });
-    const options = {
-      key: data.keyId,
-      subscription_id: data.subscriptionId,
-      name: 'PlacementSphere',
-      description: `Resume Plan — ₹${tier === '150' ? '149' : tier}/month`,
-      theme: { color: '#7c6af7' },
-      handler: function () {
-        document.getElementById('resume-sub-modal').classList.remove('open');
-        alert('Payment submitted! Your access will activate in a few seconds — refresh the page shortly.');
-      },
-      modal: {
-        ondismiss: function () { /* user cancelled — koi error nahi, bas modal band ho gaya */ }
-      }
-    };
-    const rzp = new Razorpay(options);
-    rzp.on('payment.failed', function (resp) {
-      errEl.textContent = 'Payment failed: ' + (resp.error?.description || 'please try again');
-    });
-    rzp.open();
-  } catch (e) {
-    errEl.textContent = e.message || 'Could not start subscription, try again';
-  }
-}
-
-async function cancelResumeSubscription() {
-  if (!confirm('Cancel your resume subscription? Access will stop immediately.')) return;
-  try {
-    await API.call('/resume-subscription/cancel', { method: 'POST' });
-    alert('Subscription cancelled. Access has been removed.');
-    window.location.reload();
-  } catch (e) {
-    alert(e.message || 'Could not cancel, try again');
-  }
-}
-</script>
 </body>
 </html>
