@@ -1588,4 +1588,18 @@ router.get('/send-test-report', verifyToken, verifyAdmin, async (req, res) => {
   }
 });
 
+router.get('/resume-subscriptions', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const ResumeSubscription = require('../models/ResumeSubscription');
+    const subs = await ResumeSubscription.find().populate('userId', 'name email college').sort({ createdAt: -1 }).lean();
+    res.json(subs.map(s => ({
+      name: s.userId?.name || '—', email: s.userId?.email || '—', college: s.userId?.college || 'kiit',
+      tier: s.tier === '150' ? '149' : s.tier, status: s.status,
+      purchaseDate: s.createdAt, lastChargedAt: s.lastChargedAt
+    })));
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
