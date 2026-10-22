@@ -109,6 +109,7 @@ body{background:#06060f}
     <div class="as-section">Payments</div>
     <div class="as-item" onclick="showTab('growth',this)">🚀 Growth &amp; Strategy</div>
     <div class="as-item" onclick="showTab('system',this)">🖥️ System</div>
+    <div class="as-item" onclick="showTab('subscriptions',this)">💳 Subscriptions</div>
     <div class="as-item" onclick="showTab('paysubs',this)">💳 Payment Submissions</div>
     <div class="as-item" onclick="showTab('actualrevenue',this)">📈 Actual Revenue</div>
 
@@ -583,6 +584,11 @@ body{background:#06060f}
       </div>
     </div>
 
+    <div id="tab-subscriptions" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1rem">💳 Resume Subscriptions</h2>
+      <div id="subs-table" style="overflow-x:auto"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
+    </div>
+
     <div id="tab-system" style="display:none">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.2rem">🖥️ System Health</h2>
       <p style="color:rgba(255,255,255,0.35);font-size:0.78rem;margin-bottom:1rem">Server memory snapshot — sirf iss tab ko kholne par refresh hoti hai, background mein poll nahi hoti (yeh khud load nahi daalti).</p>
@@ -983,12 +989,12 @@ function checkPwd() {
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
 // ── TAB ROUTING ──
-const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue','colleges','growth','system'];
+const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue','colleges','growth','system','subscriptions'];
 function showTab(tab, btn) {
   ALL_TABS.forEach(t => { const el = document.getElementById('tab-'+t); if(el) el.style.display = t===tab?'block':'none'; });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
-  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue, colleges: loadColleges, growth: loadGrowthReport, system: loadSystemMemory };
+  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue, colleges: loadColleges, growth: loadGrowthReport, system: loadSystemMemory, subscriptions: loadResumeSubs };
   if (loaders[tab]) loaders[tab]();
 }
 
@@ -1542,6 +1548,32 @@ function dayLabel(ymd) {
 }
 
 // ── SYSTEM MEMORY (sirf tab-open/manual-refresh par call hota hai, koi auto-poll nahi) ──
+async function loadResumeSubs() {
+  const el = document.getElementById('subs-table');
+  try {
+    const subs = await API.call('/admin/resume-subscriptions');
+    if (!subs.length) { el.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Koi subscription nahi hai abhi</div>'; return; }
+    const statusStyle = { active: '#34d399', cancelled: '#f87171', halted: '#fbbf24', created: '#a89df7' };
+    el.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+      <tr style="color:rgba(255,255,255,0.4);font-size:0.64rem;text-transform:uppercase">
+        <th style="text-align:left;padding:0.45rem 0.5rem">Name</th><th style="text-align:left;padding:0.45rem 0.5rem">Email</th>
+        <th style="text-align:left;padding:0.45rem 0.5rem">College</th><th style="text-align:right;padding:0.45rem 0.5rem">Plan</th>
+        <th style="text-align:left;padding:0.45rem 0.5rem">Purchase Date</th><th style="text-align:right;padding:0.45rem 0.5rem">Status</th>
+      </tr>
+      ${subs.map(s => `<tr style="border-top:1px solid rgba(255,255,255,0.05)">
+        <td style="padding:0.5rem;color:#fff;font-weight:600">${s.name}</td>
+        <td style="padding:0.5rem;color:rgba(255,255,255,0.6)">${s.email}</td>
+        <td style="padding:0.5rem;color:rgba(255,255,255,0.6);text-transform:uppercase">${s.college}</td>
+        <td style="padding:0.5rem;text-align:right;color:#a89df7">₹${s.tier}/mo</td>
+        <td style="padding:0.5rem;color:rgba(255,255,255,0.6)">${new Date(s.purchaseDate).toLocaleDateString('en-IN')}</td>
+        <td style="padding:0.5rem;text-align:right;color:${statusStyle[s.status]};font-weight:700;text-transform:capitalize">${s.status}</td>
+      </tr>`).join('')}
+    </table>`;
+  } catch (e) {
+    el.innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load nahi ho paaya</div>';
+  }
+}
+
 async function loadSystemMemory() {
   const el = document.getElementById('sys-strip');
   try {
