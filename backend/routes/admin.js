@@ -1591,7 +1591,9 @@ router.get('/send-test-report', verifyToken, verifyAdmin, async (req, res) => {
 router.get('/resume-subscriptions', verifyToken, verifyAdmin, async (req, res) => {
   try {
     const ResumeSubscription = require('../models/ResumeSubscription');
-    const subs = await ResumeSubscription.find().populate('userId', 'name email college').sort({ createdAt: -1 }).lean();
+    // Sirf wahi dikhao jinhone payment ki hai (lastChargedAt set hota hai) — active, ya payment ke baad cancel/halt.
+    // Jinhone sirf checkout khola/try kiya (status 'created') unhe nahi dikhana.
+    const subs = await ResumeSubscription.find({ lastChargedAt: { $exists: true, $ne: null } }).populate('userId', 'name email college').sort({ createdAt: -1 }).lean();
     res.json(subs.map(s => ({
       name: s.userId?.name || '—', email: s.userId?.email || '—', college: s.userId?.college || 'kiit',
       tier: s.tier === '150' ? '149' : s.tier, status: s.status,
