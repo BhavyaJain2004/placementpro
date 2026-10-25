@@ -38,11 +38,20 @@ router.post('/create', verifyToken, async (req, res) => {
       userId: req.user.id, status: { $in: ['created', 'active'] }
     });
     if (existing) {
-      return res.json({
-        subscriptionId: existing.razorpaySubscriptionId,
-        keyId: process.env.RAZORPAY_KEY_ID,
-        alreadyExists: true
-      });
+      // Agar purana 'created' subscription (checkout khula tha, payment nahi hui) kisi
+      // doosre tier ka hai, to usko purana maan ke chhod do aur user ka abhi chuna hua
+      // tier naya banao. Webhook subscription id se dhundhta hai, isliye agar user ne
+      // purane wale ko hi baad mein pay kar diya to wo phir bhi activate ho jayega.
+      if (existing.status === 'created' && existing.tier !== tier) {
+        existing.status = 'cancelled';
+        await existing.save();
+      } else {
+        return res.json({
+          subscriptionId: existing.razorpaySubscriptionId,
+          keyId: process.env.RAZORPAY_KEY_ID,
+          alreadyExists: true
+        });
+      }
     }
 
     const user = await User.findById(req.user.id).select('name email mobile');
