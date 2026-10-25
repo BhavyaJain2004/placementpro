@@ -29,7 +29,8 @@ router.post('/create', verifyToken, async (req, res) => {
     }
     const planId = PLAN_IDS[tier];
     if (!planId) {
-      return res.status(500).json({ message: `Plan ID missing for tier ${tier} — check env vars` });
+      console.error(`❌ Resume subscription: plan ID missing for tier ${tier} — check env vars`);
+      return res.status(500).json({ message: 'This plan is temporarily unavailable. Please try again later.' });
     }
 
     // Agar user ki pehle se koi active/created subscription hai, usko mat
@@ -38,11 +39,15 @@ router.post('/create', verifyToken, async (req, res) => {
       userId: req.user.id, status: { $in: ['created', 'active'] }
     });
     if (existing) {
+      // Already active hai to dobara checkout mat kholo (warna Razorpay ₹5 authentication dikhata hai)
+      if (existing.status === 'active') {
+        return res.status(400).json({ message: 'You already have an active resume plan. To switch plans, cancel your current subscription first.' });
+      }
       // Agar purana 'created' subscription (checkout khula tha, payment nahi hui) kisi
       // doosre tier ka hai, to usko purana maan ke chhod do aur user ka abhi chuna hua
       // tier naya banao. Webhook subscription id se dhundhta hai, isliye agar user ne
       // purane wale ko hi baad mein pay kar diya to wo phir bhi activate ho jayega.
-      if (existing.status === 'created' && existing.tier !== tier) {
+      if (existing.tier !== tier) {
         existing.status = 'cancelled';
         await existing.save();
       } else {
@@ -72,7 +77,9 @@ router.post('/create', verifyToken, async (req, res) => {
 
     res.json({ subscriptionId: subscription.id, keyId: process.env.RAZORPAY_KEY_ID });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    // Razorpay ke errors normal Error nahi hote (err.error.description me hota hai)
+    console.error('❌ Resume subscription create error:', err?.error || err);
+    res.status(500).json({ message: err?.error?.description || err?.message || 'Could not start payment. Please try again.' });
   }
 });
 
@@ -80,7 +87,7 @@ router.post('/create', verifyToken, async (req, res) => {
 router.post('/cancel', verifyToken, async (req, res) => {
   try {
     const sub = await ResumeSubscription.findOne({ userId: req.user.id, status: 'active' });
-    if (!sub) return res.status(404).json({ message: 'Koi active subscription nahi mili' });
+    if (!sub) return res.status(404).json({ message: 'No active subscription found.' });
 
     // cancel_at_cycle_end: false — turant cancel, period khatam hone ka wait nahi
     await razorpay.subscriptions.cancel(sub.razorpaySubscriptionId, false);
@@ -93,18 +100,30 @@ router.post('/cancel', verifyToken, async (req, res) => {
     const field = `resume${sub.tier}`;
     await User.updateOne({ _id: req.user.id }, { $set: { [field]: false } });
 
-    res.json({ message: 'Subscription cancel ho gayi, access turant band ho gaya' });
+    res.json({ message: 'Subscription cancelled. Access has been removed.' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// ── Current status check karo (resume page pe "Manage Subscription" dikhana hai ya nahi) ──
+// ── Current status check karo (resume page pe plan status dikhana hai) ──
+// 'subscription' pehle jaisa hi (sirf active). Naye fields: 'pending' (checkout khula par payment
+// nahi hui) aur 'cancelled' (payment karke baad mein cancel/halt hui — lastChargedAt wali hi)
 router.get('/status', verifyToken, async (req, res) => {
   try {
     const sub = await ResumeSubscription.findOne({ userId: req.user.id, status: 'active' })
       .select('tier status lastChargedAt').lean();
-    res.json({ subscription: sub || null });
+    if (sub) return res.json({ subscription: sub, pending: null, cancelled: null });
+
+    const pending = await ResumeSubscription.findOne({ userId: req.user.id, status: 'created' })
+      .sort({ createdAt: -1 }).select('tier status createdAt').lean();
+    const cancelled = await ResumeSubscription.findOne({
+      userId: req.user.id,
+      status: { $in: ['cancelled', 'halted'] },
+      lastChargedAt: { $exists: true, $ne: null }
+    }).sort({ updatedAt: -1 }).select('tier status cancelledAt').lean();
+
+    res.json({ subscription: null, pending: pending || null, cancelled: cancelled || null });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
