@@ -7,30 +7,52 @@
 <link rel="stylesheet" href="css/style.css">
 <style>
 body { font-family:'DM Sans',sans-serif; }
-.rm-hero { text-align:center; padding:3rem 1rem 1.5rem; }
+.rm-wrap { max-width:1000px; margin:0 auto; padding:4.75rem 1.25rem 3rem; text-align:left; }
+
+/* Plan status bar */
+.ps-bar { display:none; align-items:center; justify-content:space-between; gap:0.7rem 1rem; flex-wrap:wrap; margin:0; padding:0.8rem 1rem; border-radius:12px; border:1px solid; }
+.ps-bar.show { display:flex; }
+.ps-info { display:flex; align-items:center; gap:0.7rem; min-width:0; }
+.ps-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.ps-title { font-family:'Syne',sans-serif; font-size:0.88rem; font-weight:700; }
+.ps-sub { font-size:0.76rem; color:rgba(255,255,255,0.5); margin-top:2px; line-height:1.45; }
+.ps-bar.ok   { background:rgba(52,211,153,0.07);  border-color:rgba(52,211,153,0.25); }
+.ps-bar.ok   .ps-dot { background:#34d399; } .ps-bar.ok   .ps-title { color:#34d399; }
+.ps-bar.warn { background:rgba(251,191,36,0.07);  border-color:rgba(251,191,36,0.28); }
+.ps-bar.warn .ps-dot { background:#fbbf24; } .ps-bar.warn .ps-title { color:#fbbf24; }
+.ps-bar.bad  { background:rgba(248,113,113,0.07); border-color:rgba(248,113,113,0.28); }
+.ps-bar.bad  .ps-dot { background:#f87171; } .ps-bar.bad  .ps-title { color:#f87171; }
+.ps-bar.idle { background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.1); }
+.ps-bar.idle .ps-dot { background:rgba(255,255,255,0.35); } .ps-bar.idle .ps-title { color:#fff; }
+.ps-btn { background:#7c6af7; color:#fff; border:none; padding:0.45rem 1rem; border-radius:8px; font-size:0.78rem; font-weight:700; font-family:'Syne',sans-serif; cursor:pointer; white-space:nowrap; }
+.ps-btn.danger { background:none; border:1px solid rgba(248,113,113,0.4); color:#f87171; }
+
+/* Header */
+.rm-hero { padding:1.5rem 0 0.25rem; }
 .rm-eyebrow {
-  display:inline-flex; align-items:center; gap:7px; font-size:0.72rem; font-weight:700;
+  display:inline-flex; align-items:center; gap:7px; font-size:0.66rem; font-weight:700;
   text-transform:uppercase; letter-spacing:0.1em; color:#a89df7;
   background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.25);
-  padding:5px 14px; border-radius:99px; margin-bottom:1rem;
+  padding:4px 11px; border-radius:99px; margin-bottom:0.7rem;
 }
-.rm-hero h1 { font-family:'Syne',sans-serif; font-size:clamp(1.8rem,4.5vw,2.5rem); font-weight:800; color:#fff; margin-bottom:0.5rem; }
-.rm-hero p { font-size:0.9rem; color:rgba(255,255,255,0.42); max-width:480px; margin:0 auto; }
+.rm-hero h1 { font-family:'Syne',sans-serif; font-size:clamp(1.35rem,3.2vw,1.75rem); font-weight:800; color:#fff; margin-bottom:0.3rem; }
+.rm-hero p { font-size:0.84rem; color:rgba(255,255,255,0.42); max-width:560px; }
 
-.rm-tabs { display:flex; justify-content:center; gap:0.5rem; margin:2rem 0; }
+.rm-tabs { display:flex; flex-wrap:wrap; gap:0.4rem; margin:1.1rem 0; }
 .rm-tab {
   background:transparent; border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.5);
-  padding:0.6rem 1.5rem; border-radius:10px; font-size:0.88rem; font-weight:600;
+  padding:0.45rem 1.1rem; border-radius:8px; font-size:0.8rem; font-weight:600;
   cursor:pointer; font-family:'Syne',sans-serif; transition:all 0.15s;
 }
 .rm-tab.on { background:rgba(124,106,247,0.15); border-color:rgba(124,106,247,0.4); color:#a89df7; }
+.sec-title { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; color:#fff; margin:0 0 0.9rem; }
 
 /* Templates grid */
-.tpl-grid { max-width:800px; margin:0 auto; padding:0 1rem 3rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.5rem; }
-.tpl-card { position:relative; border-radius:18px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); background:#0e0e1e; }
+.tpl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,230px)); gap:1.1rem; justify-content:start; padding-bottom:1rem; }
+.tpl-card { position:relative; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,0.08); background:#0e0e1e; }
 .tpl-thumb {
-  height:420px; background:#fff; position:relative; overflow:hidden;
-  display:flex; align-items:flex-start; justify-content:center; padding-top:1.5rem;
+  height:270px; background:#fff; position:relative; overflow:hidden;
+  display:flex; align-items:flex-start; justify-content:center; padding-top:1rem;
 }
 .tpl-mini { width:88%; font-family:Georgia,serif; color:#111; padding:0; font-size:0.72rem; line-height:1.55; }
 .tpl-mini .m-name { font-size:1.15rem; font-weight:bold; }
@@ -40,32 +62,49 @@ body { font-family:'DM Sans',sans-serif; }
 .tpl-mini .m-sub { font-size:0.62rem; font-style:italic; color:#333; margin-bottom:0.1rem; }
 .tpl-mini ul { margin:0.2rem 0 0.3rem 1rem; padding:0; }
 .tpl-mini li { font-size:0.64rem; margin-bottom:0.15rem; }
+/* Sirf grid ke thumbnails chhote — "View" preview modal ka size same rehta hai */
+.tpl-thumb .tpl-mini .m-name { font-size:0.95rem; }
+.tpl-thumb .tpl-mini .m-contact { font-size:0.5rem; margin:0.15rem 0 0.4rem; }
+.tpl-thumb .tpl-mini .m-sec { font-size:0.6rem; margin-top:0.4rem; }
+.tpl-thumb .tpl-mini .m-row { font-size:0.55rem; margin-top:0.2rem; }
+.tpl-thumb .tpl-mini .m-sub { font-size:0.5rem; }
+.tpl-thumb .tpl-mini li { font-size:0.52rem; margin-bottom:0.1rem; }
 .tpl-overlay {
   position:absolute; inset:0; background:rgba(10,10,20,0.88);
-  display:flex; align-items:center; justify-content:center; gap:0.75rem;
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:0.6rem;
   opacity:0; transition:opacity 0.2s;
 }
 .tpl-card:hover .tpl-overlay { opacity:1; }
 .tpl-btn {
-  padding:0.6rem 1.3rem; border-radius:10px; font-size:0.82rem; font-weight:700;
+  padding:0.5rem 1rem; border-radius:9px; font-size:0.76rem; font-weight:700;
   font-family:'Syne',sans-serif; cursor:pointer; border:none;
 }
 .tpl-btn.view { background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.2); }
 .tpl-btn.create { background:#7c6af7; color:#fff; }
-.tpl-name { padding:1rem 1.25rem; font-family:'Syne',sans-serif; font-weight:700; color:#fff; font-size:0.95rem; }
-.tpl-desc { padding:0 1.25rem 1.25rem; font-size:0.78rem; color:rgba(255,255,255,0.4); }
+.tpl-name { padding:0.8rem 1rem 0.2rem; font-family:'Syne',sans-serif; font-weight:700; color:#fff; font-size:0.9rem; }
+.tpl-desc { padding:0 1rem 1rem; font-size:0.74rem; color:rgba(255,255,255,0.4); line-height:1.5; }
 
 /* Pricing */
-.price-grid { max-width:900px; margin:0 auto; padding:0 1rem 3rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.25rem; }
-.price-card { background:#0e0e1e; border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:1.75rem; text-align:center; position:relative; }
+.price-grid { margin:0; padding:0 0 1rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
+.price-card { background:#0e0e1e; border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.4rem 1.25rem; text-align:left; position:relative; display:flex; flex-direction:column; }
 .price-card.popular { border-color:rgba(251,191,36,0.4); box-shadow:0 0 40px rgba(251,191,36,0.08); }
-.price-tag { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:#fbbf24; color:#000; font-size:0.65rem; font-weight:800; padding:3px 12px; border-radius:99px; }
-.price-name { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; color:#fff; margin-bottom:0.5rem; }
-.price-amt { font-family:'Syne',sans-serif; font-size:2.2rem; font-weight:800; color:#fff; margin-bottom:1rem; }
+.price-tag { position:absolute; top:-11px; left:1.25rem; background:#fbbf24; color:#000; font-size:0.65rem; font-weight:800; padding:3px 12px; border-radius:99px; }
+.price-name { font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700; color:#fff; margin-bottom:0.4rem; }
+.price-amt { font-family:'Syne',sans-serif; font-size:1.9rem; font-weight:800; color:#fff; margin-bottom:0.9rem; }
 .price-amt span { font-size:0.9rem; color:rgba(255,255,255,0.3); font-weight:500; }
-.price-feats { list-style:none; text-align:left; margin-bottom:1.5rem; }
-.price-feats li { font-size:0.8rem; color:rgba(255,255,255,0.55); padding:0.4rem 0; display:flex; gap:8px; align-items:flex-start; }
-.price-buy { width:100%; background:#7c6af7; color:#fff; border:none; padding:0.75rem; border-radius:10px; font-size:0.85rem; font-weight:700; font-family:'Syne',sans-serif; cursor:pointer; }
+.price-feats { list-style:none; text-align:left; margin-bottom:1.25rem; padding:0; flex:1; }
+.price-feats li { font-size:0.8rem; color:rgba(255,255,255,0.55); padding:0.35rem 0; display:flex; gap:8px; align-items:flex-start; }
+.price-buy { width:100%; background:#7c6af7; color:#fff; border:none; padding:0.7rem; border-radius:10px; font-size:0.85rem; font-weight:700; font-family:'Syne',sans-serif; cursor:pointer; }
+
+/* How it works */
+.how-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1rem; padding-bottom:1.25rem; }
+.how-card { background:#0e0e1e; border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.2rem; text-align:left; }
+.how-ico { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.25rem; margin:0 0 0.75rem; }
+.how-card h3 { font-family:'Syne',sans-serif; font-weight:700; color:#fff; font-size:0.92rem; margin-bottom:0.4rem; }
+.how-card p { font-size:0.78rem; color:rgba(255,255,255,0.4); line-height:1.6; }
+.how-analysis { display:grid; grid-template-columns:1fr 1.4fr; gap:1.5rem; align-items:center; }
+@media (max-width:640px) { .how-analysis { grid-template-columns:1fr; } }
+@media (max-width:520px) { .tpl-grid { grid-template-columns:1fr; } }
 
 /* Preview modal */
 .pv-overlay { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.9); z-index:999; align-items:center; justify-content:center; padding:1.5rem; }
@@ -76,7 +115,7 @@ body { font-family:'DM Sans',sans-serif; }
 /* Pricing popup */
 .pp-overlay { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.85); z-index:999; align-items:center; justify-content:center; padding:1.5rem; }
 .pp-overlay.open { display:flex; }
-.pp-box { background:#0e0e1e; border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:2rem; max-width:900px; width:100%; position:relative; }
+.pp-box { background:#0e0e1e; border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:2rem; max-width:900px; width:100%; max-height:90vh; overflow-y:auto; position:relative; }
 .pp-close { position:absolute; top:1rem; right:1rem; background:rgba(255,255,255,0.06); border:none; color:#fff; width:32px; height:32px; border-radius:50%; font-size:1.1rem; cursor:pointer; }
 </style>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -88,6 +127,10 @@ body { font-family:'DM Sans',sans-serif; }
   <div class="nav-logo"><a href="dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit"><span class="dot"></span> PlacementSphere</a></div>
   <ul class="nav-links"><li><a href="dashboard.html">Dashboard</a></li></ul>
 </nav>
+
+<div class="rm-wrap">
+
+<div class="ps-bar" id="plan-status"></div>
 
 <div class="rm-hero">
   <div class="rm-eyebrow"><span style="width:6px;height:6px;border-radius:50%;background:#a89df7"></span> New Feature</div>
@@ -102,6 +145,7 @@ body { font-family:'DM Sans',sans-serif; }
 </div>
 
 <div id="rm-templates">
+  <h2 class="sec-title">Available Templates</h2>
   <div class="tpl-grid">
     <div class="tpl-card">
       <div class="tpl-thumb">
@@ -170,35 +214,35 @@ body { font-family:'DM Sans',sans-serif; }
 
 
 <div id="rm-how" style="display:none">
-  <div style="max-width:900px;margin:0 auto;padding:0 1rem 3rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem">
+  <div class="how-grid">
 
-    <div style="background:#0e0e1e;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.5rem;text-align:center">
-      <div style="width:56px;height:56px;border-radius:14px;background:rgba(124,106,247,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 1rem">1️⃣</div>
-      <div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:0.95rem;margin-bottom:0.5rem">Pick a Template</div>
-      <p style="font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.6">Browse templates, hover to preview exactly how they'll look with real content</p>
+    <div class="how-card">
+      <div class="how-ico" style="background:rgba(124,106,247,0.1)">1️⃣</div>
+      <h3>Pick a Template</h3>
+      <p>Browse templates, hover to preview exactly how they'll look with real content</p>
     </div>
 
-    <div style="background:#0e0e1e;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.5rem;text-align:center">
-      <div style="width:56px;height:56px;border-radius:14px;background:rgba(52,211,153,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 1rem">2️⃣</div>
-      <div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:0.95rem;margin-bottom:0.5rem">Choose a Plan & Pay</div>
-      <p style="font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.6">₹49 for resume only, ₹99 for 1 ATS analysis, ₹150 for unlimited analysis. Scan QR, submit payment proof.</p>
+    <div class="how-card">
+      <div class="how-ico" style="background:rgba(52,211,153,0.1)">2️⃣</div>
+      <h3>Choose a Plan & Pay</h3>
+      <p>₹49 for resume only, ₹99 for 1 ATS analysis, ₹150 for unlimited analysis. Pay securely with Razorpay. Plans renew monthly and you can cancel anytime from this page.</p>
     </div>
 
-    <div style="background:#0e0e1e;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.5rem;text-align:center">
-      <div style="width:56px;height:56px;border-radius:14px;background:rgba(251,191,36,0.1);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 1rem">3️⃣</div>
-      <div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:0.95rem;margin-bottom:0.5rem">Fill Your Details</div>
-      <p style="font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.6">Add Education, Experience, Projects & Skills on the left — watch your resume build live on the right</p>
+    <div class="how-card">
+      <div class="how-ico" style="background:rgba(251,191,36,0.1)">3️⃣</div>
+      <h3>Fill Your Details</h3>
+      <p>Add Education, Experience, Projects & Skills on the left — watch your resume build live on the right</p>
     </div>
 
   </div>
 
-  <div style="max-width:900px;margin:0 auto 3rem;padding:0 1rem">
-    <div style="background:#0e0e1e;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.75rem">
+  <div style="margin:0 0 1rem">
+    <div style="background:#0e0e1e;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.4rem">
       <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:1rem">
-        <span style="font-size:1.3rem">🎯</span>
-        <div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:1rem">If you bought ₹99 or ₹150 — here's what "Analysis" looks like</div>
+        <span style="font-size:1.2rem">🎯</span>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;color:#fff;font-size:0.95rem">If you bought ₹99 or ₹150 — here's what "Analysis" looks like</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:1.5rem;align-items:center">
+      <div class="how-analysis">
         <div>
           <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.7;margin-bottom:0.75rem">
             Click <b style="color:#fbbf24">"ATS Analysis"</b> once your resume is filled. You'll instantly get:
@@ -262,6 +306,8 @@ body { font-family:'DM Sans',sans-serif; }
   </div>
 </div>
 
+</div><!-- /rm-wrap -->
+
 <!-- Preview Modal -->
 <div class="pv-overlay" id="pv-overlay">
   <button class="pv-close" onclick="closePreview()">×</button>
@@ -313,13 +359,67 @@ function showRMTab(tab) {
 
 let selectedTemplate = 'modern';
 let existingPlan = '';
+let activeSub = null;
+let pendingSub = null;
+let cancelledSub = null;
+let statusLoaded = false;
+const PLAN_NAME = { '49': 'Basic', '99': 'Standard', '150': 'Pro' };
 
-(async function checkExistingPlan() {
+// Plan + subscription status ek hi jagah se load hota hai, upar status bar mein dikhta hai
+async function loadPlanStatus() {
   try {
     const res = await API.call('/resume');
     existingPlan = res.resumePlan || '';
   } catch (e) {}
-})();
+  try {
+    const st = await API.call('/resume-subscription/status');
+    activeSub = st.subscription || null;
+    pendingSub = st.pending || null;
+    cancelledSub = st.cancelled || null;
+    statusLoaded = true;
+  } catch (e) {}
+  renderPlanStatus();
+}
+
+function renderPlanStatus() {
+  const el = document.getElementById('plan-status');
+  // Agar status load hi nahi hua aur plan bhi pata nahi, to galat "No Active Plan" mat dikhao
+  if (!statusLoaded && !existingPlan) { el.classList.remove('show'); return; }
+
+  let cls, title, sub, btn = '';
+  if (activeSub || existingPlan) {
+    const t = activeSub ? activeSub.tier : existingPlan;
+    cls = 'ok';
+    title = 'Currently Active';
+    sub = `${PLAN_NAME[t] || 'Resume'} plan` + (activeSub ? ' · Renews monthly' : '');
+    if (activeSub) btn = '<button class="ps-btn danger" onclick="cancelResumeSubscription()">Cancel Subscription</button>';
+  } else if (pendingSub) {
+    cls = 'warn';
+    title = 'Your Plan is Currently Inactive';
+    sub = `Complete your payment to access the ${PLAN_NAME[pendingSub.tier] || 'Resume'} plan.`;
+    btn = `<button class="ps-btn" onclick="buyPlan('${pendingSub.tier}')">Complete Payment</button>`;
+  } else if (cancelledSub) {
+    cls = 'bad';
+    const halted = cancelledSub.status === 'halted';
+    title = halted ? 'Plan Inactive' : 'Subscription Cancelled';
+    sub = halted
+      ? `Your ${PLAN_NAME[cancelledSub.tier] || 'Resume'} subscription was stopped because a payment did not go through. Choose a plan to start again.`
+      : `Your ${PLAN_NAME[cancelledSub.tier] || 'Resume'} plan is no longer active. Choose a plan to start again.`;
+    btn = '<button class="ps-btn" onclick="showRMTab(\'pricing\')">View Plans</button>';
+  } else {
+    cls = 'idle';
+    title = 'No Active Plan';
+    sub = 'Choose a plan to start building your resume.';
+    btn = '<button class="ps-btn" onclick="showRMTab(\'pricing\')">View Plans</button>';
+  }
+
+  el.className = `ps-bar ${cls} show`;
+  el.innerHTML = `
+    <div class="ps-info">
+      <span class="ps-dot"></span>
+      <div><div class="ps-title">${title}</div><div class="ps-sub">${sub}</div></div>
+    </div>${btn}`;
+}
 
 function viewTemplate(tpl) {
   const cardIndex = tpl === 'modern' ? 1 : 2;
@@ -346,16 +446,33 @@ function openPricing(tpl) {
 }
 function closePricingPopup() { document.getElementById('pp-overlay').classList.remove('open'); }
 
+// Payment poori nahi hui (user ne checkout band kiya ya fail hui) — status bar mein "Inactive" dikhao
+function markPaymentPending(plan) {
+  pendingSub = { tier: plan, status: 'created' };
+  renderPlanStatus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 let currentResumePlan = '49';
 async function buyPlan(plan) {
   currentResumePlan = plan;
   document.getElementById('pp-overlay').classList.remove('open');
+
+  // Pehle se active plan hai to dobara checkout mat kholo (warna Razorpay ₹5 authentication wali payment dikhata hai)
+  if (activeSub || existingPlan) {
+    alert(activeSub
+      ? 'You already have an active resume plan. To switch plans, cancel your current subscription first.'
+      : 'You already have an active resume plan.');
+    return;
+  }
+
   try {
     const data = await API.call('/resume-subscription/create', {
       method: 'POST',
       body: JSON.stringify({ tier: plan })
     });
     const priceLabel = plan === '150' ? '149' : plan;
+    let paid = false;
     const rzp = new Razorpay({
       key: data.keyId,
       subscription_id: data.subscriptionId,
@@ -363,14 +480,16 @@ async function buyPlan(plan) {
       description: `Resume Plan — ₹${priceLabel}/month`,
       theme: { color: '#7c6af7' },
       handler: function () {
+        paid = true;
         localStorage.setItem('resumeTemplate', selectedTemplate);
         alert('Payment submitted! Access activates in a few seconds — reload if the page still looks locked.');
         window.location.href = 'resume-builder.html?template=' + selectedTemplate;
       },
-      modal: { ondismiss: function () {} } // user ne khud band kiya, koi error nahi
+      modal: { ondismiss: function () { if (!paid) markPaymentPending(plan); } } // user ne checkout band kiya
     });
     rzp.on('payment.failed', function (resp) {
       alert('Payment failed: ' + (resp.error?.description || 'please try again'));
+      markPaymentPending(plan);
     });
     rzp.open();
   } catch (e) {
@@ -389,20 +508,7 @@ async function cancelResumeSubscription() {
   }
 }
 
-// Agar active subscription hai, upar ek "Manage Subscription" bar dikha do
-(async function showManageSubIfActive() {
-  try {
-    const res = await API.call('/resume-subscription/status');
-    if (res.subscription) {
-      const bar = document.createElement('div');
-      bar.style.cssText = 'max-width:480px;margin:0 auto 1rem;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.25);border-radius:12px;padding:0.8rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap';
-      bar.innerHTML = `
-        <span style="font-size:0.82rem;color:#34d399">✓ Active — ₹${res.subscription.tier === '150' ? '149' : res.subscription.tier}/month plan</span>
-        <button onclick="cancelResumeSubscription()" style="background:none;border:1px solid rgba(248,113,113,0.4);color:#f87171;padding:0.35rem 0.8rem;border-radius:8px;font-size:0.76rem;cursor:pointer">Cancel Subscription</button>`;
-      document.body.insertBefore(bar, document.body.firstChild);
-    }
-  } catch (e) {}
-})();
+loadPlanStatus();
 </script>
 
 </body>
