@@ -2407,6 +2407,15 @@ loadStats();
       document.getElementById('profile-dropdown').classList.remove('open');
   });
 
+  // Google se signup hue users ka password hota hi nahi — unko "Change password" option mat dikhao
+  (function hidePwdForGoogleUsers() {
+    const gu = (window.Auth && Auth.getUser()) || null;
+    if (gu && gu.authProvider === 'google') {
+      const pb = document.querySelector('.dropdown-item[onclick="openPwdModal()"]');
+      if (pb) pb.style.display = 'none';
+    }
+  })();
+
   function openPwdModal() {
     document.getElementById('profile-dropdown').classList.remove('open');
     document.getElementById('pwd-modal').classList.add('open');
