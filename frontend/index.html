@@ -59,6 +59,23 @@
     .stat-item{ max-width:120px; }
   }
 </style>
+<style>
+/* Google sign-in block (login + signup form ke upar) — Client ID set hone par hi dikhta hai */
+#auth-modal .auth-google-block { display:none; margin-bottom:1.1rem; }
+#auth-modal .auth-google-btn { display:flex; justify-content:center; min-height:44px; }
+#auth-modal .auth-divider { display:flex; align-items:center; gap:0.75rem; margin:1rem 0 0; font-size:0.74rem; color:var(--faint); }
+#auth-modal .auth-divider::before, #auth-modal .auth-divider::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.1); }
+#auth-modal .auth-google-hint { font-size:0.78rem; color:var(--muted); text-align:center; margin:0.9rem 0 0; line-height:1.55; }
+/* Google account card (signup ke dusre step mein — naam/email Google se aate hain, locked) */
+#auth-modal .google-acct { display:flex; align-items:center; gap:0.8rem; padding:0.8rem 0.95rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; }
+#auth-modal .google-acct-avatar { width:38px; height:38px; flex:0 0 38px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#a89df7); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.95rem; }
+#auth-modal .google-acct-info { min-width:0; flex:1; }
+#auth-modal .google-acct-name { color:#fff; font-weight:600; font-size:0.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#auth-modal .google-acct-email { color:var(--muted); font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#auth-modal .google-acct-lock { flex:0 0 auto; display:flex; align-items:center; gap:5px; color:#34d399; font-size:0.7rem; font-weight:600; }
+#auth-modal .google-acct-change { background:none; border:none; color:var(--muted); font-size:0.76rem; text-decoration:underline; cursor:pointer; padding:0.55rem 0 1.1rem; align-self:flex-start; }
+#auth-modal .google-acct-change:hover { color:var(--text); }
+</style>
 </head>
 <body>
 
@@ -446,6 +463,10 @@
 
       <!-- LOGIN -->
       <form id="login-form" class="auth-form-anim" onsubmit="handleLogin(event)" style="display:flex;flex-direction:column;gap:0">
+        <div class="auth-google-block" id="google-block-login">
+          <div class="auth-google-btn" id="google-btn-login"></div>
+          <div class="auth-divider"><span>or log in with email</span></div>
+        </div>
         <div class="input-group">
           <label>Email</label>
           <div class="auth-input-wrap">
@@ -467,26 +488,34 @@
         <button type="submit" class="btn btn-primary auth-submit-btn" style="margin-top:0.5rem;width:100%;justify-content:center" id="login-btn">Log in</button>
       </form>
 
-      <!-- SIGNUP -->
+      <!-- SIGNUP — ab sirf Google se (password signup band hai, taaki naye accounts share na ho sakein) -->
       <form id="signup-form" class="auth-form-anim" style="display:none;flex-direction:column;gap:0" onsubmit="handleSignup(event)">
-        <div class="input-group">
-          <label>Full name</label>
-          <div class="auth-input-wrap">
-            <span class="auth-input-icon-chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-            <input class="input-field auth-input" type="text" id="s-name" placeholder="Your name" required>
-          </div>
-        </div>
         <div id="signup-plan-label" class="auth-plan-badge">✅ Signing up for Base Platform — ₹99</div>
 
 <input type="hidden" id="signup-plan" value="299">
 <input type="hidden" id="signup-college" value="kiit">
-        <div class="input-group">
-          <label>Email <span class="auth-label-note">(use your personal mail ID)</span></label>
-          <div class="auth-input-wrap">
-            <span class="auth-input-icon-chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg></span>
-            <input class="input-field auth-input" type="email" id="s-email" placeholder="you@example.com" required>
+
+        <!-- Step 1: Google se sign up -->
+        <div id="signup-step-google">
+          <div class="auth-google-block" id="google-block-signup">
+            <div class="auth-google-btn" id="google-btn-signup"></div>
           </div>
+          <p class="auth-google-hint">Continue with your Google account. No password to remember — we only use your name and email.</p>
+          <p class="form-error" id="signup-err-google"></p>
         </div>
+
+        <!-- Step 2: Google ke baad baaki details -->
+        <div id="signup-step-details" style="display:none;flex-direction:column;gap:0">
+          <div class="google-acct">
+            <div class="google-acct-avatar" id="google-acct-avatar">G</div>
+            <div class="google-acct-info">
+              <div class="google-acct-name" id="google-acct-name"></div>
+              <div class="google-acct-email" id="google-acct-email"></div>
+            </div>
+            <span class="google-acct-lock" title="Taken from your Google account"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Verified</span>
+          </div>
+          <button type="button" class="google-acct-change" onclick="resetGoogleSignup()">Not you? Use a different Google account</button>
+
         <div class="input-group">
   <label>Mobile Number <span class="auth-label-note">(mandatory)</span></label>
   <div class="auth-input-wrap">
@@ -502,24 +531,16 @@
     <input class="input-field auth-input" type="text" id="reg-referral" placeholder="Enter referral code if you have one" style="text-transform:uppercase">
   </div>
 </div>
-        <div class="input-group">
-          <label>Password</label>
-          <div class="auth-input-wrap">
-            <span class="auth-input-icon-chip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
-            <input class="input-field auth-input" type="password" id="s-pass" placeholder="Min 6 characters" minlength="6" required>
-            <button type="button" class="auth-pass-toggle" onclick="toggleAuthPass('s-pass', this)" tabindex="-1" aria-label="Show password">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-        </div>
+
         <label class="auth-terms-row">
   <input type="checkbox" id="terms-check" required>
   <span class="auth-checkbox-box"></span>
   <span>I agree to the <a href="terms.html" target="_blank">Terms</a> &amp; <a href="privacy.html" target="_blank">Privacy Policy</a></span>
 </label>
-        <p class="form-error" id="signup-err"></p>
-        <button type="submit" class="btn btn-primary auth-submit-btn" style="margin-top:0.5rem;width:100%;justify-content:center" id="signup-btn">Create account</button>
-        <p id="signup-footer-price" class="auth-footer-note">After signup you'll be taken to unlock access for ₹99</p>
+          <p class="form-error" id="signup-err"></p>
+          <button type="submit" class="btn btn-primary auth-submit-btn" style="margin-top:0.5rem;width:100%;justify-content:center" id="signup-btn">Create account</button>
+          <p id="signup-footer-price" class="auth-footer-note">After signup you'll be taken to unlock access for ₹99</p>
+        </div>
       </form>
     </div>
   </div>
@@ -802,6 +823,10 @@
     activeForm.classList.remove('auth-form-anim');
     void activeForm.offsetWidth;
     activeForm.classList.add('auth-form-anim');
+
+    if (tab === 'login') resetGoogleSignup();
+    if (tab === 'signup') showGoogleUnavailable();
+    renderGoogleButtons();
   }
 
 async function handleLogin(e) {
@@ -862,6 +887,11 @@ async function handleSignup(e) {
     document.getElementById('signup-err').textContent = 'Please accept Terms & Privacy Policy to continue';
     return;
   }
+  if (googleSignupToken) { handleGoogleSignup(); return; }
+  // Password se signup ab band hai — naye users sirf Google se signup karte hain
+  document.getElementById('signup-err').textContent = 'Please sign up with Google to continue.';
+  return;
+  /* ── purana password signup (ab use nahi hota) ──
   const btn  = document.getElementById('signup-btn');
   const plan = document.getElementById('signup-plan').value;
   const college = document.getElementById('signup-college').value;
@@ -898,13 +928,164 @@ async function handleSignup(e) {
     document.getElementById('signup-err').textContent = err.message;
     btn.disabled = false; btn.textContent = 'Create account';
   }
+  */
 }
+
+  // ── GOOGLE SIGN-IN ──
+  // Google Cloud Console se banaya hua OAuth "Web" Client ID yahan paste karo.
+  // IMPORTANT: naye users ab sirf Google se signup karte hain, isliye ye khali raha to signup band dikhega.
+  const GOOGLE_CLIENT_ID = '351925042109-8pne4rbgbm609fervg4ljj3gbmvovjp3.apps.googleusercontent.com';
+
+  let googleReady = false;
+  let googleSignupToken = '';
+
+  function initGoogleSignIn() {
+    if (googleReady || !GOOGLE_CLIENT_ID) return;
+    if (!(window.google && google.accounts && google.accounts.id)) return;
+    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential });
+    googleReady = true;
+    document.querySelectorAll('.auth-google-block').forEach(el => { el.style.display = 'block'; });
+    document.getElementById('signup-err-google').textContent = '';
+    renderGoogleButtons();
+  }
+  window.onGoogleLibraryLoad = initGoogleSignIn;
+
+  // Signup sirf Google se hota hai — Google load na ho paaye to user ko saaf message dikhao
+  let googleTimedOut = false;
+  setTimeout(function () { googleTimedOut = true; showGoogleUnavailable(); }, 6000);
+  function showGoogleUnavailable() {
+    if (googleReady) return;
+    const el = document.getElementById('signup-err-google');
+    if (!GOOGLE_CLIENT_ID) {
+      el.textContent = 'Sign up is temporarily unavailable. Please try again shortly.';
+    } else if (googleTimedOut) {
+      el.textContent = "Google sign-in couldn't load. Please check your connection, or open this page in Chrome / Safari.";
+    }
+  }
+
+  function renderGoogleButtons() {
+    if (!googleReady) return;
+    [['google-btn-login', 'signin_with'], ['google-btn-signup', 'signup_with']].forEach(([id, text]) => {
+      const el = document.getElementById(id);
+      if (!el || !el.offsetParent) return; // form abhi hidden hai
+      const w = Math.min(400, Math.max(200, el.parentElement.clientWidth || 340));
+      google.accounts.id.renderButton(el, { type: 'standard', theme: 'filled_black', size: 'large', text, shape: 'rectangular', logo_alignment: 'left', width: w });
+    });
+  }
+
+  // Login ke baad sahi page pe bhejo (handleLogin jaisa hi routing)
+  function routeAfterLogin(u) {
+    if (u.isPaid && u.masterDsaAccess) {
+      window.location.replace('choose.html');
+    } else if (u.masterDsaAccess) {
+      window.location.replace('masterdsa-dashboard.html');
+    } else if (u.isPaid && u.hasTestAccess) {
+      window.location.replace('plus.html');
+    } else if (u.isPaid) {
+      window.location.replace('dashboard.html');
+    } else if (u.selectedPlan === '299' || u.selectedPlan === '1000') {
+      window.location.replace('masterdsa.html');
+    } else if (u.selectedPlan === '199') {
+      window.location.replace('plus.html');
+    } else {
+      window.location.replace('dashboard.html');
+    }
+  }
+
+  async function handleGoogleCredential(resp) {
+    const loginVisible = document.getElementById('login-form').style.display !== 'none';
+    const errEl = document.getElementById(loginVisible ? 'login-err' : 'signup-err-google');
+    errEl.textContent = '';
+    try {
+      const data = await API.call('/auth/google', {
+        method: 'POST',
+        body: JSON.stringify({ credential: resp.credential })
+      });
+      if (data.needsSignup) { startGoogleSignup(data, loginVisible); return; }
+      localStorage.setItem('pp_token', data.token);
+      localStorage.setItem('pp_user', JSON.stringify(data.user));
+      routeAfterLogin(data.user);
+    } catch (err) {
+      errEl.textContent = err.message;
+    }
+  }
+
+  // Naya Google user — naam/email Google se locked aate hain, baaki details (mobile, referral, terms) yahan leni hain
+  let googleName = '';
+  function startGoogleSignup(data, cameFromLogin) {
+    googleSignupToken = data.signupToken;
+    googleName = data.name || '';
+    switchTab('signup');
+    const shownName = googleName || data.email.split('@')[0];
+    document.getElementById('google-acct-name').textContent = shownName;
+    document.getElementById('google-acct-email').textContent = data.email;
+    document.getElementById('google-acct-avatar').textContent = shownName.charAt(0).toUpperCase();
+    document.getElementById('signup-step-google').style.display = 'none';
+    document.getElementById('signup-step-details').style.display = 'flex';
+    document.getElementById('signup-err').textContent = '';
+    document.getElementById('auth-subheading').textContent = cameFromLogin
+      ? 'No account found for this Google account — finish signing up'
+      : 'Just one more step to finish';
+  }
+
+  function resetGoogleSignup() {
+    if (!googleSignupToken) return;
+    googleSignupToken = '';
+    googleName = '';
+    document.getElementById('signup-step-details').style.display = 'none';
+    document.getElementById('signup-step-google').style.display = 'block';
+    document.getElementById('signup-err').textContent = '';
+    document.getElementById('signup-err-google').textContent = '';
+    document.getElementById('auth-subheading').textContent = 'Start prepping in under a minute';
+    renderGoogleButtons();
+  }
+
+  async function handleGoogleSignup() {
+    const btn     = document.getElementById('signup-btn');
+    const errEl   = document.getElementById('signup-err');
+    const plan    = document.getElementById('signup-plan').value;
+    const college = document.getElementById('signup-college').value;
+    const mobile  = document.getElementById('reg-mobile').value.trim();
+    errEl.textContent = '';
+    if (!mobile) { errEl.textContent = 'Mobile number is required'; return; }
+    btn.disabled = true; btn.textContent = 'Creating account…';
+    try {
+      const data = await API.call('/auth/google/signup', {
+        method: 'POST',
+        body: JSON.stringify({
+          signupToken: googleSignupToken,
+          name:        googleName,
+          mobile:      mobile,
+          referredBy:  document.getElementById('reg-referral').value.trim().toUpperCase(),
+          plan:        plan,
+          college:     college
+        })
+      });
+      localStorage.setItem('pp_token', data.token);
+      localStorage.setItem('pp_user', JSON.stringify(data.user));
+      // Signup ke baad redirect — handleSignup jaisa hi
+      if (college !== 'kiit') {
+        window.location.replace('dashboard.html');
+      } else if (plan === '299') {
+        window.location.replace('masterdsa.html');
+      } else if (plan === '199') {
+        window.location.replace('plus.html');
+      } else {
+        window.location.replace('dashboard.html');
+      }
+    } catch (err) {
+      errEl.textContent = err.message;
+      btn.disabled = false; btn.textContent = 'Create account';
+    }
+  }
 
   // close modal on outside click
   document.getElementById('auth-modal').addEventListener('click', function(e) {
     if (e.target === this) closeAuth();
   });
 </script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>initGoogleSignIn();</script>
   <div style="text-align:center;padding:1.5rem;border-top:1px solid rgba(255,255,255,0.06)">
   <a href="terms.html" style="font-size:0.75rem;color:rgba(255,255,255,0.3);text-decoration:none;margin-right:1rem">Terms & Conditions</a>
   <a href="privacy.html" style="font-size:0.75rem;color:rgba(255,255,255,0.3);text-decoration:none">Privacy Policy</a>
