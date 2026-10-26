@@ -30,7 +30,11 @@ const userSchema = new mongoose.Schema({
   college:       { type: String, default: 'kiit', lowercase: true, trim: true },
   mobile:        { type: String, default: '' },
   referredBy:    { type: String, default: '', trim: true },
-  password:      { type: String, required: true },
+  // Google se signup karne wale users ka password hota hi nahi (field DB mein bhi nahi banta)
+  password:      { type: String, required: function () { return !this.googleId; } },
+  googleId:      { type: String, unique: true, sparse: true }, // ek Google account = ek hi user
+  authProvider:  { type: String, enum: ['local', 'google'], default: 'local' },
+  emailVerified: { type: Boolean, default: false }, // Google signup pe true, purane users pe false
   isPaid:        { type: Boolean, default: false },
   isAdmin:       { type: Boolean, default: false },
   paymentId:     { type: String },
