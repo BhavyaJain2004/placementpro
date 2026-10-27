@@ -866,7 +866,7 @@ if (u.isPaid && u.masterDsaAccess) {
   window.location.replace('dashboard.html');
 }
     } catch(err) {
-      document.getElementById('login-err').textContent = err.message;
+      showAuthError(document.getElementById('login-err'), err);
       btn.disabled = false; btn.textContent = 'Log in';
     }
   }
@@ -931,6 +931,19 @@ async function handleSignup(e) {
   */
 }
 
+  // Error dikhao — agar account Google se verify nahi hua to saath mein verify page ka link bhi
+  function showAuthError(el, err) {
+    el.textContent = err.message;
+    if (err.code === 'GOOGLE_VERIFY_REQUIRED' || err.code === 'GOOGLE_VERIFY_NEEDED') {
+      el.appendChild(document.createTextNode(' '));
+      const a = document.createElement('a');
+      a.href = 'verifywithgoogle.html';
+      a.textContent = 'Click here to verify';
+      a.style.cssText = 'color:#a89df7;font-weight:700;text-decoration:underline';
+      el.appendChild(a);
+    }
+  }
+
   // ── GOOGLE SIGN-IN ──
   // Google Cloud Console se banaya hua OAuth "Web" Client ID yahan paste karo.
   // IMPORTANT: naye users ab sirf Google se signup karte hain, isliye ye khali raha to signup band dikhega.
@@ -942,7 +955,8 @@ async function handleSignup(e) {
   function initGoogleSignIn() {
     if (googleReady || !GOOGLE_CLIENT_ID) return;
     if (!(window.google && google.accounts && google.accounts.id)) return;
-    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential });
+    // auto_select: false — Google kabhi bina click ke apne aap login nahi karayega (shared device pe saved account se)
+    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential, auto_select: false });
     googleReady = true;
     document.querySelectorAll('.auth-google-block').forEach(el => { el.style.display = 'block'; });
     document.getElementById('signup-err-google').textContent = '';
@@ -1006,7 +1020,7 @@ async function handleSignup(e) {
       localStorage.setItem('pp_user', JSON.stringify(data.user));
       routeAfterLogin(data.user);
     } catch (err) {
-      errEl.textContent = err.message;
+      showAuthError(errEl, err);
     }
   }
 
