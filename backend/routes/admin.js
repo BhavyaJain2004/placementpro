@@ -1604,4 +1604,33 @@ router.get('/resume-subscriptions', verifyToken, verifyAdmin, async (req, res) =
   }
 });
 
+// Google verification — kitne users verify kar chuke, kaun baaki hai (admin panel ka "Accounts Verified" tab)
+router.get('/google-verification', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { isEnforced } = require('../services/googleVerify');
+    const users = await User.find({}).select('name email college googleId isGoogleReq googleVerifiedAt createdAt').lean();
+
+    const verifiedUsers = users.filter(u => u.googleId);
+    const pendingUsers  = users.filter(u => !u.googleId && u.isGoogleReq !== false);
+    const exemptCount   = users.filter(u => !u.googleId && u.isGoogleReq === false).length;
+
+    const row = (u) => ({
+      name: u.name || '—', email: u.email || '—', college: u.college || 'kiit',
+      verifiedAt: u.googleVerifiedAt || u.createdAt, joinedAt: u.createdAt
+    });
+
+    res.json({
+      total:    users.length,
+      verified: verifiedUsers.length,
+      pending:  pendingUsers.length,
+      exempt:   exemptCount,
+      enforced: isEnforced(),
+      verifiedList: verifiedUsers.map(row).sort((a, b) => new Date(b.verifiedAt) - new Date(a.verifiedAt)),
+      pendingList:  pendingUsers.map(row).sort((a, b) => new Date(b.joinedAt) - new Date(a.joinedAt))
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
