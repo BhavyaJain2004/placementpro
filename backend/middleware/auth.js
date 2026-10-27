@@ -75,6 +75,10 @@
 // module.exports = { verifyToken, verifyPaid, verifyAdmin };
 const jwt  = require('jsonwebtoken');
 const User = require('../models/User');
+const { isEnforced, needsGoogleVerify } = require('../services/googleVerify');
+
+// Google verification pending ho tab bhi sirf ye routes chalne chahiye (verify karne ke liye zaroori)
+const GOOGLE_VERIFY_ALLOWED = ['/api/auth/me', '/api/auth/google/verify'];
 
 const verifyToken = async (req, res, next) => {
   const header = req.headers.authorization;
@@ -86,7 +90,7 @@ const verifyToken = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.id).select('sessionVersion activeSessionId');
+    const user = await User.findById(decoded.id).select('sessionVersion activeSessionId googleId isGoogleReq');
     if (!user) return res.status(401).json({ message: 'User not found' });
 
     // Force-logout check — agar admin ne "logout everyone" chalaya hai uske baad
@@ -103,6 +107,15 @@ const verifyToken = async (req, res, next) => {
     //  login nahi kiya — usko graceful allow karo, agla login se enforce ho jayega)
     if (user.activeSessionId && decoded.sid !== user.activeSessionId) {
       return res.status(401).json({ message: 'SESSION_EXPIRED' });
+    }
+
+    // Google verification — deadline ke baad jab tak verify nahi hota, koi route/data access nahi
+    // (chahe user URL change karke kahin bhi jaye). Sirf verify ke routes khule rehte hain.
+    if (isEnforced() && needsGoogleVerify(user)) {
+      const path = (req.originalUrl || '').split('?')[0].replace(/\/+$/, '');
+      if (!GOOGLE_VERIFY_ALLOWED.includes(path)) {
+        return res.status(403).json({ code: 'GOOGLE_VERIFY_REQUIRED', message: 'Please verify your account with Google to continue.' });
+      }
     }
 
     req.user = decoded;
