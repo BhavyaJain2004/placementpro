@@ -1,4 +1,8 @@
 {
+  "rewrites": [
+    { "source": "/verifywithgoogle", "destination": "/verifywithgoogle.html" },
+    { "source": "/verifyWithGoogle", "destination": "/verifywithgoogle.html" }
+  ],
   "headers": [
     {
       "source": "/js/(.*)",
