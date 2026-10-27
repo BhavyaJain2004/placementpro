@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verify with Google — PlacementSphere</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body { font-family:'DM Sans',sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:1.5rem; }
+.vg-card { width:100%; max-width:440px; background:#0e0e1e; border:1px solid rgba(124,106,247,0.28); border-radius:20px; padding:1.9rem 1.7rem; box-shadow:0 20px 60px rgba(0,0,0,0.5); text-align:left; }
+.vg-brand { font-family:'Syne',sans-serif; font-weight:800; font-size:1.05rem; color:#fff; margin-bottom:1.3rem; }
+.vg-tag { display:inline-flex; align-items:center; gap:7px; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#a89df7; background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.25); padding:4px 11px; border-radius:99px; margin-bottom:0.9rem; }
+.vg-card h1 { font-family:'Syne',sans-serif; font-size:1.35rem; font-weight:800; color:#fff; margin:0 0 0.5rem; line-height:1.3; }
+.vg-card p.sub { font-size:0.86rem; color:rgba(255,255,255,0.55); line-height:1.6; margin:0 0 1.2rem; }
+.vg-field { margin-bottom:0.9rem; }
+.vg-field label { display:block; font-size:0.78rem; font-weight:600; color:rgba(255,255,255,0.7); margin-bottom:0.35rem; }
+.vg-btn { width:100%; background:#7c6af7; color:#fff; border:none; padding:0.8rem; border-radius:10px; font-family:'Syne',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer; text-align:center; text-decoration:none; display:block; }
+.vg-btn:disabled { opacity:0.6; cursor:not-allowed; }
+.vg-err { color:#f87171; font-size:0.82rem; line-height:1.5; margin:0.4rem 0 0.8rem; min-height:1.2rem; }
+.vg-err a { color:#a89df7; font-weight:700; }
+.vg-email { display:flex; align-items:center; gap:0.7rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:0.8rem 0.95rem; margin-bottom:1.1rem; }
+.vg-email .lbl { font-size:0.68rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.06em; }
+.vg-email .val { font-size:0.92rem; color:#fff; font-weight:600; word-break:break-all; }
+.vg-steps { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:0.8rem 1rem; font-size:0.8rem; color:rgba(255,255,255,0.65); line-height:1.7; margin-bottom:1.1rem; }
+.vg-google { display:flex; justify-content:center; min-height:44px; }
+.vg-hint { font-size:0.74rem; color:rgba(255,255,255,0.38); line-height:1.55; margin:1rem 0 0; }
+.vg-link { background:none; border:none; color:rgba(255,255,255,0.45); text-decoration:underline; font-size:0.76rem; cursor:pointer; font-family:inherit; padding:0; }
+.vg-tick { width:58px; height:58px; border-radius:50%; background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.35); color:#34d399; display:flex; align-items:center; justify-content:center; font-size:1.6rem; margin-bottom:1rem; }
+.vg-section { display:none; }
+</style>
+</head>
+<body>
+
+<div class="vg-card">
+  <div class="vg-brand">PlacementSphere</div>
+
+  <!-- 1) Existing login form (sirf yahin password se login hota hai) -->
+  <div class="vg-section" id="vg-login">
+    <div class="vg-tag">🔒 Security update</div>
+    <h1>Verify your account with Google</h1>
+    <p class="sub">To increase the security of the website, we have added Google verification. First log in with your existing email and password, then verify with the same Google account.</p>
+    <form onsubmit="vgLogin(event)">
+      <div class="vg-field">
+        <label for="vg-email-in">Email</label>
+        <input class="input-field" type="email" id="vg-email-in" placeholder="you@example.com" autocomplete="username" required>
+      </div>
+      <div class="vg-field">
+        <label for="vg-pass-in">Password</label>
+        <input class="input-field" type="password" id="vg-pass-in" placeholder="Your password" autocomplete="current-password" required>
+      </div>
+      <p class="vg-err" id="vg-login-err"></p>
+      <button type="submit" class="vg-btn" id="vg-login-btn">Continue</button>
+    </form>
+    <p class="vg-hint">Signed up with Google, or already verified? <a href="index.html" style="color:#a89df7">Log in with Google</a> from the home page.</p>
+  </div>
+
+  <!-- 2) Google verify -->
+  <div class="vg-section" id="vg-verify">
+    <div class="vg-tag">🔒 Security update</div>
+    <h1>Verify with Google</h1>
+    <p class="sub">To increase the security of the website, we have added Google verification. It takes less than a minute.</p>
+    <div class="vg-email">
+      <div style="min-width:0">
+        <div class="lbl">Your registered email</div>
+        <div class="val" id="vg-reg-email"></div>
+      </div>
+    </div>
+    <div class="vg-steps">
+      1. Click <b style="color:#fff">Continue with Google</b> below<br>
+      2. Choose the Google account for <b style="color:#fff">this exact email</b><br>
+      3. After verifying, you will log in with Google from now on
+    </div>
+    <div class="vg-google" id="vg-google-btn"></div>
+    <p class="vg-err" id="vg-verify-err" style="margin-top:0.9rem"></p>
+    <p class="vg-hint" style="margin-top:0">Your email must be a Google account. If it is not, create a Google account using this same email first. Verifying with any other email will not work.</p>
+    <p class="vg-hint"><button class="vg-link" onclick="vgLogout()">Not you? Log out</button></p>
+  </div>
+
+  <!-- 3) Done -->
+  <div class="vg-section" id="vg-done">
+    <div class="vg-tick">✓</div>
+    <h1>Verified successfully</h1>
+    <p class="sub">Your account is now verified with Google. Kindly log in with your Google account to continue. Your email and password will no longer work for login.</p>
+    <a class="vg-btn" href="index.html">Go to login</a>
+  </div>
+
+  <!-- 4) Info (already verified / not required) -->
+  <div class="vg-section" id="vg-info">
+    <h1 id="vg-info-title"></h1>
+    <p class="sub" id="vg-info-text"></p>
+    <a class="vg-btn" id="vg-info-btn" href="index.html"></a>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  // Google Cloud wala wahi Web Client ID jo index.html mein hai
+  const GOOGLE_CLIENT_ID = '351925042109-8pne4rbgbm609fervg4ljj3gbmvovjp3.apps.googleusercontent.com';
+
+  const $ = (id) => document.getElementById(id);
+  let googleReady = false;
+  let currentState = '';
+
+  function show(state) {
+    currentState = state;
+    ['vg-login', 'vg-verify', 'vg-done', 'vg-info'].forEach(id => { $(id).style.display = (id === state) ? 'block' : 'none'; });
+    if (state === 'vg-verify') renderGoogleButton();
+  }
+
+  // API.call 401 pe user ko index.html bhej deta hai — is page pe wo nahi chahiye, isliye apna fetch
+  async function vgCall(endpoint, options = {}) {
+    const token = localStorage.getItem('pp_token');
+    let res;
+    try {
+      res = await fetch(API.base + endpoint, {
+        ...options,
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) }
+      });
+    } catch (e) {
+      throw new Error('Network issue. Please check your connection and try again.');
+    }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data.message || 'Something went wrong. Please try again.');
+      err.code = data.code; err.status = res.status;
+      throw err;
+    }
+    return data;
+  }
+
+  // User ki halat ke hisaab se sahi screen dikhao
+  function routeUser(user) {
+    if (user.needsGoogleVerify) {
+      $('vg-reg-email').textContent = user.email;
+      show('vg-verify');
+    } else if (user.authProvider === 'google') {
+      $('vg-info-title').textContent = 'Already verified';
+      $('vg-info-text').textContent = 'Your account is already verified with Google. Please log in with your Google account.';
+      $('vg-info-btn').textContent = 'Log in with Google';
+      $('vg-info-btn').href = 'index.html';
+      show('vg-info');
+    } else {
+      $('vg-info-title').textContent = 'Verification not required';
+      $('vg-info-text').textContent = 'Your account does not need Google verification. You can continue using the website.';
+      $('vg-info-btn').textContent = 'Go to dashboard';
+      $('vg-info-btn').href = 'dashboard.html';
+      show('vg-info');
+    }
+  }
+
+  async function init() {
+    const token = localStorage.getItem('pp_token');
+    if (!token) { show('vg-login'); return; }
+    try {
+      const data = await vgCall('/auth/me');
+      if (data.token) localStorage.setItem('pp_token', data.token);
+      localStorage.setItem('pp_user', JSON.stringify(data.user));
+      routeUser(data.user);
+    } catch (e) {
+      // Token purana/expire/doosre device se logout — fresh login form dikhao
+      localStorage.removeItem('pp_token'); localStorage.removeItem('pp_user');
+      show('vg-login');
+      if (e.status === 401 && e.message === 'SESSION_EXPIRED') {
+        $('vg-login-err').textContent = 'You were logged out because your account was accessed from another device. Please log in again.';
+      }
+    }
+  }
+
+  async function vgLogin(e) {
+    e.preventDefault();
+    const btn = $('vg-login-btn'), err = $('vg-login-err');
+    err.textContent = '';
+    btn.disabled = true; btn.textContent = 'Please wait…';
+    try {
+      const data = await vgCall('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: $('vg-email-in').value.trim(), password: $('vg-pass-in').value, verifyPortal: true })
+      });
+      localStorage.setItem('pp_token', data.token);
+      localStorage.setItem('pp_user', JSON.stringify(data.user));
+      $('vg-pass-in').value = '';
+      routeUser(data.user);
+    } catch (ex) {
+      if (ex.code === 'GOOGLE_ONLY') {
+        // Pehle se verified / Google signup — yahan password login nahi, Google login karna hai
+        $('vg-info-title').textContent = 'Already verified';
+        $('vg-info-text').textContent = ex.message;
+        $('vg-info-btn').textContent = 'Log in with Google';
+        $('vg-info-btn').href = 'index.html';
+        show('vg-info');
+      } else {
+        err.textContent = ex.message;
+      }
+    }
+    btn.disabled = false; btn.textContent = 'Continue';
+  }
+
+  function vgLogout() {
+    localStorage.clear(); sessionStorage.clear();
+    $('vg-verify-err').textContent = '';
+    show('vg-login');
+  }
+
+  // ── Google ──
+  function initGoogle() {
+    if (googleReady || !(window.google && google.accounts && google.accounts.id)) return;
+    // auto_select: false — Google kabhi bina click ke apne aap saved account se verify/login nahi karayega
+    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onGoogleCredential, auto_select: false });
+    googleReady = true;
+    if (currentState === 'vg-verify') renderGoogleButton();
+  }
+  window.onGoogleLibraryLoad = initGoogle;
+
+  function renderGoogleButton() {
+    const box = $('vg-google-btn');
+    if (!googleReady) {
+      box.innerHTML = '<span style="color:rgba(255,255,255,0.4);font-size:0.8rem">Loading Google…</span>';
+      setTimeout(() => {
+        if (!googleReady && currentState === 'vg-verify')
+          $('vg-verify-err').textContent = "Google sign-in couldn't load. Please check your connection, or open this page in Chrome / Safari.";
+      }, 6000);
+      return;
+    }
+    box.innerHTML = '';
+    const w = Math.min(400, Math.max(200, box.clientWidth || 340));
+    google.accounts.id.renderButton(box, { type: 'standard', theme: 'filled_black', size: 'large', text: 'continue_with', shape: 'rectangular', logo_alignment: 'left', width: w });
+  }
+
+  async function onGoogleCredential(resp) {
+    const err = $('vg-verify-err');
+    err.textContent = '';
+    try {
+      await vgCall('/auth/google/verify', { method: 'POST', body: JSON.stringify({ credential: resp.credential }) });
+      // Server ne purane saare sessions khatam kar diye — local data bhi saaf, ab sirf Google login
+      localStorage.clear(); sessionStorage.clear();
+      try { google.accounts.id.disableAutoSelect(); } catch (e) {}
+      show('vg-done');
+    } catch (ex) {
+      if (ex.status === 401) {
+        localStorage.removeItem('pp_token'); localStorage.removeItem('pp_user');
+        show('vg-login');
+        $('vg-login-err').textContent = 'Your session expired. Please log in again.';
+      } else {
+        err.textContent = ex.message;
+      }
+    }
+  }
+
+  init();
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>initGoogle();</script>
+</body>
+</html>
