@@ -49,6 +49,18 @@ const call = async (endpoint, options = {}) => {
 
   // New Part over
 
+  // Google verification pending hai (deadline ke baad) — token valid hai par kuch access nahi,
+  // isliye user ko seedha verify page pe bhejo (verify page pe khud ye redirect nahi karte)
+  if (res.status === 403) {
+    const d403 = await res.clone().json().catch(() => ({}));
+    if (d403.code === 'GOOGLE_VERIFY_REQUIRED') {
+      if (!window.location.pathname.toLowerCase().includes('verifywithgoogle')) {
+        window.location.href = 'verifywithgoogle.html';
+      }
+      return;
+    }
+  }
+
   // 413 Payload Too Large (screenshot/image bahut bada) aksar server/proxy se plain text/HTML aata hai, JSON nahi —
   // isliye .json() try karne se pehle status check karo taaki crash na ho aur user ko sahi message mile
   if (res.status === 413) {
@@ -56,7 +68,11 @@ const call = async (endpoint, options = {}) => {
   }
 
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.message || data.error || 'Something went wrong. Please try again.');
+  if (!res.ok) {
+    const apiErr = new Error(data.message || data.error || 'Something went wrong. Please try again.');
+    apiErr.code = data.code; // e.g. GOOGLE_VERIFY_REQUIRED — frontend isse link dikhata hai
+    throw apiErr;
+  }
   return data;
 };
 
