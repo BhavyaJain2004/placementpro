@@ -105,6 +105,7 @@ body{background:#06060f}
     <div class="as-item" onclick="showTab('notifications',this)">🔔 Notifications</div>
      <div class="as-section">Security</div>
    <div class="as-item" onclick="showTab('security',this)">🚨 Password Sharing</div>
+   <div class="as-item" onclick="showTab('gverify',this)">✅ Accounts Verified</div>
 
     <div class="as-section">Payments</div>
     <div class="as-item" onclick="showTab('growth',this)">🚀 Growth &amp; Strategy</div>
@@ -584,6 +585,17 @@ body{background:#06060f}
       </div>
     </div>
 
+    <div id="tab-gverify" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.2rem">✅ Accounts Verified</h2>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.78rem;margin-bottom:1rem">Google verification status — kitne users verify kar chuke hain aur kaun baaki hai.</p>
+      <div id="gv-stats" style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem"></div>
+      <div style="display:flex;gap:0.5rem;margin-bottom:0.9rem">
+        <button id="gv-btn-verified" onclick="showGvList('verified')" style="background:rgba(124,106,247,0.15);border:1px solid rgba(124,106,247,0.4);color:#a89df7;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.76rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Verified</button>
+        <button id="gv-btn-pending" onclick="showGvList('pending')" style="background:none;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);padding:0.4rem 0.9rem;border-radius:8px;font-size:0.76rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">Not verified yet</button>
+      </div>
+      <div id="gv-table" style="overflow-x:auto"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
+    </div>
+
     <div id="tab-subscriptions" style="display:none">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1rem">💳 Resume Subscriptions</h2>
       <div id="subs-table" style="overflow-x:auto"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
@@ -989,12 +1001,12 @@ function checkPwd() {
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
 // ── TAB ROUTING ──
-const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue','colleges','growth','system','subscriptions'];
+const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue','colleges','growth','system','subscriptions','gverify'];
 function showTab(tab, btn) {
   ALL_TABS.forEach(t => { const el = document.getElementById('tab-'+t); if(el) el.style.display = t===tab?'block':'none'; });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
-  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue, colleges: loadColleges, growth: loadGrowthReport, system: loadSystemMemory, subscriptions: loadResumeSubs };
+  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue, colleges: loadColleges, growth: loadGrowthReport, system: loadSystemMemory, subscriptions: loadResumeSubs, gverify: loadGVerify };
   if (loaders[tab]) loaders[tab]();
 }
 
@@ -1548,6 +1560,59 @@ function dayLabel(ymd) {
 }
 
 // ── SYSTEM MEMORY (sirf tab-open/manual-refresh par call hota hai, koi auto-poll nahi) ──
+// ── ACCOUNTS VERIFIED (Google verification status) ──
+let gvData = null;
+let gvView = 'verified';
+function gvEsc(x) { return String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+async function loadGVerify() {
+  const stats = document.getElementById('gv-stats');
+  const table = document.getElementById('gv-table');
+  try {
+    gvData = await API.call('/admin/google-verification');
+    const pct = gvData.total ? Math.round((gvData.verified / gvData.total) * 100) : 0;
+    const card = (label, val, color, sub) => `<div style="background:#0e0e1e;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.8rem 1.1rem;min-width:130px">
+      <div style="font-size:0.64rem;text-transform:uppercase;color:rgba(255,255,255,0.4);letter-spacing:0.05em">${label}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:${color}">${val}</div>
+      ${sub ? `<div style="font-size:0.68rem;color:rgba(255,255,255,0.35)">${sub}</div>` : ''}</div>`;
+    stats.innerHTML = card('Total accounts', gvData.total, '#fff', '')
+      + card('Verified', gvData.verified, '#34d399', pct + '% of total')
+      + card('Not verified', gvData.pending, '#fbbf24', gvData.enforced ? 'locked until verified' : 'reminder popup on')
+      + (gvData.exempt ? card('Exempt', gvData.exempt, '#a89df7', 'isGoogleReq: false') : '');
+    showGvList(gvView);
+  } catch (e) {
+    table.innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load nahi ho paaya</div>';
+  }
+}
+function showGvList(which) {
+  gvView = which;
+  const on  = 'background:rgba(124,106,247,0.15);border:1px solid rgba(124,106,247,0.4);color:#a89df7';
+  const off = 'background:none;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5)';
+  const bV = document.getElementById('gv-btn-verified'), bP = document.getElementById('gv-btn-pending');
+  const base = 'padding:0.4rem 0.9rem;border-radius:8px;font-size:0.76rem;font-weight:600;cursor:pointer;font-family:\'DM Sans\',sans-serif;';
+  bV.style.cssText = base + (which === 'verified' ? on : off);
+  bP.style.cssText = base + (which === 'pending' ? on : off);
+  const table = document.getElementById('gv-table');
+  if (!gvData) return;
+  const list = which === 'verified' ? gvData.verifiedList : gvData.pendingList;
+  if (!list.length) { table.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Koi account nahi hai abhi</div>'; return; }
+  const fmt = (d) => new Date(d).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
+  const dateHead = which === 'verified' ? 'Verified on' : 'Joined on';
+  table.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+    <tr style="color:rgba(255,255,255,0.4);font-size:0.64rem;text-transform:uppercase">
+      <th style="text-align:left;padding:0.45rem 0.5rem">#</th><th style="text-align:left;padding:0.45rem 0.5rem">Name</th>
+      <th style="text-align:left;padding:0.45rem 0.5rem">Email</th><th style="text-align:left;padding:0.45rem 0.5rem">College</th>
+      <th style="text-align:right;padding:0.45rem 0.5rem">${dateHead}</th>
+    </tr>
+    ${list.map((u, i) => `<tr style="border-top:1px solid rgba(255,255,255,0.05)">
+      <td style="padding:0.5rem;color:rgba(255,255,255,0.35)">${i + 1}</td>
+      <td style="padding:0.5rem;color:#fff;font-weight:600">${gvEsc(u.name)}</td>
+      <td style="padding:0.5rem;color:rgba(255,255,255,0.6)">${gvEsc(u.email)}</td>
+      <td style="padding:0.5rem;color:rgba(255,255,255,0.6);text-transform:uppercase">${gvEsc(u.college)}</td>
+      <td style="padding:0.5rem;text-align:right;color:rgba(255,255,255,0.7);white-space:nowrap">${fmt(which === 'verified' ? u.verifiedAt : u.joinedAt)}</td>
+    </tr>`).join('')}
+  </table>`;
+}
+
 async function loadResumeSubs() {
   const el = document.getElementById('subs-table');
   try {
