@@ -6,6 +6,7 @@ const User    = require('../models/User');
 const { verifyToken } = require('../middleware/auth');
 const LoginLog = require('../models/LoginLog');
 const { verifyGoogleIdToken } = require('../services/googleAuth');
+const { isEnforced, needsGoogleVerify, normalizeEmail, verifyInfo } = require('../services/googleVerify');
 
 function getIP(req) {
   return (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
@@ -130,6 +131,16 @@ router.post('/login', async (req, res) => {
     if (!user)
       return res.status(400).json({ message: 'Invalid credentials' });
 
+    // Google se jude account (naya Google signup, ya Google se verify ho chuka purana user) — password login band.
+    // Sirf wo accounts bachte hain jinpe isGoogleReq: false hai (unka password login chalta rahega)
+    if (user.googleId && user.isGoogleReq !== false)
+      return res.status(400).json({
+        code: 'GOOGLE_ONLY',
+        message: user.password
+          ? 'Your account is verified with Google. Please log in with Google.'
+          : 'You signed up using Google. Please log in with Google.'
+      });
+
     // Google se signup hua account — isme password hai hi nahi, to password login nahi chalega
     if (!user.password)
       return res.status(400).json({ message: 'You signed up using Google. Please log in with Google.' });
@@ -137,6 +148,12 @@ router.post('/login', async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match)
       return res.status(400).json({ message: 'Invalid credentials' });
+
+    // Verify deadline ke baad unverified user main login form se andar nahi aa sakta — wo sirf
+    // /verifywithgoogle page se login karega (verifyPortal). Wahan ka token bhi verifyToken middleware
+    // mein sirf verify ke routes tak limited rehta hai, to ye flag koi bypass nahi hai.
+    if (isEnforced() && needsGoogleVerify(user) && !req.body.verifyPortal)
+      return res.status(400).json({ code: 'GOOGLE_VERIFY_REQUIRED', message: 'Your account is not verified with Google. Please verify it to continue.' });
 
 const { token, sessionId } = makeToken(user);
 
@@ -173,7 +190,9 @@ const { token, sessionId } = makeToken(user);
         isPaid:  user.isPaid,
         isAdmin: user.isAdmin,
         masterDsaAccess: user.masterDsaAccess || false,
-    selectedPlan:    user.selectedPlan    || '99'
+    selectedPlan:    user.selectedPlan    || '99',
+        authProvider:    user.authProvider    || 'local',
+        ...verifyInfo(user)
       }
     });
   } catch (err) {
@@ -202,6 +221,7 @@ router.get('/me', verifyToken, async (req, res) => {
     masterDsaAccess: user.masterDsaAccess || false,
     selectedPlan:    user.selectedPlan    || '99',
     authProvider:    user.authProvider    || 'local',
+    ...verifyInfo(user),
     resumePlan
   }
 });
@@ -219,7 +239,7 @@ router.post('/change-password', verifyToken, async (req, res) => {
       return res.status(400).json({ message: 'Min 6 characters' });
 
     const user  = await User.findById(req.user.id);
-    if (!user.password)
+    if (!user.password || user.googleId)
       return res.status(400).json({ message: 'Your account uses Google sign-in, so there is no password to change.' });
     const match = await bcrypt.compare(currentPassword, user.password);
     if (!match)
@@ -274,7 +294,8 @@ function googleUserPayload(user) {
     isAdmin: user.isAdmin,
     masterDsaAccess: user.masterDsaAccess || false,
     selectedPlan:    user.selectedPlan    || '99',
-    authProvider:    user.authProvider    || 'local'
+    authProvider:    user.authProvider    || 'local',
+    ...verifyInfo(user)
   };
 }
 
@@ -307,7 +328,7 @@ router.post('/google', async (req, res) => {
 
     const byEmail = await User.findOne({ email: g.email });
     if (byEmail)
-      return res.status(400).json({ message: 'This email is already registered with a password. Please log in with your email and password.' });
+      return res.status(400).json({ code: 'GOOGLE_VERIFY_NEEDED', message: 'This email is already registered but not verified with Google yet. Please verify your account first.' });
 
     const signupToken = jwt.sign(
       { purpose: 'google-signup', googleId: g.googleId, email: g.email, name: g.name },
@@ -357,6 +378,7 @@ router.post('/google/signup', async (req, res) => {
       googleId:   g.googleId,
       authProvider: 'google',
       emailVerified: true,
+      googleVerifiedAt: new Date(),
       mobile:     String(mobile).trim(),
       college:    userCollege,
       referredBy: referredBy ? String(referredBy).toUpperCase().trim() : '',
@@ -370,6 +392,59 @@ router.post('/google/signup', async (req, res) => {
   } catch (err) {
     if (err && err.code === 11000)
       return res.status(400).json({ message: 'Email already registered' });
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Existing (password wale) user ka Google verification — user pehle email+password se login karta hai,
+// phir wahi Google account (same email) se verify karta hai. Uske baad sirf Google login chalta hai.
+router.post('/google/verify', verifyToken, async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential)
+      return res.status(400).json({ message: 'Google sign-in failed. Please try again.' });
+
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (user.googleId)
+      return res.status(400).json({ message: 'Your account is already verified with Google. Please log in with Google.' });
+
+    let g;
+    try {
+      g = await verifyGoogleIdToken(credential);
+    } catch (verr) {
+      console.error('Google verify error:', verr.message);
+      if (verr.code === 'NOT_CONFIGURED')
+        return res.status(500).json({ message: 'Google sign-in is not available right now.' });
+      return res.status(400).json({ message: 'Google sign-in failed. Please try again.' });
+    }
+
+    // Verification usi email se honi chahiye jisse account bana tha
+    if (normalizeEmail(g.email) !== normalizeEmail(user.email))
+      return res.status(400).json({
+        code: 'EMAIL_MISMATCH',
+        message: 'You enrolled using ' + user.email + '. Please verify with the same Google account.'
+      });
+
+    // Ek Google account sirf ek hi PlacementSphere account se jud sakta hai
+    const taken = await User.findOne({ googleId: g.googleId });
+    if (taken)
+      return res.status(400).json({ code: 'GOOGLE_ALREADY_LINKED', message: 'This Google account is already linked to another PlacementSphere account.' });
+
+    user.googleId         = g.googleId;
+    user.authProvider     = 'google';
+    user.emailVerified    = true;
+    user.googleVerifiedAt = new Date();
+    // Purane saare sessions khatam (random id — null hota to verifyToken purane token allow kar deta)
+    user.sessions         = [];
+    user.activeSessionId  = crypto.randomUUID();
+    await user.save();
+
+    res.json({ verified: true, message: 'Verified successfully. Please log in with your Google account.' });
+  } catch (err) {
+    if (err && err.code === 11000)
+      return res.status(400).json({ code: 'GOOGLE_ALREADY_LINKED', message: 'This Google account is already linked to another PlacementSphere account.' });
     res.status(500).json({ message: err.message });
   }
 });
