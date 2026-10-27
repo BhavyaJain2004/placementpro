@@ -111,6 +111,15 @@ app.use((err, _req, res, _next) => {
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
+
+    // Purane users ke document mein isGoogleReq field hota hi nahi tha (Mongoose default DB mein save nahi karta).
+    // Ek baar sabme true set kar do — jinke paas pehle se value hai (jaise tumne false kiya) unhe nahi chhedta,
+    // aur dobara chalane par kuch nahi badalta. (collection.updateMany => updatedAt/timestamps pe koi asar nahi)
+    require('./models/User').collection
+      .updateMany({ isGoogleReq: { $exists: false } }, { $set: { isGoogleReq: true } })
+      .then(r => console.log(`🔑 isGoogleReq added to ${r.modifiedCount} users`))
+      .catch(err => console.error('❌ isGoogleReq migration failed:', err.message));
+
     app.listen(process.env.PORT || 5000, () =>
       console.log(`🚀 Server on port ${process.env.PORT || 5000}`));
 
