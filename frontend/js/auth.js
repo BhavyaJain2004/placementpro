@@ -50,52 +50,56 @@ const logout = () => {
 
 
 // ── GOOGLE VERIFY POPUP ──
-// Jin users ka account abhi Google se verify nahi hua unko login ke baad ye popup dikhta hai.
-// Deadline tak "Remind me later" hai, uske baad server hi sab access band kar deta hai (verifyToken middleware).
+// Jin users ka account abhi Google se verify nahi hua unko har page par ye popup dikhta hai (skip/close nahi hota).
+// Verify kiye bina aage nahi badh sakte. Deadline ke baad server bhi sab API access band kar deta hai (verifyToken middleware).
 (function googleVerifyPopup() {
   try {
     if (!localStorage.getItem('pp_token')) return;
     const page = window.location.pathname.toLowerCase();
     if (page.includes('verifywithgoogle') || page.endsWith('/') || page.endsWith('index.html')) return;
 
-    const u = JSON.parse(localStorage.getItem('pp_user') || 'null');
-    if (!u || u.needsGoogleVerify !== true) return;
-
-    const enforced = u.googleVerifyEnforced === true;
-    if (!enforced && sessionStorage.getItem('pp_gv_later') === '1') return;
-
     const esc = (x) => String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    let dl = '';
-    if (u.googleVerifyDeadline) {
-      dl = new Date(u.googleVerifyDeadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
-    }
-    const deadlineLine = enforced
-      ? 'Your account is locked until you verify.'
-      : (dl ? 'Please verify before <b style="color:#fbbf24">' + esc(dl) + '</b>. After that, your account stays locked until it is verified.' : '');
 
-    const run = () => {
+    const render = (u) => {
       if (document.getElementById('gv-popup')) return;
       const box = document.createElement('div');
       box.id = 'gv-popup';
-      box.style.cssText = 'position:fixed;inset:0;z-index:100000;background:rgba(5,5,12,0.82);display:flex;align-items:center;justify-content:center;padding:1.25rem;font-family:"DM Sans",sans-serif';
+      box.style.cssText = 'position:fixed;inset:0;z-index:100000;background:rgba(5,5,12,0.9);display:flex;align-items:center;justify-content:center;padding:1.25rem;font-family:"DM Sans",sans-serif;overflow-y:auto';
       box.innerHTML =
         '<div role="dialog" aria-modal="true" style="max-width:440px;width:100%;background:#0e0e1e;border:1px solid rgba(124,106,247,0.35);border-radius:18px;padding:1.6rem;box-shadow:0 20px 60px rgba(0,0,0,0.6);color:#fff">' +
           '<div style="display:inline-flex;align-items:center;gap:7px;font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#a89df7;background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);padding:4px 11px;border-radius:99px;margin-bottom:0.9rem">🔒 Security update</div>' +
-          '<h2 style="font-family:Syne,sans-serif;font-size:1.25rem;font-weight:800;margin:0 0 0.5rem;line-height:1.3">Verify with Google to keep using your account</h2>' +
-          '<p style="font-size:0.86rem;color:rgba(255,255,255,0.6);line-height:1.6;margin:0 0 1rem">To increase the security of the website, we have added Google verification. It takes less than a minute.</p>' +
+          '<h2 style="font-family:Syne,sans-serif;font-size:1.25rem;font-weight:800;margin:0 0 0.5rem;line-height:1.3">Verify with Google to use your account</h2>' +
+          '<p style="font-size:0.86rem;color:rgba(255,255,255,0.6);line-height:1.6;margin:0 0 1rem">To increase the security of the website, we have added Google verification. It takes less than a minute and is required to continue.</p>' +
           '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.85rem 1rem;font-size:0.8rem;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:1rem">' +
             '1. Click <b style="color:#fff">Verify with Google</b> below<br>' +
             '2. Sign in with the Google account for <b style="color:#fff">' + esc(u.email) + '</b><br>' +
             '3. After verifying, you will log in with Google from now on' +
           '</div>' +
-          (deadlineLine ? '<p style="font-size:0.8rem;color:rgba(255,255,255,0.55);line-height:1.55;margin:0 0 1rem">' + deadlineLine + '</p>' : '') +
           '<a href="verifywithgoogle.html" style="display:block;text-align:center;background:#7c6af7;color:#fff;text-decoration:none;font-family:Syne,sans-serif;font-weight:700;font-size:0.9rem;padding:0.8rem;border-radius:10px">Verify with Google</a>' +
-          (enforced ? '' : '<button id="gv-later" style="display:block;width:100%;background:none;border:none;color:rgba(255,255,255,0.45);font-size:0.78rem;padding:0.75rem 0 0;cursor:pointer;font-family:inherit">Remind me later</button>') +
           '<p style="font-size:0.72rem;color:rgba(255,255,255,0.35);line-height:1.5;margin:0.9rem 0 0">Your email must be a Google account. If it is not, create a Google account using this same email first.</p>' +
+          '<button id="gv-logout" style="display:block;background:none;border:none;color:rgba(255,255,255,0.4);text-decoration:underline;font-size:0.74rem;padding:0.6rem 0 0;cursor:pointer;font-family:inherit">Log out</button>' +
         '</div>';
       document.body.appendChild(box);
-      const later = document.getElementById('gv-later');
-      if (later) later.onclick = () => { sessionStorage.setItem('pp_gv_later', '1'); box.remove(); };
+      document.body.style.overflow = 'hidden';
+      document.getElementById('gv-logout').onclick = () => { localStorage.clear(); sessionStorage.clear(); window.location.href = 'index.html'; };
+    };
+
+    const run = () => {
+      let u = null;
+      try { u = JSON.parse(localStorage.getItem('pp_user') || 'null'); } catch (e) {}
+
+      // Flag pehle se pata hai (login ya /me se aaya) — turant dikhao ya chhodo
+      if (u && typeof u.needsGoogleVerify === 'boolean') {
+        if (u.needsGoogleVerify) render(u);
+        return;
+      }
+      // Purana login hai (pp_user mein flag nahi) — server se abhi pata karo, taaki har page par popup aaye
+      API.call('/auth/me').then((d) => {
+        if (!d || !d.user) return;
+        const merged = Object.assign({}, u || {}, d.user);
+        localStorage.setItem('pp_user', JSON.stringify(merged));
+        if (d.user.needsGoogleVerify === true) render(merged);
+      }).catch(() => {});
     };
     if (document.body) run(); else document.addEventListener('DOMContentLoaded', run);
   } catch (e) {}
