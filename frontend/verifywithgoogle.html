@@ -23,6 +23,11 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; display:flex; align-i
 .vg-email .val { font-size:0.92rem; color:#fff; font-weight:600; word-break:break-all; }
 .vg-steps { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:0.8rem 1rem; font-size:0.8rem; color:rgba(255,255,255,0.65); line-height:1.7; margin-bottom:1.1rem; }
 .vg-google { display:flex; justify-content:center; min-height:44px; }
+.vg-pick { background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.45); border-radius:12px; padding:0.8rem 1rem; margin-bottom:0.9rem; text-align:center; }
+.vg-pick .t { font-size:0.74rem; color:rgba(255,255,255,0.6); }
+.vg-pick .e { font-size:1rem; font-weight:700; color:#fff; word-break:break-all; margin-top:2px; }
+.vg-warn { background:rgba(251,191,36,0.07); border:1px solid rgba(251,191,36,0.28); border-radius:12px; padding:0.7rem 0.9rem; font-size:0.78rem; color:rgba(255,255,255,0.7); line-height:1.55; margin-top:1rem; }
+.vg-warn b { color:#fbbf24; }
 .vg-hint { font-size:0.74rem; color:rgba(255,255,255,0.38); line-height:1.55; margin:1rem 0 0; }
 .vg-link { background:none; border:none; color:rgba(255,255,255,0.45); text-decoration:underline; font-size:0.76rem; cursor:pointer; font-family:inherit; padding:0; }
 .vg-tick { width:58px; height:58px; border-radius:50%; background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.35); color:#34d399; display:flex; align-items:center; justify-content:center; font-size:1.6rem; margin-bottom:1rem; }
@@ -59,20 +64,22 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; display:flex; align-i
     <div class="vg-tag">🔒 Security update</div>
     <h1>Verify with Google</h1>
     <p class="sub">To increase the security of the website, we have added Google verification. It takes less than a minute.</p>
-    <div class="vg-email">
-      <div style="min-width:0">
-        <div class="lbl">Your registered email</div>
-        <div class="val" id="vg-reg-email"></div>
-      </div>
+    <div class="vg-pick">
+      <div class="t">Select your registered email</div>
+      <div class="e" id="vg-pick-email"></div>
     </div>
     <div class="vg-steps">
       1. Click <b style="color:#fff">Continue with Google</b> below<br>
-      2. Choose the Google account for <b style="color:#fff">this exact email</b><br>
+      2. In the Google window, choose <b style="color:#fff">the email shown above</b> (not any other account)<br>
       3. After verifying, you will log in with Google from now on
     </div>
     <div class="vg-google" id="vg-google-btn"></div>
     <p class="vg-err" id="vg-verify-err" style="margin-top:0.9rem"></p>
-    <p class="vg-hint" style="margin-top:0">Your email must be a Google account. If it is not, create a Google account using this same email first. Verifying with any other email will not work.</p>
+    <div class="vg-warn">
+      <b>Seeing "Access blocked" or an error from Google?</b><br>
+      That means a different (or restricted) Google account was selected. Close that window and choose <b id="vg-warn-email"></b> here. School or college Google accounts can be blocked by their admin; use the exact email you registered with.
+    </div>
+    <p class="vg-hint">Your email must be a Google account. If it is not, create a Google account using this same email first. Verifying with any other email will not work.</p>
     <p class="vg-hint"><button class="vg-link" onclick="vgLogout()">Not you? Log out</button></p>
   </div>
 
@@ -100,6 +107,7 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; display:flex; align-i
   const $ = (id) => document.getElementById(id);
   let googleReady = false;
   let currentState = '';
+  let regEmail = ''; // account ka registered email — Google ko hint dete hain taaki wahi account pre-select ho
 
   function show(state) {
     currentState = state;
@@ -131,7 +139,9 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; display:flex; align-i
   // User ki halat ke hisaab se sahi screen dikhao
   function routeUser(user) {
     if (user.needsGoogleVerify) {
-      $('vg-reg-email').textContent = user.email;
+      regEmail = user.email;
+      $('vg-pick-email').textContent = user.email;
+      $('vg-warn-email').textContent = user.email;
       show('vg-verify');
     } else if (user.authProvider === 'google') {
       $('vg-info-title').textContent = 'Already verified';
@@ -204,8 +214,6 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; display:flex; align-i
   // ── Google ──
   function initGoogle() {
     if (googleReady || !(window.google && google.accounts && google.accounts.id)) return;
-    // auto_select: false — Google kabhi bina click ke apne aap saved account se verify/login nahi karayega
-    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onGoogleCredential, auto_select: false });
     googleReady = true;
     if (currentState === 'vg-verify') renderGoogleButton();
   }
@@ -222,6 +230,9 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; display:flex; align-i
       return;
     }
     box.innerHTML = '';
+    // auto_select: false — Google kabhi bina click ke apne aap saved account se verify/login nahi karayega
+    // login_hint — registered email pre-select karne ki koshish (galat account chunne ke chance kam)
+    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onGoogleCredential, auto_select: false, login_hint: regEmail });
     const w = Math.min(400, Math.max(200, box.clientWidth || 340));
     google.accounts.id.renderButton(box, { type: 'standard', theme: 'filled_black', size: 'large', text: 'continue_with', shape: 'rectangular', logo_alignment: 'left', width: w });
   }
