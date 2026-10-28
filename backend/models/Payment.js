@@ -32,6 +32,7 @@ plan:          { type: String, enum: ['99', '199', '299', '499', '1000', 'resume
   status:        { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
   createdAt:     { type: Date, default: Date.now },
   reviewedAt:    { type: Date },
+  reportedAt:    { type: Date }, // daily 8 PM report mein ye payment ginaa ja chuka hai (dobara count na ho)
   // ── Google Form se purana data import karne ke liye ──
   isLegacyImport: { type: Boolean, default: false }, // Google Form se import kiya gaya record hai
   legacyMatched:  { type: Boolean, default: true }   // false = platform pe koi matching account nahi mila (email typo/missing)
