@@ -16,14 +16,19 @@ const fetchWithTimeout = (url, options, timeoutMs = 4000) => {
   return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
 };
 
+// Admin panel ke bhaari endpoints (payments, reports) 4 second mein nahi aate — wahan list/refresh
+// "update nahi hota" jaisa lagta tha. Admin pages ke liye 30 sec, baaki sab pages pe wahi 4 sec fail-fast.
+const defaultTimeout = () => (window.location.pathname.toLowerCase().includes('admin') ? 30000 : 4000);
+
 const call = async (endpoint, options = {}) => {
+  const { timeoutMs, ...restOptions } = options;
   const token = getToken();
   const fetchOptions = {
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {})
     },
-    ...options
+    ...restOptions
   };
 
   // Fail-fast: 4 second timeout, koi retry nahi. Normal case mein isse koi delay nahi —
@@ -31,7 +36,7 @@ const call = async (endpoint, options = {}) => {
   // request ko 4 second baad hi cancel kar deta hai (pehle 12-38 second tak wait hota tha).
   let res;
   try {
-    res = await fetchWithTimeout(`${API_BASE}${endpoint}`, fetchOptions);
+    res = await fetchWithTimeout(`${API_BASE}${endpoint}`, fetchOptions, timeoutMs || defaultTimeout());
   } catch (err) {
     throw new Error('Network issue — dobara try karo.');
   }
