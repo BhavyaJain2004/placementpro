@@ -59,6 +59,7 @@ const cors     = require('cors');
 const cron     = require('node-cron');
 const { sendDailyReport } = require('./services/dailyReport');
 const { cutoffOldManualResumeUsers } = require('./services/resumeMonthlyCutoff');
+const { syncPendingPayments } = require('./services/paymentSync');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -139,5 +140,14 @@ mongoose.connect(process.env.MONGO_URI)
       cutoffOldManualResumeUsers().catch(err => console.error('❌ Resume cutoff failed:', err));
     }, { timezone: 'Asia/Kolkata' });
     console.log('📅 Resume monthly cutoff scheduled for 1st of month, 12:05 AM IST');
+
+    // Har 10 minute: jin pending payments ke users ko access mil chuka hai (DB se manually active kiya)
+    // unhe approved mark karo — admin panel kholna zaroori nahi
+    cron.schedule('*/10 * * * *', () => {
+      syncPendingPayments()
+        .then(n => { if (n) console.log(`🔄 paymentSync: ${n} pending payment(s) approved`); })
+        .catch(err => console.error('❌ paymentSync failed:', err.message));
+    }, { timezone: 'Asia/Kolkata' });
+    console.log('📅 Payment auto-sync scheduled every 10 minutes');
   })
   .catch(err => { console.error('❌ DB error:', err); process.exit(1); });
