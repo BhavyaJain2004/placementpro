@@ -4,6 +4,7 @@ const Company     = require('../models/Company');
 const DSAQuestion = require('../models/DSAQuestion');
 const { Note, Experience } = require('../models/Content');
 const User        = require('../models/User');
+const { syncPendingPayments } = require('../services/paymentSync');
 const { verifyToken, verifyAdmin } = require('../middleware/auth');
 const Test        = require('../models/Test');
 const TestAttempt = require('../models/TestAttempt');
@@ -1238,31 +1239,12 @@ router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) =>
   try {
     const { status } = req.query;
 
-    // ── AUTO-SYNC ── Agar kisi pending submission ke user ko DB se seedha
-    // access diya gaya hai (isPaid/masterDsaAccess manually true kiya gaya),
-    // toh usko yahan khud approved mark kar do — panel aur DB hamesha sync rahein
-    //
-    // NOTE: pehle yeh EXACT tier match maangta tha (jaise plan='299' ho toh
-    // masterDsaAccess bhi zaroor true chahiye) — isliye mismatched cases
-    // (299 select karke signup, lekin admin ne sirf 199-level access diya)
-    // kabhi approve nahi hote the, hamesha pending reh jaate the. Ab sirf
-    // "koi bhi paid access mil chuka hai" check hota hai — Payment.plan
-    // asli granted access se match karna zaroori nahi hai.
-    const pendingOnes = await Payment.find({ status: 'pending' }).select('userId plan amountPaid status reviewedAt');
-    for (const p of pendingOnes) {
-      const u = await User.findById(p.userId).select('isPaid hasTestAccess masterDsaAccess resume49 resume99 resume150');
-      if (!u) continue;
-
-      const nowHasAccess = ['resume49','resume99','resume150'].includes(p.plan)
-        ? !!u[p.plan]
-        : !!u.isPaid;
-
-      if (nowHasAccess) {
-        p.status = 'approved';
-        p.reviewedAt = new Date();
-        await p.save();
-      }
-    }
+    // ── AUTO-SYNC ── Agar kisi pending submission ke user ko DB se seedha access diya gaya hai
+    // (isPaid / resume flag manually true kiya), toh usko approved mark kar do.
+    // Pehle ye har pending ke liye alag query chalata tha (bahut slow — admin panel ka 4 sec ka
+    // timeout cross ho jata tha, isliye list refresh/update hi nahi hoti thi). Ab ek batch mein
+    // hota hai (services/paymentSync.js) aur server.js mein har 10 minute apne aap bhi chalta hai.
+    try { await syncPendingPayments(); } catch (syncErr) { console.error('paymentSync error:', syncErr.message); }
 
     const filter = status ? { status, isLegacyImport: { $ne: true } } : { isLegacyImport: { $ne: true } };
     const submissions = await Payment.find(filter).select('-screenshot').sort({ createdAt: -1 }).lean();
@@ -1279,12 +1261,9 @@ router.get('/payment-submissions', verifyToken, verifyAdmin, async (req, res) =>
 // Ek submission approve karo — user ko sahi access bhi mil jayega automatically
 router.post('/payment-submissions/:id/approve', verifyToken, verifyAdmin, async (req, res) => {
   try {
-    const payment = await Payment.findById(req.params.id);
+    // screenshot (bada base64) load hi nahi karte — approve ko slow karta tha
+    const payment = await Payment.findById(req.params.id).select('-screenshot');
     if (!payment) return res.status(404).json({ message: 'Submission not found' });
-
-    payment.status = 'approved';
-    payment.reviewedAt = new Date();
-    await payment.save();
 
     let update, accessLabel;
     if (payment.plan === '99') {
@@ -1311,9 +1290,19 @@ router.post('/payment-submissions/:id/approve', verifyToken, verifyAdmin, async 
       accessLabel = `Resume ₹${resumePlanValue}`;
     } else { update = { isPaid: true, paidAt: new Date() }; accessLabel = 'Base'; }
 
-    const user = await User.findByIdAndUpdate(payment.userId, update, { new: true });
+    // Pehle user ko access do, uske baad payment approved mark karo — taaki "approved par access nahi mila"
+    // wali halat kabhi na bane (agar beech mein kuch fail ho to payment pending hi rahegi aur dobara approve ho sakegi)
+    const user = payment.userId ? await User.findByIdAndUpdate(payment.userId, update, { new: true }) : null;
+    if (!user) return res.status(404).json({ message: 'User not found for this payment — approve nahi hua' });
 
-    res.json({ message: `✅ Approved & ${accessLabel} access diya gaya`, user: { name: user?.name, email: user?.email } });  } catch (err) {
+    // updateOne (save() nahi) — poora document + screenshot dobara likhna aur plan-enum validation fail hona dono se bachta hai
+    await Payment.updateOne(
+      { _id: payment._id },
+      { $set: { status: 'approved', reviewedAt: payment.reviewedAt || new Date() } }
+    );
+
+    res.json({ message: `✅ Approved & ${accessLabel} access diya gaya`, user: { name: user.name, email: user.email } });
+  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
