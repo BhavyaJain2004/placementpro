@@ -5,11 +5,23 @@
 // ko email karta hai. Window hamesha "pichle 8 baje se abhi ke 8 baje tak"
 // (24 ghante rolling), isliye agar koi raat 8:01 baje aaya toh woh agle din
 // ke report mein aayega.
+//
+// Payments: payment ka time = jab user ne form submit kiya (createdAt) — approve kab hua isse
+// farak nahi padta. Sirf APPROVED payments dikhte hain. Window "pichle 8 baje se abhi ke 8 baje tak".
+// Agar koi payment pichle report ke baad approve hui par form usse pehle submit hua tha, to wo
+// "Earlier payments approved later" mein apni purani date ke saath aati hai. Har payment sirf
+// ek hi baar ginti hai (Payment.reportedAt se). Report se pehle paymentSync chalta hai, taaki
+// DB se manually activate kiye users ki payment bhi approved ho jaye (admin panel kholna zaroori nahi).
 
 const PDFDocument = require('pdfkit');
 const User        = require('../models/User');
 const Payment     = require('../models/Payment');
 const Package     = require('../models/Package');
+const ResumeSubscription = require('../models/ResumeSubscription');
+const { syncPendingPayments } = require('./paymentSync');
+
+// Resume (Razorpay) tiers ka asli monthly price. Agar Razorpay plan ₹149 ka bana hai to yahan '150': 149 kar do.
+const RESUME_PRICE = { '49': 49, '99': 99, '150': 150 };
 
 // IMPORTANT: timeZone explicitly 'Asia/Kolkata' diya hai — warna server UTC
 // mein chalta hai (Railway), aur raat 8 PM IST ka time UTC mein 2:30 PM hota
@@ -29,22 +41,76 @@ function formatMoney(n) {
 function formatMoneyPDF(n) {
   return 'Rs. ' + Number(n || 0).toLocaleString('en-IN');
 }
+// "28 Oct, 07:58 PM" — payment table mein date + time
+function formatShortDateTime(d) {
+  const day = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', timeZone: 'Asia/Kolkata' });
+  return `${day}, ${formatTime(d)}`;
+}
+
 
 // ── Data collect karo ek time-window ke liye ──
-async function collectReportData(windowStart, windowEnd) {
-  const [rawSignups, payments, packages] = await Promise.all([
+// respectReported: true (daily cron) = jo payment pehle kisi report mein aa chuki use dobara mat ginao.
+// Custom date-range (testing) mein false — poori range dikhao.
+async function collectReportData(windowStart, windowEnd, { respectReported = true } = {}) {
+  const notReported = respectReported ? { reportedAt: { $exists: false } } : {};
+
+  const [rawSignups, inWindowRaw, earlierRaw, resumeCharges, packages] = await Promise.all([
     User.find({ createdAt: { $gte: windowStart, $lt: windowEnd } })
       .select('name email college createdAt selectedPlan').sort({ createdAt: 1 }).lean(),
+    // Is window mein HUI payments (payment ka time = form submit ka time = createdAt) — sirf approved
     Payment.find({
       status: 'approved',
       isLegacyImport: { $ne: true },
-      reviewedAt: { $gte: windowStart, $lt: windowEnd }
-    }).select('userId name email college plan amountPaid createdAt').sort({ reviewedAt: 1 }).lean(),
+      createdAt: { $gte: windowStart, $lt: windowEnd },
+      ...notReported
+    }).select('userId name email college plan amountPaid status createdAt reviewedAt').sort({ createdAt: 1 }).lean(),
+    // Pehle HUI par is window mein approve hui payments (warna kisi report mein kabhi aati hi nahi)
+    Payment.find({
+      status: 'approved',
+      isLegacyImport: { $ne: true },
+      createdAt: { $lt: windowStart },
+      reviewedAt: { $gte: windowStart, $lt: windowEnd },
+      ...notReported
+    }).select('userId name email college plan amountPaid status createdAt reviewedAt').sort({ reviewedAt: 1 }).lean(),
+    // Razorpay se Resume ki payments (inka Payment record nahi banta) — charge ka time = lastChargedAt
+    ResumeSubscription.find({ lastChargedAt: { $gte: windowStart, $lt: windowEnd } })
+      .select('userId tier lastChargedAt').sort({ lastChargedAt: 1 }).lean(),
     Package.find().lean()
   ]);
 
   const planNameMap = {};
   packages.forEach(p => { planNameMap[p.key] = p.name; });
+  const planLabel = (plan) => planNameMap[plan] || (/^resume\d+$/.test(plan) ? `Resume Rs. ${plan.replace('resume', '')}` : `Plan ${plan}`);
+
+  const inWindow = inWindowRaw;
+
+  // Razorpay charges ke liye user ka naam/college
+  const rzUserMap = {};
+  if (resumeCharges.length) {
+    const us = await User.find({ _id: { $in: resumeCharges.map(c => c.userId) } }).select('name email college').lean();
+    us.forEach(u => { rzUserMap[String(u._id)] = u; });
+  }
+
+  // Sabko ek hi shape mein lao
+  const fromPayment = (p) => ({
+    name: p.name || '—', college: p.college, package: planLabel(p.plan),
+    amountPaid: p.amountPaid || 0, paidAt: p.createdAt, confirmedAt: p.reviewedAt || null, paymentId: p._id
+  });
+  const fromResume = (c) => {
+    const u = rzUserMap[String(c.userId)] || {};
+    const amt = RESUME_PRICE[c.tier] || 0;
+    return {
+      name: u.name || '—', college: u.college,
+      package: `Resume Rs. ${amt}/mo`, amountPaid: amt, paidAt: c.lastChargedAt, confirmedAt: null, paymentId: null
+    };
+  };
+
+  const counted = [...inWindow.map(fromPayment), ...resumeCharges.map(fromResume)]
+    .sort((x, y) => new Date(x.paidAt) - new Date(y.paidAt));
+  const earlierConfirmed = earlierRaw.map(fromPayment);
+
+  const sum = (arr) => arr.reduce((t, p) => t + (p.amountPaid || 0), 0);
+  const totalRevenue = sum(counted) + sum(earlierConfirmed);
 
   // Har signup ke liye uski koi bhi (kisi bhi date ki) approved payment dhoondo,
   // taaki signup table mein "kaunsa package liya + kitna paid kiya" bhi dikhe
@@ -69,9 +135,15 @@ async function collectReportData(windowStart, windowEnd) {
     };
   });
 
-  const totalRevenue = payments.reduce((sum, p) => sum + (p.amountPaid || 0), 0);
+  const paymentCount = counted.length + earlierConfirmed.length;
+  const reportedIds = [...inWindow.map(p => p._id), ...earlierRaw.map(p => p._id)];
 
-  return { signups, payments, planNameMap, totalRevenue };
+  return {
+    signups, planNameMap, totalRevenue, paymentCount,
+    payments: counted, earlierConfirmed,
+    paymentsTotal: sum(counted), earlierTotal: sum(earlierConfirmed),
+    reportedIds
+  };
 }
 
 // ── Simple table drawer (pdfkit has no built-in tables) ──
@@ -130,7 +202,7 @@ function formatDateTimeFull(d) {
 }
 
 // ── Poora PDF banao ──
-function generateReportPDF({ signups, payments, planNameMap, totalRevenue, windowStart, windowEnd }) {
+function generateReportPDF({ signups, paymentCount, payments, earlierConfirmed, paymentsTotal, earlierTotal, totalRevenue, windowStart, windowEnd }) {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({ margin: 48, size: 'A4' });
     const chunks = [];
@@ -166,8 +238,8 @@ function generateReportPDF({ signups, payments, planNameMap, totalRevenue, windo
     const boxH = 60;
     const summary = [
       { label: 'NEW SIGNUPS', value: String(signups.length), color: '#7c6af7', w: otherW },
-      { label: 'PAYMENTS COLLECTED', value: String(payments.length), color: '#06b6d4', w: otherW },
-      { label: 'REVENUE TODAY', value: formatMoneyPDF(totalRevenue), color: '#34d399', w: revW }
+      { label: 'PAYMENTS COLLECTED', value: String(paymentCount), color: '#06b6d4', w: otherW },
+      { label: 'TOTAL REVENUE (THIS REPORT)', value: formatMoneyPDF(totalRevenue), color: '#34d399', w: revW }
     ];
     let bx = 48;
     summary.forEach(s => {
@@ -181,29 +253,38 @@ function generateReportPDF({ signups, payments, planNameMap, totalRevenue, windo
     doc.y = boxY + boxH + 26;
     doc.x = 48;
 
-    // ── 1) Payments Collected (bill-style, with total row) — ab sabse upar ──
-    // Note: PDF ke standard fonts emoji render nahi karte, isliye yahan plain
-    // text headings hain (emoji sirf email HTML mein use hoti hai)
+    // ── 1) Payments — 8 PM se 8 PM ke beech form submit hui (approved) payments, date + time ke saath ──
+    // Note: PDF ke standard fonts emoji render nahi karte, isliye yahan plain text headings hain
+    const payRows = (arr) => arr.map(p => [
+      formatShortDateTime(new Date(p.paidAt)), p.name, (p.college || 'kiit').toUpperCase(), p.package, formatMoneyPDF(p.amountPaid)
+    ]);
+
     doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a1a2e').text('Payments Collected');
+    doc.font('Helvetica').fontSize(8.5).fillColor('#888')
+      .text(`Form submitted between ${formatDate(windowStart)}, ${formatTime(windowStart)}  and  ${formatDate(windowEnd)}, ${formatTime(windowEnd)}`);
     doc.moveDown(0.4);
     if (!payments.length) {
-      doc.font('Helvetica').fontSize(10).fillColor('#999').text('No payments collected in this period.');
+      doc.font('Helvetica').fontSize(10).fillColor('#999').text('No payments in this period.');
       doc.moveDown(1);
     } else {
+      drawTable(doc, ['Paid On', 'Name', 'College', 'Package', 'Amount Paid'], payRows(payments),
+        [100, 120, 62, 117, 100], { alignRight: [4], totalRow: ['', '', '', 'Total', formatMoneyPDF(paymentsTotal)] });
+      doc.moveDown(0.6);
+    }
+
+    if (earlierConfirmed.length) {
+      doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a1a2e').text('Earlier Payments Approved Later');
+      doc.font('Helvetica').fontSize(8.5).fillColor('#888').text('Form was submitted before this report period, approved during it (original date shown)');
+      doc.moveDown(0.4);
       drawTable(
         doc,
-        ['Name', 'College', 'Package', 'Amount Paid'],
-        payments.map(p => [
-          p.name || '—',
-          (p.college || 'kiit').toUpperCase(),
-          planNameMap[p.plan] || `Plan ${p.plan}`,
-          formatMoneyPDF(p.amountPaid)
+        ['Paid On', 'Name', 'Package', 'Amount Paid', 'Approved On'],
+        earlierConfirmed.map(p => [
+          formatShortDateTime(new Date(p.paidAt)), p.name, p.package, formatMoneyPDF(p.amountPaid),
+          p.confirmedAt ? formatShortDateTime(new Date(p.confirmedAt)) : '-'
         ]),
-        [150, 75, 139, 135],
-        {
-          alignRight: [3],
-          totalRow: ['', '', 'Total Collected', formatMoneyPDF(totalRevenue)]
-        }
+        [100, 112, 107, 90, 90],
+        { alignRight: [3], totalRow: ['', '', 'Total', formatMoneyPDF(earlierTotal), ''] }
       );
       doc.moveDown(0.6);
     }
@@ -238,7 +319,7 @@ function generateReportPDF({ signups, payments, planNameMap, totalRevenue, windo
 }
 
 // ── Professional email HTML body ──
-function buildEmailHtml({ signups, payments, totalRevenue, windowStart, windowEnd }) {
+function buildEmailHtml({ signups, paymentCount, payments, earlierConfirmed, paymentsTotal, earlierTotal, totalRevenue, windowStart, windowEnd }) {
   return `
   <div style="font-family:'Segoe UI',Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;background:#ffffff">
     <div style="background:linear-gradient(135deg,#4433c4,#7c6af7);padding:28px 32px;border-radius:12px 12px 0 0">
@@ -258,13 +339,17 @@ function buildEmailHtml({ signups, payments, totalRevenue, windowStart, windowEn
           </td>
           <td style="background:#f0fdfa;border-radius:10px;padding:16px;text-align:center;width:33%">
             <div style="color:#888;font-size:11px;text-transform:uppercase;letter-spacing:0.04em">Payments</div>
-            <div style="color:#06b6d4;font-size:24px;font-weight:800;margin-top:4px">${payments.length}</div>
+            <div style="color:#06b6d4;font-size:24px;font-weight:800;margin-top:4px">${paymentCount}</div>
           </td>
           <td style="background:#f0fdf6;border-radius:10px;padding:16px;text-align:center;width:33%">
             <div style="color:#888;font-size:11px;text-transform:uppercase;letter-spacing:0.04em">Revenue</div>
             <div style="color:#34d399;font-size:20px;font-weight:800;margin-top:4px">${formatMoney(totalRevenue)}</div>
           </td>
         </tr>
+      </table>
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 0;font-size:13px;color:#444">
+        <tr><td style="padding:5px 0">Payments submitted in this period</td><td align="right" style="padding:5px 0"><b>${payments.length}</b> &nbsp;·&nbsp; ${formatMoney(paymentsTotal)}</td></tr>
+        ${earlierConfirmed.length ? `<tr><td style="padding:5px 0;border-top:1px solid #eee">Earlier payments approved later</td><td align="right" style="padding:5px 0;border-top:1px solid #eee"><b>${earlierConfirmed.length}</b> &nbsp;·&nbsp; ${formatMoney(earlierTotal)}</td></tr>` : ''}
       </table>
       <p style="color:#999;font-size:12px;line-height:1.6;margin:24px 0 0">
         📎 Full report (names, packages, per-transaction amounts) attached as PDF.
@@ -317,7 +402,13 @@ async function sendDailyReport(customStart, customEnd) {
   const windowEnd = customEnd ? new Date(customEnd) : new Date();
   const windowStart = customStart ? new Date(customStart) : new Date(windowEnd.getTime() - 24 * 60 * 60 * 1000);
 
-  const data = await collectReportData(windowStart, windowEnd);
+  // Report se pehle: jin pending payments ke users ko access mil chuka hai unhe approved kar do
+  // (admin panel kholna zaroori nahi)
+  try { await syncPendingPayments(); } catch (syncErr) { console.error('❌ paymentSync (report se pehle) failed:', syncErr.message); }
+
+  // Custom range (testing) mein reportedAt ka filter/marking nahi — sirf asli daily cron mein
+  const isCustom = !!(customStart || customEnd);
+  const data = await collectReportData(windowStart, windowEnd, { respectReported: !isCustom });
   const pdfBuffer = await generateReportPDF({ ...data, windowStart, windowEnd });
 
   console.log('📧 Email config check:', {
@@ -334,7 +425,16 @@ async function sendDailyReport(customStart, customEnd) {
     filename: `PlacementSphere-Report-${dateStr}.pdf`
   });
 
-  console.log(`✅ Daily report sent — ${data.signups.length} signups, ${formatMoney(data.totalRevenue)} revenue`);
+  // Email chali gayi — ab in payments ko "report ho chuki" mark karo taaki agle din dobara count na ho
+  if (!isCustom && data.reportedIds.length) {
+    try {
+      await Payment.updateMany({ _id: { $in: data.reportedIds } }, { $set: { reportedAt: new Date() } });
+    } catch (markErr) {
+      console.error('❌ reportedAt mark failed (agle report mein duplicate aa sakta hai):', markErr.message);
+    }
+  }
+
+  console.log(`✅ Daily report sent — ${data.signups.length} signups, ${data.paymentCount} payments, ${formatMoney(data.totalRevenue)} revenue`);
 }
 
 module.exports = { sendDailyReport, collectReportData, generateReportPDF, sendViaResend };
