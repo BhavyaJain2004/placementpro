@@ -561,7 +561,14 @@ body{background:#06060f}
       </div>
 
       <div class="card">
-        <div class="card-title">📋 All Submissions</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem;margin-bottom:0.9rem">
+          <div class="card-title" style="margin:0">📋 Submissions</div>
+          <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap">
+            <div id="ps-filters" style="display:flex;gap:0.35rem;flex-wrap:wrap"></div>
+            <button id="ps-refresh" onclick="loadPaymentSubmissions(true)" style="background:rgba(124,106,247,0.12);border:1px solid rgba(124,106,247,0.3);color:#a89df7;padding:0.35rem 0.8rem;border-radius:8px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">↻ Refresh</button>
+            <span id="ps-updated" style="font-size:0.66rem;color:rgba(255,255,255,0.3)"></span>
+          </div>
+        </div>
         <div id="paysubs-list"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
       </div>
     </div>
@@ -1502,51 +1509,115 @@ function planBadge(plan) {
     : { label: plan, bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)' };
 }
 
-async function loadPaymentSubmissions() {
+// ── PAYMENT SUBMISSIONS ──
+// Data ek baar load hota hai, filter/approve/reject ke baad list turant local update hoti hai
+// (server ke response ka wait nahi) aur background mein fresh data aake confirm kar deta hai.
+let _psData = null, _psFilter = 'pending', _psLimit = 100, _psLoading = false, _psFirst = true;
+const PS_STATUS = {
+  pending:  { bg:'rgba(251,191,36,0.12)',  color:'#fbbf24', label:'⏳ Pending' },
+  approved: { bg:'rgba(52,211,153,0.12)',  color:'#34d399', label:'✅ Approved' },
+  rejected: { bg:'rgba(248,113,113,0.12)', color:'#f87171', label:'❌ Rejected' }
+};
+function psEsc(x) { return String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+async function loadPaymentSubmissions(manual) {
+  if (_psLoading) return;
+  _psLoading = true;
+  const list = document.getElementById('paysubs-list');
+  const btn  = document.getElementById('ps-refresh');
+  if (btn) { btn.disabled = true; btn.textContent = 'Refreshing…'; }
+  if (!_psData) list.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div>';
   try {
-    const data = await API.call('/admin/payment-submissions');
-    document.getElementById('ps-revenue').textContent  = '₹' + data.actualRevenue.toLocaleString('en-IN');
-    document.getElementById('ps-pending').textContent  = data.pendingCount;
-    document.getElementById('ps-approved').textContent = data.approvedCount;
+    const data = await API.call('/admin/payment-submissions', { timeoutMs: 45000 });
+    if (!data) return; // session expire hua, redirect ho raha hai
+    _psData = data;
+    if (_psFirst) { _psFirst = false; if (!data.pendingCount) _psFilter = 'all'; } // pending nahi hai to seedha All dikhao
+    document.getElementById('ps-updated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' });
+    renderPaymentSubmissions();
+  } catch (e) {
+    if (_psData) {
+      showToast('Refresh nahi ho paaya — purana data dikh raha hai', 'error');
+      renderPaymentSubmissions();
+    } else {
+      list.innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load karne mein error aaya. <a href="#" onclick="loadPaymentSubmissions(true);return false" style="color:#a89df7;text-decoration:underline">Retry</a></div>';
+    }
+  } finally {
+    _psLoading = false;
+    if (btn) { btn.disabled = false; btn.textContent = '↻ Refresh'; }
+  }
+}
 
-    const statusStyle = {
-      pending:  { bg:'rgba(251,191,36,0.12)',  color:'#fbbf24', label:'⏳ Pending' },
-      approved: { bg:'rgba(52,211,153,0.12)',  color:'#34d399', label:'✅ Approved' },
-      rejected: { bg:'rgba(248,113,113,0.12)', color:'#f87171', label:'❌ Rejected' }
-    };
+function setPsFilter(f) { _psFilter = f; _psLimit = 100; renderPaymentSubmissions(); }
+function psShowMore() { _psLimit += 100; renderPaymentSubmissions(); }
 
-    document.getElementById('paysubs-list').innerHTML = data.submissions.length ? data.submissions.map(s => {
-      const st = statusStyle[s.status];
-      return `
+function renderPaymentSubmissions() {
+  const d = _psData;
+  if (!d) return;
+  document.getElementById('ps-revenue').textContent  = '₹' + d.actualRevenue.toLocaleString('en-IN');
+  document.getElementById('ps-pending').textContent  = d.pendingCount;
+  document.getElementById('ps-approved').textContent = d.approvedCount;
+
+  const counts = { pending: 0, approved: 0, rejected: 0, all: d.submissions.length };
+  d.submissions.forEach(s => { if (counts[s.status] !== undefined) counts[s.status]++; });
+  document.getElementById('ps-filters').innerHTML = [['pending', 'Pending'], ['approved', 'Approved'], ['rejected', 'Rejected'], ['all', 'All']].map(([k, label]) => {
+    const on = _psFilter === k;
+    return `<button onclick="setPsFilter('${k}')" style="background:${on ? 'rgba(124,106,247,0.18)' : 'none'};border:1px solid ${on ? 'rgba(124,106,247,0.45)' : 'rgba(255,255,255,0.12)'};color:${on ? '#a89df7' : 'rgba(255,255,255,0.5)'};padding:0.35rem 0.75rem;border-radius:8px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">${label} (${counts[k]})</button>`;
+  }).join('');
+
+  const rows = _psFilter === 'all' ? d.submissions : d.submissions.filter(s => s.status === _psFilter);
+  const shown = rows.slice(0, _psLimit);
+  const listEl = document.getElementById('paysubs-list');
+  if (!rows.length) {
+    listEl.innerHTML = `<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">${_psFilter === 'pending' ? 'Koi pending submission nahi hai 🎉' : 'Koi submission nahi hai abhi'}</div>`;
+    return;
+  }
+  listEl.innerHTML = shown.map(s => {
+    const st = PS_STATUS[s.status] || PS_STATUS.pending;
+    const badge = planBadge(s.plan);
+    return `
       <div style="border-bottom:1px solid rgba(255,255,255,0.06);padding:0.9rem 0">
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <div class="avatar" style="background:${st.bg};color:${st.color}">${(s.name||'?').charAt(0).toUpperCase()}</div>
+          <div class="avatar" style="background:${st.bg};color:${st.color}">${psEsc((s.name||'?').charAt(0).toUpperCase())}</div>
           <div style="flex:1;min-width:150px">
-            <div style="font-size:0.85rem;color:#fff">${s.name||'Unknown'}</div>
-            <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${s.email}</div>
+            <div style="font-size:0.85rem;color:#fff">${psEsc(s.name||'Unknown')}</div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.3)">${psEsc(s.email)}</div>
           </div>
-         <span class="tag" style="background:${planBadge(s.plan).bg};color:${planBadge(s.plan).color}">${planBadge(s.plan).label}</span>
-          <span class="tag" id="amt-${s._id}" style="background:rgba(52,211,153,0.1);color:#34d399;cursor:pointer" onclick="editAmount('${s._id}', ${s.amountPaid})" title="Click to edit">₹${s.amountPaid} ✏️</span>
+          <span class="tag" style="background:${badge.bg};color:${badge.color}">${psEsc(badge.label)}</span>
+          <span class="tag" id="amt-${s._id}" style="background:rgba(52,211,153,0.1);color:#34d399;cursor:pointer" onclick="editAmount('${s._id}', ${Number(s.amountPaid) || 0})" title="Click to edit">₹${s.amountPaid} ✏️</span>
           <span class="tag" style="background:${st.bg};color:${st.color}">${st.label}</span>
         </div>
         <div style="margin-top:0.5rem;padding-left:2.5rem;font-size:0.75rem;color:rgba(255,255,255,0.4)">
-          UTR: <span style="color:rgba(255,255,255,0.6);font-family:monospace">${s.transactionId}</span>
+          UTR: <span style="color:rgba(255,255,255,0.6);font-family:monospace">${psEsc(s.transactionId)}</span>
           · ${new Date(s.createdAt).toLocaleString('en-IN')}
-          ${s.referredBy ? ' · Referred by: ' + s.referredBy : ''}
+          ${s.referredBy ? ' · Referred by: ' + psEsc(s.referredBy) : ''}
         </div>
         <div style="padding-left:2.5rem;margin-top:0.5rem" id="ss-wrap-${s._id}">
           <button onclick="viewScreenshot('${s._id}')" style="background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);color:#a89df7;padding:0.3rem 0.7rem;border-radius:8px;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">🖼️ View Screenshot</button>
         </div>
         ${s.status === 'pending' ? `
-        <div style="padding-left:2.5rem;margin-top:0.6rem;display:flex;gap:0.5rem">
+        <div id="act-${s._id}" style="padding-left:2.5rem;margin-top:0.6rem;display:flex;gap:0.5rem">
           <button onclick="approvePayment('${s._id}')" style="background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);color:#34d399;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">✅ Approve</button>
           <button onclick="rejectPayment('${s._id}')" style="background:rgba(248,113,113,0.12);border:1px solid rgba(248,113,113,0.3);color:#f87171;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">❌ Reject</button>
         </div>` : ''}
       </div>`;
-    }).join('') : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Koi submission nahi hai abhi</div>';
-  } catch(e) {
-    document.getElementById('paysubs-list').innerHTML = '<div style="color:#f87171;text-align:center;padding:1rem">Load karne mein error aaya</div>';
-  }
+  }).join('') + (rows.length > shown.length
+    ? `<div style="text-align:center;padding:1rem"><button onclick="psShowMore()" style="background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);padding:0.45rem 1.2rem;border-radius:8px;font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif">Show more (${rows.length - shown.length} left)</button></div>`
+    : '');
+}
+
+// Action ke dauran buttons ki jagah "Working…" — double click nahi hoga
+function psBusy(id, text) {
+  const el = document.getElementById('act-' + id);
+  if (el) el.innerHTML = `<span style="font-size:0.75rem;color:rgba(255,255,255,0.5)">${text}</span>`;
+}
+// Server ke jawab ka wait kiye bina list turant update
+function psApplyLocal(id, status) {
+  if (!_psData) return;
+  const s = _psData.submissions.find(x => x._id === id);
+  if (!s || s.status === status) return;
+  if (s.status === 'pending') _psData.pendingCount = Math.max(0, _psData.pendingCount - 1);
+  if (status === 'approved') { _psData.approvedCount++; _psData.actualRevenue += (s.amountPaid || 0); }
+  s.status = status;
 }
 
 let _arCache = null; // transactions cache, search filter isi pe chalta hai
@@ -1833,19 +1904,36 @@ function filterActualRevenueSearch(query) {
 
 async function approvePayment(id) {
   if (!confirm('Approve karke user ko access de do?')) return;
+  psBusy(id, 'Approving…');
   try {
-    const res = await API.call('/admin/payment-submissions/' + id + '/approve', { method: 'POST' });
-    alert('✅ ' + res.message);
-    loadPaymentSubmissions();
-  } catch(e) { alert('Error: ' + e.message); }
+    const res = await API.call('/admin/payment-submissions/' + id + '/approve', { method: 'POST', timeoutMs: 45000 });
+    if (!res) return;
+    showToast(res.message || 'Approved');
+    psApplyLocal(id, 'approved');
+    renderPaymentSubmissions();   // turant update
+    loadPaymentSubmissions();     // background mein server se confirm
+  } catch (e) {
+    alert('Error: ' + e.message);
+    renderPaymentSubmissions();
+    loadPaymentSubmissions();     // server ki asli halat dekh lo (approve ho gaya ho to wahi dikhega)
+  }
 }
 
 async function rejectPayment(id) {
   if (!confirm('Reject karna hai? (fake/galat screenshot waghera)')) return;
+  psBusy(id, 'Rejecting…');
   try {
-    await API.call('/admin/payment-submissions/' + id + '/reject', { method: 'POST' });
+    const res = await API.call('/admin/payment-submissions/' + id + '/reject', { method: 'POST', timeoutMs: 45000 });
+    if (!res) return;
+    showToast('Rejected');
+    psApplyLocal(id, 'rejected');
+    renderPaymentSubmissions();
     loadPaymentSubmissions();
-  } catch(e) { alert('Error: ' + e.message); }
+  } catch (e) {
+    alert('Error: ' + e.message);
+    renderPaymentSubmissions();
+    loadPaymentSubmissions();
+  }
 }
 
 async function viewScreenshot(id) {
@@ -1870,10 +1958,13 @@ async function editAmount(id, currentAmount) {
   if (!amt || amt <= 0) { alert('Valid amount daalo'); return; }
 
   try {
-    await API.call('/admin/payment-submissions/' + id + '/edit-amount', {
+    const res = await API.call('/admin/payment-submissions/' + id + '/edit-amount', {
       method: 'POST',
-      body: JSON.stringify({ amountPaid: amt })
+      body: JSON.stringify({ amountPaid: amt }),
+      timeoutMs: 45000
     });
+    if (!res) return;
+    showToast('Amount updated');
     loadPaymentSubmissions();
   } catch(e) { alert('Error: ' + e.message); }
 }
