@@ -1,25 +1,53 @@
 {
   "rewrites": [
-    { "source": "/verifywithgoogle", "destination": "/verifywithgoogle.html" },
-    { "source": "/verifyWithGoogle", "destination": "/verifywithgoogle.html" }
+    {
+      "source": "/verifywithgoogle",
+      "destination": "/verifywithgoogle.html"
+    },
+    {
+      "source": "/verifyWithGoogle",
+      "destination": "/verifywithgoogle.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "placementpro-rho.vercel.app"
+        }
+      ],
+      "destination": "https://placementsphere.in/$1",
+      "permanent": false
+    }
   ],
   "headers": [
     {
       "source": "/js/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
       ]
     },
     {
       "source": "/css/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
       ]
     },
     {
       "source": "/(.*).html",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
       ]
     }
   ]
