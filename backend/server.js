@@ -31,7 +31,7 @@
 // app.use('/api/notes',       require('./routes/notes'));
 // app.use('/api/experiences', require('./routes/experiences'));
 // app.use('/api/admin',       require('./routes/admin'));
-app.use('/api/mail',  require('./routes/mail'));
+// app.use('/api/mail',  require('./routes/mail'));
 // app.use('/api/activity', require('./routes/activity'));
 // app.use('/api/feedback', require('./routes/feedback'));
 // app.use('/api/tests', require('./routes/tests'));
@@ -98,6 +98,7 @@ app.use('/api/dsa',         require('./routes/dsa'));
 app.use('/api/notes',       require('./routes/notes'));
 app.use('/api/experiences', require('./routes/experiences'));
 app.use('/api/admin',       require('./routes/admin'));
+app.use('/api/mail',        require('./routes/mail'));
 app.use('/api/activity', require('./routes/activity'));
 app.use('/api/feedback', require('./routes/feedback'));
 app.use('/api/tests', require('./routes/tests'));
