@@ -61,6 +61,7 @@ body{background:#06060f}
 .notif-banner.show{transform:translateY(0)}
 .pulse-dot{width:7px;height:7px;border-radius:50%;display:inline-block;animation:pulse 1.5s infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+@media (max-width:1000px){ #mail-grid{ grid-template-columns:1fr !important; } }
 </style>
 </head>
 <body>
@@ -103,6 +104,7 @@ body{background:#06060f}
     <div class="as-item" onclick="showTab('feedback',this)">💬 Feedback</div>
     <div class="as-item" onclick="showTab('funnel',this)">📈 Funnel</div>
     <div class="as-item" onclick="showTab('notifications',this)">🔔 Notifications</div>
+   <div class="as-item" onclick="showTab('mail',this)">✉️ Send Mail</div>
      <div class="as-section">Security</div>
    <div class="as-item" onclick="showTab('security',this)">🚨 Password Sharing</div>
    <div class="as-item" onclick="showTab('gverify',this)">✅ Accounts Verified</div>
@@ -603,6 +605,39 @@ body{background:#06060f}
       <div id="gv-table" style="overflow-x:auto"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
     </div>
 
+    <div id="tab-mail" style="display:none">
+      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.2rem">✉️ Send Mail</h2>
+      <p style="color:rgba(255,255,255,0.35);font-size:0.78rem;margin-bottom:1rem">Promotional / wishes / reminders. Mail PlacementSphere ke naam se, banner ke saath jaati hai. Daily limit ke andar apne aap bhejti hai.</p>
+      <div id="mail-warn"></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;align-items:start" id="mail-grid">
+        <div class="card">
+          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem;margin-top:0">Template</label><select id="mail-template" onchange="mailLoadPreset()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"></select>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem">
+            <div><label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Audience</label><select id="mail-segment" onchange="mailAudience()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"></select></div>
+            <div><label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">College</label><select id="mail-college" onchange="mailAudience()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"></select></div>
+          </div>
+          <div id="mail-aud" style="margin-top:0.6rem;font-size:0.78rem;color:#a89df7"></div>
+          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Set size (roz kitne users ko bhejna hai, 0 = sabko ek saath)</label>
+          <input id="mail-setsize" type="number" min="0" oninput="mailSetInfo()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%">
+          <div id="mail-setinfo" style="margin-top:0.4rem;font-size:0.74rem;color:rgba(255,255,255,0.5)"></div>
+          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Subject</label><input id="mail-subject" oninput="mailPreviewSoon()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%">
+          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Heading</label><input id="mail-heading" oninput="mailPreviewSoon()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%">
+          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Message (khali line = naya paragraph, "• " = bullet, {{name}} = user ka naam)</label>
+          <textarea id="mail-body" rows="9" oninput="mailPreviewSoon()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%;resize:vertical"></textarea>
+          <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:0.6rem">
+            <div><label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Button text</label><input id="mail-ctatext" oninput="mailPreviewSoon()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"></div>
+            <div><label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Button link</label><input id="mail-ctaurl" oninput="mailPreviewSoon()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"></div>
+          </div>
+          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Test mail (apna email daalo, pehle yahan check karo)</label>
+          <div style="display:flex;gap:0.5rem"><input id="mail-testto" type="email" placeholder="you@gmail.com" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"><button onclick="mailTest()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:0.6rem 1rem;border-radius:10px;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif">Send test</button></div>
+          <div style="margin-top:1.1rem"><button id="mail-send-btn" onclick="mailSend()" style="background:#7c6af7;border:none;color:#fff;padding:0.7rem 1.3rem;border-radius:10px;font-size:0.84rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%">Send campaign</button></div>
+          <div id="mail-quota" style="margin-top:0.8rem;font-size:0.72rem;color:rgba(255,255,255,0.4)"></div>
+        </div>
+        <div class="card" style="padding:0.6rem"><div style="font-size:0.7rem;color:rgba(255,255,255,0.4);padding:0.3rem 0.5rem">Live preview</div><iframe id="mail-preview" style="width:100%;height:620px;border:0;border-radius:10px;background:#f1f1f7"></iframe></div>
+      </div>
+      <div class="card" style="margin-top:1rem"><div class="card-title">📊 Campaigns</div><div id="mail-camps" style="overflow-x:auto"></div></div>
+    </div>
+
     <div id="tab-subscriptions" style="display:none">
       <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:1rem">💳 Resume Subscriptions</h2>
       <div id="subs-table" style="overflow-x:auto"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Loading…</div></div>
@@ -1008,12 +1043,12 @@ function checkPwd() {
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
 
 // ── TAB ROUTING ──
-const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue','colleges','growth','system','subscriptions','gverify'];
+const ALL_TABS = ['overview','revenue','signups','active','users','pending','upsell','inactive','feedback','funnel','notifications','security','paysubs','packages','actualrevenue','colleges','growth','system','subscriptions','gverify','mail'];
 function showTab(tab, btn) {
   ALL_TABS.forEach(t => { const el = document.getElementById('tab-'+t); if(el) el.style.display = t===tab?'block':'none'; });
   document.querySelectorAll('.as-item').forEach(i => i.classList.remove('active'));
   btn.classList.add('active');
-  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue, colleges: loadColleges, growth: loadGrowthReport, system: loadSystemMemory, subscriptions: loadResumeSubs, gverify: loadGVerify };
+  const loaders = { users: loadActiveToday, feedback: loadFeedback, funnel: loadFunnel, inactive: loadInactive, upsell: loadUpsell, revenue: loadRevenue, signups: loadSignups, active: loadActiveUsers, pending: loadPending, notifications: loadNotifList, security: loadSecurity, paysubs: loadPaymentSubmissions, packages: loadPackages, actualrevenue: loadActualRevenue, colleges: loadColleges, growth: loadGrowthReport, system: loadSystemMemory, subscriptions: loadResumeSubs, gverify: loadGVerify, mail: loadMailTab };
   if (loaders[tab]) loaders[tab]();
 }
 
@@ -1682,6 +1717,96 @@ function showGvList(which) {
       <td style="padding:0.5rem;text-align:right;color:rgba(255,255,255,0.7);white-space:nowrap">${fmt(which === 'verified' ? u.verifiedAt : u.joinedAt)}</td>
     </tr>`).join('')}
   </table>`;
+}
+
+// ── SEND MAIL ──
+let _mailMeta = null, _mailTimer = null, _mailPoll = null;
+const mailEl = (id) => document.getElementById(id);
+async function loadMailTab() {
+  try {
+    if (!_mailMeta) {
+      _mailMeta = await API.call('/mail/meta');
+      mailEl('mail-template').innerHTML = Object.entries(_mailMeta.presets).map(([k, v]) => `<option value="${k}">${gvEsc(v.label)}</option>`).join('');
+      mailEl('mail-segment').innerHTML = Object.entries(_mailMeta.segments).map(([k, v]) => `<option value="${k}">${gvEsc(v)}</option>`).join('');
+      mailEl('mail-college').innerHTML = '<option value="all">Sab colleges</option>' + _mailMeta.colleges.map(c => `<option value="${gvEsc(c.slug)}">${gvEsc(c.name)}</option>`).join('');
+      mailEl('mail-setsize').value = _mailMeta.quota.limit;
+      mailEl('mail-testto').value = localStorage.getItem('mail_test_to') || '';
+      mailEl('mail-template').value = 'diwali';
+      mailLoadPreset();
+    }
+    mailEl('mail-warn').innerHTML = _mailMeta.senderReady ? '' : '<div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);color:#fbbf24;padding:0.7rem 1rem;border-radius:10px;font-size:0.78rem;margin-bottom:1rem">⚠️ Railway mein <b>RESEND_FROM</b> abhi onboarding@resend.dev hai — isse sirf test mail jayegi. Campaign ke liye Resend mein apna domain verify karke RESEND_FROM = PlacementSphere &lt;hello@placementsphere.in&gt; set karo.</div>';
+    loadMailCampaigns();
+  } catch (e) { mailEl('mail-camps').innerHTML = '<div style="color:#f87171">Load nahi hua: ' + gvEsc(e.message) + '</div>'; }
+}
+function mailLoadPreset() {
+  const p = _mailMeta.presets[mailEl('mail-template').value];
+  mailEl('mail-subject').value = p.subject; mailEl('mail-heading').value = p.heading; mailEl('mail-body').value = p.body;
+  mailEl('mail-ctatext').value = p.ctaText; mailEl('mail-ctaurl').value = p.ctaUrl;
+  const seg = { upgrade_base: 'base_only', upgrade_plus: 'plus_only', resume: 'no_resume', comeback: 'inactive' }[mailEl('mail-template').value];
+  if (seg) mailEl('mail-segment').value = seg;
+  mailAudience(); mailPreview();
+}
+function mailFields() {
+  return { subject: mailEl('mail-subject').value, heading: mailEl('mail-heading').value, body: mailEl('mail-body').value,
+    ctaText: mailEl('mail-ctatext').value, ctaUrl: mailEl('mail-ctaurl').value,
+    segment: mailEl('mail-segment').value, college: mailEl('mail-college').value };
+}
+async function mailAudience() {
+  const f = mailFields(); mailEl('mail-aud').textContent = 'Counting…';
+  try {
+    const r = await API.call('/mail/audience', { method: 'POST', body: JSON.stringify(f) });
+    mailEl('mail-aud').textContent = `${r.count} users ko jayegi` + (r.sample.length ? ' (jaise ' + r.sample.map(s => s.name).slice(0, 3).join(', ') + ')' : '');
+    window._mailCount = r.count; mailSetInfo();
+  } catch (e) { mailEl('mail-aud').textContent = e.message; }
+}
+function mailSetInfo() {
+  const n = window._mailCount || 0, s = parseInt(mailEl('mail-setsize').value, 10) || 0;
+  mailEl('mail-setinfo').textContent = s > 0 && n > s ? `${n} users = ${Math.ceil(n / s)} sets (${s} per set). Set 1 abhi jayega, baaki sets tum roz table se bhejna.` : (n ? 'Sab users ko ek saath (daily limit ke andar) jayegi.' : '');
+  if (n) mailEl('mail-send-btn').textContent = s > 0 && n > s ? `Send Set 1 of ${Math.ceil(n / s)} (${s} users)` : `Send to ${n} users`;
+}
+function mailPreviewSoon() { clearTimeout(_mailTimer); _mailTimer = setTimeout(mailPreview, 400); }
+async function mailPreview() {
+  try { const r = await API.call('/mail/preview', { method: 'POST', body: JSON.stringify(mailFields()) }); mailEl('mail-preview').srcdoc = r.html; } catch (e) {}
+}
+async function mailTest() {
+  const to = mailEl('mail-testto').value.trim();
+  if (!to) { alert('Pehle test ke liye apna email daalo'); mailEl('mail-testto').focus(); return; }
+  localStorage.setItem('mail_test_to', to);
+  try { const r = await API.call('/mail/test', { method: 'POST', body: JSON.stringify({ ...mailFields(), to }) }); showToast(r.message); loadMailCampaigns(); }
+  catch (e) { alert('Error: ' + e.message); }
+}
+async function mailSend() {
+  const f = mailFields();
+  if (!f.subject || !f.heading || !f.body) { alert('Subject, heading aur message bharo'); return; }
+  const n = window._mailCount || 0, s = parseInt(mailEl('mail-setsize').value, 10) || 0;
+  const now = s > 0 ? Math.min(s, n) : n;
+  if (!confirm(`Abhi ${now} users ko jayegi${s > 0 && n > s ? ` (Set 1 of ${Math.ceil(n / s)})` : ''}. Pakka bhejni hai?\n\nTip: pehle test mail se check kar lo.`)) return;
+  f.setSize = s;
+  try { const r = await API.call('/mail/send', { method: 'POST', body: JSON.stringify(f) }); showToast(r.message); loadMailCampaigns(); }
+  catch (e) { alert('Error: ' + e.message); }
+}
+async function mailNextSet(id) {
+  if (!confirm('Agla set abhi bhejna hai?')) return;
+  try { const r = await API.call('/mail/campaigns/' + id + '/next-set', { method: 'POST' }); showToast(r.message); loadMailCampaigns(); }
+  catch (e) { alert('Error: ' + e.message); }
+}
+async function mailCancel(id) {
+  if (!confirm('Campaign cancel karni hai?')) return;
+  await API.call('/mail/campaigns/' + id + '/cancel', { method: 'POST' }); loadMailCampaigns();
+}
+async function loadMailCampaigns() {
+  clearTimeout(_mailPoll);
+  try {
+    const d = await API.call('/mail/campaigns');
+    mailEl('mail-quota').textContent = `Aaj bheji gayi: ${d.quota.used} / ${d.quota.limit} (daily limit). Limit poori hone par campaign rukti hai aur kal apne aap aage chalti hai.`;
+    const colr = { done: '#34d399', sending: '#fbbf24', queued: '#fbbf24', paused: '#fb923c', waiting: '#a89df7', cancelled: '#9a9ab8' };
+    const fmt = (x) => new Date(x).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true });
+    mailEl('mail-camps').innerHTML = d.campaigns.length ? `<table style="width:100%;border-collapse:collapse;font-size:0.78rem">
+      <tr style="color:rgba(255,255,255,0.4);font-size:0.64rem;text-transform:uppercase"><th style="text-align:left;padding:0.4rem">When</th><th style="text-align:left;padding:0.4rem">Subject</th><th style="text-align:left;padding:0.4rem">Audience</th><th style="text-align:right;padding:0.4rem">Sent</th><th style="text-align:right;padding:0.4rem">Failed</th><th style="text-align:left;padding:0.4rem">Status</th><th></th></tr>
+      ${d.campaigns.map(c => `<tr style="border-top:1px solid rgba(255,255,255,0.05)"><td style="padding:0.5rem;white-space:nowrap;color:rgba(255,255,255,0.6)">${fmt(c.createdAt)}</td><td style="padding:0.5rem;color:#fff">${gvEsc(c.subject)}</td><td style="padding:0.5rem;color:rgba(255,255,255,0.6)">${gvEsc((_mailMeta && _mailMeta.segments[c.segment]) || c.segment)}${c.college && c.college !== 'all' ? ' · ' + gvEsc(c.college) : ''}</td><td style="padding:0.5rem;text-align:right;color:#fff">${c.sent}/${c.total}${c.setSize && c.total > c.setSize ? `<div style="font-size:0.66rem;color:rgba(255,255,255,0.4)">Set ${Math.ceil(Math.min(c.releaseCount, c.total) / c.setSize)}/${Math.ceil(c.total / c.setSize)}</div>` : ''}</td><td style="padding:0.5rem;text-align:right;color:${c.failed ? '#f87171' : 'rgba(255,255,255,0.4)'}">${c.failed}</td><td style="padding:0.5rem;color:${colr[c.status]}">${c.status}${c.note ? '<div style="font-size:0.66rem;color:rgba(255,255,255,0.35)">' + gvEsc(c.note) + '</div>' : ''}</td><td style="padding:0.5rem">${c.status === 'waiting' ? `<button onclick="mailNextSet('${c._id}')" style="background:#7c6af7;border:none;color:#fff;border-radius:8px;padding:0.3rem 0.7rem;font-size:0.7rem;font-weight:700;cursor:pointer;margin-right:6px">Send Set ${Math.ceil(Math.min(c.releaseCount, c.total) / c.setSize) + 1}</button>` : ''}${['queued', 'sending', 'paused', 'waiting'].includes(c.status) ? `<button onclick="mailCancel('${c._id}')" style="background:none;border:1px solid rgba(248,113,113,0.4);color:#f87171;border-radius:8px;padding:0.2rem 0.6rem;font-size:0.68rem;cursor:pointer">Cancel</button>` : ''}</td></tr>`).join('')}
+    </table>` : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Abhi koi campaign nahi</div>';
+    if (d.campaigns.some(c => ['queued', 'sending'].includes(c.status)) && mailEl('tab-mail').style.display !== 'none') _mailPoll = setTimeout(loadMailCampaigns, 8000);
+  } catch (e) {}
 }
 
 async function loadResumeSubs() {
