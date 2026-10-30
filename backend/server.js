@@ -31,6 +31,7 @@
 // app.use('/api/notes',       require('./routes/notes'));
 // app.use('/api/experiences', require('./routes/experiences'));
 // app.use('/api/admin',       require('./routes/admin'));
+app.use('/api/mail',  require('./routes/mail'));
 // app.use('/api/activity', require('./routes/activity'));
 // app.use('/api/feedback', require('./routes/feedback'));
 // app.use('/api/tests', require('./routes/tests'));
@@ -60,6 +61,7 @@ const cron     = require('node-cron');
 const { sendDailyReport } = require('./services/dailyReport');
 const { cutoffOldManualResumeUsers } = require('./services/resumeMonthlyCutoff');
 const { syncPendingPayments } = require('./services/paymentSync');
+const { processMailQueue } = require('./services/mailCampaign');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -149,5 +151,10 @@ mongoose.connect(process.env.MONGO_URI)
         .catch(err => console.error('❌ paymentSync failed:', err.message));
     }, { timezone: 'Asia/Kolkata' });
     console.log('📅 Payment auto-sync scheduled every 10 minutes');
+
+    // Admin panel ki mail campaigns: har 2 minute queue check (daily limit ke andar bhejti hai, agle din aage chalti hai)
+    cron.schedule('*/2 * * * *', () => {
+      processMailQueue().catch(err => console.error('❌ mail queue failed:', err.message));
+    }, { timezone: 'Asia/Kolkata' });
   })
   .catch(err => { console.error('❌ DB error:', err); process.exit(1); });
