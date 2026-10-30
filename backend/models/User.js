@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema({
   emailVerified: { type: Boolean, default: false }, // Google signup pe true, purane users pe false
   // false kar do (DB mein) to is account pe Google verification zaroori nahi — password login chalta rahega
   isGoogleReq:   { type: Boolean, default: true },
+  mailOptOut:    { type: Boolean, default: false }, // promotional mail unsubscribe
   googleVerifiedAt: { type: Date }, // kab Google se verify/signup hua
   isPaid:        { type: Boolean, default: false },
   isAdmin:       { type: Boolean, default: false },
