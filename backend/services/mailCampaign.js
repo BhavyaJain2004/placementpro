@@ -100,8 +100,8 @@ async function processMailQueue() {
         if (n && n % 10 === 0) { const fresh = await MailCampaign.findById(c._id).select('status').lean(); if (fresh.status === 'cancelled') break; }
         try {
           const m = render(c, r.name);
-          await sendOne({ to: r.email, subject: m.subject, html: m.html, text: m.text });
-          r.status = 'sent'; c.sent++;
+          const resp = await sendOne({ to: r.email, subject: m.subject, html: m.html, text: m.text });
+          r.status = 'sent'; r.emailId = resp && resp.id; c.sent++;
         } catch (e) {
           r.status = 'failed'; r.error = String(e.response?.data?.message || e.message).slice(0, 160); c.failed++;
         }
