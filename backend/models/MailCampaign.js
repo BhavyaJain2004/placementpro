@@ -7,7 +7,9 @@ const recipientSchema = new mongoose.Schema({
   email:  String,
   name:   String,
   status: { type: String, enum: ['pending', 'sent', 'failed'], default: 'pending' },
-  error:  String
+  error:  String,
+  emailId: String,                       // Resend ka email id (webhook se open/click match karne ke liye)
+  delivered: Boolean, opened: Boolean, clicked: Boolean, bounced: Boolean, complained: Boolean
 }, { _id: false });
 
 const mailCampaignSchema = new mongoose.Schema({
@@ -25,6 +27,8 @@ const mailCampaignSchema = new mongoose.Schema({
   total:    { type: Number, default: 0 },
   sent:     { type: Number, default: 0 },
   failed:   { type: Number, default: 0 },
+  delivered: { type: Number, default: 0 }, opened: { type: Number, default: 0 }, clicked: { type: Number, default: 0 },
+  bounced:  { type: Number, default: 0 }, complained: { type: Number, default: 0 },
   recipients: [recipientSchema],
   finishedAt: Date
 }, { timestamps: true });
