@@ -29,8 +29,11 @@ router.post('/audience', ...guard, async (req, res) => {
   } catch (e) { res.status(400).json({ message: e.message }); }
 });
 
+// Preview/test mein asli user ka naam: admin ka apna naam (ya jis user ko test bhej rahe ho uska)
+const adminName = async (req) => { const u = await User.findById(req.user.id).select('name').lean(); return (u && u.name) || 'there'; };
+
 router.post('/preview', ...guard, async (req, res) => {
-  const m = svc.render(pickFields(req.body), 'Aarav', null);
+  const m = svc.render(pickFields(req.body), await adminName(req));
   res.json({ html: m.html, subject: m.subject });
 });
 
@@ -38,7 +41,8 @@ router.post('/test', ...guard, async (req, res) => {
   try {
     const to = String(req.body.to || '').trim();
     if (!/^\S+@\S+\.\S+$/.test(to)) return res.status(400).json({ message: 'Valid email daalo' });
-    const m = svc.render(pickFields(req.body), req.body.name || 'Aarav', null);
+    const target = await User.findOne({ email: to.toLowerCase() }).select('name').lean();
+    const m = svc.render(pickFields(req.body), (target && target.name) || await adminName(req));
     await svc.sendOne({ to, subject: '[TEST] ' + m.subject, html: m.html, text: m.text });
     res.json({ message: 'Test mail bhej di: ' + to });
   } catch (e) { res.status(400).json({ message: e.response?.data?.message || e.message }); }
