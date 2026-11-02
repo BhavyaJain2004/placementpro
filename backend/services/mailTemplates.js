@@ -2,7 +2,8 @@
 const BASE = () => process.env.MAIL_ASSET_BASE || 'https://placementsphere.in';
 const esc = (x) => String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fill = (str, name) => String(str || '').replace(/\{\{\s*name\s*\}\}/gi, name || 'there');
-const firstName = (n) => String(n || '').trim().split(/\s+/)[0] || 'there';
+// Pehla naam, sahi capitalization ke saath (bhavya / BHAVYA -> Bhavya)
+const firstName = (n) => { const w = String(n || '').trim().split(/\s+/)[0]; return w ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : 'there'; };
 
 const PRESETS = {
   custom: { label: 'Custom (khud likho)', subject: '', heading: '', body: '', ctaText: 'Open PlacementSphere', ctaUrl: 'https://placementsphere.in' },
