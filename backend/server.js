@@ -31,7 +31,7 @@
 // app.use('/api/notes',       require('./routes/notes'));
 // app.use('/api/experiences', require('./routes/experiences'));
 // app.use('/api/admin',       require('./routes/admin'));
-// app.use('/api/mail',  require('./routes/mail'));
+app.use('/api/mail',  require('./routes/mail'));
 // app.use('/api/activity', require('./routes/activity'));
 // app.use('/api/feedback', require('./routes/feedback'));
 // app.use('/api/tests', require('./routes/tests'));
@@ -83,6 +83,7 @@ app.use(cors({
 // IMPORTANT: webhook route ko raw body chahiye signature verify karne ke liye —
 // isliye global express.json() se PEHLE, sirf isi path ke liye raw parser
 app.use('/api/webhooks', express.raw({ type: 'application/json' }), require('./routes/razorpayWebhook'));
+app.use('/api/webhooks', express.raw({ type: 'application/json' }), require('./routes/resendWebhook')); // Resend email events (open/click)
 
 app.use(express.json({ limit: '10mb' }));
 
@@ -98,7 +99,6 @@ app.use('/api/dsa',         require('./routes/dsa'));
 app.use('/api/notes',       require('./routes/notes'));
 app.use('/api/experiences', require('./routes/experiences'));
 app.use('/api/admin',       require('./routes/admin'));
-app.use('/api/mail',        require('./routes/mail'));
 app.use('/api/activity', require('./routes/activity'));
 app.use('/api/feedback', require('./routes/feedback'));
 app.use('/api/tests', require('./routes/tests'));
