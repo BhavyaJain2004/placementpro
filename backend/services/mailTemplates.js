@@ -38,51 +38,58 @@ const PRESETS = {
   }
 };
 
-// Plain text paragraphs -> HTML (blank line = naya paragraph, "• " = bullet)
+// Plain text -> HTML. Khali line = naya paragraph, "• " ya "- " = checklist
+const BUL = /^\s*[•\-]\s+/;
 function bodyToHtml(body) {
-  return String(body || '').split(/\n{2,}/).map(block => {
-    const lines = block.split('\n');
-    const items = lines.filter(l => /^\s*[•\-]\s+/.test(l));
-    if (items.length && items.length === lines.filter(l => l.trim()).length) {
-      return '<ul style="margin:0 0 18px;padding-left:20px;color:#3b3b52;font-size:15px;line-height:1.7">' + items.map(l => `<li style="margin-bottom:6px">${esc(l.replace(/^\s*[•\-]\s+/, ''))}</li>`).join('') + '</ul>';
-    }
-    // intro line + bullets mix
-    const out = []; let list = [];
-    const flush = () => { if (list.length) { out.push('<ul style="margin:0 0 18px;padding-left:20px;color:#3b3b52;font-size:15px;line-height:1.7">' + list.map(i => `<li style="margin-bottom:6px">${esc(i)}</li>`).join('') + '</ul>'); list = []; } };
-    let text = [];
-    const flushText = () => { if (text.length) { out.push(`<p style="margin:0 0 18px;color:#3b3b52;font-size:15px;line-height:1.7">${text.map(esc).join('<br>')}</p>`); text = []; } };
-    lines.forEach(l => {
-      if (/^\s*[•\-]\s+/.test(l)) { flushText(); list.push(l.replace(/^\s*[•\-]\s+/, '')); }
-      else if (l.trim()) { flush(); text.push(l); }
+  const out = [];
+  String(body || '').split(/\n{2,}/).forEach(block => {
+    let text = [], items = [];
+    const flushText = () => { if (text.length) { out.push(`<p style="margin:0 0 20px;color:#44445e;font-size:16px;line-height:1.75">${text.map(esc).join('<br>')}</p>`); text = []; } };
+    const flushList = () => {
+      if (!items.length) return;
+      out.push('<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px">' + items.map(i =>
+        `<tr><td style="padding:0 0 8px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f5ff;border:1px solid #e7e4ff;border-radius:12px"><tr>
+          <td width="44" valign="top" style="padding:14px 0 14px 14px"><div style="width:22px;height:22px;line-height:22px;border-radius:11px;background:#7c6af7;color:#ffffff;text-align:center;font-size:13px;font-weight:700">&#10003;</div></td>
+          <td style="padding:14px 16px 14px 6px;color:#2b2b45;font-size:15px;line-height:1.55">${esc(i)}</td></tr></table></td></tr>`).join('') + '</table>');
+      items = [];
+    };
+    block.split('\n').forEach(l => {
+      if (BUL.test(l)) { flushText(); items.push(l.replace(BUL, '')); }
+      else if (l.trim()) { flushList(); text.push(l); }
     });
-    flushText(); flush();
-    return out.join('');
-  }).join('');
+    flushText(); flushList();
+  });
+  return out.join('');
 }
 
-function renderEmail({ heading, body, ctaText, ctaUrl, name, unsubscribeUrl }) {
+function renderEmail({ heading, body, ctaText, ctaUrl, name }) {
   const n = firstName(name);
   const h = fill(heading, n), b = fill(body, n);
   const safeUrl = /^https?:\/\//i.test(ctaUrl || '') ? ctaUrl : BASE();
   const banner = `${BASE()}/email/banner.png`;
-  const cta = ctaText ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 6px"><tr><td style="border-radius:10px;background:#7c6af7"><a href="${esc(safeUrl)}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:10px;font-family:Arial,Helvetica,sans-serif">${esc(fill(ctaText, n))}</a></td></tr></table>` : '';
+  const pre = esc(b.replace(/\s+/g, ' ').slice(0, 110));
+  const cta = ctaText ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:10px 0 8px"><tr><td style="border-radius:12px;background:#7c6af7;box-shadow:0 8px 20px rgba(124,106,247,0.35)"><a href="${esc(safeUrl)}" style="display:inline-block;padding:16px 34px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:12px;font-family:Arial,Helvetica,sans-serif">${esc(fill(ctaText, n))} &rarr;</a></td></tr></table>` : '';
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(h)}</title></head>
-<body style="margin:0;padding:0;background:#f1f1f7;font-family:Arial,Helvetica,sans-serif">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f1f7"><tr><td align="center" style="padding:24px 12px">
-  <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#ffffff;border-radius:18px;overflow:hidden">
+<body style="margin:0;padding:0;background:#eeeef6;font-family:Arial,Helvetica,sans-serif">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#eeeef6">${pre}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eeeef6"><tr><td align="center" style="padding:28px 12px">
+  <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#ffffff;border-radius:22px;overflow:hidden;box-shadow:0 12px 40px rgba(20,20,60,0.10)">
     <tr><td style="background:#0b0b16"><img src="${banner}" width="600" alt="PlacementSphere" style="display:block;width:100%;max-width:600px;height:auto;border:0"></td></tr>
-    <tr><td style="padding:34px 32px 26px">
-      <h1 style="margin:0 0 18px;font-size:24px;line-height:1.3;color:#14142b;font-family:Arial,Helvetica,sans-serif">${esc(h)}</h1>
+    <tr><td style="height:4px;background:linear-gradient(90deg,#7c6af7,#06b6d4);font-size:0;line-height:0">&nbsp;</td></tr>
+    <tr><td style="padding:42px 38px 34px">
+      <h1 style="margin:0 0 22px;font-size:28px;line-height:1.25;color:#14142b;font-family:Arial,Helvetica,sans-serif;letter-spacing:-0.3px">${esc(h)}</h1>
       ${bodyToHtml(b)}
       ${cta}
+      <p style="margin:26px 0 0;color:#7a7a94;font-size:14px;line-height:1.6">Team PlacementSphere</p>
     </td></tr>
-    <tr><td style="padding:20px 32px 28px;border-top:1px solid #ececf4;color:#8a8aa3;font-size:12px;line-height:1.6">
-      You are receiving this because you have an account on PlacementSphere.<br>
-      Have a question? Just reply to this email.
+    <tr><td style="padding:24px 38px 30px;background:#fafafe;border-top:1px solid #ececf6;color:#8a8aa3;font-size:12px;line-height:1.7">
+      <b style="color:#44445e">PlacementSphere</b> &middot; Placement prep built by placed seniors<br>
+      <a href="${BASE()}" style="color:#7c6af7;text-decoration:none">placementsphere.in</a><br>
+      You are receiving this because you have an account on PlacementSphere. Have a question? Just reply to this email.
     </td></tr>
   </table>
 </td></tr></table></body></html>`;
-  const text = `${h}\n\n${b}\n\n${ctaText ? fill(ctaText, n) + ': ' + safeUrl + '\n\n' : ''}Reply to this email if you have any questions.`;
+  const text = `${h}\n\n${b}\n\n${ctaText ? fill(ctaText, n) + ': ' + safeUrl + '\n\n' : ''}Team PlacementSphere\n${BASE()}`;
   return { html, text };
 }
 
