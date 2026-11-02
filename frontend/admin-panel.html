@@ -62,6 +62,53 @@ body{background:#06060f}
 .pulse-dot{width:7px;height:7px;border-radius:50%;display:inline-block;animation:pulse 1.5s infinite;flex-shrink:0}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 @media (max-width:1000px){ #mail-grid{ grid-template-columns:1fr !important; } }
+
+/* ── Send Mail tab ── */
+#tab-mail { max-width: 1240px; }
+#tab-mail select, #tab-mail option, #tab-mail input, #tab-mail textarea { color-scheme: dark; }
+#tab-mail option { background: #14142a; color: #fff; }
+#tab-mail .mc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.6rem; }
+#tab-mail .mc-title { font-family: 'Syne', sans-serif; color: #fff; font-size: 1.5rem; margin-bottom: 0.3rem; }
+#tab-mail .mc-sub { color: rgba(255,255,255,0.45); font-size: 0.84rem; max-width: 46em; line-height: 1.55; }
+#tab-mail .mc-pill { display: inline-flex; align-items: center; gap: 8px; padding: 0.5rem 0.95rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.75); font-size: 0.78rem; white-space: nowrap; }
+#tab-mail .mc-pill b { color: #fff; }
+#tab-mail .mc-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 1.6rem; align-items: start; }
+#tab-mail .mc-card { background: #0e0e1e; border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 1.5rem 1.6rem; margin-bottom: 1.2rem; }
+#tab-mail .mc-step { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.2rem; }
+#tab-mail .mc-step i { width: 26px; height: 26px; border-radius: 50%; background: rgba(124,106,247,0.18); border: 1px solid rgba(124,106,247,0.45); color: #a89df7; font-style: normal; font-size: 0.78rem; font-weight: 700; display: grid; place-items: center; flex: none; }
+#tab-mail .mc-step span { font-family: 'Syne', sans-serif; color: #fff; font-size: 1rem; font-weight: 700; }
+#tab-mail .mc-lab { display: block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin: 1.1rem 0 0.45rem; }
+#tab-mail .mc-lab:first-of-type { margin-top: 0; }
+#tab-mail .mc-in { width: 100%; background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.13); border-radius: 12px; color: #fff; padding: 0.75rem 0.9rem; font-size: 0.88rem; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color .15s, box-shadow .15s; }
+#tab-mail .mc-in:focus { border-color: #7c6af7; box-shadow: 0 0 0 3px rgba(124,106,247,0.2); }
+#tab-mail textarea.mc-in { resize: vertical; line-height: 1.6; min-height: 170px; }
+#tab-mail .mc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+#tab-mail .mc-hint { font-size: 0.74rem; color: rgba(255,255,255,0.4); margin-top: 0.45rem; line-height: 1.5; }
+#tab-mail .mc-aud { display: flex; align-items: center; gap: 0.6rem; margin-top: 1rem; padding: 0.8rem 1rem; border-radius: 12px; background: rgba(124,106,247,0.1); border: 1px solid rgba(124,106,247,0.28); color: #cfc8ff; font-size: 0.84rem; }
+#tab-mail .mc-aud b { color: #fff; font-size: 1.1rem; }
+#tab-mail .mc-btn { border: none; border-radius: 12px; padding: 0.8rem 1.3rem; font-size: 0.86rem; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: transform .15s, background .15s; }
+#tab-mail .mc-btn:hover { transform: translateY(-1px); }
+#tab-mail .mc-btn-ghost { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); color: #fff; white-space: nowrap; }
+#tab-mail .mc-btn-primary { background: #7c6af7; color: #fff; width: 100%; padding: 0.95rem; font-size: 0.92rem; box-shadow: 0 10px 28px -10px rgba(124,106,247,0.8); }
+#tab-mail .mc-test { display: flex; gap: 0.6rem; }
+#tab-mail .mc-sticky { position: sticky; top: 1rem; }
+#tab-mail .mc-inbox { border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; background: #0e0e1e; padding: 1rem; }
+#tab-mail .mc-inbox-bar { display: flex; align-items: center; gap: 0.7rem; padding: 0.4rem 0.4rem 0.9rem; }
+#tab-mail .mc-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #8f7ffb, #4433c4); display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 0.85rem; flex: none; }
+#tab-mail .mc-inbox-bar .s { color: #fff; font-size: 0.86rem; font-weight: 600; }
+#tab-mail .mc-inbox-bar .t { color: rgba(255,255,255,0.45); font-size: 0.76rem; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 420px; }
+#tab-mail iframe { width: 100%; height: 640px; border: 0; border-radius: 12px; background: #eeeef6; display: block; }
+#tab-mail .mc-warn { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.3); color: #fbbf24; padding: 0.9rem 1.1rem; border-radius: 12px; font-size: 0.82rem; line-height: 1.55; margin-bottom: 1.4rem; }
+#tab-mail .mc-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 820px; }
+#tab-mail .mc-table th { text-align: left; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.4); font-weight: 600; padding: 0.55rem 0.7rem; }
+#tab-mail .mc-table td { padding: 0.95rem 0.7rem; border-top: 1px solid rgba(255,255,255,0.06); vertical-align: middle; color: rgba(255,255,255,0.7); }
+#tab-mail .mc-prog { height: 6px; border-radius: 99px; background: rgba(255,255,255,0.08); overflow: hidden; margin-top: 6px; min-width: 110px; }
+#tab-mail .mc-prog i { display: block; height: 100%; background: linear-gradient(90deg, #7c6af7, #06b6d4); }
+#tab-mail .mc-num b { color: #fff; font-size: 0.95rem; }
+#tab-mail .mc-num small { display: block; color: rgba(255,255,255,0.4); font-size: 0.7rem; margin-top: 2px; }
+#tab-mail .mc-st { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 600; }
+@media (max-width: 1100px) { #tab-mail .mc-grid { grid-template-columns: 1fr; } #tab-mail .mc-sticky { position: static; } }
+@media (max-width: 560px) { #tab-mail .mc-row { grid-template-columns: 1fr; } #tab-mail .mc-test { flex-direction: column; } }
 </style>
 </head>
 <body>
@@ -606,36 +653,66 @@ body{background:#06060f}
     </div>
 
     <div id="tab-mail" style="display:none">
-      <h2 style="font-family:'Syne',sans-serif;color:#fff;font-size:1.4rem;margin-bottom:0.2rem">✉️ Send Mail</h2>
-      <p style="color:rgba(255,255,255,0.35);font-size:0.78rem;margin-bottom:1rem">Promotional / wishes / reminders. Mail PlacementSphere ke naam se, banner ke saath jaati hai. Daily limit ke andar apne aap bhejti hai.</p>
-      <div id="mail-warn"></div>
-      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;align-items:start" id="mail-grid">
-        <div class="card">
-          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem;margin-top:0">Template</label><select id="mail-template" onchange="mailLoadPreset()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"></select>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem">
-            <div><label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Audience</label><select id="mail-segment" onchange="mailAudience()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"></select></div>
-            <div><label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">College</label><select id="mail-college" onchange="mailAudience()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"></select></div>
-          </div>
-          <div id="mail-aud" style="margin-top:0.6rem;font-size:0.78rem;color:#a89df7"></div>
-          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Set size (roz kitne users ko bhejna hai, 0 = sabko ek saath)</label>
-          <input id="mail-setsize" type="number" min="0" oninput="mailSetInfo()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%">
-          <div id="mail-setinfo" style="margin-top:0.4rem;font-size:0.74rem;color:rgba(255,255,255,0.5)"></div>
-          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Subject</label><input id="mail-subject" oninput="mailPreviewSoon()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%">
-          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Heading</label><input id="mail-heading" oninput="mailPreviewSoon()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%">
-          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Message (khali line = naya paragraph, "• " = bullet, {{name}} = user ka naam)</label>
-          <textarea id="mail-body" rows="9" oninput="mailPreviewSoon()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%;resize:vertical"></textarea>
-          <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:0.6rem">
-            <div><label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Button text</label><input id="mail-ctatext" oninput="mailPreviewSoon()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"></div>
-            <div><label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Button link</label><input id="mail-ctaurl" oninput="mailPreviewSoon()" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"></div>
-          </div>
-          <label style="display:block;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.4);margin:0.8rem 0 0.3rem">Test mail (apna email daalo, pehle yahan check karo)</label>
-          <div style="display:flex;gap:0.5rem"><input id="mail-testto" type="email" placeholder="you@gmail.com" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;padding:0.6rem 0.75rem;font-size:0.82rem;font-family:'DM Sans',sans-serif;width:100%"><button onclick="mailTest()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:0.6rem 1rem;border-radius:10px;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif">Send test</button></div>
-          <div style="margin-top:1.1rem"><button id="mail-send-btn" onclick="mailSend()" style="background:#7c6af7;border:none;color:#fff;padding:0.7rem 1.3rem;border-radius:10px;font-size:0.84rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%">Send campaign</button></div>
-          <div id="mail-quota" style="margin-top:0.8rem;font-size:0.72rem;color:rgba(255,255,255,0.4)"></div>
+      <div class="mc-head">
+        <div>
+          <h2 class="mc-title">✉️ Send Mail</h2>
+          <p class="mc-sub">Sahi audience chuno, message likho, pehle apne email pe test karo, phir bhejo. Mail PlacementSphere ke naam se banner ke saath jaati hai aur opens/clicks neeche table mein dikhte hain.</p>
         </div>
-        <div class="card" style="padding:0.6rem"><div style="font-size:0.7rem;color:rgba(255,255,255,0.4);padding:0.3rem 0.5rem">Live preview</div><iframe id="mail-preview" style="width:100%;height:620px;border:0;border-radius:10px;background:#f1f1f7"></iframe></div>
+        <div class="mc-pill" id="mail-quota-pill">Aaj bheji gayi: <b>0 / 90</b></div>
       </div>
-      <div class="card" style="margin-top:1rem"><div class="card-title">📊 Campaigns</div><div id="mail-camps" style="overflow-x:auto"></div></div>
+      <div id="mail-warn"></div>
+
+      <div class="mc-grid" id="mail-grid">
+        <div>
+          <div class="mc-card">
+            <div class="mc-step"><i>1</i><span>Template aur audience</span></div>
+            <label class="mc-lab">Template</label>
+            <select id="mail-template" class="mc-in" onchange="mailLoadPreset()"></select>
+            <div class="mc-row">
+              <div><label class="mc-lab">Kisko bhejni hai</label><select id="mail-segment" class="mc-in" onchange="mailAudience()"></select></div>
+              <div><label class="mc-lab">College</label><select id="mail-college" class="mc-in" onchange="mailAudience()"></select></div>
+            </div>
+            <div class="mc-aud" id="mail-aud">Counting…</div>
+            <label class="mc-lab">Set size (roz kitne users ko bhejna hai)</label>
+            <input id="mail-setsize" type="number" min="0" class="mc-in" oninput="mailSetInfo()">
+            <div class="mc-hint" id="mail-setinfo"></div>
+          </div>
+
+          <div class="mc-card">
+            <div class="mc-step"><i>2</i><span>Mail likho</span></div>
+            <label class="mc-lab">Subject</label><input id="mail-subject" class="mc-in" oninput="mailPreviewSoon()">
+            <label class="mc-lab">Heading</label><input id="mail-heading" class="mc-in" oninput="mailPreviewSoon()">
+            <label class="mc-lab">Message</label>
+            <textarea id="mail-body" rows="9" class="mc-in" oninput="mailPreviewSoon()"></textarea>
+            <div class="mc-hint">Khali line = naya paragraph. <b>•</b> se shuru line = checklist. <b>{{name}}</b> = user ka pehla naam.</div>
+            <div class="mc-row">
+              <div><label class="mc-lab">Button text</label><input id="mail-ctatext" class="mc-in" oninput="mailPreviewSoon()"></div>
+              <div><label class="mc-lab">Button link</label><input id="mail-ctaurl" class="mc-in" oninput="mailPreviewSoon()"></div>
+            </div>
+          </div>
+
+          <div class="mc-card">
+            <div class="mc-step"><i>3</i><span>Test karo, phir bhejo</span></div>
+            <label class="mc-lab">Test mail kahan bhejni hai</label>
+            <div class="mc-test"><input id="mail-testto" type="email" placeholder="your@gmail.com" class="mc-in"><button class="mc-btn mc-btn-ghost" onclick="mailTest()">Send test</button></div>
+            <div class="mc-hint">Jo abhi form mein hai wahi test mein aayega. Pehle apne inbox mein dekh lo.</div>
+            <div style="margin-top:1.4rem"><button id="mail-send-btn" class="mc-btn mc-btn-primary" onclick="mailSend()">Send campaign</button></div>
+            <div class="mc-hint" id="mail-quota" style="margin-top:0.9rem"></div>
+          </div>
+        </div>
+
+        <div class="mc-sticky">
+          <div class="mc-inbox">
+            <div class="mc-inbox-bar"><div class="mc-avatar">P</div><div><div class="s">PlacementSphere</div><div class="t" id="mail-subject-line">Subject yahan dikhega</div></div></div>
+            <iframe id="mail-preview"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="mc-card" style="margin-top:0.4rem">
+        <div class="mc-step"><i>📊</i><span>Campaigns</span></div>
+        <div id="mail-camps" style="overflow-x:auto"></div>
+      </div>
     </div>
 
     <div id="tab-subscriptions" style="display:none">
@@ -1734,7 +1811,7 @@ async function loadMailTab() {
       mailEl('mail-template').value = 'diwali';
       mailLoadPreset();
     }
-    mailEl('mail-warn').innerHTML = _mailMeta.senderReady ? '' : '<div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);color:#fbbf24;padding:0.7rem 1rem;border-radius:10px;font-size:0.78rem;margin-bottom:1rem">⚠️ Railway mein <b>RESEND_FROM</b> abhi onboarding@resend.dev hai — isse sirf test mail jayegi. Campaign ke liye Resend mein apna domain verify karke RESEND_FROM = PlacementSphere &lt;hello@placementsphere.in&gt; set karo.</div>';
+    mailEl('mail-warn').innerHTML = _mailMeta.senderReady ? '' : '<div class="mc-warn">⚠️ Railway mein <b>RESEND_FROM</b> abhi onboarding@resend.dev hai — isse sirf test mail jayegi. Campaign ke liye Resend mein apna domain verify karke RESEND_FROM = PlacementSphere &lt;hello@placementsphere.in&gt; set karo.</div>';
     loadMailCampaigns();
   } catch (e) { mailEl('mail-camps').innerHTML = '<div style="color:#f87171">Load nahi hua: ' + gvEsc(e.message) + '</div>'; }
 }
@@ -1752,10 +1829,10 @@ function mailFields() {
     segment: mailEl('mail-segment').value, college: mailEl('mail-college').value };
 }
 async function mailAudience() {
-  const f = mailFields(); mailEl('mail-aud').textContent = 'Counting…';
+  const f = mailFields(); mailEl('mail-aud').innerHTML = 'Counting…';
   try {
     const r = await API.call('/mail/audience', { method: 'POST', body: JSON.stringify(f) });
-    mailEl('mail-aud').textContent = `${r.count} users ko jayegi` + (r.sample.length ? ' (jaise ' + r.sample.map(s => s.name).slice(0, 3).join(', ') + ')' : '');
+    mailEl('mail-aud').innerHTML = `<b>${r.count}</b> users ko jayegi` + (r.sample.length ? ' <span style="opacity:.7">(jaise ' + r.sample.map(s => gvEsc(s.name)).slice(0, 3).join(', ') + ')</span>' : '');
     window._mailCount = r.count; mailSetInfo();
   } catch (e) { mailEl('mail-aud').textContent = e.message; }
 }
@@ -1766,7 +1843,7 @@ function mailSetInfo() {
 }
 function mailPreviewSoon() { clearTimeout(_mailTimer); _mailTimer = setTimeout(mailPreview, 400); }
 async function mailPreview() {
-  try { const r = await API.call('/mail/preview', { method: 'POST', body: JSON.stringify(mailFields()) }); mailEl('mail-preview').srcdoc = r.html; } catch (e) {}
+  try { const r = await API.call('/mail/preview', { method: 'POST', body: JSON.stringify(mailFields()) }); mailEl('mail-preview').srcdoc = r.html; mailEl('mail-subject-line').textContent = r.subject || 'Subject yahan dikhega'; } catch (e) {}
 }
 async function mailTest() {
   const to = mailEl('mail-testto').value.trim();
@@ -1798,13 +1875,24 @@ async function loadMailCampaigns() {
   clearTimeout(_mailPoll);
   try {
     const d = await API.call('/mail/campaigns');
-    mailEl('mail-quota').textContent = `Aaj bheji gayi: ${d.quota.used} / ${d.quota.limit} (daily limit). Limit poori hone par campaign rukti hai aur kal apne aap aage chalti hai.`;
-    const colr = { done: '#34d399', sending: '#fbbf24', queued: '#fbbf24', paused: '#fb923c', waiting: '#a89df7', cancelled: '#9a9ab8' };
+    mailEl('mail-quota-pill').innerHTML = `Aaj bheji gayi: <b>${d.quota.used} / ${d.quota.limit}</b>`;
+    mailEl('mail-quota').textContent = 'Daily limit poori hone par campaign rukti hai aur agle din apne aap aage chalti hai.';
+    const sty = { done: ['#34d399', 'rgba(52,211,153,0.14)'], sending: ['#fbbf24', 'rgba(251,191,36,0.14)'], queued: ['#fbbf24', 'rgba(251,191,36,0.14)'], paused: ['#fb923c', 'rgba(251,146,60,0.14)'], waiting: ['#a89df7', 'rgba(124,106,247,0.16)'], cancelled: ['#9a9ab8', 'rgba(255,255,255,0.07)'] };
     const fmt = (x) => new Date(x).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true });
-    mailEl('mail-camps').innerHTML = d.campaigns.length ? `<table style="width:100%;border-collapse:collapse;font-size:0.78rem">
-      <tr style="color:rgba(255,255,255,0.4);font-size:0.64rem;text-transform:uppercase"><th style="text-align:left;padding:0.4rem">When</th><th style="text-align:left;padding:0.4rem">Subject</th><th style="text-align:left;padding:0.4rem">Audience</th><th style="text-align:right;padding:0.4rem">Sent</th><th style="text-align:right;padding:0.4rem">Failed</th><th style="text-align:left;padding:0.4rem">Status</th><th></th></tr>
-      ${d.campaigns.map(c => `<tr style="border-top:1px solid rgba(255,255,255,0.05)"><td style="padding:0.5rem;white-space:nowrap;color:rgba(255,255,255,0.6)">${fmt(c.createdAt)}</td><td style="padding:0.5rem;color:#fff">${gvEsc(c.subject)}</td><td style="padding:0.5rem;color:rgba(255,255,255,0.6)">${gvEsc((_mailMeta && _mailMeta.segments[c.segment]) || c.segment)}${c.college && c.college !== 'all' ? ' · ' + gvEsc(c.college) : ''}</td><td style="padding:0.5rem;text-align:right;color:#fff">${c.sent}/${c.total}${c.setSize && c.total > c.setSize ? `<div style="font-size:0.66rem;color:rgba(255,255,255,0.4)">Set ${Math.ceil(Math.min(c.releaseCount, c.total) / c.setSize)}/${Math.ceil(c.total / c.setSize)}</div>` : ''}</td><td style="padding:0.5rem;text-align:right;color:${c.failed ? '#f87171' : 'rgba(255,255,255,0.4)'}">${c.failed}</td><td style="padding:0.5rem;color:${colr[c.status]}">${c.status}${c.note ? '<div style="font-size:0.66rem;color:rgba(255,255,255,0.35)">' + gvEsc(c.note) + '</div>' : ''}</td><td style="padding:0.5rem">${c.status === 'waiting' ? `<button onclick="mailNextSet('${c._id}')" style="background:#7c6af7;border:none;color:#fff;border-radius:8px;padding:0.3rem 0.7rem;font-size:0.7rem;font-weight:700;cursor:pointer;margin-right:6px">Send Set ${Math.ceil(Math.min(c.releaseCount, c.total) / c.setSize) + 1}</button>` : ''}${['queued', 'sending', 'paused', 'waiting'].includes(c.status) ? `<button onclick="mailCancel('${c._id}')" style="background:none;border:1px solid rgba(248,113,113,0.4);color:#f87171;border-radius:8px;padding:0.2rem 0.6rem;font-size:0.68rem;cursor:pointer">Cancel</button>` : ''}</td></tr>`).join('')}
-    </table>` : '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:1rem">Abhi koi campaign nahi</div>';
+    const pct = (n, t) => t ? Math.round((n / t) * 100) : 0;
+    const stat = (n, base) => `<div class="mc-num"><b>${n || 0}</b><small>${pct(n || 0, base)}%</small></div>`;
+    mailEl('mail-camps').innerHTML = d.campaigns.length ? `<table class="mc-table">
+      <tr><th>Campaign</th><th>Progress</th><th>Delivered</th><th>Opened</th><th>Clicked</th><th>Bounced</th><th>Status</th><th></th></tr>
+      ${d.campaigns.map(c => { const s = sty[c.status] || sty.cancelled, setTxt = c.setSize && c.total > c.setSize ? ` · Set ${Math.ceil(Math.min(c.releaseCount, c.total) / c.setSize)}/${Math.ceil(c.total / c.setSize)}` : '';
+        return `<tr>
+        <td style="max-width:260px"><div style="color:#fff;font-weight:600">${gvEsc(c.subject)}</div><div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-top:3px">${fmt(c.createdAt)} · ${gvEsc((_mailMeta && _mailMeta.segments[c.segment]) || c.segment)}${c.college && c.college !== 'all' ? ' · ' + gvEsc(c.college) : ''}</div></td>
+        <td><div class="mc-num"><b>${c.sent}</b> / ${c.total}${setTxt}</div><div class="mc-prog"><i style="width:${pct(c.sent, c.total)}%"></i></div>${c.failed ? `<small style="color:#f87171;font-size:0.7rem">${c.failed} failed</small>` : ''}</td>
+        <td>${stat(c.delivered, c.sent)}</td><td>${stat(c.opened, c.sent)}</td><td>${stat(c.clicked, c.sent)}</td>
+        <td><div class="mc-num"><b style="color:${c.bounced ? '#f87171' : '#fff'}">${c.bounced || 0}</b></div></td>
+        <td><span class="mc-st" style="color:${s[0]};background:${s[1]}">${c.status}</span>${c.note ? `<div style="font-size:0.68rem;color:rgba(255,255,255,0.35);margin-top:5px;max-width:200px">${gvEsc(c.note)}</div>` : ''}</td>
+        <td style="white-space:nowrap">${c.status === 'waiting' ? `<button class="mc-btn" onclick="mailNextSet('${c._id}')" style="background:#7c6af7;color:#fff;padding:0.45rem 0.9rem;font-size:0.74rem">Send Set ${Math.ceil(Math.min(c.releaseCount, c.total) / c.setSize) + 1}</button> ` : ''}${['queued', 'sending', 'paused', 'waiting'].includes(c.status) ? `<button class="mc-btn" onclick="mailCancel('${c._id}')" style="background:none;border:1px solid rgba(248,113,113,0.4);color:#f87171;padding:0.45rem 0.8rem;font-size:0.74rem">Cancel</button>` : ''}</td>
+      </tr>`; }).join('')}
+    </table><div class="mc-hint" style="margin-top:0.9rem">Opened/clicked Resend ke webhook se aate hain. Apple Mail privacy ki wajah se opens thode zyada dikh sakte hain, clicks sabse bharosemand hain.</div>` : '<div style="color:rgba(255,255,255,0.35);text-align:center;padding:1.4rem">Abhi koi campaign nahi</div>';
     if (d.campaigns.some(c => ['queued', 'sending'].includes(c.status)) && mailEl('tab-mail').style.display !== 'none') _mailPoll = setTimeout(loadMailCampaigns, 8000);
   } catch (e) {}
 }
