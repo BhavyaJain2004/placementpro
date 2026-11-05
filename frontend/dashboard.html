@@ -1058,6 +1058,74 @@ body.sidebar-hovered{
 }
 
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&display=swap" rel="stylesheet">
+<style id="dash-modern">
+/* ═════ DASHBOARD MODERN SKIN ═════ landing page jaisi design language. Sirf styling — logic ko chhua nahi gaya. */
+:root { --serif: 'Instrument Serif','Iowan Old Style','Times New Roman',serif; --hair: rgba(255,255,255,.08); --hair2: rgba(255,255,255,.14); --muted2: #9a9ab8; }
+body { background: radial-gradient(900px 440px at 72% -8%, rgba(124,106,247,.16), transparent 70%), radial-gradient(600px 360px at 0% 30%, rgba(6,182,212,.06), transparent 70%), var(--bg); }
+/* navbar */
+.navbar { background: rgba(8,8,16,.72) !important; backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); border-bottom: 1px solid var(--hair) !important; }
+@media (min-width: 901px) { .navbar .nav-right { margin-left: auto !important; } .navbar-brand-wrap { display: none !important; } .navbar::before { content: 'Dashboard'; position: absolute; left: 28px; top: 50%; transform: translateY(-50%); font: 600 1rem 'DM Sans',sans-serif; color: #fff; letter-spacing: -.01em; } }
+.profile-btn { border-radius: 999px !important; border: 1px solid var(--hair2) !important; background: rgba(255,255,255,.04) !important; }
+.profile-dropdown, .dropdown-menu { border-radius: 16px !important; border: 1px solid var(--hair2) !important; background: #0d0d1a !important; box-shadow: 0 24px 60px rgba(0,0,0,.6) !important; }
+.dropdown-item { border-radius: 10px !important; }
+/* sidebar */
+.sidebar { background: rgba(10,10,20,.94) !important; border-right: 1px solid var(--hair) !important; }
+.sidebar-logo { border-bottom: 1px solid var(--hair) !important; }
+.sidebar-logo-text { font-family: 'Syne',sans-serif; letter-spacing: -.02em; }
+.sidebar-section-label { font-size: .68rem !important; letter-spacing: .1em !important; color: #6f6f90 !important; }
+.sidebar-item { border-radius: 12px !important; color: #a9a9c8 !important; font-weight: 500 !important; border: 1px solid transparent !important; background: transparent !important; transition: background .15s, color .15s, border-color .15s; }
+.sidebar-item:hover { background: rgba(255,255,255,.05) !important; color: #fff !important; }
+.sidebar-item.active { background: rgba(124,106,247,.14) !important; border-color: rgba(124,106,247,.3) !important; color: #fff !important; }
+.si-icon { background: rgba(255,255,255,.04) !important; border: 1px solid var(--hair) !important; border-radius: 10px !important; }
+.sidebar-item.active .si-icon { background: rgba(124,106,247,.2) !important; border-color: rgba(124,106,247,.35) !important; }
+.sidebar-profile { border: 1px solid var(--hair) !important; background: rgba(255,255,255,.03) !important; border-radius: 14px !important; }
+/* page */
+.page-body { max-width: 1140px !important; margin-left: auto !important; margin-right: auto !important; padding-top: 30px !important; padding-bottom: 90px !important; }
+.welcome-hero { position: relative; border: 1px solid var(--hair2) !important; border-radius: 24px !important; padding: 36px 38px !important; background: radial-gradient(520px 240px at 92% 0%, rgba(124,106,247,.22), transparent 70%), radial-gradient(380px 200px at 0% 100%, rgba(6,182,212,.08), transparent 70%), linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012)) !important; box-shadow: none !important; }
+.welcome-hero h1 { font-family: var(--serif) !important; font-weight: 400 !important; font-size: clamp(2.1rem, 4.2vw, 3rem) !important; letter-spacing: -.025em !important; line-height: 1.05 !important; color: #fff !important; margin-bottom: 10px !important; }
+.welcome-hero h1 #welcome-name { background: none !important; -webkit-text-fill-color: #fff !important; color: #fff !important; }
+.welcome-hero p { color: var(--muted2) !important; font-size: 1rem !important; }
+.sub-badge, .college-tag { border-radius: 999px !important; }
+#resume-upsell-banner { background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012)) !important; border: 1px solid var(--hair2) !important; border-radius: 20px !important; padding: 20px 24px !important; margin-bottom: 16px !important; }
+#resume-upsell-banner > div > div:first-child { font-family: 'DM Sans',sans-serif !important; font-weight: 600 !important; font-size: 1.05rem !important; letter-spacing: -.01em; }
+#resume-upsell-banner > div > div:last-child { font-size: .86rem !important; color: var(--muted2) !important; }
+#resume-upsell-banner button { font-family: 'DM Sans',sans-serif !important; font-weight: 600 !important; border-radius: 12px !important; padding: .7rem 1.4rem !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 8px 22px -8px rgba(124,106,247,.7) !important; }
+.mt-banner { border-radius: 22px !important; border: 1px solid var(--hair2) !important; margin: 0 0 18px !important; background: radial-gradient(520px 220px at 100% 0%, rgba(124,106,247,.2), transparent 70%), linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012)) !important; padding: 28px 32px !important; }
+.mt-banner:hover { transform: translateY(-2px); border-color: rgba(124,106,247,.45) !important; }
+.mt-title { font-family: 'DM Sans',sans-serif !important; font-weight: 600 !important; font-size: clamp(1.4rem, 2.6vw, 1.9rem) !important; letter-spacing: -.025em !important; }
+.mt-sub { color: var(--muted2) !important; }
+.mt-pill { border-radius: 999px !important; font-weight: 500 !important; }
+.mt-btn { font-family: 'DM Sans',sans-serif !important; font-weight: 600 !important; border-radius: 12px !important; }
+.stats-row { gap: 14px !important; margin-bottom: 10px !important; }
+.stat-card { border: 1px solid var(--hair) !important; border-radius: 20px !important; padding: 22px 24px !important; background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015)) !important; box-shadow: none !important; }
+.sc-label { font-size: .84rem !important; text-transform: none !important; letter-spacing: 0 !important; color: var(--muted2) !important; font-weight: 500 !important; }
+.sc-value { font-family: 'DM Sans',sans-serif !important; font-weight: 600 !important; font-size: 2.1rem !important; letter-spacing: -.035em !important; font-variant-numeric: tabular-nums; margin: 6px 0 4px !important; }
+.sc-sub { color: #77779a !important; font-size: .8rem !important; }
+.section-header { margin: 34px 0 16px !important; }
+.section-title { font-family: var(--serif) !important; font-weight: 400 !important; font-size: 1.9rem !important; letter-spacing: -.015em !important; color: #fff !important; }
+.dash-grid { gap: 16px !important; }
+.dash-tile { border: 1px solid var(--hair) !important; border-radius: 22px !important; padding: 26px !important; background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.012)) !important; box-shadow: none !important; transition: transform .2s, border-color .2s, background .2s !important; }
+.dash-tile:hover { transform: translateY(-4px); border-color: rgba(124,106,247,.4) !important; background: linear-gradient(180deg, rgba(124,106,247,.1), rgba(255,255,255,.015)) !important; }
+.dash-tile-icon { width: 48px; height: 48px; border-radius: 14px; display: grid !important; place-items: center; font-size: 1.35rem !important; background: rgba(124,106,247,.1) !important; border: 1px solid rgba(124,106,247,.24); margin-bottom: 16px !important; }
+.dash-tile h3 { font-family: 'DM Sans',sans-serif !important; font-weight: 600 !important; font-size: 1.1rem !important; letter-spacing: -.015em !important; color: #fff !important; margin-bottom: 6px !important; }
+.dash-tile p { color: var(--muted2) !important; font-size: .9rem !important; line-height: 1.6 !important; }
+.tile-arrow { border-radius: 50% !important; border: 1px solid var(--hair2) !important; background: rgba(255,255,255,.04) !important; }
+.paywall-card { border-radius: 24px !important; border: 1px solid var(--hair2) !important; background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.012)) !important; }
+@media (max-width: 760px) {
+  .page-body { padding: 18px 16px 100px !important; }
+  .welcome-hero { padding: 24px 22px !important; border-radius: 20px !important; }
+  .welcome-hero h1 { font-size: 2rem !important; }
+  .stats-row { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .stat-card { padding: 16px !important; border-radius: 16px !important; }
+  .sc-value { font-size: 1.6rem !important; }
+  .dash-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .dash-tile { padding: 20px !important; border-radius: 18px !important; }
+  .mt-banner { padding: 20px !important; }
+  #resume-upsell-banner { flex-direction: column; align-items: flex-start !important; gap: 14px; }
+  .section-title { font-size: 1.6rem !important; }
+}
+</style>
 <style id="diwali-css">
 /* ═════ DIWALI THEME (band karna: JS mein DIWALI_END nikal jaye to apne aap band; ya ?diwali=off) ═════ */
 body.diwali { --dw-gold:#ffd23f; --dw-orange:#ff9f1c; }
