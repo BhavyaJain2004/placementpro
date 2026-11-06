@@ -124,6 +124,11 @@ mongoose.connect(process.env.MONGO_URI)
       .then(r => console.log(`🔑 isGoogleReq added to ${r.modifiedCount} users`))
       .catch(err => console.error('❌ isGoogleReq migration failed:', err.message));
 
+    // VIT launch: college + ₹299 package + companies ek baar add (SEED_VIT=true hone par, idempotent)
+    if (process.env.SEED_VIT === 'true') {
+      require('./services/vitSeed').seedVit().catch(err => console.error('❌ VIT seed failed:', err.message));
+    }
+
     app.listen(process.env.PORT || 5000, () =>
       console.log(`🚀 Server on port ${process.env.PORT || 5000}`));
 
