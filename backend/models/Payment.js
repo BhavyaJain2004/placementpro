@@ -32,6 +32,10 @@ plan:          { type: String, enum: ['99', '199', '299', '499', '1000', 'resume
   status:        { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
   createdAt:     { type: Date, default: Date.now },
   reviewedAt:    { type: Date },
+  college:       { type: String, lowercase: true, trim: true },   // kis college ka payment (report mein dikhta hai)
+  method:        { type: String, enum: ['manual', 'razorpay'], default: 'manual' },
+  razorpayPaymentId: { type: String, unique: true, sparse: true }, // ek Razorpay payment sirf ek baar count ho
+  razorpayOrderId:   { type: String },
   reportedAt:    { type: Date }, // daily 8 PM report mein ye payment ginaa ja chuka hai (dobara count na ho)
   // ── Google Form se purana data import karne ke liye ──
   isLegacyImport: { type: Boolean, default: false }, // Google Form se import kiya gaya record hai
