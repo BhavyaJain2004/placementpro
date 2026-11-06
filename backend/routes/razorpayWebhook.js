@@ -27,6 +27,20 @@ router.post('/razorpay', async (req, res) => {
 
     const payload = JSON.parse(rawBody.toString());
     const event = payload.event;
+
+    // One-time order payment (VIT jaisa) — user ne payment ke baad tab band kar diya ho tab bhi access mil jaye
+    if (event === 'payment.captured' || event === 'order.paid') {
+      const pay = payload.payload?.payment?.entity;
+      if (pay && pay.order_id) {
+        const onl = require('../services/onlinePayment');
+        const order = await onl.razorpay().orders.fetch(pay.order_id);
+        if (order.notes && order.notes.userId && order.notes.plan) {
+          await onl.fulfill({ userId: order.notes.userId, plan: order.notes.plan, college: order.notes.college, paymentId: pay.id, orderId: pay.order_id, amountPaise: pay.amount });
+        }
+      }
+      return res.json({ received: true });
+    }
+
     const subEntity = payload.payload?.subscription?.entity;
     if (!subEntity) return res.json({ received: true }); // humare liye relevant nahi
 
