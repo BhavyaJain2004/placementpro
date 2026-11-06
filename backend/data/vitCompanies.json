@@ -1,0 +1,906 @@
+[
+  {
+    "name": "Ernst and Young",
+    "domain": "Consulting",
+    "year": 2023,
+    "type": "Service",
+    "package": "Varies by role",
+    "testType": "Aptitude",
+    "testDetails": "Online assessment with aptitude and technical questions.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude and technical questions."
+      },
+      {
+        "round": "Interviews",
+        "description": "Technical and HR discussion."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": []
+  },
+  {
+    "name": "KPMG",
+    "domain": "Consulting",
+    "year": 2025,
+    "type": "Service",
+    "package": "Varies by role",
+    "testType": "Aptitude",
+    "testDetails": "Online assessment with aptitude and technical questions.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude and technical questions."
+      },
+      {
+        "round": "Interviews",
+        "description": "Technical and HR discussion."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": []
+  },
+  {
+    "name": "Morgan Stanley",
+    "domain": "Consulting",
+    "year": 2023,
+    "type": "Service",
+    "package": "Varies by role",
+    "testType": "Coding",
+    "testDetails": "Online coding assessment.",
+    "process": [
+      {
+        "round": "Online coding assessment",
+        "description": "DSA problems."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "DSA and CS fundamentals."
+      },
+      {
+        "round": "HR / managerial round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Trees",
+      "Graphs",
+      "Dynamic Programming"
+    ]
+  },
+  {
+    "name": "PwC",
+    "domain": "Consulting",
+    "year": 2023,
+    "type": "Service",
+    "package": "Varies by role",
+    "testType": "Aptitude",
+    "testDetails": "Online assessment with aptitude and technical questions.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude and technical questions."
+      },
+      {
+        "round": "Interviews",
+        "description": "Technical and HR discussion."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": []
+  },
+  {
+    "name": "Accenture",
+    "domain": "Consulting",
+    "year": 2023,
+    "type": "Service",
+    "package": "Varies by role",
+    "testType": "Both",
+    "testDetails": "Cognitive and technical assessment plus a coding section.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Cognitive ability, technical MCQs and coding."
+      },
+      {
+        "round": "Communication assessment",
+        "description": "Spoken/written English evaluation."
+      },
+      {
+        "round": "Technical + HR interview",
+        "description": "Projects, CS basics, behavioural questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "Be ready for the communication round.",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Sorting",
+      "Hashing"
+    ]
+  },
+  {
+    "name": "Deloitte",
+    "domain": "Consulting",
+    "year": 2025,
+    "type": "Service",
+    "package": "Varies by role",
+    "testType": "Both",
+    "testDetails": "Online assessment with aptitude, verbal and technical/logical sections.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude, verbal and technical/logical sections."
+      },
+      {
+        "round": "Technical + HR interview",
+        "description": "Projects, role fit and behavioural questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Sorting"
+    ]
+  },
+  {
+    "name": "IBM",
+    "domain": "Consulting",
+    "year": 2025,
+    "type": "Service",
+    "package": "Varies by role",
+    "testType": "Both",
+    "testDetails": "Online assessment with cognitive and coding sections.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Cognitive/aptitude and coding."
+      },
+      {
+        "round": "Technical + HR interview",
+        "description": "Projects, CS fundamentals and behavioural questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Sorting",
+      "Hashing"
+    ]
+  },
+  {
+    "name": "Genpact",
+    "domain": "Data Analytics",
+    "year": 2023,
+    "type": "Service",
+    "package": "Varies by role",
+    "testType": "Aptitude",
+    "testDetails": "Online assessment with aptitude, verbal and analytical sections.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude, verbal and analytical questions."
+      },
+      {
+        "round": "Interview",
+        "description": "Communication and role fit."
+      },
+      {
+        "round": "HR round",
+        "description": "Behavioural questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": []
+  },
+  {
+    "name": "SAP",
+    "domain": "Data Analytics",
+    "year": 2023,
+    "type": "Product",
+    "package": "Varies by role",
+    "testType": "Both",
+    "testDetails": "Online assessment with aptitude and coding.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude and coding."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "DSA, DBMS, OOP, projects."
+      },
+      {
+        "round": "HR round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Trees",
+      "Hashing"
+    ]
+  },
+  {
+    "name": "Oracle",
+    "domain": "Data Analytics",
+    "year": 2025,
+    "type": "Product",
+    "package": "Super Dream recruiter at VIT (10 LPA+ category). Varies by role",
+    "testType": "Both",
+    "testDetails": "Online test with aptitude/technical questions and coding.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude, technical MCQs and coding."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "CS fundamentals, DBMS/SQL, coding."
+      },
+      {
+        "round": "HR interview",
+        "description": "Behavioural questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "SQL and DBMS concepts matter a lot.",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Trees",
+      "Sorting",
+      "Hashing"
+    ]
+  },
+  {
+    "name": "Samsung",
+    "domain": "Core Engineering",
+    "year": 2025,
+    "type": "Product",
+    "package": "Varies by role",
+    "testType": "Both",
+    "testDetails": "Online test with coding/aptitude.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Coding and aptitude."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "Programming, projects and core subjects."
+      },
+      {
+        "round": "HR round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Graphs",
+      "Dynamic Programming"
+    ]
+  },
+  {
+    "name": "Nvidia",
+    "domain": "Core Engineering",
+    "year": 2023,
+    "type": "Product",
+    "package": "Varies by role",
+    "testType": "Both",
+    "testDetails": "Technical screening test.",
+    "process": [
+      {
+        "round": "Technical screening",
+        "description": "Online technical/coding test."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "CS fundamentals, C/C++, computer architecture or VLSI depending on role."
+      },
+      {
+        "round": "HR round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Bit Manipulation",
+      "Trees",
+      "Dynamic Programming"
+    ]
+  },
+  {
+    "name": "Microsoft",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Product",
+    "package": "Marquee recruiter at VIT (20 LPA+ category). Varies by role",
+    "testType": "Coding",
+    "testDetails": "Online coding assessment.",
+    "process": [
+      {
+        "round": "Online coding assessment",
+        "description": "DSA problems on an online platform."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "Multiple rounds: DSA, problem solving, basic design."
+      },
+      {
+        "round": "Hiring-manager round",
+        "description": "Projects, behaviour and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "Explain your thought process aloud; focus on trees, graphs and DP.",
+    "dsaTopics": [
+      "Arrays",
+      "Linked List",
+      "Trees",
+      "Graphs",
+      "Dynamic Programming",
+      "Strings"
+    ]
+  },
+  {
+    "name": "Amazon",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Product",
+    "package": "Marquee recruiter at VIT (20 LPA+ category). Varies by role",
+    "testType": "Coding",
+    "testDetails": "Online assessment with coding problems and a work-style/behavioural simulation.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Coding problems (DSA) plus work-style simulation."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "DSA problem solving, complexity analysis, clean code."
+      },
+      {
+        "round": "Bar-raiser / hiring-manager round",
+        "description": "DSA plus Leadership Principles based behavioural questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "Prepare Amazon Leadership Principles stories with the STAR method.",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Trees",
+      "Graphs",
+      "Dynamic Programming",
+      "Heaps",
+      "Hashing"
+    ]
+  },
+  {
+    "name": "PayPal",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Product",
+    "package": "Marquee recruiter at VIT (20 LPA+ category). Varies by role",
+    "testType": "Coding",
+    "testDetails": "Online coding assessment.",
+    "process": [
+      {
+        "round": "Online coding assessment",
+        "description": "DSA problems."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "DSA, problem solving, projects."
+      },
+      {
+        "round": "Hiring-manager / HR round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Trees",
+      "Graphs",
+      "Dynamic Programming",
+      "Hashing"
+    ]
+  },
+  {
+    "name": "Adobe",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Product",
+    "package": "Marquee recruiter at VIT (20 LPA+ category). Varies by role",
+    "testType": "Both",
+    "testDetails": "Online assessment with CS fundamentals/aptitude and coding.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Technical MCQs and coding."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "DSA, projects, CS fundamentals (OS, DBMS, OOP)."
+      },
+      {
+        "round": "HR / managerial round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "Revise OS, DBMS and OOP along with DSA.",
+    "dsaTopics": [
+      "Arrays",
+      "Trees",
+      "Graphs",
+      "Dynamic Programming",
+      "Strings"
+    ]
+  },
+  {
+    "name": "Dell",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Product",
+    "package": "Super Dream recruiter at VIT (10 LPA+ category). Varies by role",
+    "testType": "Both",
+    "testDetails": "Online test with aptitude and coding.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude and coding."
+      },
+      {
+        "round": "Technical interview",
+        "description": "Projects, CS fundamentals, coding."
+      },
+      {
+        "round": "HR interview",
+        "description": "Behavioural questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Sorting",
+      "Hashing"
+    ]
+  },
+  {
+    "name": "Cisco",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Product",
+    "package": "Super Dream recruiter at VIT (10 LPA+ category). Varies by role",
+    "testType": "Both",
+    "testDetails": "Online assessment with aptitude/technical questions and coding.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude, technical MCQs and coding."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "Networking, OS, CS fundamentals and DSA."
+      },
+      {
+        "round": "HR / managerial round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "Brush up networking basics (TCP/IP, routing) and OS.",
+    "dsaTopics": [
+      "Arrays",
+      "Linked List",
+      "Trees",
+      "Strings",
+      "Hashing"
+    ]
+  },
+  {
+    "name": "Intel",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Product",
+    "package": "Varies by role",
+    "testType": "Both",
+    "testDetails": "Online assessment with technical and aptitude questions.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Technical and aptitude questions."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "Core CS/ECE fundamentals, C/C++, digital electronics (role dependent)."
+      },
+      {
+        "round": "HR interview",
+        "description": "Behavioural questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Bit Manipulation",
+      "Linked List"
+    ]
+  },
+  {
+    "name": "HP",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Product",
+    "package": "Varies by role",
+    "testType": "Both",
+    "testDetails": "Online test.",
+    "process": [
+      {
+        "round": "Online test",
+        "description": "Aptitude and technical questions."
+      },
+      {
+        "round": "Technical interview",
+        "description": "Projects and CS fundamentals."
+      },
+      {
+        "round": "HR interview",
+        "description": "Behavioural questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Linked List"
+    ]
+  },
+  {
+    "name": "Google",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Product",
+    "package": "Varies by role",
+    "testType": "Coding",
+    "testDetails": "Online assessment for shortlisted candidates.",
+    "process": [
+      {
+        "round": "Resume shortlisting + online assessment",
+        "description": "Selected profiles take a coding assessment."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "Multiple rounds of DSA and problem solving."
+      },
+      {
+        "round": "Behavioural round",
+        "description": "Team fit and communication."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Trees",
+      "Graphs",
+      "Dynamic Programming",
+      "Strings",
+      "Heaps"
+    ]
+  },
+  {
+    "name": "Qualcomm",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Product",
+    "package": "Varies by role",
+    "testType": "Both",
+    "testDetails": "Online test with aptitude, technical and coding.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude, technical and coding."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "C/C++, DSA, OS, digital electronics (role dependent)."
+      },
+      {
+        "round": "HR round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Bit Manipulation",
+      "Linked List",
+      "Trees"
+    ]
+  },
+  {
+    "name": "TCS",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Service",
+    "package": "Mass recruiter at VIT. Package varies by role",
+    "testType": "Both",
+    "testDetails": "TCS NQT: Foundation section (numerical, verbal, reasoning) and an Advanced section (advanced quant/reasoning plus coding) for Digital/Prime-type roles.",
+    "process": [
+      {
+        "round": "Online test (TCS NQT)",
+        "description": "Foundation section for all; Advanced section with coding for higher-category roles."
+      },
+      {
+        "round": "Technical interview",
+        "description": "Projects, core CS basics, simple coding/logic questions."
+      },
+      {
+        "round": "Managerial / HR interview",
+        "description": "Communication, willingness to relocate, behavioural questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "Practise aptitude speed and basic coding. Be clear on your final-year project.",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Number Theory",
+      "Sorting",
+      "Recursion"
+    ]
+  },
+  {
+    "name": "Infosys",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Service",
+    "package": "Mass recruiter at VIT. Package varies by role",
+    "testType": "Both",
+    "testDetails": "Online test with reasoning, quantitative, verbal and pseudo-code/coding depending on the role.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Reasoning, maths, verbal, plus pseudo-code or coding by role."
+      },
+      {
+        "round": "Technical interview",
+        "description": "Projects, basics of programming, DBMS, OOP."
+      },
+      {
+        "round": "HR interview",
+        "description": "Behavioural and relocation questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "Strengthen aptitude and basic programming.",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Sorting",
+      "Searching",
+      "Recursion"
+    ]
+  },
+  {
+    "name": "Wipro",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Service",
+    "package": "Mass recruiter at VIT. Package varies by role",
+    "testType": "Both",
+    "testDetails": "Online assessment covering aptitude, written communication (essay) and coding.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude, written communication and coding sections."
+      },
+      {
+        "round": "Technical interview",
+        "description": "Programming basics, projects, CS fundamentals."
+      },
+      {
+        "round": "HR interview",
+        "description": "Behavioural fit and location flexibility."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "Practise the written communication section.",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Sorting",
+      "Recursion"
+    ]
+  },
+  {
+    "name": "Cognizant",
+    "domain": "IT / Software",
+    "year": 2025,
+    "type": "Service",
+    "package": "Mass recruiter at VIT. Package varies by role",
+    "testType": "Both",
+    "testDetails": "Online test with aptitude/logical reasoning, communication and coding.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude, logical reasoning, communication and coding."
+      },
+      {
+        "round": "Technical + HR interview",
+        "description": "Projects, programming basics, behavioural questions."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "Focus on aptitude accuracy plus basic coding.",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Sorting",
+      "Hashing"
+    ]
+  },
+  {
+    "name": "Flipkart",
+    "domain": "IT / Software",
+    "year": 2023,
+    "type": "Product",
+    "package": "Varies by role",
+    "testType": "Coding",
+    "testDetails": "Online coding test.",
+    "process": [
+      {
+        "round": "Online coding test",
+        "description": "DSA problems."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "DSA and problem solving; machine-coding style round for some roles."
+      },
+      {
+        "round": "Hiring-manager round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Trees",
+      "Graphs",
+      "Dynamic Programming",
+      "Hashing"
+    ]
+  },
+  {
+    "name": "Bank of America",
+    "domain": "Banking & Finance",
+    "year": 2025,
+    "type": "Service",
+    "package": "Super Dream recruiter at VIT (10 LPA+ category). Varies by role",
+    "testType": "Both",
+    "testDetails": "Online assessment with aptitude and coding.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude and coding."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "DSA, projects, CS fundamentals."
+      },
+      {
+        "round": "HR / behavioural round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Trees",
+      "Dynamic Programming",
+      "Hashing"
+    ]
+  },
+  {
+    "name": "JP Morgan",
+    "domain": "Banking & Finance",
+    "year": 2025,
+    "type": "Service",
+    "package": "Varies by role",
+    "testType": "Both",
+    "testDetails": "Online assessment with aptitude/logic and coding.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Aptitude/logic and coding."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "DSA, projects."
+      },
+      {
+        "round": "HR / behavioural round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "",
+    "dsaTopics": [
+      "Arrays",
+      "Strings",
+      "Trees",
+      "Graphs",
+      "Dynamic Programming"
+    ]
+  },
+  {
+    "name": "DE Shaw",
+    "domain": "Banking & Finance",
+    "year": 2025,
+    "type": "Product",
+    "package": "Varies by role",
+    "testType": "Coding",
+    "testDetails": "Online coding assessment, often with aptitude/maths.",
+    "process": [
+      {
+        "round": "Online assessment",
+        "description": "Coding plus aptitude/maths."
+      },
+      {
+        "round": "Technical interviews",
+        "description": "Multiple rounds of DSA, algorithms and problem solving."
+      },
+      {
+        "round": "HR round",
+        "description": "Behavioural and role fit."
+      }
+    ],
+    "eligibility": "Eligibility, CGPA and arrear criteria are announced for each drive on the VIT placement portal. Companies commonly ask for 6.5+ CGPA (some 7+ or 8+) and no standing arrears.",
+    "tips": "Strong problem solving and maths/probability help.",
+    "dsaTopics": [
+      "Arrays",
+      "Trees",
+      "Graphs",
+      "Dynamic Programming",
+      "Probability",
+      "Greedy"
+    ]
+  }
+]
