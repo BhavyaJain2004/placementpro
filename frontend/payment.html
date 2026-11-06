@@ -145,7 +145,23 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; }
 
   <div class="pay-card">
 
-    <div class="qr-box">
+    <div id="rz-box" style="display:none">
+      <div style="padding:1.4rem;border:1px solid rgba(124,106,247,.3);border-radius:18px;background:linear-gradient(180deg,rgba(124,106,247,.12),rgba(255,255,255,.02));text-align:left">
+        <div style="font-size:.8rem;color:var(--muted,#9a9ab8)">You are paying for</div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:6px 0 4px">
+          <div id="rz-plan" style="font-weight:700;font-size:1.15rem;color:#fff"></div>
+          <div id="rz-price" style="font-weight:800;font-size:1.7rem;color:#fff"></div>
+        </div>
+        <div style="font-size:.82rem;color:var(--muted,#9a9ab8)">One-time payment. Lifetime access. No subscription.</div>
+      </div>
+      <ul style="list-style:none;margin:1.1rem 0;display:grid;gap:8px;font-size:.88rem;color:#d4d4ee;padding:0">
+        <li>✓ Pay with UPI, cards or netbanking</li><li>✓ Access activates instantly after payment</li><li>✓ Secured by Razorpay</li>
+      </ul>
+      <button id="rz-btn" type="button" onclick="startRazorpay()" style="width:100%;border:none;border-radius:12px;padding:.95rem;font-size:1rem;font-weight:700;background:#7c6af7;color:#fff;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 10px 28px -10px rgba(124,106,247,.8)">Pay securely</button>
+      <p id="rz-msg" style="margin-top:.9rem;font-size:.84rem;line-height:1.5;color:#f87171;text-align:center"></p>
+    </div>
+
+    <div class="qr-box manual-only">
       <div class="qr-img-wrap">
         <img src="images/payment-qr.jpg" alt="UPI QR Code" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:0.7rem;text-align:center;padding:0.5rem\'>QR image missing<br>add images/payment-qr.jpg</div>'">
       </div>
@@ -154,12 +170,12 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; }
       <div class="qr-upi">UPI ID: yourid@upi</div>
     </div>
 
-    <label class="field-label">Select Payment For</label>
-    <select class="plan-select" id="plan-select" onchange="updatePlanUI()">
+    <label class="field-label manual-only">Select Payment For</label>
+    <select class="plan-select manual-only" id="plan-select" onchange="updatePlanUI()">
       <option value="">Loading plans...</option>
     </select>
 
-    <form id="payment-form" onsubmit="handlePaymentSubmit(event)">
+    <form id="payment-form" class="manual-only" onsubmit="handlePaymentSubmit(event)">
 
       <div class="field-group">
         <label class="field-label">Name</label>
@@ -203,6 +219,7 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; }
   </div>
 </div>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script>
@@ -241,7 +258,7 @@ let pricingPackages = [];
     const only = pricingPackages[0];
     select.style.display = 'none';
     const staticCard = document.createElement('div');
-    staticCard.className = 'plan-select';
+    staticCard.className = 'plan-select manual-only';
     staticCard.style.cssText = 'display:flex;align-items:center;justify-content:space-between;cursor:default;';
     staticCard.innerHTML = `<span>${only.name}</span><span style="color:var(--accent2,#a78bfa);font-weight:700">₹${only.price}</span>`;
     select.insertAdjacentElement('afterend', staticCard);
@@ -255,7 +272,57 @@ let pricingPackages = [];
   if (!validKeys.includes(initialPlan)) initialPlan = validKeys[0];
   select.value = initialPlan;
   updatePlanUI();
+  initOnlineMode();
 })();
+
+// ── RAZORPAY (one-time) — sirf unn colleges ke liye jinke liye backend 'razorpay' mode bole (jaise VIT) ──
+async function initOnlineMode() {
+  try { const m = await API.call('/payment/mode'); if (!m || m.mode !== 'razorpay') return; } catch (e) { return; }
+  document.querySelectorAll('.manual-only').forEach(el => { el.style.display = 'none'; });
+  const sel = document.getElementById('plan-select');
+  const pkg = pricingPackages.find(p => p.key === sel.value) || pricingPackages[0];
+  document.getElementById('rz-plan').textContent = pkg.name + (pkg.tagline ? ' · ' + pkg.tagline : '');
+  document.getElementById('rz-price').textContent = '₹' + pkg.price;
+  document.getElementById('rz-btn').textContent = 'Pay ₹' + pkg.price + ' securely';
+  document.getElementById('rz-box').style.display = 'block';
+  document.getElementById('rz-box').dataset.plan = pkg.key;
+  document.querySelector('.pay-hdr p').textContent = 'Pay securely online. Your access activates instantly';
+}
+
+async function startRazorpay() {
+  const btn = document.getElementById('rz-btn'), msg = document.getElementById('rz-msg'), plan = document.getElementById('rz-box').dataset.plan;
+  const label = btn.textContent; msg.style.color = '#f87171'; msg.textContent = '';
+  btn.disabled = true; btn.textContent = 'Please wait…';
+  const reset = () => { btn.disabled = false; btn.textContent = label; };
+  try {
+    const o = await API.call('/payment/razorpay/order', { method: 'POST', body: JSON.stringify({ plan }) });
+    if (!o) return reset();
+    let paid = false;
+    const rz = new Razorpay({
+      key: o.keyId, amount: o.amount, currency: 'INR', order_id: o.orderId,
+      name: 'PlacementSphere', description: o.planName + ' · one-time payment',
+      prefill: { name: o.name, email: o.email }, theme: { color: '#7c6af7' },
+      handler: async function (resp) {
+        paid = true; btn.textContent = 'Activating your access…';
+        try {
+          await API.call('/payment/razorpay/verify', { method: 'POST', body: JSON.stringify(resp) });
+          msg.style.color = '#34d399'; msg.textContent = 'Payment successful! Taking you to your dashboard…';
+          setTimeout(() => { window.location.replace('dashboard.html'); }, 1200);
+        } catch (e) {
+          // Paisa kat chuka hai — webhook bhi access de deta hai, isliye dobara pay mat karwao
+          msg.style.color = '#fbbf24';
+          msg.textContent = 'Payment received. Your access is being activated, please do not pay again. Refresh in a minute, or contact support if it does not unlock.';
+        }
+      },
+      modal: { ondismiss: function () { if (!paid) reset(); } }
+    });
+    rz.on('payment.failed', function (r) { msg.textContent = 'Payment failed: ' + ((r.error && r.error.description) || 'please try again'); reset(); });
+    rz.open();
+  } catch (e) {
+    msg.textContent = e.message || 'Could not start payment. Please try again.';
+    reset();
+  }
+}
 
 function updatePlanUI() {
   // Amount field ko bhi plan ke actual price se prefill kar do (editable rahega)
