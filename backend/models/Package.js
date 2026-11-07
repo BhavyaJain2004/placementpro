@@ -26,4 +26,7 @@ const packageSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+// Key har college ke andar unique hai (KIIT ka '299' aur VIT ka '299' alag-alag chalte hain)
+packageSchema.index({ college: 1, key: 1 }, { unique: true });
+
 module.exports = mongoose.model('Package', packageSchema);
