@@ -29,6 +29,15 @@ router.post('/audience', ...guard, async (req, res) => {
   } catch (e) { res.status(400).json({ message: e.message }); }
 });
 
+// Manual BCC (apni Gmail se bhejne ke liye): audience ke emails, dedupe karke — Resend quota use nahi hota
+router.post('/bcc-list', ...guard, async (req, res) => {
+  try {
+    const users = await svc.audience(req.body.segment, req.body.college);
+    const emails = [...new Set(users.map(u => String(u.email || '').trim().toLowerCase()).filter(e => /^\S+@\S+\.\S+$/.test(e)))];
+    res.json({ count: emails.length, emails });
+  } catch (e) { res.status(400).json({ message: e.message }); }
+});
+
 // Preview/test mein asli user ka naam: admin ka apna naam (ya jis user ko test bhej rahe ho uska)
 const adminName = async (req) => { const u = await User.findById(req.user.id).select('name').lean(); return (u && u.name) || 'there'; };
 
