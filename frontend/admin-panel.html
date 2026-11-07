@@ -699,6 +699,19 @@ body{background:#06060f}
             <div style="margin-top:1.4rem"><button id="mail-send-btn" class="mc-btn mc-btn-primary" onclick="mailSend()">Send campaign</button></div>
             <div class="mc-hint" id="mail-quota" style="margin-top:0.9rem"></div>
           </div>
+
+          <div class="mc-card">
+            <div class="mc-step"><i>G</i><span>Ya apni Gmail se bhejo (BCC)</span></div>
+            <div class="mc-hint" style="margin-top:0">Isme Resend ka quota use nahi hota. Upar template aur audience chuno, phir: <b>1)</b> Copy subject <b>2)</b> Copy mail design, aur Gmail compose mein paste karo <b>3)</b> BCC batch copy karke BCC mein paste karo.</div>
+            <label class="mc-lab">Ek mail mein kitne emails (BCC)</label>
+            <input id="mail-bccsize" type="number" min="1" value="100" class="mc-in">
+            <div class="mc-row" style="margin-top:0.9rem">
+              <button class="mc-btn mc-btn-ghost" onclick="mailCopySubject()">Copy subject</button>
+              <button class="mc-btn mc-btn-ghost" onclick="mailCopyDesign()">Copy mail design</button>
+            </div>
+            <div style="margin-top:0.9rem"><button class="mc-btn mc-btn-primary" onclick="mailBccLoad()">Get BCC lists</button></div>
+            <div id="mail-bcc-out" style="margin-top:0.9rem"></div>
+          </div>
         </div>
 
         <div class="mc-sticky">
@@ -1808,7 +1821,7 @@ async function loadMailTab() {
       mailEl('mail-college').innerHTML = '<option value="all">Sab colleges</option>' + _mailMeta.colleges.map(c => `<option value="${gvEsc(c.slug)}">${gvEsc(c.name)}</option>`).join('');
       mailEl('mail-setsize').value = _mailMeta.quota.limit;
       mailEl('mail-testto').value = localStorage.getItem('mail_test_to') || '';
-      mailEl('mail-template').value = 'diwali';
+      mailEl('mail-template').value = 'choti_diwali';
       mailLoadPreset();
     }
     mailEl('mail-warn').innerHTML = _mailMeta.senderReady ? '' : '<div class="mc-warn">⚠️ Railway mein <b>RESEND_FROM</b> abhi onboarding@resend.dev hai — isse sirf test mail jayegi. Campaign ke liye Resend mein apna domain verify karke RESEND_FROM = PlacementSphere &lt;hello@placementsphere.in&gt; set karo.</div>';
@@ -1861,6 +1874,35 @@ async function mailSend() {
   f.setSize = s;
   try { const r = await API.call('/mail/send', { method: 'POST', body: JSON.stringify(f) }); showToast(r.message); loadMailCampaigns(); }
   catch (e) { alert('Error: ' + e.message); }
+}
+function mailCopySubject() {
+  navigator.clipboard.writeText(mailEl('mail-subject').value).then(() => showToast('Subject copy ho gaya'), () => alert('Copy nahi hua, manually copy kar lo'));
+}
+// Preview iframe ka rendered design select karke copy — Gmail compose mein paste karne par banner + design aa jata hai
+function mailCopyDesign() {
+  const fr = mailEl('mail-preview'), d = fr.contentDocument;
+  if (!d || !d.body) { alert('Pehle preview load hone do'); return; }
+  const sel = fr.contentWindow.getSelection(), range = d.createRange();
+  range.selectNodeContents(d.body); sel.removeAllRanges(); sel.addRange(range);
+  const ok = d.execCommand('copy'); sel.removeAllRanges();
+  if (ok) showToast('Mail design copy ho gaya — ab Gmail compose mein paste karo');
+  else alert('Copy nahi hua. Preview pe click karke Ctrl+A, Ctrl+C karo.');
+}
+async function mailBccLoad() {
+  const f = mailFields(), size = Math.max(1, parseInt(mailEl('mail-bccsize').value, 10) || 100);
+  mailEl('mail-bcc-out').innerHTML = 'Loading…';
+  try {
+    const r = await API.call('/mail/bcc-list', { method: 'POST', body: JSON.stringify(f) });
+    window._mailBcc = [];
+    for (let i = 0; i < r.emails.length; i += size) window._mailBcc.push(r.emails.slice(i, i + size));
+    mailEl('mail-bcc-out').innerHTML = `<div class="mc-aud" style="margin-top:0"><b>${r.count}</b> emails · ${window._mailBcc.length} batch</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.8rem">${window._mailBcc.map((b, i) => `<button class="mc-btn mc-btn-ghost" onclick="mailCopyBcc(${i})">Copy batch ${i + 1} (${b.length})</button>`).join('')}</div>
+      <div class="mc-hint">Gmail mein BCC field mein paste karo. Gmail ki daily recipient limit ka dhyan rakhna.</div>`;
+  } catch (e) { mailEl('mail-bcc-out').innerHTML = '<div style="color:#f87171">' + gvEsc(e.message) + '</div>'; }
+}
+function mailCopyBcc(i) {
+  const b = window._mailBcc[i];
+  navigator.clipboard.writeText(b.join(', ')).then(() => showToast(`Batch ${i + 1} copy ho gaya (${b.length} emails)`), () => alert('Copy nahi hua'));
 }
 async function mailNextSet(id) {
   if (!confirm('Agla set abhi bhejna hai?')) return;
