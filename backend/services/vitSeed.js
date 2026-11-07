@@ -6,7 +6,22 @@ const Package = require('../models/Package');
 const Company = require('../models/Company');
 const companies = require('../data/vitCompanies.json');
 
+// Purane DB mein 'key' pe akela unique index (key_1) tha — isliye KIIT ke '299' ke baad VIT ka '299' fail hota tha.
+// Use hatao aur (college + key) ka unique index lagao. Kuch bhi delete nahi hota, sirf rule halka hota hai.
+async function fixPackageIndex() {
+  try {
+    for (const i of await Package.collection.indexes()) {
+      if (i.unique && Object.keys(i.key).length === 1 && i.key.key === 1) {
+        await Package.collection.dropIndex(i.name);
+        console.log(`🔧 Package index '${i.name}' hata diya (ab key college ke andar unique hai)`);
+      }
+    }
+    await Package.collection.createIndex({ college: 1, key: 1 }, { unique: true });
+  } catch (e) { console.log('Package index fix:', e.message); }
+}
+
 async function seedVit() {
+  await fixPackageIndex();
   await College.updateOne({ slug: 'vit' }, { $setOnInsert: {
     slug: 'vit', name: 'VIT (Vellore Institute of Technology)', location: 'Vellore, Tamil Nadu', status: 'active', order: 10
   } }, { upsert: true });
