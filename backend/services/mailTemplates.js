@@ -13,6 +13,12 @@ const PRESETS = {
     body: "Wishing you and your family a Diwali full of light, sweets and good news.\n\nMay this festive season bring you the offer letter you have been working towards. We're cheering for you all the way.\n\nTake a break, enjoy the celebrations, and come back stronger. Your prep will be right here.\n\nWith love,\nTeam PlacementSphere",
     ctaText: 'Continue your prep', ctaUrl: 'https://placementsphere.in'
   },
+  choti_diwali: {
+    label: 'Choti Diwali wishes (Gmail BCC ke liye, bina naam)', subject: 'Happy Choti Diwali from PlacementSphere 🪔',
+    heading: 'Happy Choti Diwali! 🪔',
+    body: "Tonight, as the first diyas get lit, we just wanted to stop by and say thank you for being a part of PlacementSphere.\n\nA small wish from our side this Choti Diwali:\n• May every diya you light bring you one step closer to that offer letter\n• May your prep stay as bright as the lights around you\n• May the coming days bring interview calls, good luck and great news\n\nTake a break tonight. Enjoy the sweets, the lights and the people you love. Your prep will be right here when you are back, and so will we.\n\nWishing you and your family a safe, bright and happy Diwali.\n\nWith love,\nTeam PlacementSphere",
+    ctaText: 'Continue your prep', ctaUrl: 'https://placementsphere.in'
+  },
   upgrade_base: {
     label: 'Base users: upgrade reminder (price hike)', subject: 'Upgrade your plan before prices go up',
     heading: 'Ready for the next level, {{name}}?',
