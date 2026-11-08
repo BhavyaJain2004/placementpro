@@ -19,6 +19,12 @@ const PRESETS = {
     body: "Tonight, as the first diyas get lit, we just wanted to stop by and say thank you for being a part of PlacementSphere.\n\nA small wish from our side this Choti Diwali:\n• May every diya you light bring you one step closer to that offer letter\n• May your prep stay as bright as the lights around you\n• May the coming days bring interview calls, good luck and great news\n\nTake a break tonight. Enjoy the sweets, the lights and the people you love. Your prep will be right here when you are back, and so will we.\n\nWishing you and your family a safe, bright and happy Diwali.\n\nWith love,\nTeam PlacementSphere",
     ctaText: 'Continue your prep', ctaUrl: 'https://placementsphere.in'
   },
+  diwali_poster: {
+    label: 'Diwali wishes + poster (Gmail BCC ke liye, bina naam)', subject: 'Happy Diwali from Team PlacementSphere 🪔',
+    heading: 'Happy Diwali! 🪔',
+    body: "[img:diwali-poster.png]\n\nWishing you and your family a Diwali full of light, sweets and good news.\n\nThank you for being a part of the PlacementSphere family. Our wishes for you this festive season:\n• May your hard work turn into the offer letter you have been dreaming of\n• May every mock test, every DSA problem and every late night pay off\n• May your life glow brighter than every diya you light\n\nTake a break, enjoy the celebrations with the people you love, and come back fresh. We are cheering for you all the way.\n\nWith love,\nTeam PlacementSphere",
+    ctaText: 'Continue your prep', ctaUrl: 'https://placementsphere.in'
+  },
   upgrade_base: {
     label: 'Base users: upgrade reminder (price hike)', subject: 'Upgrade your plan before prices go up',
     heading: 'Ready for the next level, {{name}}?',
@@ -50,6 +56,8 @@ const BUL = /^\s*[•\-]\s+/;
 function bodyToHtml(body) {
   const out = [];
   String(body || '').split(/\n{2,}/).forEach(block => {
+    const im = block.trim().match(/^\[img:([\w.\-]+)\]$/);
+    if (im) { out.push(`<img src="${BASE()}/email/${im[1]}" width="524" alt="" style="display:block;width:100%;max-width:524px;height:auto;border:0;border-radius:16px;margin:0 0 26px">`); return; }
     let text = [], items = [];
     const flushText = () => { if (text.length) { out.push(`<p style="margin:0 0 20px;color:#44445e;font-size:16px;line-height:1.75">${text.map(esc).join('<br>')}</p>`); text = []; } };
     const flushList = () => {
@@ -74,7 +82,8 @@ function renderEmail({ heading, body, ctaText, ctaUrl, name }) {
   const h = fill(heading, n), b = fill(body, n);
   const safeUrl = /^https?:\/\//i.test(ctaUrl || '') ? ctaUrl : BASE();
   const banner = `${BASE()}/email/banner.png`;
-  const pre = esc(b.replace(/\s+/g, ' ').slice(0, 110));
+  const bt = b.replace(/\[img:[\w.\-]+\]\s*/g, '');
+  const pre = esc(bt.replace(/\s+/g, ' ').slice(0, 110));
   const cta = ctaText ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:10px 0 8px"><tr><td style="border-radius:12px;background:#7c6af7;box-shadow:0 8px 20px rgba(124,106,247,0.35)"><a href="${esc(safeUrl)}" style="display:inline-block;padding:16px 34px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:12px;font-family:Arial,Helvetica,sans-serif">${esc(fill(ctaText, n))} &rarr;</a></td></tr></table>` : '';
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(h)}</title></head>
 <body style="margin:0;padding:0;background:#eeeef6;font-family:Arial,Helvetica,sans-serif">
@@ -96,7 +105,7 @@ function renderEmail({ heading, body, ctaText, ctaUrl, name }) {
     </td></tr>
   </table>
 </td></tr></table></body></html>`;
-  const text = `${h}\n\n${b}\n\n${ctaText ? fill(ctaText, n) + ': ' + safeUrl + '\n\n' : ''}Team PlacementSphere\n${BASE()}`;
+  const text = `${h}\n\n${bt}\n\n${ctaText ? fill(ctaText, n) + ': ' + safeUrl + '\n\n' : ''}Team PlacementSphere\n${BASE()}`;
   return { html, text };
 }
 
