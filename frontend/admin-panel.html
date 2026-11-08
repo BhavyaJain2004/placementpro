@@ -712,6 +712,13 @@ body{background:#06060f}
             <div style="margin-top:0.9rem"><button class="mc-btn mc-btn-primary" onclick="mailBccLoad()">Get BCC lists</button></div>
             <div id="mail-bcc-out" style="margin-top:0.9rem"></div>
           </div>
+
+          <div class="mc-card">
+            <div class="mc-step"><i>1</i><span>Ek user ko mail bhejo</span></div>
+            <label class="mc-lab">Us user ka email</label>
+            <div class="mc-test"><input id="mail-oneto" type="email" placeholder="user@gmail.com" class="mc-in"><button class="mc-btn mc-btn-primary" onclick="mailSendOne()">Send mail</button></div>
+            <div class="mc-hint">Test jaisi hi hai, par asli mail jaati hai (subject mein [TEST] nahi lagta). Registered user hai to uska naam use hoga.</div>
+          </div>
         </div>
 
         <div class="mc-sticky">
@@ -1863,6 +1870,13 @@ async function mailTest() {
   if (!to) { alert('Pehle test ke liye apna email daalo'); mailEl('mail-testto').focus(); return; }
   localStorage.setItem('mail_test_to', to);
   try { const r = await API.call('/mail/test', { method: 'POST', body: JSON.stringify({ ...mailFields(), to }) }); showToast(r.message); loadMailCampaigns(); }
+  catch (e) { alert('Error: ' + e.message); }
+}
+async function mailSendOne() {
+  const to = mailEl('mail-oneto').value.trim();
+  if (!to) { alert('Us user ka email daalo'); mailEl('mail-oneto').focus(); return; }
+  if (!confirm('Ye asli mail ' + to + ' ko jayegi. Bhejni hai?')) return;
+  try { const r = await API.call('/mail/send-one', { method: 'POST', body: JSON.stringify({ ...mailFields(), to }) }); showToast(r.message); mailEl('mail-oneto').value = ''; }
   catch (e) { alert('Error: ' + e.message); }
 }
 async function mailSend() {
