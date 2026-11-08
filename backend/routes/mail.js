@@ -57,6 +57,20 @@ router.post('/test', ...guard, async (req, res) => {
   } catch (e) { res.status(400).json({ message: e.response?.data?.message || e.message }); }
 });
 
+// Ek user ko real mail (test jaisi hi, par [TEST] nahi lagta)
+router.post('/send-one', ...guard, async (req, res) => {
+  try {
+    const to = String(req.body.to || '').trim();
+    if (!/^\S+@\S+\.\S+$/.test(to)) return res.status(400).json({ message: 'Valid email daalo' });
+    const f = pickFields(req.body);
+    if (!f.subject || !f.heading || !f.body) return res.status(400).json({ message: 'Subject, heading aur body zaroori hain' });
+    const target = await User.findOne({ email: to.toLowerCase() }).select('name').lean();
+    const m = svc.render(f, (target && target.name) || '');
+    await svc.sendOne({ to, subject: m.subject, html: m.html, text: m.text });
+    res.json({ message: 'Mail bhej di: ' + to });
+  } catch (e) { res.status(400).json({ message: e.response?.data?.message || e.message }); }
+});
+
 router.post('/send', ...guard, async (req, res) => {
   try {
     const f = pickFields(req.body);
