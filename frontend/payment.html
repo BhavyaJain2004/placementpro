@@ -14,6 +14,10 @@
 <title>Complete Payment — PlacementSphere</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
+body.pay-loading .manual-only { display: none !important; }
+#pay-load { display: none; text-align: center; padding: 2.5rem 1rem; color: #9a9ab8; font-size: .9rem; }
+body.pay-loading #pay-load { display: block; }
+
 body { font-family:'DM Sans',sans-serif; min-height:100vh; }
 
 .pay-wrap {
@@ -125,7 +129,7 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; }
 .err-msg { color:#f87171; font-size:0.78rem; margin-top:0.7rem; text-align:center; min-height:1rem; }
 </style>
 </head>
-<body>
+<body class="pay-loading">
 <div id="toast"></div>
 
 <nav class="navbar">
@@ -145,6 +149,7 @@ body { font-family:'DM Sans',sans-serif; min-height:100vh; }
 
   <div class="pay-card">
 
+    <div id="pay-load">Loading your payment options…</div>
     <div id="rz-box" style="display:none">
       <div style="padding:1.4rem;border:1px solid rgba(124,106,247,.3);border-radius:18px;background:linear-gradient(180deg,rgba(124,106,247,.12),rgba(255,255,255,.02));text-align:left">
         <div style="font-size:.8rem;color:var(--muted,#9a9ab8)">You are paying for</div>
@@ -276,8 +281,11 @@ let pricingPackages = [];
 })();
 
 // ── RAZORPAY (one-time) — sirf unn colleges ke liye jinke liye backend 'razorpay' mode bole (jaise VIT) ──
+setTimeout(() => document.body.classList.remove('pay-loading'), 7000); // safety: kuch atke to bhi page khule
 async function initOnlineMode() {
-  try { const m = await API.call('/payment/mode'); if (!m || m.mode !== 'razorpay') return; } catch (e) { return; }
+  let online = false;
+  try { const m = await API.call('/payment/mode'); online = !!m && m.mode === 'razorpay'; } catch (e) {}
+  if (!online) { document.body.classList.remove('pay-loading'); return; }
   document.querySelectorAll('.manual-only').forEach(el => { el.style.display = 'none'; });
   const sel = document.getElementById('plan-select');
   const pkg = pricingPackages.find(p => p.key === sel.value) || pricingPackages[0];
@@ -287,6 +295,7 @@ async function initOnlineMode() {
   document.getElementById('rz-box').style.display = 'block';
   document.getElementById('rz-box').dataset.plan = pkg.key;
   document.querySelector('.pay-hdr p').textContent = 'Pay securely online. Your access activates instantly';
+  document.body.classList.remove('pay-loading');
 }
 
 async function startRazorpay() {
