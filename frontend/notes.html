@@ -27,7 +27,7 @@
   <div class="section-header" style="margin-bottom:0">
     <div>
       <h1 class="section-title">Notes & Resources</h1>
-      <p style="color:var(--muted);font-size:0.875rem;margin-top:0.25rem">Java · Python · DSA theory · Aptitude</p>
+      <p style="color:var(--muted);font-size:0.875rem;margin-top:0.25rem">Java · Python · DSA theory · Aptitude · ECE</p>
       
     </div>
     <!-- 
@@ -72,6 +72,7 @@
     <button class="note-tab" onclick="setCategory(this,'Python')" data-cat="Python">🐍 Python</button>
     <button class="note-tab" onclick="setCategory(this,'DSA')" data-cat="DSA">🌳 DSA Theory</button>
     <button class="note-tab" onclick="setCategory(this,'Aptitude')" data-cat="Aptitude">🧮 Aptitude</button>
+    <button class="note-tab" onclick="setCategory(this,'ECE')" data-cat="ECE">📡 ECE</button>
   </div>
 
   <div class="notes-grid" id="notes-grid" style="margin-top:1.75rem">
@@ -103,9 +104,9 @@
 
   let allNotes = [], activeCategory = 'Java';
 
-  const CATEGORY_ICONS = { Java:'☕', Python:'🐍', DSA:'🌳', Aptitude:'🧮' };
-  const ICON_BG = { Java:'rgba(251,191,36,0.1)', Python:'rgba(52,211,153,0.1)', DSA:'rgba(124,106,247,0.1)', Aptitude:'rgba(45,212,191,0.1)' };
-  const ICON_COLOR = { Java:'#fbbf24', Python:'#34d399', DSA:'#7c6af7', Aptitude:'#2dd4bf' };
+  const CATEGORY_ICONS = { Java:'☕', Python:'🐍', DSA:'🌳', Aptitude:'🧮', ECE:'📡' };
+  const ICON_BG = { Java:'rgba(251,191,36,0.1)', Python:'rgba(52,211,153,0.1)', DSA:'rgba(124,106,247,0.1)', Aptitude:'rgba(45,212,191,0.1)', ECE:'rgba(244,114,182,0.1)' };
+  const ICON_COLOR = { Java:'#fbbf24', Python:'#34d399', DSA:'#7c6af7', Aptitude:'#2dd4bf', ECE:'#f472b6' };
 
   async function loadNotes() {
     try {
