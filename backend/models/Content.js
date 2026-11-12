@@ -42,7 +42,8 @@ const noteSchema = new mongoose.Schema({
       'Aptitude',
       'Core CS',
       'System Design',
-      'Placement'
+      'Placement',
+      'ECE'
     ],
     required: true
   },
