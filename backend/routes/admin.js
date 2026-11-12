@@ -871,6 +871,23 @@ router.post('/seed-notes', verifyToken, verifyAdmin, async (req, res) => {
     res.json({ message: `Done! ${count} notes` });
   } catch(err) { res.status(500).json({ message: err.message }); }
 });
+
+// ── ECE notes ADD karta hai (admin console se ek baar chalao) ──
+// Purane notes delete NAHI hote (seed-notes jaisa deleteMany nahi hai). title + category se upsert hota hai,
+// isliye dobara chalane par duplicate nahi banta — sirf content update ho jata hai.
+router.post('/seed-ece-notes', verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { Note } = require('../models/Content');
+    const notes = require('../data/eceNotes');
+    let added = 0, updated = 0;
+    for (const n of notes) {
+      const r = await Note.updateOne({ title: n.title, category: 'ECE' }, { $set: n }, { upsert: true });
+      if (r.upsertedCount) added++; else updated++;
+    }
+    const total = await Note.countDocuments({ category: 'ECE' });
+    res.json({ message: `Done! ${added} new added, ${updated} updated. Total ECE notes: ${total}` });
+  } catch(err) { res.status(500).json({ message: err.message }); }
+});
 // ── SECURITY: Password sharing detection ──
 // Jinke abhi (last 7 din ke andar, JWT valid rehne tak) 2+ alag devices/IPs se
 // active session hai unhe suspicious mark karte hain.
