@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>More Topics Notes — Master DSA</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.notes-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px)}
+@media(max-width:768px){.notes-layout{grid-template-columns:1fr}.notes-sidebar{display:none}}
+.notes-sidebar{background:#09091a;border-right:1px solid rgba(255,255,255,0.06);padding:1.5rem 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;align-self:start}
+.nt-item{display:flex;align-items:center;gap:0.6rem;padding:0.6rem 1.25rem;font-size:0.83rem;color:rgba(255,255,255,0.45);cursor:pointer;border-left:2px solid transparent;text-decoration:none}
+.nt-item:hover{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.8)}
+.nt-item.active{background:rgba(124,106,247,0.08);border-left-color:#a89df7;color:#a89df7;font-weight:600}
+.nt-item.locked{opacity:0.3;cursor:not-allowed}
+.notes-main{padding:2.5rem 3.5rem 5rem;max-width:760px}
+@media(max-width:768px){.notes-main{padding:1.5rem 1.25rem 4rem}}
+.nt-h1{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:#fff;margin-bottom:0.6rem;line-height:1.2}
+.nt-intro{font-size:1rem;color:rgba(255,255,255,0.55);line-height:1.9;margin-bottom:2.5rem}
+.nt-h2{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin:4rem 0 1.5rem;display:flex;align-items:center;gap:0.6rem}
+.nt-h2-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;background:rgba(124,106,247,0.15);color:#a89df7;font-size:0.95rem;flex-shrink:0}
+.nt-h3{font-family:'Syne',sans-serif;font-size:1.02rem;font-weight:700;color:#a89df7;margin:2rem 0 0.9rem}
+.nt-p{font-size:0.95rem;color:rgba(255,255,255,0.68);line-height:2;margin-bottom:1.4rem}
+.nt-p b{color:rgba(255,255,255,0.92);font-weight:600}
+.nt-p code{background:rgba(124,106,247,0.1);color:#a89df7;padding:1px 7px;border-radius:5px;font-family:'Fira Code',monospace;font-size:0.85em}
+.nt-divider{height:1px;background:rgba(255,255,255,0.06);margin:3.5rem 0}
+.nt-code{background:#0a0a18;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.25rem 1.4rem;font-family:'Fira Code',monospace;font-size:0.8rem;color:#e2e8f0;line-height:1.85;margin:1.5rem 0;overflow-x:auto;white-space:pre}
+.nt-code .c{color:rgba(255,255,255,0.3)}
+.nt-tip{background:rgba(251,191,36,0.05);border-left:3px solid #fbbf24;border-radius:0 10px 10px 0;padding:1rem 1.25rem;font-size:0.88rem;color:rgba(251,191,36,0.92);margin:1.5rem 0;line-height:1.8}
+.nt-tip-label{font-weight:800;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;display:block}
+.nt-warn{background:rgba(248,113,113,0.05);border-left:3px solid #f87171;border-radius:0 10px 10px 0;padding:1rem 1.25rem;font-size:0.88rem;color:rgba(248,113,113,0.92);margin:1.5rem 0;line-height:1.8}
+.nt-warn-label{font-weight:800;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;display:block}
+.nt-try{background:linear-gradient(135deg,rgba(52,211,153,0.07),rgba(52,211,153,0.02));border:1px solid rgba(52,211,153,0.25);border-radius:14px;padding:1.25rem 1.4rem;margin:2rem 0;display:flex;align-items:center;justify-content:space-between;gap:1.25rem;flex-wrap:wrap}
+.nt-try-label{font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#34d399;margin-bottom:0.4rem}
+.nt-try-text{font-size:0.92rem;color:rgba(255,255,255,0.85);line-height:1.6}
+.nt-try-btn{background:#34d399;color:#06160f;border:none;border-radius:9px;padding:0.6rem 1.1rem;font-size:0.82rem;font-weight:800;text-decoration:none;white-space:nowrap;font-family:'Syne',sans-serif}
+.nt-nav{display:flex;justify-content:space-between;margin-top:3.5rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,0.06)}
+.nt-nav a{font-size:0.88rem;color:#fff;background:#7c6af7;text-decoration:none;padding:0.75rem 1.5rem;border-radius:10px;font-weight:700;font-family:'Syne',sans-serif}
+.progress-pill{display:inline-flex;align-items:center;gap:6px;font-size:0.72rem;color:#a89df7;background:rgba(124,106,247,0.1);padding:5px 12px;border-radius:99px;margin-bottom:1.25rem;font-weight:600}
+.trace-box{background:#0a0a18;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.1rem;margin:1.5rem 0;overflow-x:auto}
+.trace-table{width:100%;border-collapse:collapse;font-size:0.8rem;font-family:'Fira Code',monospace}
+.trace-table th{color:rgba(255,255,255,0.4);text-align:left;padding:0.55rem 0.8rem;border-bottom:1px solid rgba(255,255,255,0.08);font-weight:600;font-family:'DM Sans',sans-serif;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em}
+.trace-table td{color:#e2e8f0;padding:0.55rem 0.8rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+.toc{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:1.4rem 1.6rem;margin-bottom:3rem}
+.toc-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.3);margin-bottom:0.85rem}
+.toc a{display:flex;align-items:center;gap:0.6rem;font-size:0.88rem;color:rgba(255,255,255,0.6);text-decoration:none;padding:0.4rem 0}
+.toc a:hover{color:#a89df7}
+.toc-num{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:0.68rem;color:rgba(255,255,255,0.4);flex-shrink:0}
+.def-card{background:linear-gradient(135deg,rgba(124,106,247,0.08),rgba(6,182,212,0.03));border:1px solid rgba(124,106,247,0.2);border-radius:14px;padding:1.4rem 1.6rem;margin:1.5rem 0}
+.def-label{font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#a89df7;margin-bottom:0.6rem}
+.def-text{font-size:0.95rem;color:rgba(255,255,255,0.85);line-height:1.85}
+.call-tree{background:#0a0a18;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1.25rem;margin:1.5rem 0;font-family:'Fira Code',monospace;font-size:0.78rem;color:#e2e8f0;line-height:2}
+.call-tree .ret{color:#34d399}
+.call-tree .call{color:#a89df7}
+.call-tree .base{color:#fbbf24}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<nav class="navbar" style="position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.06);">
+  <div class="nav-logo"><a href="masterdsa-dashboard.html" style="display:flex;align-items:center;gap:8px;color:inherit"><span class="dot"></span> Master DSA</a></div>
+  <div style="display:flex;align-items:center;gap:0.25rem">
+    <a href="masterdsa-dashboard.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">🏠 Home</a>
+    <a href="masterdsa-practice.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">📚 Practice</a>
+    <a href="masterdsa-notes.html" style="font-size:0.82rem;color:#a89df7;text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px;background:rgba(124,106,247,0.1)">📖 Notes</a>
+    <a href="masterdsa-videos.html" style="font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;padding:0.35rem 0.75rem;border-radius:8px">🎥 Videos</a>
+  </div>
+  <div class="nav-right"><a href="masterdsa-notes.html" style="font-size:0.85rem;color:var(--muted);text-decoration:none">← Notes Home</a></div>
+</nav>
+
+<div class="notes-layout">
+  <div class="notes-sidebar">
+    <div style="padding:0 1.25rem 1rem;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.25)">Topics</div>
+    <a class="nt-item" href="masterdsa-notes.html">📐 Arrays & Strings</a>
+    <a class="nt-item" href="masterdsa-notes-linkedlist.html">🔗 Linked List</a>
+    <a class="nt-item" href="masterdsa-notes-stacks.html">📚 Stacks & Queues</a>
+    <a class="nt-item" href="masterdsa-notes-recursion.html">🔄 Recursion</a>
+    <a class="nt-item" href="#trees">🌳 Trees & BST</a>
+    <a class="nt-item" href="#sorting">🔍 Searching & Sorting</a>
+    <a class="nt-item" href="#binarysearch">🎯 Binary Search</a>
+    <a class="nt-item" href="#heaps">⛰️ Heaps & Priority Queue</a>
+    <a class="nt-item" href="#graphs">🕸️ Graphs</a>
+    <a class="nt-item" href="#greedy">💰 Greedy Algorithms</a>
+    <a class="nt-item" href="#dp">🧩 Dynamic Programming</a>
+    <a class="nt-item" href="#tries">🌲 Tries & Advanced Trees</a>
+    <a class="nt-item" href="#bits">⚙️ Bit Manipulation</a>
+    <a class="nt-item" href="#math">🔢 Math & Number Theory</a>
+  </div>
+
+  <div class="notes-main">
+    <div class="nt-h1">More Topics — Quick Notes</div>
+    <p class="nt-intro">Yahan baaki 10 topics ke short aur kaam ke notes hain. Har topic mein core idea, main patterns, ek code template aur must-do questions hain, taaki jaldi revision ho sake.</p>
+    <div class="toc">
+      <div class="toc-title">Is page mein kya padhenge</div>
+      <a href="#trees"><span class="toc-num">5</span> 🌳 Trees & BST</a>
+      <a href="#sorting"><span class="toc-num">6</span> 🔍 Searching & Sorting</a>
+      <a href="#binarysearch"><span class="toc-num">7</span> 🎯 Binary Search</a>
+      <a href="#heaps"><span class="toc-num">8</span> ⛰️ Heaps & Priority Queue</a>
+      <a href="#graphs"><span class="toc-num">9</span> 🕸️ Graphs</a>
+      <a href="#greedy"><span class="toc-num">10</span> 💰 Greedy Algorithms</a>
+      <a href="#dp"><span class="toc-num">11</span> 🧩 Dynamic Programming</a>
+      <a href="#tries"><span class="toc-num">12</span> 🌲 Tries & Advanced Trees</a>
+      <a href="#bits"><span class="toc-num">13</span> ⚙️ Bit Manipulation</a>
+      <a href="#math"><span class="toc-num">14</span> 🔢 Math & Number Theory</a>
+    </div>
+
+    <div class="progress-pill">🌳 Topic 5 of 14</div>
+    <div class="nt-h2" id="trees" style="margin-top:0.5rem"><span class="nt-h2-num">5</span> Trees & BST</div>
+    <p class="nt-p">Tree ek hierarchical structure hai: ek root, aur har node ke children. Binary tree mein har node ke maximum 2 children hote hain (left aur right). Interviews mein sabse zyada puche jaane wale topics mein se ek.</p>
+    <div class="def-card"><div class="def-label">Core idea</div><div class="def-text"><b>BST (Binary Search Tree)</b> mein har node ke liye: left subtree ki saari values chhoti, right subtree ki saari values badi. Isliye BST ka <b>inorder traversal sorted</b> hota hai, aur search/insert/delete O(h) mein hote hain (h = height).</div></div>
+    <div class="nt-h3">Main patterns</div>
+<p class="nt-p"><b>1. Traversals:</b> Inorder (Left, Node, Right), Preorder (Node, Left, Right), Postorder (Left, Right, Node), aur Level Order (BFS, queue se).</p>
+<p class="nt-p"><b>2. Height wali recursion:</b> height(node) = 1 + max(height(left), height(right)). Diameter, balanced tree, max path sum jaise problems isi pe bante hain.</p>
+<p class="nt-p"><b>3. Global answer:</b> jab answer kisi bhi node pe ban sakta ho (diameter, max path sum), to ek global variable rakho aur recursion se child ka result return karo.</p>
+<p class="nt-p"><b>4. LCA (Lowest Common Ancestor):</b> agar p aur q alag-alag sides mein mile, to current node hi LCA hai. BST mein value compare karke ek hi side jao.</p>
+    <div class="nt-code">int height(TreeNode root) {
+  if (root == null) return 0;            // base case
+  return 1 + Math.max(height(root.left), height(root.right));
+}
+
+TreeNode lca(TreeNode root, TreeNode p, TreeNode q) {
+  if (root == null || root == p || root == q) return root;
+  TreeNode l = lca(root.left, p, q);
+  TreeNode r = lca(root.right, p, q);
+  if (l != null &amp;&amp; r != null) return root;  // dono side mile
+  return l != null ? l : r;
+}</div>
+    <div class="nt-tip"><span class="nt-tip-label">💡 Yaad rakho</span>Har tree problem ko ek sawal mein todo: <b>ek node pe kya karna hai</b> aur <b>left/right se kya result aayega</b>. Baaki recursion sambhal leti hai.</div>
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Maximum Depth</b>, <b>Level Order Traversal</b>, <b>Diameter of Binary Tree</b>, <b>Validate BST</b>, <b>Lowest Common Ancestor</b></div></div>
+      <a href="masterdsa-practice.html?topic=trees" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="progress-pill">🔍 Topic 6 of 14</div>
+    <div class="nt-h2" id="sorting" style="margin-top:0.5rem"><span class="nt-h2-num">6</span> Searching & Sorting</div>
+    <p class="nt-p">Sorting khud ek topic hai aur bahut saare problems ko aasaan banata hai: data sort kar do to two pointers, binary search ya greedy lag jaata hai.</p>
+    <div class="def-card"><div class="def-label">Core idea</div><div class="def-text">Linear search O(n) kisi bhi array pe chalta hai. Sorted array pe binary search O(log n). Sorting ka best general cost <b>O(n log n)</b> hai.</div></div>
+    <div class="nt-h3">Main patterns</div>
+<p class="nt-p"><b>Algorithms:</b> Bubble, Selection, Insertion = O(n²). <b>Merge Sort</b> = O(n log n), stable, O(n) extra space. <b>Quick Sort</b> = average O(n log n), worst O(n²). <b>Heap Sort</b> = O(n log n), in-place. <b>Counting Sort</b> = O(n + k) jab range chhoti ho.</p>
+<p class="nt-p"><b>Java mein:</b> <code>Arrays.sort()</code> primitives ke liye dual-pivot quicksort, objects ke liye TimSort (stable) use karta hai.</p>
+<p class="nt-p"><b>Patterns:</b> sort + two pointers, custom comparator (intervals), Dutch National Flag (0,1,2 sort), merge two sorted arrays, quickselect (kth element O(n) average).</p>
+    <div class="nt-code">int[][] intervals = ...;
+Arrays.sort(intervals, (a, b) -&gt; Integer.compare(a[0], b[0]));  // start time se sort
+
+// Dutch National Flag: 0, 1, 2 ko ek pass mein sort karo
+int lo = 0, mid = 0, hi = a.length - 1;
+while (mid &lt;= hi) {
+  if (a[mid] == 0) swap(a, lo++, mid++);
+  else if (a[mid] == 1) mid++;
+  else swap(a, mid, hi--);
+}</div>
+    <div class="nt-warn"><span class="nt-warn-label">⚠️ Comparator mein dhyan</span><code>a[0] - b[0]</code> likhne se integer overflow ho sakta hai. Hamesha <code>Integer.compare(a[0], b[0])</code> use karo.</div>
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Merge Intervals</b>, <b>Sort Colors</b>, <b>Kth Largest Element</b>, <b>Merge Sorted Array</b>, <b>Meeting Rooms</b></div></div>
+      <a href="masterdsa-practice.html?topic=sorting" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="progress-pill">🎯 Topic 7 of 14</div>
+    <div class="nt-h2" id="binarysearch" style="margin-top:0.5rem"><span class="nt-h2-num">7</span> Binary Search</div>
+    <p class="nt-p">Binary search sirf sorted array tak limited nahi hai. Jahan bhi answer ka koi <b>monotonic</b> pattern ho (ek point ke baad hamesha true), wahan chal jaata hai.</p>
+    <div class="def-card"><div class="def-label">Core idea</div><div class="def-text">Search space ko har step mein aadha karo. Time O(log n). <b>Binary search on answer:</b> jab sawal hai "minimum X jisme kaam ho jaaye", to X ki range pe binary search karo aur ek <code>check(x)</code> function likho.</div></div>
+    <div class="nt-h3">Main patterns</div>
+<p class="nt-p"><b>1. Classic:</b> sorted array mein target dhundo. <b>2. Bounds:</b> first/last occurrence, lower/upper bound. <b>3. Rotated sorted array:</b> dekho kaunsa half sorted hai. <b>4. On answer:</b> Koko eating bananas, ship capacity, split array.</p>
+    <div class="nt-code">int lo = 0, hi = n - 1, ans = -1;
+while (lo &lt;= hi) {
+  int mid = lo + (hi - lo) / 2;      // overflow safe
+  if (check(mid)) { ans = mid; hi = mid - 1; }  // pehla true dhundo
+  else lo = mid + 1;
+}
+return ans;</div>
+    <div class="nt-warn"><span class="nt-warn-label">⚠️ Off-by-one</span>Infinite loop tab hota hai jab <code>lo</code> ya <code>hi</code> update nahi hota. Hamesha decide karo: loop <code>lo &lt;= hi</code> hai ya <code>lo &lt; hi</code>, aur usi hisaab se mid ±1 karo.</div>
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Search Insert Position</b>, <b>First and Last Position</b>, <b>Search in Rotated Array</b>, <b>Find Peak Element</b>, <b>Koko Eating Bananas</b></div></div>
+      <a href="masterdsa-practice.html?topic=binarysearch" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="progress-pill">⛰️ Topic 8 of 14</div>
+    <div class="nt-h2" id="heaps" style="margin-top:0.5rem"><span class="nt-h2-num">8</span> Heaps & Priority Queue</div>
+    <p class="nt-p">Heap ek complete binary tree hai jisme parent hamesha child se chhota (min-heap) ya bada (max-heap) hota hai. Java mein iska use <code>PriorityQueue</code> se hota hai.</p>
+    <div class="def-card"><div class="def-label">Core idea</div><div class="def-text">Top element O(1) mein milta hai, insert aur remove O(log n) mein. Bahut saari problems mein "sabse chhota/bada K" nikalna hota hai, wahan heap perfect hai.</div></div>
+    <div class="nt-h3">Main patterns</div>
+<p class="nt-p"><b>1. Top K:</b> K largest chahiye to <b>min-heap of size K</b> rakho. <b>2. K-way merge:</b> K sorted lists ke heads heap mein rakho. <b>3. Two heaps:</b> median ke liye ek max-heap (left half) aur ek min-heap (right half). <b>4. Scheduling:</b> task scheduler, meeting rooms II.</p>
+    <div class="nt-code">PriorityQueue&lt;Integer&gt; pq = new PriorityQueue&lt;&gt;();      // min-heap
+for (int x : nums) {
+  pq.add(x);
+  if (pq.size() &gt; k) pq.poll();      // sabse chhota nikaal do
+}
+return pq.peek();                    // kth largest
+
+PriorityQueue&lt;Integer&gt; max = new PriorityQueue&lt;&gt;(Collections.reverseOrder());</div>
+    <div class="nt-tip"><span class="nt-tip-label">💡 Yaad rakho</span>K <b>largest</b> chahiye to <b>min-heap</b> use karo, K <b>smallest</b> chahiye to <b>max-heap</b>. Ulta lagta hai par isi se heap size K pe rehta hai.</div>
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Kth Largest Element</b>, <b>Top K Frequent Elements</b>, <b>Merge K Sorted Lists</b>, <b>Find Median from Data Stream</b></div></div>
+      <a href="masterdsa-practice.html?topic=heaps" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="progress-pill">🕸️ Topic 9 of 14</div>
+    <div class="nt-h2" id="graphs" style="margin-top:0.5rem"><span class="nt-h2-num">9</span> Graphs</div>
+    <p class="nt-p">Graph = nodes (vertices) aur unke beech edges. Social network, maps, course dependencies, grid problems, sab graph hain.</p>
+    <div class="def-card"><div class="def-label">Core idea</div><div class="def-text">Graph ko <b>adjacency list</b> mein store karo (<code>List&lt;List&lt;Integer&gt;&gt;</code>). Har traversal mein <b>visited</b> track karna zaroori hai, nahi to infinite loop.</div></div>
+    <div class="nt-h3">Main patterns</div>
+<p class="nt-p"><b>BFS</b> (queue): level-by-level, unweighted graph mein shortest path. <b>DFS</b> (recursion/stack): connected components, cycle detection, path dhundna.</p>
+<p class="nt-p"><b>Topological Sort</b> (DAG): Kahn's algorithm, indegree se. Course Schedule jaise problems.</p>
+<p class="nt-p"><b>Dijkstra</b>: weighted graph (non-negative) mein shortest path, PriorityQueue se, O((V+E) log V). <b>Union-Find</b>: components aur cycle.</p>
+<p class="nt-p"><b>Grid problems:</b> har cell ek node, 4 directions uske neighbours. Number of Islands, Rotting Oranges.</p>
+    <div class="nt-code">boolean[] vis = new boolean[n];
+Queue&lt;Integer&gt; q = new LinkedList&lt;&gt;();
+q.add(start); vis[start] = true;       // push karte time hi mark karo
+while (!q.isEmpty()) {
+  int u = q.poll();
+  for (int v : adj.get(u)) {
+    if (!vis[v]) { vis[v] = true; q.add(v); }
+  }
+}</div>
+    <div class="nt-warn"><span class="nt-warn-label">⚠️ BFS mein visited</span>Visited ko queue mein <b>daalte waqt</b> mark karo, nikalte waqt nahi. Warna ek node queue mein kai baar aa jaayega.</div>
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Number of Islands</b>, <b>Clone Graph</b>, <b>Course Schedule</b>, <b>Rotting Oranges</b>, <b>Network Delay Time</b></div></div>
+      <a href="masterdsa-practice.html?topic=graphs" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="progress-pill">💰 Topic 10 of 14</div>
+    <div class="nt-h2" id="greedy" style="margin-top:0.5rem"><span class="nt-h2-num">10</span> Greedy Algorithms</div>
+    <p class="nt-p">Greedy mein har step pe wahi choose karte hain jo us waqt sabse achha lag raha ho, is umeed se ki end mein bhi best answer milega.</p>
+    <div class="def-card"><div class="def-label">Core idea</div><div class="def-text">Greedy tab chalta hai jab <b>local best choice se global best</b> banta ho. Aksar pehle data <b>sort</b> karna padta hai.</div></div>
+    <div class="nt-h3">Main patterns</div>
+<p class="nt-p"><b>Patterns:</b> Interval scheduling (end time se sort), Jump Game (farthest reach track karo), Gas Station, Candy distribution, Minimum Platforms, Fractional Knapsack.</p>
+<p class="nt-p"><b>Proof ka tareeka:</b> ek chhota counter-example sochkar check karo. Agar greedy fail ho jaaye, to shayad DP chahiye (jaise arbitrary coins ka Coin Change).</p>
+    <div class="nt-code">Arrays.sort(iv, (a, b) -&gt; Integer.compare(a[1], b[1]));   // end time se sort
+int count = 0, end = Integer.MIN_VALUE;
+for (int[] x : iv) {
+  if (x[0] &gt;= end) { count++; end = x[1]; }   // overlap nahi hai to le lo
+}
+return count;   // maximum non-overlapping intervals</div>
+    <div class="nt-tip"><span class="nt-tip-label">💡 Yaad rakho</span>Sort ka key sahi chuno: intervals mein <b>end time</b>, jobs mein <b>deadline/profit</b>. Galat key se greedy galat answer deta hai.</div>
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Jump Game</b>, <b>Gas Station</b>, <b>Non-overlapping Intervals</b>, <b>Minimum Platforms</b>, <b>Candy</b></div></div>
+      <a href="masterdsa-practice.html?topic=greedy" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="progress-pill">🧩 Topic 11 of 14</div>
+    <div class="nt-h2" id="dp" style="margin-top:0.5rem"><span class="nt-h2-num">11</span> Dynamic Programming</div>
+    <p class="nt-p">DP = ek badi problem ko chhote subproblems mein todna, aur har subproblem ka answer <b>ek baar</b> solve karke store kar lena, taaki baar-baar compute na ho.</p>
+    <div class="def-card"><div class="def-label">Core idea</div><div class="def-text">DP tab lagta hai jab: (1) <b>overlapping subproblems</b> hon, aur (2) <b>optimal substructure</b> ho. Steps: state define karo, transition likho, base case, order, aur final answer kahan hai.</div></div>
+    <div class="nt-h3">Main patterns</div>
+<p class="nt-p"><b>Memoization (top-down):</b> recursion + cache. <b>Tabulation (bottom-up):</b> table bharte jao.</p>
+<p class="nt-p"><b>Common patterns:</b> 1D (Climbing Stairs, House Robber), 2D grid (Unique Paths), 0/1 Knapsack (take / not take), Subset Sum, Coin Change, LIS, LCS, Edit Distance.</p>
+<p class="nt-p"><b>Sochne ka tareeka:</b> pehle plain recursion likho, phir dekho kaunse parameters change hote hain (wahi state hai), phir cache lagao, aur last mein table banao.</p>
+    <div class="nt-code">// House Robber: dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+int prev2 = 0, prev1 = 0;
+for (int x : nums) {
+  int cur = Math.max(prev1, prev2 + x);
+  prev2 = prev1; prev1 = cur;
+}
+return prev1;
+
+// Coin Change (min coins)
+int[] dp = new int[amt + 1];
+Arrays.fill(dp, amt + 1); dp[0] = 0;
+for (int a = 1; a &lt;= amt; a++)
+  for (int c : coins)
+    if (c &lt;= a) dp[a] = Math.min(dp[a], dp[a - c] + 1);
+return dp[amt] &gt; amt ? -1 : dp[amt];</div>
+    <div class="nt-tip"><span class="nt-tip-label">💡 Key insight</span>Agar dp[i] sirf pichle 1-2 values pe depend karta hai, to poori table ki jagah <b>2 variables</b> se kaam chal jaata hai (space O(1)).</div>
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Climbing Stairs</b>, <b>House Robber</b>, <b>Coin Change</b>, <b>Longest Common Subsequence</b>, <b>0/1 Knapsack</b></div></div>
+      <a href="masterdsa-practice.html?topic=dp" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="progress-pill">🌲 Topic 12 of 14</div>
+    <div class="nt-h2" id="tries" style="margin-top:0.5rem"><span class="nt-h2-num">12</span> Tries & Advanced Trees</div>
+    <p class="nt-p">Trie (prefix tree) strings ko character-by-character store karta hai. Autocomplete, spell checker aur "is prefix se kitne words" jaise sawalon mein kaam aata hai.</p>
+    <div class="def-card"><div class="def-label">Core idea</div><div class="def-text">Har node mein 26 children (a–z) aur ek <code>isEnd</code> flag. Insert/search/startsWith teeno <b>O(L)</b> mein, L = word ki length.</div></div>
+    <div class="nt-h3">Main patterns</div>
+<p class="nt-p"><b>Use cases:</b> prefix search, Word Search II, longest common prefix, replace words.</p>
+<p class="nt-p"><b>Advanced trees (overview):</b> <b>Segment Tree</b> range query/update O(log n). <b>Fenwick Tree (BIT)</b> prefix sum with updates. <b>AVL / Red-Black</b> self-balancing BST, height hamesha O(log n) (Java ka <code>TreeMap</code> Red-Black hai).</p>
+    <div class="nt-code">class TrieNode {
+  TrieNode[] ch = new TrieNode[26];
+  boolean end;
+}
+void insert(String w) {
+  TrieNode cur = root;
+  for (char c : w.toCharArray()) {
+    if (cur.ch[c - 'a'] == null) cur.ch[c - 'a'] = new TrieNode();
+    cur = cur.ch[c - 'a'];
+  }
+  cur.end = true;
+}</div>
+    <div class="nt-tip"><span class="nt-tip-label">💡 Yaad rakho</span>HashSet mein prefix search ke liye har word check karna padta hai. Trie mein prefix ke saath hi seedha ruk jaate ho, isliye wo prefix problems mein jeetta hai.</div>
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Implement Trie</b>, <b>Design Add and Search Words</b>, <b>Word Search II</b>, <b>Range Sum Query - Mutable</b></div></div>
+      <a href="masterdsa-practice.html?topic=tries" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="progress-pill">⚙️ Topic 13 of 14</div>
+    <div class="nt-h2" id="bits" style="margin-top:0.5rem"><span class="nt-h2-num">13</span> Bit Manipulation</div>
+    <p class="nt-p">Computer sab kuch bits mein store karta hai. Bit tricks se kai problems O(1) space aur bahut fast mein ho jaate hain.</p>
+    <div class="def-card"><div class="def-label">Core idea</div><div class="def-text">Operators: <code>&amp;</code> (AND), <code>|</code> (OR), <code>^</code> (XOR), <code>~</code> (NOT), <code>&lt;&lt;</code> aur <code>&gt;&gt;</code> (shift). XOR ki khaas baat: <code>a ^ a = 0</code> aur <code>a ^ 0 = a</code>.</div></div>
+    <div class="nt-h3">Main patterns</div>
+<p class="nt-p"><b>Common tricks:</b> i-th bit check <code>(n &gt;&gt; i) &amp; 1</code>, set <code>n | (1 &lt;&lt; i)</code>, clear <code>n &amp; ~(1 &lt;&lt; i)</code>, toggle <code>n ^ (1 &lt;&lt; i)</code>.</p>
+<p class="nt-p"><b>n &amp; (n-1)</b> sabse right wala set bit hata deta hai. Power of 2 check: <code>n &gt; 0 &amp;&amp; (n &amp; (n-1)) == 0</code>.</p>
+<p class="nt-p"><b>XOR pattern:</b> array mein sab do-do baar hain sirf ek ek baar, to sabko XOR kar do. <b>Subsets:</b> 0 se 2ⁿ−1 tak ke masks.</p>
+    <div class="nt-code">int count = 0;                         // set bits count (Brian Kernighan)
+while (n != 0) { n &amp;= (n - 1); count++; }
+
+int single = 0;                        // Single Number
+for (int x : nums) single ^= x;
+
+for (int mask = 0; mask &lt; (1 &lt;&lt; n); mask++) {   // saare subsets
+  for (int i = 0; i &lt; n; i++)
+    if ((mask &amp; (1 &lt;&lt; i)) != 0) { /* nums[i] subset mein hai */ }
+}</div>
+    <div class="nt-warn"><span class="nt-warn-label">⚠️ Precedence</span>Bit operators ki precedence <code>==</code> se kam hoti hai. Hamesha brackets lagao: <code>(n &amp; 1) == 1</code>.</div>
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Single Number</b>, <b>Number of 1 Bits</b>, <b>Power of Two</b>, <b>Missing Number</b>, <b>Counting Bits</b></div></div>
+      <a href="masterdsa-practice.html?topic=bits" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+    <div class="progress-pill">🔢 Topic 14 of 14</div>
+    <div class="nt-h2" id="math" style="margin-top:0.5rem"><span class="nt-h2-num">14</span> Math & Number Theory</div>
+    <p class="nt-p">Coding rounds mein kuch math concepts baar-baar aate hain: GCD, primes, power aur modulo. Ye chhote hain par seekhna zaroori hai.</p>
+    <div class="def-card"><div class="def-label">Core idea</div><div class="def-text"><b>GCD</b> Euclid se O(log n): <code>gcd(a, b) = gcd(b, a % b)</code>. <b>LCM = a / gcd × b</b> (pehle divide karo, overflow se bachne ke liye). <b>Prime check</b> sirf √n tak. <b>Sieve of Eratosthenes</b> se 1 se n tak ke saare primes O(n log log n) mein.</div></div>
+    <div class="nt-h3">Main patterns</div>
+<p class="nt-p"><b>Modular arithmetic:</b> bade answers <code>10^9 + 7</code> se mod karke maangte hain. (a + b) % m aur (a × b) % m formula use karo, aur multiply se pehle <code>long</code> mein convert karo.</p>
+<p class="nt-p"><b>Fast power:</b> x^n ko O(log n) mein, n ko aadha karte hue.</p>
+<p class="nt-p"><b>Aur tricks:</b> digits nikalna (% 10, / 10), factorial ke trailing zeroes (n/5 + n/25 + ...), integer overflow ka dhyan.</p>
+    <div class="nt-code">int gcd(int a, int b) { return b == 0 ? a : gcd(b, a % b); }
+
+boolean[] comp = new boolean[n + 1];      // Sieve
+for (int i = 2; (long) i * i &lt;= n; i++)
+  if (!comp[i])
+    for (int j = i * i; j &lt;= n; j += i) comp[j] = true;
+
+long power(long x, long n, long mod) {   // fast power
+  long res = 1; x %= mod;
+  while (n &gt; 0) {
+    if ((n &amp; 1) == 1) res = res * x % mod;
+    x = x * x % mod; n &gt;&gt;= 1;
+  }
+  return res;
+}</div>
+    <div class="nt-tip"><span class="nt-tip-label">💡 Yaad rakho</span>Jab bhi answer bahut bada ho sakta hai, pehle sochlo <b>long</b> chahiye ya <b>mod</b>. Int overflow chupke se galat answer deta hai.</div>
+    <div class="nt-try">
+      <div><div class="nt-try-label">Ab practice karo</div><div class="nt-try-text">Try karo: <b>Count Primes</b>, <b>Pow(x, n)</b>, <b>Factorial Trailing Zeroes</b>, <b>Palindrome Number</b>, <b>Sqrt(x)</b></div></div>
+      <a href="masterdsa-practice.html?topic=math" class="nt-try-btn">Practice page →</a>
+    </div>
+
+    <div class="nt-divider"></div>
+
+  </div>
+</div>
+</body>
+</html>
