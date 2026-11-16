@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="shortcut icon" href="favicon.ico">
+<meta name="theme-color" content="#10142c">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Resume Builder by PlacementSphere — ATS-Friendly Resume Templates for B.Tech Students</title>
+<meta name="description" content="Build an ATS-friendly resume with 5 professional templates, live preview, ATS score with analysis and instant PDF download. Made for B.Tech students and freshers.">
+<link rel="canonical" href="https://placementsphere.in/resume.html">
+<meta property="og:title" content="Resume Builder by PlacementSphere">
+<meta property="og:description" content="5 ATS-friendly resume templates, ATS score with analysis and bullet-by-bullet suggestions. Made for B.Tech students and freshers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://placementsphere.in/resume.html">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.rb-page { max-width:1100px; margin:0 auto; padding:5.5rem 1.25rem 3rem; }
+.rb-eyebrow { display:inline-flex; align-items:center; gap:7px; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#a89df7; background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.25); padding:5px 12px; border-radius:99px; margin-bottom:1rem; }
+.rb-hero { padding:1.5rem 0 2.5rem; max-width:760px; }
+.rb-hero h1 { font-family:'Syne',sans-serif; font-size:clamp(1.8rem,5vw,2.9rem); font-weight:800; color:#fff; line-height:1.15; margin-bottom:0.9rem; }
+.rb-hero h1 em { font-style:normal; color:#a89df7; }
+.rb-hero p { font-size:1rem; color:rgba(255,255,255,0.55); line-height:1.7; max-width:620px; }
+.rb-cta { display:flex; flex-wrap:wrap; gap:0.7rem; margin-top:1.5rem; }
+.rb-btn { display:inline-flex; align-items:center; justify-content:center; padding:0.8rem 1.4rem; border-radius:10px; font-family:'Syne',sans-serif; font-weight:700; font-size:0.85rem; text-decoration:none; border:1px solid rgba(255,255,255,0.15); color:#fff; cursor:pointer; background:transparent; }
+.rb-btn.primary { background:#7c6af7; border-color:#7c6af7; box-shadow:0 6px 24px rgba(124,106,247,0.35); }
+.rb-chips { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:1.4rem; }
+.rb-chip { font-size:0.74rem; color:rgba(255,255,255,0.6); border:1px solid rgba(255,255,255,0.1); border-radius:99px; padding:0.35rem 0.85rem; }
+.rb-sec { padding:2.5rem 0 0.5rem; }
+.rb-sec h2 { font-family:'Syne',sans-serif; font-size:clamp(1.3rem,3vw,1.7rem); font-weight:800; color:#fff; margin-bottom:0.4rem; }
+.rb-sub { font-size:0.9rem; color:rgba(255,255,255,0.45); margin-bottom:1.4rem; max-width:620px; line-height:1.6; }
+.rb-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:1.1rem; }
+.rb-card { background:#0e0e1e; border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; }
+.rb-card .thumb { cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.08); }
+.rb-card h3 { font-family:'Syne',sans-serif; font-size:0.95rem; font-weight:700; color:#fff; padding:0.9rem 1rem 0.25rem; }
+.rb-card p { font-size:0.78rem; color:rgba(255,255,255,0.45); line-height:1.55; padding:0 1rem 0.9rem; flex:1; }
+.rb-card .prev { margin:0 1rem 1rem; }
+.rb-feat { background:#0e0e1e; border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.3rem; }
+.rb-feat .ico { width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; margin-bottom:0.8rem; background:rgba(124,106,247,0.1); }
+.rb-feat h3 { font-family:'Syne',sans-serif; font-size:0.92rem; font-weight:700; color:#fff; margin-bottom:0.4rem; }
+.rb-feat p { font-size:0.8rem; color:rgba(255,255,255,0.45); line-height:1.65; }
+.rb-steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1rem; }
+.rb-step b { display:inline-flex; width:30px; height:30px; border-radius:50%; background:rgba(124,106,247,0.15); color:#a89df7; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-size:0.85rem; margin-bottom:0.7rem; }
+.rb-ats { display:grid; grid-template-columns:1fr 1.15fr; gap:1.5rem; align-items:center; background:#0e0e1e; border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:1.6rem; }
+@media (max-width:720px) { .rb-ats { grid-template-columns:1fr; } }
+.rb-ats ul { list-style:none; padding:0; margin:0.8rem 0 0; }
+.rb-ats li { font-size:0.84rem; color:rgba(255,255,255,0.6); padding:0.35rem 0; display:flex; gap:8px; }
+.rb-demo { background:#fff; color:#111; border-radius:12px; padding:1.2rem; }
+.rb-demo .top { display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem; }
+.rb-demo .num { font-family:'Syne',sans-serif; font-weight:800; font-size:2rem; color:#16a34a; }
+.rb-demo .bd { display:grid; grid-template-columns:1fr 1fr; gap:0.4rem; margin-bottom:0.8rem; }
+.rb-demo .bd div { background:#f4f4f7; border-radius:7px; padding:0.4rem 0.6rem; font-size:0.7rem; color:#444; display:flex; justify-content:space-between; }
+.rb-demo .sg { border-left:2px solid #f59e0b; background:#fef9ee; border-radius:6px; padding:0.55rem 0.75rem; font-size:0.72rem; }
+.rb-demo .sg .i { color:#b45309; font-weight:600; margin-bottom:0.2rem; }
+.rb-demo .sg .o { color:#888; text-decoration:line-through; margin-bottom:0.15rem; }
+.rb-demo .sg .f { color:#16a34a; }
+.rb-demo small { display:block; margin-top:0.7rem; font-size:0.64rem; color:#888; }
+.rb-plans { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1rem; }
+.rb-plan { background:#0e0e1e; border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.5rem 1.3rem; position:relative; }
+.rb-plan.pop { border-color:rgba(251,191,36,0.4); box-shadow:0 0 40px rgba(251,191,36,0.08); }
+.rb-plan .tag { position:absolute; top:-11px; left:1.3rem; background:#fbbf24; color:#000; font-size:0.65rem; font-weight:800; padding:3px 12px; border-radius:99px; }
+.rb-plan h3 { font-family:'Syne',sans-serif; font-size:0.95rem; color:#fff; margin-bottom:0.4rem; }
+.rb-plan .amt { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:#fff; margin-bottom:1rem; }
+.rb-plan .amt span { font-size:0.85rem; font-weight:500; color:rgba(255,255,255,0.35); }
+.rb-plan ul { list-style:none; padding:0; margin:0; }
+.rb-plan li { font-size:0.82rem; color:rgba(255,255,255,0.6); padding:0.35rem 0; display:flex; gap:8px; }
+.rb-note { font-size:0.8rem; color:rgba(255,255,255,0.4); margin-top:1rem; }
+.rb-foot { margin-top:3.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.08); display:flex; flex-wrap:wrap; gap:1rem 1.5rem; font-size:0.8rem; color:rgba(255,255,255,0.4); }
+.rb-foot a { color:rgba(255,255,255,0.55); text-decoration:none; }
+.rb-modal { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.9); z-index:999; align-items:flex-start; justify-content:center; padding:1.5rem; overflow-y:auto; }
+.rb-modal.open { display:flex; }
+.rb-modal .box { background:#fff; max-width:720px; width:100%; border-radius:12px; overflow:hidden; margin:auto; }
+.rb-modal .box .rt-paper { max-height:none; }
+.rb-modal .x { position:fixed; top:1rem; right:1rem; background:rgba(255,255,255,0.12); border:none; color:#fff; width:38px; height:38px; border-radius:50%; font-size:1.2rem; cursor:pointer; z-index:1000; }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-logo"><a href="index.html" style="display:flex;align-items:center;gap:8px;color:inherit"><span class="dot"></span> PlacementSphere</a></div>
+  <div class="nav-right"><a href="index.html" style="color:var(--muted);text-decoration:none;font-size:0.85rem">← Home</a></div>
+</nav>
+
+<main class="rb-page">
+
+  <section class="rb-hero">
+    <div class="rb-eyebrow">Resume Builder by PlacementSphere</div>
+    <h1>A resume that <em>ATS software can read</em> and recruiters want to open</h1>
+    <p>Pick one of 5 professional templates, fill in your details and watch your resume build live. Then check your ATS score and get bullet-by-bullet suggestions. Made for B.Tech students and freshers.</p>
+    <div class="rb-cta">
+      <a class="rb-btn primary" href="#templates">See the templates</a>
+      <a class="rb-btn" href="#plans">View plans</a>
+    </div>
+    <div class="rb-chips">
+      <span class="rb-chip">5 professional templates</span>
+      <span class="rb-chip">Live preview</span>
+      <span class="rb-chip">ATS score with analysis</span>
+      <span class="rb-chip">Instant PDF download</span>
+    </div>
+  </section>
+
+  <section class="rb-sec" id="templates">
+    <h2>5 templates, 5 different looks</h2>
+    <p class="rb-sub">Every template is a clean single-column layout with plain text only, so ATS software can read it. Click a template to see the full resume. Previews use sample content.</p>
+    <div class="rb-grid" id="tpl-grid"></div>
+  </section>
+
+  <section class="rb-sec">
+    <h2>Why students use it</h2>
+    <p class="rb-sub">Built around what campus recruiters and ATS filters actually look at.</p>
+    <div class="rb-grid">
+      <div class="rb-feat"><div class="ico">🧾</div><h3>ATS-friendly structure</h3><p>Single-column layouts, standard section names and plain text. No tables, images or icons that confuse ATS parsers.</p></div>
+      <div class="rb-feat"><div class="ico">🎯</div><h3>ATS score with a clear breakdown</h3><p>Get a score out of 100 across contact info, sections, action verbs, measurable results and content depth, plus a list of exactly what to fix.</p></div>
+      <div class="rb-feat"><div class="ico">💡</div><h3>Bullet-by-bullet suggestions</h3><p>Weak bullets are rewritten in simple words using your own details. No fake numbers are added; missing results are shown as placeholders for you to fill.</p></div>
+      <div class="rb-feat"><div class="ico">🎓</div><h3>Made for B.Tech freshers</h3><p>Sections for education with CGPA, projects, skills, internships and achievements, in the order recruiters expect.</p></div>
+    </div>
+  </section>
+
+  <section class="rb-sec">
+    <h2>How it works</h2>
+    <p class="rb-sub">From blank page to a finished resume in a few minutes.</p>
+    <div class="rb-steps">
+      <div class="rb-feat rb-step"><b>1</b><h3>Pick a template</h3><p>Preview all 5 and choose one. You can switch to another template any time.</p></div>
+      <div class="rb-feat rb-step"><b>2</b><h3>Fill in your details</h3><p>Add education, experience, projects and skills. Your resume updates live as you type.</p></div>
+      <div class="rb-feat rb-step"><b>3</b><h3>Check and download</h3><p>Run the ATS analysis, fix what it points out, then download your resume as a PDF.</p></div>
+    </div>
+  </section>
+
+  <section class="rb-sec">
+    <h2>See what the analysis looks like</h2>
+    <p class="rb-sub">Available with the Standard and Pro plans.</p>
+    <div class="rb-ats">
+      <div>
+        <p style="font-size:0.86rem;color:rgba(255,255,255,0.55);line-height:1.7">After you run the analysis you get:</p>
+        <ul>
+          <li><span>✅</span><span>An <b style="color:#fff">ATS score out of 100</b> with a breakdown in 5 areas</span></li>
+          <li><span>✅</span><span>A <b style="color:#fff">"What to fix"</b> list: weak sections, missing links, vague bullets</span></li>
+          <li><span>✅</span><span>Suggestions that keep your meaning and <b style="color:#fff">never invent numbers</b></span></li>
+        </ul>
+      </div>
+      <div class="rb-demo">
+        <div class="top"><div class="num">86</div><div><div style="font-weight:700;font-size:0.85rem">ATS Score</div><div style="font-size:0.68rem;color:#666">out of 100 · Excellent</div></div></div>
+        <div class="bd"><div><span>Contact Info</span><span>15/15</span></div><div><span>Sections</span><span>18/20</span></div><div><span>Action Verbs</span><span>27/30</span></div><div><span>Quantified Metrics</span><span>18/25</span></div><div><span>Content Depth</span><span>8/10</span></div></div>
+        <div class="sg"><div class="i">Projects — Missing a measurable result</div><div class="o">Built a chat application using React and Node.js</div><div class="f">→ Built a chat application using React and Node.js, supporting [add a number here, e.g. X users]</div></div>
+        <small>Sample analysis for illustration only.</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="rb-sec" id="plans">
+    <h2>Resume Builder plans</h2>
+    <p class="rb-sub">Simple monthly plans. All plans include every template.</p>
+    <div class="rb-plans">
+      <div class="rb-plan"><h3>Basic</h3><div class="amt">₹49 <span>/ month</span></div>
+        <ul><li><span>✅</span><span>Full resume builder</span></li><li><span>✅</span><span>All 5 templates</span></li><li><span>✅</span><span>Download as PDF</span></li><li><span>❌</span><span>No ATS analysis</span></li></ul></div>
+      <div class="rb-plan pop"><div class="tag">MOST POPULAR</div><h3>Standard</h3><div class="amt">₹99 <span>/ month</span></div>
+        <ul><li><span>✅</span><span>Full resume builder</span></li><li><span>✅</span><span>All 5 templates</span></li><li><span>✅</span><span>Download as PDF</span></li><li><span>✅</span><span>1 ATS score + analysis</span></li></ul></div>
+      <div class="rb-plan"><h3>Pro</h3><div class="amt">₹150 <span>/ month</span></div>
+        <ul><li><span>✅</span><span>Full resume builder</span></li><li><span>✅</span><span>All 5 templates</span></li><li><span>✅</span><span>Download as PDF</span></li><li><span>✅</span><span>Unlimited ATS score + analysis</span></li></ul></div>
+    </div>
+    <p class="rb-note">Plans are available inside your PlacementSphere account.</p>
+  </section>
+
+  <div class="rb-foot">
+    <span>© PlacementSphere</span>
+    <a href="index.html">Home</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms &amp; Conditions</a>
+  </div>
+</main>
+
+<div class="rb-modal" id="rb-modal">
+  <button class="x" type="button" onclick="closeModal()" aria-label="Close preview">×</button>
+  <div class="box" id="rb-modal-box"></div>
+</div>
+
+<script src="js/resume-templates.js"></script>
+<script>
+// Templates grid — builder wale resume jaisa hi dikhta hai (shared js/resume-templates.js)
+function renderGrid() {
+  const g = document.getElementById('tpl-grid');
+  g.innerHTML = ResumeTemplates.list.map(t => `
+    <div class="rb-card">
+      <div class="thumb" onclick="openModal('${t.id}')">${ResumeTemplates.thumbHTML(t.id)}</div>
+      <h3>${t.name}</h3>
+      <p>${t.desc}</p>
+      <button class="rb-btn prev" type="button" onclick="openModal('${t.id}')">👁️ Preview</button>
+    </div>`).join('');
+  ResumeTemplates.fitThumbs(g);
+}
+function openModal(tpl) {
+  document.getElementById('rb-modal-box').innerHTML = ResumeTemplates.paperHTML(tpl);
+  document.getElementById('rb-modal').classList.add('open');
+}
+function closeModal() { document.getElementById('rb-modal').classList.remove('open'); }
+document.getElementById('rb-modal').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+renderGrid();
+</script>
+</body>
+</html>
