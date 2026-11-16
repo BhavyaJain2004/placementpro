@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Resume Maker — PlacementSphere</title>
+<title>Resume Builder — PlacementSphere</title>
 <link rel="stylesheet" href="css/style.css">
 <style>
 body { font-family:'DM Sans',sans-serif; }
@@ -117,6 +117,15 @@ body { font-family:'DM Sans',sans-serif; }
 .pp-overlay.open { display:flex; }
 .pp-box { background:#0e0e1e; border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:2rem; max-width:900px; width:100%; max-height:90vh; overflow-y:auto; position:relative; }
 .pp-close { position:absolute; top:1rem; right:1rem; background:rgba(255,255,255,0.06); border:none; color:#fff; width:32px; height:32px; border-radius:50%; font-size:1.1rem; cursor:pointer; }
+
+/* 5 templates — real resume ka chhota version (poora page dikhta hai) */
+.tpl-grid { grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); }
+.tpl-thumb.rt { height:auto; display:block; padding:0; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.08); }
+.tpl-btns { display:flex; gap:0.5rem; padding:0 1rem 1rem; }
+.tpl-btns .tpl-btn { flex:1; }
+.pv-box { padding:0; }
+.pv-box .rt-paper { max-height:none; }
+.pv-use { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); background:#7c6af7; color:#fff; border:none; padding:0.8rem 1.7rem; border-radius:99px; font-weight:700; font-size:0.85rem; font-family:'Syne',sans-serif; cursor:pointer; box-shadow:0 8px 30px rgba(124,106,247,0.5); z-index:1000; }
 </style>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
@@ -145,71 +154,8 @@ body { font-family:'DM Sans',sans-serif; }
 </div>
 
 <div id="rm-templates">
-  <h2 class="sec-title">Available Templates</h2>
-  <div class="tpl-grid">
-    <div class="tpl-card">
-      <div class="tpl-thumb">
-        <div class="tpl-mini" style="text-align:center">
-          <div class="m-name">RAHUL SHARMA</div>
-          <div class="m-contact">rahul.sharma@email.com | +91 98765 43210 | LinkedIn | GitHub</div>
-          <div class="m-sec" style="text-align:left">Education</div>
-          <div class="m-row"><b>KIIT University</b><span>Bhubaneswar, Odisha</span></div>
-          <div class="m-sub" style="text-align:left">B.Tech in Computer Science and Engineering — 2022 to 2026</div>
-          <div class="m-sec" style="text-align:left">Experience</div>
-          <div class="m-row"><b>Tech Solutions Pvt Ltd — SDE Intern</b><span>Jun 2025 - Aug 2025</span></div>
-          <ul style="text-align:left">
-            <li>Developed 3 REST APIs using Node.js and Express, serving 500+ daily active users</li>
-            <li>Optimized database queries, reducing average response time by 35%</li>
-          </ul>
-          <div class="m-sec" style="text-align:left">Projects</div>
-          <div class="m-row"><b>Placement Prep Tracker</b><span>React, Node.js, MongoDB</span></div>
-          <ul style="text-align:left">
-            <li>Built a full-stack app used by 200+ students to track DSA progress</li>
-          </ul>
-          <div class="m-sec" style="text-align:left">Skills</div>
-          <div style="text-align:left;font-size:0.64rem;margin-top:0.25rem"><b>Languages:</b> Java, Python, C, JavaScript<br><b>Tools:</b> Git, MongoDB, SQL</div>
-        </div>
-        <div class="tpl-overlay">
-          <button class="tpl-btn view" onclick="viewTemplate('modern')">👁️ View</button>
-          <button class="tpl-btn create" onclick="openPricing('modern')">Create Resume</button>
-        </div>
-      </div>
-      <div class="tpl-name">Modern</div>
-      <div class="tpl-desc">Clean single-column layout, ATS-friendly, ideal for tech roles</div>
-    </div>
-
-    <div class="tpl-card">
-      <div class="tpl-thumb">
-        <div class="tpl-mini">
-          <div class="m-name">RAHUL SHARMA</div>
-          <div class="m-contact">rahul.sharma@email.com · +91 98765 43210 · LinkedIn · GitHub</div>
-          <hr style="margin:0.4rem 0;border-color:#bbb">
-          <div class="m-sec">Education</div>
-          <div class="m-row"><b>KIIT University</b><span>2022 - 2026</span></div>
-          <div class="m-sub">B.Tech in Computer Science and Engineering, Bhubaneswar</div>
-          <div class="m-sec">Experience</div>
-          <div class="m-row"><b>Tech Solutions Pvt Ltd — SDE Intern</b><span>Jun 2025 - Aug 2025</span></div>
-          <ul>
-            <li>Developed 3 REST APIs using Node.js and Express, serving 500+ daily active users</li>
-            <li>Optimized database queries, reducing average response time by 35%</li>
-          </ul>
-          <div class="m-sec">Projects</div>
-          <div class="m-row"><b>Placement Prep Tracker</b><span>React, Node.js, MongoDB</span></div>
-          <ul>
-            <li>Built a full-stack app used by 200+ students to track DSA progress</li>
-          </ul>
-          <div class="m-sec">Skills</div>
-          <div style="font-size:0.64rem;margin-top:0.25rem"><b>Languages:</b> Java, Python, C, JavaScript<br><b>Tools:</b> Git, MongoDB, SQL</div>
-        </div>
-        <div class="tpl-overlay">
-          <button class="tpl-btn view" onclick="viewTemplate('classic')">👁️ View</button>
-          <button class="tpl-btn create" onclick="openPricing('classic')">Create Resume</button>
-        </div>
-      </div>
-      <div class="tpl-name">Classic</div>
-      <div class="tpl-desc">Traditional formal layout with subtle dividers, works everywhere</div>
-    </div>
-  </div>
+  <h2 class="sec-title">Choose from 5 Templates</h2>
+  <div class="tpl-grid" id="tpl-grid"></div>
 </div>
 
 
@@ -219,7 +165,7 @@ body { font-family:'DM Sans',sans-serif; }
     <div class="how-card">
       <div class="how-ico" style="background:rgba(124,106,247,0.1)">1️⃣</div>
       <h3>Pick a Template</h3>
-      <p>Browse templates, hover to preview exactly how they'll look with real content</p>
+      <p>Browse the 5 templates and click Preview to see exactly how each one looks with real content</p>
     </div>
 
     <div class="how-card">
@@ -312,6 +258,7 @@ body { font-family:'DM Sans',sans-serif; }
 <div class="pv-overlay" id="pv-overlay">
   <button class="pv-close" onclick="closePreview()">×</button>
   <div class="pv-box" id="pv-content"></div>
+  <button class="pv-use" id="pv-use" type="button">Use this template</button>
 </div>
 
 <!-- Pricing Popup (from "Create Resume") -->
@@ -345,6 +292,7 @@ body { font-family:'DM Sans',sans-serif; }
 
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/resume-templates.js"></script>
 <script>
 Auth.requireAuth();
 
@@ -422,14 +370,8 @@ function renderPlanStatus() {
 }
 
 function viewTemplate(tpl) {
-  const cardIndex = tpl === 'modern' ? 1 : 2;
-  const miniEl = document.querySelector(`#rm-templates .tpl-card:nth-child(${cardIndex}) .tpl-mini`);
-  const clone = miniEl.cloneNode(true);
-  clone.style.width = '100%';
-  clone.style.fontSize = '0.92rem'; // bada karke dikhao, thumbnail se zyada readable
-
-  document.getElementById('pv-content').innerHTML = '';
-  document.getElementById('pv-content').appendChild(clone);
+  document.getElementById('pv-content').innerHTML = ResumeTemplates.paperHTML(tpl);
+  document.getElementById('pv-use').onclick = function () { closePreview(); openPricing(tpl); };
   document.getElementById('pv-overlay').classList.add('open');
 }
 function closePreview() { document.getElementById('pv-overlay').classList.remove('open'); }
@@ -507,6 +449,25 @@ async function cancelResumeSubscription() {
     alert(e.message || 'Could not cancel, try again');
   }
 }
+
+// 5 templates ka grid — shared file se (builder wale resume jaisa hi dikhta hai)
+function renderTemplateGrid() {
+  const g = document.getElementById('tpl-grid');
+  g.innerHTML = ResumeTemplates.list.map(t => `
+    <div class="tpl-card">
+      <div class="tpl-thumb rt" onclick="viewTemplate('${t.id}')">${ResumeTemplates.thumbHTML(t.id)}</div>
+      <div class="tpl-name">${t.name}</div>
+      <div class="tpl-desc">${t.desc}</div>
+      <div class="tpl-btns">
+        <button class="tpl-btn view" type="button" onclick="viewTemplate('${t.id}')">👁️ Preview</button>
+        <button class="tpl-btn create" type="button" onclick="openPricing('${t.id}')">Create Resume</button>
+      </div>
+    </div>`).join('');
+  ResumeTemplates.fitThumbs(g);
+}
+const _showRMTab = showRMTab;
+showRMTab = function (tab) { _showRMTab(tab); if (tab === 'templates') ResumeTemplates.fitThumbs(); };
+renderTemplateGrid();
 
 loadPlanStatus();
 </script>
