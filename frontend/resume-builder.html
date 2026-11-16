@@ -79,6 +79,10 @@ body { font-family:'DM Sans',sans-serif; }
 .ats-sugg .issue { color:#fbbf24; font-size:0.7rem; font-weight:600; margin-bottom:0.3rem; }
 .ats-sugg .orig { color:rgba(255,255,255,0.4); text-decoration:line-through; font-size:0.73rem; margin-bottom:0.25rem; }
 .ats-sugg .fix { color:#34d399; font-size:0.76rem; }
+.ats-chk { display:flex; gap:0.5rem; align-items:flex-start; font-size:0.74rem; color:rgba(255,255,255,0.65); padding:0.38rem 0; border-top:1px solid rgba(255,255,255,0.05); line-height:1.45; }
+.ats-chk b { font-size:0.64rem; text-transform:uppercase; letter-spacing:0.04em; color:rgba(255,255,255,0.4); display:block; }
+.ats-chk-ok { font-size:0.72rem; color:#34d399; margin-top:0.5rem; }
+.ats-note { font-size:0.68rem; color:rgba(255,255,255,0.35); line-height:1.55; margin:0.9rem 0 0.2rem; }
 </style>
 </head>
 <body>
@@ -99,6 +103,9 @@ body { font-family:'DM Sans',sans-serif; }
       <select id="template-switcher" onchange="switchTemplate()" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.55rem 0.75rem;color:#fff;font-size:0.82rem;font-family:'DM Sans',sans-serif">
         <option value="modern">Modern</option>
         <option value="classic">Classic</option>
+        <option value="executive">Executive</option>
+        <option value="compact">Compact</option>
+        <option value="elegant">Elegant</option>
       </select>
     </div>
 
@@ -134,9 +141,12 @@ body { font-family:'DM Sans',sans-serif; }
         <div>
           <div style="color:#fff;font-weight:700;font-size:0.85rem">ATS Score</div>
           <div style="color:rgba(255,255,255,0.4);font-size:0.72rem">out of 100</div>
+          <div id="ats-verdict" style="font-size:0.74rem;font-weight:700;margin-top:2px"></div>
         </div>
       </div>
       <div class="ats-breakdown" id="ats-breakdown"></div>
+      <div id="ats-checks"></div>
+      <div class="ats-note">This score checks how well your resume is structured and readable for ATS software. Every company's ATS works differently, so use it as a guide to improve, not as a guarantee.</div>
       <div id="ats-suggestions"></div>
     </div>
   </div>
@@ -151,6 +161,7 @@ body { font-family:'DM Sans',sans-serif; }
 <script src="js/api.js"></script>
 <script src="js/layout.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/resume-templates.js"></script>
 <script>
 Auth.requireAuth();
 
@@ -439,6 +450,18 @@ function showATSResults(res) {
     <div class="ats-bd-item"><span>Quantified Metrics</span><span>${bd.metrics||0}/25</span></div>
     <div class="ats-bd-item"><span>Content Depth</span><span>${bd.length||0}/10</span></div>
   `;
+
+  // Detailed checks (naye analysis mein aate hain; purane saved results mein nahi hote)
+  const verdictEl = document.getElementById('ats-verdict');
+  if (verdictEl) { verdictEl.textContent = bd.verdict || ''; verdictEl.style.color = scoreEl.style.color; }
+  const checks = bd.checks || res.checks || [];
+  const bad = checks.filter(c => c.status !== 'pass');
+  const okCount = checks.length - bad.length;
+  document.getElementById('ats-checks').innerHTML = checks.length ? (
+    '<div style="color:#fff;font-weight:700;font-size:0.82rem;margin:0.4rem 0 0.2rem">What to fix</div>' +
+    bad.map(c => `<div class="ats-chk"><span>${c.status === 'fail' ? '❌' : '⚠️'}</span><span><b>${c.area}</b>${c.text}</span></div>`).join('') +
+    `<div class="ats-chk-ok">✅ ${okCount} of ${checks.length} checks passed</div>`
+  ) : '';
 
   const sug = res.suggestions || [];
   const nudges = getStructuralNudges(collectFormData());
