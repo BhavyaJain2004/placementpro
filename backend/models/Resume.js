@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const resumeSchema = new mongoose.Schema({
   userId:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  template: { type: String, enum: ['modern', 'classic'], default: 'modern' },
+  template: { type: String, enum: ['modern', 'classic', 'executive', 'compact', 'elegant'], default: 'modern' },
 
   // ── Resume Content (structured, important sections) ──
   name: String, email: String, phone: String, linkedin: String, github: String, location: String,
