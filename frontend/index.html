@@ -542,7 +542,7 @@ body { overflow-x: hidden; }
 <header class="lp2-nav" id="lp2-nav">
   <div class="lp2-nav-inner">
     <a class="nav-logo" href="#top" aria-label="PlacementSphere home">
-      <span class="nav-logo-mark"><span>P</span></span> PlacementSphere
+      <span class="ps-globe" aria-hidden="true"></span> PlacementSphere
     </a>
     <ul class="lp2-links">
       <li><a href="#features">Features</a></li>
@@ -888,7 +888,7 @@ body { overflow-x: hidden; }
   <div class="lp2-wrap">
     <div class="lp2-foot-grid">
       <div>
-        <div class="nav-logo"><span class="nav-logo-mark"><span>P</span></span> PlacementSphere</div>
+        <div class="nav-logo"><span class="ps-globe" aria-hidden="true"></span> PlacementSphere</div>
         <p>The all-in-one placement prep platform built by placed seniors. Study smarter, prep better, get placed faster.</p>
       </div>
       <div>
@@ -930,7 +930,7 @@ body { overflow-x: hidden; }
     <div class="auth-modal-glow" aria-hidden="true"></div>
     <div class="modal-header auth-modal-header">
       <div>
-        <div class="nav-logo" style="font-size:1rem"><span class="nav-logo-mark" style="width:26px;height:26px;flex:0 0 26px;border-radius:8px"><span style="font-size:0.8rem">P</span></span> PlacementSphere</div>
+        <div class="nav-logo" style="font-size:1rem"><span class="ps-globe" style="--s:26px" aria-hidden="true"></span> PlacementSphere</div>
       </div>
       <button class="modal-close" onclick="closeAuth()">×</button>
     </div>
@@ -1613,5 +1613,6 @@ async function handleSignup(e) {
   <a href="terms.html" style="font-size:0.75rem;color:rgba(255,255,255,0.3);text-decoration:none;margin-right:1rem">Terms & Conditions</a>
   <a href="privacy.html" style="font-size:0.75rem;color:rgba(255,255,255,0.3);text-decoration:none">Privacy Policy</a>
 </div>
+<script src="js/ps-globe.js" defer></script>
 </body>
 </html>
