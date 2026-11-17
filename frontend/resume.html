@@ -212,7 +212,7 @@ body { background:#0a0a12; color:var(--text,#f0f0fa); font-family:'DM Sans',sans
 
 <header class="lp2-nav" id="lp2-nav">
   <div class="lp2-nav-inner">
-    <a class="nav-logo" href="index.html" aria-label="PlacementSphere home"><span class="nav-logo-mark"><span>P</span></span> PlacementSphere</a>
+    <a class="nav-logo" href="index.html" aria-label="PlacementSphere home"><span class="ps-globe" aria-hidden="true"></span> PlacementSphere</a>
     <ul class="lp2-links">
       <li><a href="index.html#features">Features</a></li>
       <li><a href="index.html#reviews">Reviews</a></li>
@@ -388,5 +388,6 @@ window.addEventListener('load', function () { R.fitThumbs(); });
   document.addEventListener('click', e => { if (!nav.contains(e.target)) close(); });
 })();
 </script>
+<script src="js/ps-globe.js" defer></script>
 </body>
 </html>
