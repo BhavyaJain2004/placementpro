@@ -18,207 +18,322 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://placementsphere.in/resume.html">
 <link rel="stylesheet" href="css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-body { background:#0a0b16; }
-.rb-glow { position:fixed; inset:0; pointer-events:none; z-index:0; background:radial-gradient(700px 420px at 85% 8%,rgba(124,106,247,0.22),transparent 70%),radial-gradient(500px 360px at 8% 40%,rgba(45,212,191,0.07),transparent 70%); }
-.rb-page { position:relative; z-index:1; max-width:1160px; margin:0 auto; padding:5.5rem 1.25rem 3rem; }
-.rb-hero { display:grid; grid-template-columns:1.02fr 1fr; gap:1rem; align-items:center; min-height:590px; padding-bottom:1.5rem; }
-.rb-eyebrow { display:inline-flex; align-items:center; gap:7px; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#a89df7; background:rgba(124,106,247,0.1); border:1px solid rgba(124,106,247,0.25); padding:5px 12px; border-radius:99px; margin-bottom:1.1rem; }
-.rb-hero h1 { font-family:'Syne',sans-serif; font-size:clamp(2rem,4.6vw,3.2rem); font-weight:800; color:#fff; line-height:1.12; margin-bottom:1rem; }
-.rb-hero h1 em { font-style:normal; color:#a89df7; }
-.rb-hero p.lead { font-size:1.02rem; color:rgba(255,255,255,0.58); line-height:1.75; max-width:520px; }
-.rb-cta { display:flex; flex-wrap:wrap; gap:0.7rem; margin-top:1.6rem; }
-.rb-btn { display:inline-flex; align-items:center; justify-content:center; padding:0.8rem 1.4rem; border-radius:10px; font-family:'Syne',sans-serif; font-weight:700; font-size:0.85rem; text-decoration:none; border:1px solid rgba(255,255,255,0.18); color:#fff; cursor:pointer; background:transparent; transition:transform .2s, border-color .2s; }
-.rb-btn:hover { transform:translateY(-2px); border-color:rgba(255,255,255,0.4); }
-.rb-btn.primary { background:#7c6af7; border-color:#7c6af7; box-shadow:0 6px 24px rgba(124,106,247,0.35); }
-.rb-chips { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:1.5rem; }
-.rb-chip { font-size:0.74rem; color:rgba(255,255,255,0.62); border:1px solid rgba(255,255,255,0.1); border-radius:99px; padding:0.35rem 0.85rem; }
-.rb-chip::before { content:"✓ "; color:#2dd4bf; }
+:root {
+  --lp-max: 1180px;
+  --serif: 'Instrument Serif', 'Iowan Old Style', 'Times New Roman', serif;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --hair: rgba(255,255,255,0.08);
+  --hair2: rgba(255,255,255,0.14);
+  --cyan: #06b6d4;
+  --muted2: #9a9ab8;
+}
+html { scroll-padding-top: 88px; }
+.lp2-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 46px; padding: 0 22px; border-radius: 12px; border: 1px solid transparent; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.95rem; cursor: pointer; text-decoration: none; transition: background .18s, border-color .18s, transform .18s, box-shadow .18s; white-space: nowrap; }
+.lp2-btn:focus-visible { outline: 2px solid var(--accent3); outline-offset: 3px; }
+.lp2-btn-primary { background: var(--accent); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 6px 24px -6px rgba(124,106,247,.65); }
+.lp2-btn-primary:hover { background: #8a7af9; transform: translateY(-1px); }
+.lp2-btn-ghost { background: rgba(255,255,255,0.03); border-color: var(--hair2); color: var(--text); }
+.lp2-btn-ghost:hover { background: rgba(255,255,255,0.07); }
+.lp2-btn-sm { height: 38px; padding: 0 16px; border-radius: 999px; font-size: 0.88rem; }
+.lp2-btn-text { background: none; color: var(--muted2); height: 38px; padding: 0 14px; border-radius: 999px; }
+.lp2-btn-text:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.lp2-nav { position: sticky; top: 0; z-index: 100; padding: 12px 16px; }
+.lp2-nav-inner { max-width: var(--lp-max); margin: 0 auto; height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 10px 0 18px; border: 1px solid var(--hair); border-radius: 999px; background: rgba(14,14,26,0.55); backdrop-filter: blur(16px) saturate(150%); -webkit-backdrop-filter: blur(16px) saturate(150%); transition: background .2s, border-color .2s; position: relative; }
+.lp2-nav.scrolled .lp2-nav-inner { background: rgba(10,10,18,0.85); border-color: var(--hair2); }
+.lp2-nav .nav-logo { text-decoration: none; color: var(--text); }
+.lp2-links { display: flex; gap: 2px; list-style: none; position: absolute; left: 50%; transform: translateX(-50%); }
+.lp2-links a { display: block; padding: 8px 14px; border-radius: 999px; color: var(--muted2); font-size: 0.9rem; text-decoration: none; transition: color .15s, background .15s; }
+.lp2-links a:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+.lp2-nav-right { display: flex; align-items: center; gap: 6px; }
+.lp2-burger { display: none; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--hair2); background: rgba(255,255,255,0.04); color: var(--text); cursor: pointer; align-items: center; justify-content: center; }
+.lp2-burger svg { width: 20px; height: 20px; }
+.lp2-mobile-panel { display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: #0d0d1a; border: 1px solid var(--hair2); border-radius: 22px; padding: 10px; box-shadow: 0 24px 60px rgba(0,0,0,.6); }
+.lp2-mobile-panel.open { display: block; }
+.lp2-mobile-panel a { display: block; padding: 14px 16px; border-radius: 14px; color: var(--text); text-decoration: none; font-size: 1rem; }
+.lp2-mobile-panel a:active, .lp2-mobile-panel a:hover { background: rgba(255,255,255,0.06); }
+.lp2-mobile-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 6px 6px; border-top: 1px solid var(--hair); margin-top: 6px; }
+.lp2-nav-inner { height: 60px; padding: 0 10px 0 16px; gap: 18px; background: linear-gradient(180deg, rgba(26,26,46,.78), rgba(12,12,24,.78)); border-color: rgba(255,255,255,.11); box-shadow: 0 10px 34px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.07); }
+.lp2-nav.scrolled .lp2-nav-inner { background: rgba(10,10,20,.9); }
+.lp2-links { position: static; transform: none; flex: 1; justify-content: center; gap: 2px; }
+.lp2-links a { padding: 8px 15px; font-size: .9rem; font-weight: 500; color: #adadc9; letter-spacing: 0; white-space: nowrap; }
+.lp2-links a:hover { color: #fff; background: rgba(255,255,255,.06); }
+.lp2-links a.active { color: #fff; background: rgba(124,106,247,.17); box-shadow: inset 0 0 0 1px rgba(124,106,247,.38); }
+.lp2-nav-right { gap: 8px; }
+.lp2-nav-right .lp2-btn-sm { height: 40px; padding: 0 20px; font-weight: 600; }
+.lp2-mobile-panel a { font-size: 1rem; font-weight: 500; }
+.lp2-mobile-panel a.active { background: rgba(124,106,247,.16); color: #fff; }
+/* ═════════ NAVBAR v2 — uniform links, scroll-spy, cleaner pill ═════════ */
+.lp2-nav-inner { height: 60px; padding: 0 10px 0 16px; gap: 18px; background: linear-gradient(180deg, rgba(26,26,46,.78), rgba(12,12,24,.78)); border-color: rgba(255,255,255,.11); box-shadow: 0 10px 34px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.07); }
+.lp2-nav.scrolled .lp2-nav-inner { background: rgba(10,10,20,.9); }
+.lp2-links { position: static; transform: none; flex: 1; justify-content: center; gap: 2px; }
+.lp2-links a { padding: 8px 15px; font-size: .9rem; font-weight: 500; color: #adadc9; letter-spacing: 0; white-space: nowrap; }
+.lp2-links a:hover { color: #fff; background: rgba(255,255,255,.06); }
+.lp2-links a.active { color: #fff; background: rgba(124,106,247,.17); box-shadow: inset 0 0 0 1px rgba(124,106,247,.38); }
+.lp2-nav-right { gap: 8px; }
+.lp2-nav-right .lp2-btn-sm { height: 40px; padding: 0 20px; font-weight: 600; }
+.lp2-mobile-panel a { font-size: 1rem; font-weight: 500; }
+.lp2-mobile-panel a.active { background: rgba(124,106,247,.16); color: #fff; }
+@media (max-width: 1020px) {
+  .lp2-links { display: none; }
+  .lp2-burger { display: inline-flex; }
+  .lp2-nav-right .lp2-btn-text, .lp2-nav-right .lp2-btn-sm { display: none; }
+  .lp2-nav-inner { justify-content: space-between; }
+}
+body { background:#0a0a12; color:var(--text,#f0f0fa); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+.rb-glow { position:fixed; inset:0; pointer-events:none; z-index:0; background:radial-gradient(760px 460px at 86% 6%,rgba(124,106,247,.2),transparent 70%),radial-gradient(520px 380px at 4% 46%,rgba(6,182,212,.06),transparent 70%); }
+.lp2-nav { position:sticky; top:0; }
+.rb-page { position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:2rem 24px 3rem; }
 
-/* Hero: tilted, slightly blurred resumes on the right */
-.rb-stackwrap { position:relative; height:560px; -webkit-mask-image:linear-gradient(to right,transparent 0,#000 12%); mask-image:linear-gradient(to right,transparent 0,#000 12%); }
-.rb-stack { position:absolute; inset:0; -webkit-mask-image:linear-gradient(to bottom,#000 82%,transparent 100%); mask-image:linear-gradient(to bottom,#000 82%,transparent 100%); }
-.rb-stack .rb-sheet { position:absolute; width:54%; border-radius:6px; box-shadow:0 30px 70px rgba(0,0,0,0.55); }
-.rb-sheet.s3 { left:44%; top:2%; z-index:1; transform:perspective(1500px) rotateY(-24deg) rotateX(8deg) rotateZ(6deg); filter:blur(3px); opacity:.55; }
-.rb-sheet.s2 { left:23%; top:11%; z-index:2; transform:perspective(1500px) rotateY(-24deg) rotateX(8deg) rotateZ(6deg); filter:blur(1.6px); opacity:.85; }
-.rb-sheet.s1 { left:2%; top:20%; z-index:3; transform:perspective(1500px) rotateY(-24deg) rotateX(8deg) rotateZ(6deg); filter:blur(.6px); }
+/* Hero */
+.rb-hero { display:grid; grid-template-columns:1.05fr 1fr; gap:1rem; align-items:center; min-height:580px; padding-bottom:1rem; }
+.rb-kicker { display:inline-flex; align-items:center; gap:9px; font:500 .72rem 'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:#b9b0ff; margin-bottom:1.3rem; }
+.rb-kicker i { width:7px; height:7px; border-radius:50%; background:#7c6af7; box-shadow:0 0 0 4px rgba(124,106,247,.2); }
+.rb-hero h1 { font-family:var(--serif); font-weight:400; font-size:clamp(2.6rem,5.4vw,4.4rem); line-height:1.02; letter-spacing:-.025em; color:#fff; margin-bottom:1.2rem; }
+.rb-hero h1 em { font-style:italic; color:#b9b0ff; }
+.rb-hero .lead { font-size:1.05rem; line-height:1.75; color:#a4a4c0; max-width:510px; }
+.rb-cta { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.7rem; }
+.rb-chips { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.6rem; }
+.rb-chips span { font:500 .7rem 'JetBrains Mono',monospace; color:#9a9ab8; border:1px solid var(--hair); border-radius:999px; padding:.38rem .8rem; }
+.rb-stackwrap { position:relative; height:540px; -webkit-mask-image:linear-gradient(to right,transparent 0,#000 14%); mask-image:linear-gradient(to right,transparent 0,#000 14%); }
+.rb-stack { position:absolute; inset:0; -webkit-mask-image:linear-gradient(to bottom,#000 80%,transparent 100%); mask-image:linear-gradient(to bottom,#000 80%,transparent 100%); }
+.rb-stack .rb-sheet { position:absolute; width:54%; border-radius:6px; box-shadow:0 30px 70px rgba(0,0,0,.55); }
+.rb-stack .rb-sheet.s3 { left:44%; top:2%; z-index:1; transform:perspective(1500px) rotateY(-22deg) rotateX(7deg) rotateZ(5deg); filter:blur(1.4px); opacity:.7; }
+.rb-stack .rb-sheet.s2 { left:23%; top:10%; z-index:2; transform:perspective(1500px) rotateY(-22deg) rotateX(7deg) rotateZ(5deg); filter:blur(.6px); opacity:.92; }
+.rb-stack .rb-sheet.s1 { left:2%; top:19%; z-index:3; transform:perspective(1500px) rotateY(-22deg) rotateX(7deg) rotateZ(5deg); }
 
-.rb-sec { padding:3rem 0 0.5rem; }
-.rb-h { display:flex; align-items:center; gap:14px; font-size:0.72rem; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:#a89df7; margin-bottom:0.7rem; }
-.rb-h::after { content:""; flex:1; height:1px; background:rgba(255,255,255,0.14); }
-.rb-sec h2 { font-family:'Syne',sans-serif; font-size:clamp(1.4rem,3vw,1.9rem); font-weight:800; color:#fff; margin-bottom:0.45rem; }
-.rb-sub { font-size:0.92rem; color:rgba(255,255,255,0.48); margin-bottom:1.5rem; max-width:640px; line-height:1.65; }
-.rb-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:1.3rem; }
-.rb-card { display:flex; flex-direction:column; }
-.rb-card .thumb { cursor:pointer; border-radius:6px; overflow:hidden; box-shadow:0 14px 40px rgba(0,0,0,0.45); transition:transform .25s, box-shadow .25s; }
-.rb-card:hover .thumb { transform:translateY(-6px); box-shadow:0 22px 50px rgba(124,106,247,0.28); }
-.rb-card h3 { font-family:'Syne',sans-serif; font-size:0.98rem; font-weight:700; color:#fff; padding:0.95rem 0.1rem 0.25rem; }
-.rb-card p { font-size:0.8rem; color:rgba(255,255,255,0.48); line-height:1.6; flex:1; padding-bottom:0.8rem; }
-.rb-card .prev { align-self:flex-start; }
+/* Sections */
+.rb-sec { padding:4.2rem 0 .5rem; }
+.rb-k { display:flex; align-items:center; gap:14px; font:500 .72rem 'JetBrains Mono',monospace; letter-spacing:.14em; text-transform:uppercase; color:#9a9ab8; margin-bottom:.9rem; }
+.rb-k span { color:#b9b0ff; }
+.rb-k::after { content:""; flex:1; height:1px; background:var(--hair2); }
+.rb-sec h2 { font-family:var(--serif); font-weight:400; font-size:clamp(2rem,4vw,3rem); line-height:1.08; letter-spacing:-.02em; color:#fff; margin-bottom:.7rem; max-width:760px; }
+.rb-sub { font-size:1rem; line-height:1.7; color:#9a9ab8; max-width:640px; margin-bottom:1.8rem; }
+.rb-sec h2 + .rb-grid, .rb-sec h2 + .rb-feats, .rb-sec h2 + .rb-steps { margin-top:1.8rem; }
 
-/* Paper-style cards */
-.rb-paper { background:#fbfaf6; color:#1b1b1b; border-radius:8px; padding:1.4rem 1.3rem; font-family:Georgia,serif; box-shadow:0 14px 40px rgba(0,0,0,0.4); border-top:4px solid #7c6af7; }
-.rb-paper h3 { font-size:1rem; font-weight:700; margin-bottom:0.4rem; border-bottom:1px solid #d9d6cc; padding-bottom:0.45rem; text-transform:uppercase; letter-spacing:0.05em; font-size:0.82rem; }
-.rb-paper p { font-size:0.84rem; line-height:1.65; color:#3a3a3a; }
-.rb-paper .ico { font-size:1.3rem; margin-bottom:0.5rem; }
+/* Templates */
+.rb-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.4rem; }
+.rb-card { min-width:0; }
+.rb-card .thumb { cursor:pointer; border-radius:8px; overflow:hidden; border:1px solid var(--hair2); box-shadow:0 16px 44px rgba(0,0,0,.45); transition:transform .25s, box-shadow .25s; }
+.rb-card:hover .thumb { transform:translateY(-5px); box-shadow:0 24px 54px rgba(124,106,247,.25); }
+.rb-card .meta { display:flex; align-items:center; justify-content:space-between; padding:1rem .1rem .3rem; }
+.rb-card h3 { font:600 1.05rem 'DM Sans',sans-serif; color:#fff; }
+.rb-card .meta button { background:none; border:1px solid var(--hair2); color:#cfcfe8; border-radius:999px; font:500 .8rem 'DM Sans',sans-serif; padding:.32rem .9rem; cursor:pointer; }
+.rb-card .meta button:hover { background:rgba(255,255,255,.07); color:#fff; }
+.rb-card p { font-size:.88rem; line-height:1.6; color:#8f8fae; }
+.rb-more { margin-top:1.4rem; -webkit-mask-image:linear-gradient(to bottom,#000 0%,rgba(0,0,0,.35) 55%,transparent 92%); mask-image:linear-gradient(to bottom,#000 0%,rgba(0,0,0,.35) 55%,transparent 92%); padding-bottom:1rem; }
+.rb-lockcard .thumb { cursor:default; background:#0f0f1c; }
+.rb-lockcard:hover .thumb { transform:none; box-shadow:0 16px 44px rgba(0,0,0,.45); }
+.rb-lockcard .rt-thumb { background:#12121f; }
+.rb-lockcard .ghost { position:absolute; inset:0; padding:12% 11%; display:flex; flex-direction:column; gap:3.2%; filter:blur(2px); opacity:.55; }
+.rb-lockcard .ghost u { display:block; height:7px; background:#2a2a44; border-radius:3px; }
+.rb-lockcard .ghost s { display:block; height:14px; }
+.rb-lockcard .chip { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; font:600 .92rem 'DM Sans',sans-serif; color:#fff; background:rgba(10,10,20,.82); border:1px solid rgba(255,255,255,.16); border-radius:16px; padding:18px 20px; width:78%; backdrop-filter:blur(8px); }
+.rb-lockcard .chip svg { width:26px; height:26px; fill:none; stroke:#b9b0ff; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 
-/* How it works — resume jaisa */
-.rb-how { max-width:760px; border-radius:8px; box-shadow:0 18px 50px rgba(0,0,0,0.45); }
-.rb-how.rt-paper { padding:2rem 2.2rem; font-size:0.95rem; }
-.rb-how .rp-sec-title { margin-top:0; }
-.rb-how li { font-size:0.88rem; }
+/* Features */
+.rb-feats { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+.rb-feat { background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015)); border:1px solid var(--hair); border-radius:16px; padding:1.5rem 1.3rem; }
+.rb-feat svg { width:26px; height:26px; fill:none; stroke:#b9b0ff; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; margin-bottom:1rem; }
+.rb-feat h3 { font:600 1.02rem 'DM Sans',sans-serif; color:#fff; margin-bottom:.5rem; }
+.rb-feat p { font-size:.88rem; line-height:1.65; color:#9a9ab8; }
 
-.rb-ats { display:grid; grid-template-columns:1fr 1.15fr; gap:1.6rem; align-items:center; }
-@media (max-width:720px) { .rb-ats { grid-template-columns:1fr; } }
-.rb-ats ul { list-style:none; padding:0; margin:0.8rem 0 0; }
-.rb-ats li { font-size:0.88rem; color:rgba(255,255,255,0.62); padding:0.4rem 0; display:flex; gap:8px; line-height:1.55; }
-.rb-demo { background:#fff; color:#111; border-radius:12px; padding:1.3rem; box-shadow:0 18px 50px rgba(0,0,0,0.45); }
-.rb-demo .top { display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem; }
-.rb-demo .num { font-family:'Syne',sans-serif; font-weight:800; font-size:2.1rem; color:#16a34a; }
-.rb-demo .bd { display:grid; grid-template-columns:1fr 1fr; gap:0.4rem; margin-bottom:0.8rem; }
-.rb-demo .bd div { background:#f4f4f7; border-radius:7px; padding:0.4rem 0.6rem; font-size:0.7rem; color:#444; display:flex; justify-content:space-between; }
-.rb-demo .sg { border-left:2px solid #f59e0b; background:#fef9ee; border-radius:6px; padding:0.55rem 0.75rem; font-size:0.72rem; }
-.rb-demo .sg .i { color:#b45309; font-weight:600; margin-bottom:0.2rem; }
-.rb-demo .sg .o { color:#888; text-decoration:line-through; margin-bottom:0.15rem; }
-.rb-demo .sg .f { color:#16a34a; }
-.rb-demo small { display:block; margin-top:0.7rem; font-size:0.64rem; color:#888; }
+/* Steps — resume entry jaisa */
+.rb-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+.rb-step { border:1px solid var(--hair); border-radius:16px; padding:1.5rem 1.4rem; background:rgba(255,255,255,.025); }
+.rb-step b { display:block; font:400 2.6rem/1 var(--serif); color:#b9b0ff; margin-bottom:.9rem; }
+.rb-step h3 { font:600 1.05rem 'DM Sans',sans-serif; color:#fff; padding-bottom:.7rem; margin-bottom:.7rem; border-bottom:1px solid var(--hair2); }
+.rb-step ul { list-style:none; padding:0; margin:0; }
+.rb-step li { font-size:.88rem; color:#9a9ab8; line-height:1.6; padding:.15rem 0 .15rem 1rem; position:relative; }
+.rb-step li::before { content:""; position:absolute; left:0; top:.78em; width:4px; height:4px; border-radius:50%; background:#7c6af7; }
 
-.rb-plans { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.3rem; }
-.rb-plan { position:relative; }
-.rb-plan.pop { border-top-color:#f59e0b; transform:translateY(-6px); }
-.rb-plan .tag { position:absolute; top:-13px; right:1rem; background:#f59e0b; color:#1b1b1b; font:800 0.62rem 'Syne',sans-serif; padding:4px 11px; border-radius:99px; letter-spacing:0.04em; }
-.rb-plan h3 { border:none; padding:0; margin-bottom:0.2rem; }
-.rb-plan .amt { font-family:'Syne',sans-serif; font-size:2.1rem; font-weight:800; color:#111; margin:0.2rem 0 0.9rem; padding-bottom:0.8rem; border-bottom:1px solid #d9d6cc; }
-.rb-plan .amt span { font-size:0.82rem; font-weight:500; color:#777; font-family:Georgia,serif; }
+/* ATS demo */
+.rb-ats { display:grid; grid-template-columns:1fr 1.1fr; gap:2rem; align-items:center; }
+.rb-ats-l ul { list-style:none; padding:0; margin:0; }
+.rb-ats-l li { display:flex; gap:12px; font-size:.98rem; line-height:1.6; color:#a4a4c0; padding:.7rem 0; border-bottom:1px solid var(--hair); }
+.rb-ats-l li i { font-style:normal; color:#2dd4bf; font-weight:700; }
+.rb-ats-l li b { color:#fff; font-weight:600; }
+.rb-demo { background:#10101d; border:1px solid var(--hair2); border-radius:18px; padding:1.5rem; box-shadow:0 24px 60px rgba(0,0,0,.45); }
+.rb-demo-top { display:flex; align-items:center; gap:1rem; margin-bottom:1.1rem; }
+.rb-score { width:68px; height:68px; border-radius:50%; display:flex; align-items:center; justify-content:center; font:400 2rem var(--serif); color:#34d399; border:3px solid #34d399; box-shadow:0 0 24px rgba(52,211,153,.25); }
+.rb-demo-top .t { font-weight:600; color:#fff; } .rb-demo-top .s { font-size:.78rem; color:#8f8fae; }
+.rb-bars { display:flex; flex-direction:column; gap:.55rem; margin-bottom:1.1rem; }
+.rb-bars div { display:grid; grid-template-columns:130px 1fr 44px; gap:.7rem; align-items:center; font-size:.78rem; color:#a4a4c0; }
+.rb-bars em { display:block; height:6px; border-radius:6px; background:#23233a; position:relative; }
+.rb-bars em::after { content:""; position:absolute; left:0; top:0; bottom:0; width:var(--w); background:linear-gradient(90deg,#7c6af7,#a89df7); border-radius:6px; }
+.rb-bars b { text-align:right; color:#fff; font-weight:600; font-size:.74rem; }
+.rb-sug { border-left:2px solid #f59e0b; background:rgba(245,158,11,.07); border-radius:8px; padding:.7rem .9rem; font-size:.78rem; line-height:1.55; }
+.rb-sug .i { color:#fbbf24; font-weight:600; margin-bottom:.3rem; }
+.rb-sug .o { color:#8f8fae; text-decoration:line-through; margin-bottom:.2rem; }
+.rb-sug .f { color:#34d399; }
+.rb-sample { margin-top:.8rem; font:500 .66rem 'JetBrains Mono',monospace; color:#6e6e90; letter-spacing:.04em; }
+
+/* Plans */
+.rb-plans { display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:1.6rem; }
+.rb-plan { position:relative; background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:18px; padding:1.8rem 1.5rem; }
+.rb-plan.pop { border-color:rgba(124,106,247,.55); background:linear-gradient(180deg,rgba(124,106,247,.12),rgba(124,106,247,.03)); box-shadow:0 0 50px rgba(124,106,247,.12); }
+.rb-plan .tag { position:absolute; top:-12px; left:1.5rem; background:#7c6af7; color:#fff; font:600 .68rem 'JetBrains Mono',monospace; letter-spacing:.06em; text-transform:uppercase; padding:4px 11px; border-radius:999px; }
+.rb-plan h3 { font:600 1rem 'DM Sans',sans-serif; color:#cfcfe8; margin-bottom:.4rem; }
+.rb-plan .amt { font:400 3rem/1 var(--serif); color:#fff; padding-bottom:1.1rem; margin-bottom:1rem; border-bottom:1px solid var(--hair2); }
+.rb-plan .amt span { font:400 .85rem 'DM Sans',sans-serif; color:#8f8fae; margin-left:6px; }
 .rb-plan ul { list-style:none; padding:0; margin:0; }
-.rb-plan li { font-size:0.86rem; color:#333; padding:0.32rem 0; display:flex; gap:8px; }
-.rb-note { font-size:0.8rem; color:rgba(255,255,255,0.42); margin-top:1.1rem; }
-.rb-foot { margin-top:3.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-wrap:wrap; gap:1rem 1.5rem; font-size:0.8rem; color:rgba(255,255,255,0.4); }
-.rb-foot a { color:rgba(255,255,255,0.58); text-decoration:none; }
-.rb-modal { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.9); z-index:999; align-items:flex-start; justify-content:center; padding:1.5rem; overflow-y:auto; }
+.rb-plan li { display:flex; gap:10px; font-size:.92rem; color:#c4c4dc; padding:.4rem 0; }
+.rb-plan li i { font-style:normal; color:#2dd4bf; font-weight:700; width:14px; }
+.rb-plan li.no { color:#6e6e90; } .rb-plan li.no i { color:#6e6e90; }
+.rb-note { font-size:.85rem; color:#8f8fae; margin-top:1.2rem; }
+.rb-foot { margin-top:4rem; padding-top:1.6rem; border-top:1px solid var(--hair); display:flex; flex-wrap:wrap; gap:.8rem 1.6rem; font-size:.84rem; color:#8f8fae; }
+.rb-foot a { color:#b4b4d0; text-decoration:none; } .rb-foot a:hover { color:#fff; }
+
+/* Modal */
+.rb-modal { display:none; position:fixed; inset:0; background:rgba(5,5,10,.92); z-index:999; align-items:flex-start; justify-content:center; padding:1.5rem; overflow-y:auto; }
 .rb-modal.open { display:flex; }
 .rb-modal .box { background:#fff; max-width:720px; width:100%; border-radius:8px; overflow:hidden; margin:auto; }
 .rb-modal .box .rt-paper { max-height:none; }
-.rb-modal .x { position:fixed; top:1rem; right:1rem; background:rgba(255,255,255,0.12); border:none; color:#fff; width:38px; height:38px; border-radius:50%; font-size:1.2rem; cursor:pointer; z-index:1000; }
-@media (max-width:900px) {
+.rb-modal .x { position:fixed; top:1rem; right:1rem; background:rgba(255,255,255,.14); border:none; color:#fff; width:40px; height:40px; border-radius:50%; font-size:1.3rem; cursor:pointer; z-index:1000; }
+
+@media (max-width:980px) {
   .rb-hero { grid-template-columns:1fr; min-height:0; }
-  .rb-stackwrap { height:380px; order:2; margin-top:-.5rem; }
-  .rb-sheet { width:62%; }
-  .rb-sheet.s1 { left:2%; top:20%; z-index:3; transform:perspective(1500px) rotateY(-24deg) rotateX(8deg) rotateZ(6deg); filter:blur(.6px); } .rb-sheet.s2 { left:23%; top:11%; z-index:2; transform:perspective(1500px) rotateY(-24deg) rotateX(8deg) rotateZ(6deg); filter:blur(1.6px); opacity:.85; } .rb-sheet.s3 { left:44%; top:2%; z-index:1; transform:perspective(1500px) rotateY(-24deg) rotateX(8deg) rotateZ(6deg); filter:blur(3px); opacity:.55; }
-  .rb-plan.pop { transform:none; }
+  .rb-stackwrap { height:400px; order:2; }
+  .rb-stack .rb-sheet { width:62%; }
+  .rb-stack .rb-sheet.s1 { left:0; } .rb-stack .rb-sheet.s2 { left:20%; } .rb-stack .rb-sheet.s3 { left:40%; }
+  .rb-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .rb-feats { grid-template-columns:repeat(2,1fr); }
+  .rb-steps, .rb-plans { grid-template-columns:1fr; }
+  .rb-ats { grid-template-columns:1fr; }
 }
+@media (max-width:620px) { .rb-grid, .rb-feats { grid-template-columns:1fr; } .rb-bars div { grid-template-columns:104px 1fr 40px; } }
 </style>
 </head>
 <body>
 <div class="rb-glow"></div>
 
-<nav class="navbar">
-  <div class="nav-logo"><a href="index.html" style="display:flex;align-items:center;gap:8px;color:inherit"><span class="dot"></span> PlacementSphere</a></div>
-  <div class="nav-right" style="display:flex;gap:1.1rem;align-items:center;font-size:0.85rem">
-    <a href="#templates" style="color:var(--muted);text-decoration:none">Templates</a>
-    <a href="#plans" style="color:var(--muted);text-decoration:none">Plans</a>
-    <a href="index.html" style="color:var(--muted);text-decoration:none">← Home</a>
+<header class="lp2-nav" id="lp2-nav">
+  <div class="lp2-nav-inner">
+    <a class="nav-logo" href="index.html" aria-label="PlacementSphere home"><span class="nav-logo-mark"><span>P</span></span> PlacementSphere</a>
+    <ul class="lp2-links">
+      <li><a href="index.html#features">Features</a></li>
+      <li><a href="index.html#reviews">Reviews</a></li>
+      <li><a href="index.html#colleges">Colleges</a></li>
+      <li><a href="index.html#pricing">Pricing</a></li>
+      <li><a href="resume.html" class="active">Resume Builder</a></li>
+      <li><a href="index.html#faq">FAQ</a></li>
+    </ul>
+    <div class="lp2-nav-right">
+      <a class="lp2-btn lp2-btn-text" href="index.html">Log in</a>
+      <a class="lp2-btn lp2-btn-primary lp2-btn-sm" href="index.html#pricing">Get access</a>
+      <button class="lp2-burger" id="lp2-burger" aria-label="Open menu" aria-expanded="false" aria-controls="lp2-mpanel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+    <nav class="lp2-mobile-panel" id="lp2-mpanel" aria-label="Menu">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#reviews">Reviews</a>
+      <a href="index.html#colleges">Colleges</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="resume.html" class="active">Resume Builder</a>
+      <a href="index.html#faq">FAQ</a>
+      <div class="lp2-mobile-actions">
+        <a class="lp2-btn lp2-btn-ghost" href="index.html">Log in</a>
+        <a class="lp2-btn lp2-btn-primary" href="index.html#pricing">Get access</a>
+      </div>
+    </nav>
   </div>
-</nav>
+</header>
 
-<main class="rb-page">
+<main class="rb-page" id="top">
 
   <section class="rb-hero">
     <div>
-      <div class="rb-eyebrow">Resume Builder by PlacementSphere</div>
-      <h1>The <em>Resume Builder</em> made for B.Tech students</h1>
-      <p class="lead">Pick one of 5 professional templates, fill in your details and watch your resume build live. Then check your ATS score and get bullet-by-bullet suggestions to fix what recruiters will notice.</p>
+      <div class="rb-kicker"><i></i> Resume Builder · PlacementSphere</div>
+      <h1>The Resume Builder that <em>clears ATS</em> and gets you noticed</h1>
+      <p class="lead">Pick a professional template, fill in your details and watch your resume build live. Then check your ATS score and fix weak bullets with clear suggestions. Made for B.Tech students and freshers.</p>
       <div class="rb-cta">
-        <a class="rb-btn primary" href="#templates">See the templates</a>
-        <a class="rb-btn" href="#plans">View plans</a>
+        <a class="lp2-btn lp2-btn-primary" href="#templates">See the templates</a>
+        <a class="lp2-btn lp2-btn-ghost" href="#plans">View plans</a>
       </div>
-      <div class="rb-chips">
-        <span class="rb-chip">5 professional templates</span>
-        <span class="rb-chip">Live preview</span>
-        <span class="rb-chip">ATS score + analysis</span>
-        <span class="rb-chip">PDF download</span>
-      </div>
+      <div class="rb-chips"><span>5 templates</span><span>Live preview</span><span>ATS score + analysis</span><span>PDF download</span></div>
     </div>
     <div class="rb-stackwrap" aria-hidden="true"><div class="rb-stack" id="rb-stack"></div></div>
   </section>
 
   <section class="rb-sec" id="templates">
-    <div class="rb-h">01 · Templates</div>
-    <h2>5 templates, 5 different looks</h2>
-    <p class="rb-sub">Every template is a clean single-column layout with plain text only, so ATS software can read it. Click a template to see the full resume. Previews use sample content.</p>
-    <div class="rb-grid" id="tpl-grid"></div>
+    <div class="rb-k"><span>01</span> Templates</div>
+    <h2>Pick a look that fits you</h2>
+    <p class="rb-sub">Every template is a clean single-column layout with plain text, so ATS software can read it. Click one to see the full resume. Previews use sample content.</p>
+    <div class="rb-grid" id="tpl-row1"></div>
+    <div class="rb-more"><div class="rb-grid" id="tpl-row2"></div></div>
   </section>
 
   <section class="rb-sec">
-    <div class="rb-h">02 · Why students use it</div>
+    <div class="rb-k"><span>02</span> Why students use it</div>
     <h2>Built around what recruiters and ATS filters look at</h2>
-    <p class="rb-sub">Simple tools, no design skills needed.</p>
-    <div class="rb-grid">
-      <div class="rb-paper"><div class="ico">🧾</div><h3>ATS-friendly structure</h3><p>Single-column layouts, standard section names and plain text. No tables, images or icons that confuse ATS parsers.</p></div>
-      <div class="rb-paper"><div class="ico">🎯</div><h3>ATS score with a breakdown</h3><p>A score out of 100 across contact info, sections, action verbs, measurable results and content depth, plus a list of exactly what to fix.</p></div>
-      <div class="rb-paper"><div class="ico">💡</div><h3>Bullet-by-bullet suggestions</h3><p>Weak bullets are rewritten in simple words using your own details. No fake numbers are added; missing results show up as placeholders for you to fill.</p></div>
-      <div class="rb-paper"><div class="ico">🎓</div><h3>Made for B.Tech freshers</h3><p>Sections for education with CGPA, projects, skills, internships and achievements, in the order recruiters expect.</p></div>
+    <div class="rb-feats">
+      <div class="rb-feat"><svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M10 12h6M10 16h6"/></svg><h3>ATS-friendly structure</h3><p>Single-column layouts, standard section names and plain text. No tables, images or icons that confuse ATS parsers.</p></div>
+      <div class="rb-feat"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><path d="M12 4V2M12 22v-2M4 12H2M22 12h-2"/></svg><h3>ATS score with a breakdown</h3><p>A score out of 100 across contact info, sections, action verbs, measurable results and content depth, plus a list of what to fix.</p></div>
+      <div class="rb-feat"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg><h3>Bullet-by-bullet suggestions</h3><p>Weak bullets are rewritten in simple words using your own details. No fake numbers are added; missing results show as placeholders.</p></div>
+      <div class="rb-feat"><svg viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/></svg><h3>Made for B.Tech freshers</h3><p>Sections for education with CGPA, projects, skills, internships and achievements, in the order recruiters expect.</p></div>
     </div>
   </section>
 
   <section class="rb-sec">
-    <div class="rb-h">03 · How it works</div>
+    <div class="rb-k"><span>03</span> How it works</div>
     <h2>From blank page to finished resume</h2>
-    <p class="rb-sub">Three steps, a few minutes.</p>
-    <div class="rt-paper modern rb-how">
-      <div class="rp-sec-title">How it works</div>
-      <div class="rp-entry-top"><b>Pick a template</b><span>Step 1</span></div>
-      <ul><li>Preview all 5 templates and choose the one you like</li><li>Switch to another template any time without retyping</li></ul>
-      <div class="rp-entry-top"><b>Fill in your details</b><span>Step 2</span></div>
-      <ul><li>Add education, experience, projects, skills and achievements</li><li>Your resume updates live as you type</li></ul>
-      <div class="rp-entry-top"><b>Check and download</b><span>Step 3</span></div>
-      <ul><li>Run the ATS analysis and fix what it points out</li><li>Download your resume as a PDF</li></ul>
+    <div class="rb-steps">
+      <div class="rb-step"><b>1</b><h3>Pick a template</h3><ul><li>Preview the templates and choose one</li><li>Switch to another any time, no retyping</li></ul></div>
+      <div class="rb-step"><b>2</b><h3>Fill in your details</h3><ul><li>Education, experience, projects, skills</li><li>Your resume updates live as you type</li></ul></div>
+      <div class="rb-step"><b>3</b><h3>Check and download</h3><ul><li>Run the ATS analysis and fix what it flags</li><li>Download your resume as a PDF</li></ul></div>
     </div>
   </section>
 
   <section class="rb-sec">
-    <div class="rb-h">04 · ATS analysis</div>
+    <div class="rb-k"><span>04</span> ATS analysis</div>
     <h2>See what the analysis looks like</h2>
     <p class="rb-sub">Available with the Standard and Pro plans.</p>
     <div class="rb-ats">
-      <div>
-        <p style="font-size:0.9rem;color:rgba(255,255,255,0.6);line-height:1.7">After you run the analysis you get:</p>
+      <div class="rb-ats-l">
         <ul>
-          <li><span>✅</span><span>An <b style="color:#fff">ATS score out of 100</b> with a breakdown in 5 areas</span></li>
-          <li><span>✅</span><span>A <b style="color:#fff">"What to fix"</b> list: weak sections, missing links, vague bullets</span></li>
-          <li><span>✅</span><span>Suggestions that keep your meaning and <b style="color:#fff">never invent numbers</b></span></li>
+          <li><i>✓</i><span><b>ATS score out of 100</b> with a breakdown in 5 areas</span></li>
+          <li><i>✓</i><span><b>"What to fix" list:</b> weak sections, missing links, vague bullets</span></li>
+          <li><i>✓</i><span><b>Suggestions that keep your meaning</b> and never invent numbers</span></li>
         </ul>
       </div>
       <div class="rb-demo">
-        <div class="top"><div class="num">86</div><div><div style="font-weight:700;font-size:0.85rem">ATS Score</div><div style="font-size:0.68rem;color:#666">out of 100 · Excellent</div></div></div>
-        <div class="bd"><div><span>Contact Info</span><span>15/15</span></div><div><span>Sections</span><span>18/20</span></div><div><span>Action Verbs</span><span>27/30</span></div><div><span>Quantified Metrics</span><span>18/25</span></div><div><span>Content Depth</span><span>8/10</span></div></div>
-        <div class="sg"><div class="i">Projects — Missing a measurable result</div><div class="o">Built a chat application using React and Node.js</div><div class="f">→ Built a chat application using React and Node.js, supporting [add a number here, e.g. X users]</div></div>
-        <small>Sample analysis for illustration only.</small>
+        <div class="rb-demo-top"><div class="rb-score">86</div><div><div class="t">ATS Score</div><div class="s">out of 100 · Excellent</div></div></div>
+        <div class="rb-bars">
+          <div><span>Contact Info</span><em style="--w:100%"></em><b>15/15</b></div>
+          <div><span>Sections</span><em style="--w:90%"></em><b>18/20</b></div>
+          <div><span>Action Verbs</span><em style="--w:90%"></em><b>27/30</b></div>
+          <div><span>Quantified Metrics</span><em style="--w:72%"></em><b>18/25</b></div>
+          <div><span>Content Depth</span><em style="--w:80%"></em><b>8/10</b></div>
+        </div>
+        <div class="rb-sug"><div class="i">Projects · Missing a measurable result</div><div class="o">Built a chat application using React and Node.js</div><div class="f">→ Built a chat application using React and Node.js, supporting [add a number here, e.g. X users]</div></div>
+        <div class="rb-sample">Sample analysis for illustration only</div>
       </div>
     </div>
   </section>
 
   <section class="rb-sec" id="plans">
-    <div class="rb-h">05 · Plans</div>
+    <div class="rb-k"><span>05</span> Plans</div>
     <h2>Resume Builder plans</h2>
-    <p class="rb-sub">Simple monthly plans. All plans include every template.</p>
+    <p class="rb-sub">Simple monthly plans. Every plan includes all templates.</p>
     <div class="rb-plans">
-      <div class="rb-paper rb-plan"><h3>Basic</h3><div class="amt">₹49 <span>/ month</span></div>
-        <ul><li><span>✅</span><span>Full Resume Builder</span></li><li><span>✅</span><span>All 5 templates</span></li><li><span>✅</span><span>Download as PDF</span></li><li><span>❌</span><span>No ATS analysis</span></li></ul></div>
-      <div class="rb-paper rb-plan pop"><div class="tag">MOST POPULAR</div><h3>Standard</h3><div class="amt">₹99 <span>/ month</span></div>
-        <ul><li><span>✅</span><span>Full Resume Builder</span></li><li><span>✅</span><span>All 5 templates</span></li><li><span>✅</span><span>Download as PDF</span></li><li><span>✅</span><span>1 ATS score + analysis</span></li></ul></div>
-      <div class="rb-paper rb-plan"><h3>Pro</h3><div class="amt">₹150 <span>/ month</span></div>
-        <ul><li><span>✅</span><span>Full Resume Builder</span></li><li><span>✅</span><span>All 5 templates</span></li><li><span>✅</span><span>Download as PDF</span></li><li><span>✅</span><span>Unlimited ATS score + analysis</span></li></ul></div>
+      <div class="rb-plan"><h3>Basic</h3><div class="amt">₹49<span>/ month</span></div>
+        <ul><li><i>✓</i>Full Resume Builder</li><li><i>✓</i>All templates</li><li><i>✓</i>Download as PDF</li><li class="no"><i>–</i>No ATS analysis</li></ul></div>
+      <div class="rb-plan pop"><div class="tag">Most popular</div><h3>Standard</h3><div class="amt">₹99<span>/ month</span></div>
+        <ul><li><i>✓</i>Full Resume Builder</li><li><i>✓</i>All templates</li><li><i>✓</i>Download as PDF</li><li><i>✓</i>1 ATS score + analysis</li></ul></div>
+      <div class="rb-plan"><h3>Pro</h3><div class="amt">₹150<span>/ month</span></div>
+        <ul><li><i>✓</i>Full Resume Builder</li><li><i>✓</i>All templates</li><li><i>✓</i>Download as PDF</li><li><i>✓</i>Unlimited ATS score + analysis</li></ul></div>
     </div>
     <p class="rb-note">Plans are available inside your PlacementSphere account.</p>
   </section>
 
-  <div class="rb-foot">
+  <footer class="rb-foot">
     <span>© PlacementSphere · Resume Builder</span>
-    <a href="index.html">Home</a>
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="terms.html">Terms &amp; Conditions</a>
-  </div>
+    <a href="index.html">Home</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms &amp; Conditions</a>
+  </footer>
 </main>
 
 <div class="rb-modal" id="rb-modal">
@@ -228,36 +343,50 @@ body { background:#0a0b16; }
 
 <script src="js/resume-templates.js"></script>
 <script>
-// Hero: 3 tilted resumes (shared renderer — builder wale resume jaisa hi)
+const R = ResumeTemplates;
+const byId = id => R.list.find(t => t.id === id);
+
+// Hero: 3 tilted resumes (builder wale resume jaisa hi, halka sa blur sirf peeche wale par)
 (function () {
-  const R = ResumeTemplates;
   const sheet = (cls, tpl) => `<div class="rt-thumb rb-sheet ${cls}"><div class="rt-scale"><div class="rt-paper ${tpl}">${R.render(R.sample)}</div></div></div>`;
   const st = document.getElementById('rb-stack');
   st.innerHTML = sheet('s3', 'elegant') + sheet('s2', 'modern') + sheet('s1', 'executive');
   R.fitThumbs(st);
 })();
 
-// Templates grid
-function renderGrid() {
-  const g = document.getElementById('tpl-grid');
-  g.innerHTML = ResumeTemplates.list.map(t => `
-    <div class="rb-card">
-      <div class="thumb" onclick="openModal('${t.id}')">${ResumeTemplates.thumbHTML(t.id)}</div>
-      <h3>${t.name}</h3>
-      <p>${t.desc}</p>
-      <button class="rb-btn prev" type="button" onclick="openModal('${t.id}')">👁️ Preview</button>
-    </div>`).join('');
-  ResumeTemplates.fitThumbs(g);
-}
-function openModal(tpl) {
-  document.getElementById('rb-modal-box').innerHTML = ResumeTemplates.paperHTML(tpl);
-  document.getElementById('rb-modal').classList.add('open');
-}
+// Templates: pehli row 3 templates, doosri row fade hoti hui + "More templates" lock card
+const card = t => `
+  <div class="rb-card">
+    <div class="thumb" onclick="openModal('${t.id}')">${R.thumbHTML(t.id)}</div>
+    <div class="meta"><h3>${t.name}</h3><button type="button" onclick="openModal('${t.id}')">Preview</button></div>
+    <p>${t.desc}</p>
+  </div>`;
+const MORE_TEXT = 'More templates coming soon';   // jab sach mein 10+ templates ho jayein tab yahan "10+ more templates" kar dena
+const lockCard = `
+  <div class="rb-card rb-lockcard">
+    <div class="thumb"><div class="rt-thumb"><div class="ghost">
+      <u style="width:46%"></u><u style="width:70%"></u><s></s><u style="width:38%"></u><u style="width:90%"></u><u style="width:84%"></u><s></s><u style="width:42%"></u><u style="width:88%"></u><u style="width:76%"></u>
+    </div><div class="chip"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>${MORE_TEXT}</div></div></div>
+  </div>`;
+document.getElementById('tpl-row1').innerHTML = ['executive', 'modern', 'elegant'].map(id => card(byId(id))).join('');
+document.getElementById('tpl-row2').innerHTML = ['classic', 'compact'].map(id => card(byId(id))).join('') + lockCard;
+R.fitThumbs(document.getElementById('templates'));
+
+function openModal(tpl) { document.getElementById('rb-modal-box').innerHTML = R.paperHTML(tpl); document.getElementById('rb-modal').classList.add('open'); }
 function closeModal() { document.getElementById('rb-modal').classList.remove('open'); }
 document.getElementById('rb-modal').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
-renderGrid();
-window.addEventListener('load', function () { ResumeTemplates.fitThumbs(); });
+window.addEventListener('load', function () { R.fitThumbs(); });
+
+// Navbar: scrolled state + mobile menu
+(function () {
+  const nav = document.getElementById('lp2-nav'), burger = document.getElementById('lp2-burger'), panel = document.getElementById('lp2-mpanel');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8); onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  const close = () => { panel.classList.remove('open'); burger.setAttribute('aria-expanded', 'false'); };
+  burger.addEventListener('click', e => { e.stopPropagation(); burger.setAttribute('aria-expanded', panel.classList.toggle('open') ? 'true' : 'false'); });
+  document.addEventListener('click', e => { if (!nav.contains(e.target)) close(); });
+})();
 </script>
 </body>
 </html>
