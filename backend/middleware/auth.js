@@ -121,6 +121,8 @@ const verifyToken = async (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
+    // 24 ghante poore hone par token expire — frontend ko alag message do
+    if (err && err.name === 'TokenExpiredError') return res.status(401).json({ message: 'SESSION_TIMEOUT' });
     return res.status(401).json({ message: 'Invalid token' });
   }
 };
