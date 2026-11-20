@@ -1129,12 +1129,19 @@ async function loadColleges() {
   }
 }
 // ── AUTH ──
-function checkPwd() {
-  if (document.getElementById('gate-pwd').value === 'adminbhavya') {
+async function checkPwd() {
+  // Password ab frontend mein nahi hai — server (ADMIN_PANEL_PASSWORD) se verify hota hai
+  let r;
+  try {
+    r = await API.call('/admin/panel-login', { method: 'POST', body: JSON.stringify({ password: document.getElementById('gate-pwd').value }) });
+  } catch (e) {
+    document.getElementById('gate-err').textContent = e.message || 'Wrong password';
+    return;
+  }
+  if (r && r.ok) {
     document.getElementById('gate').style.display = 'none';
     document.getElementById('admin-layout').style.display = 'grid';
     loadOverview();
-   
   } else document.getElementById('gate-err').textContent = 'Wrong password';
 }
 document.getElementById('gate-pwd').addEventListener('keypress', e => { if(e.key==='Enter') checkPwd(); });
