@@ -48,6 +48,9 @@ const call = async (endpoint, options = {}) => {
     if (data.message === 'SESSION_EXPIRED') {
       alert('You were logged out because your account was accessed from another device.');
     }
+    if (data.message === 'SESSION_TIMEOUT') {
+      alert('Your session has expired (24 hours). Please log in again with Google.');
+    }
     window.location.href = 'index.html';
     return;
   }
