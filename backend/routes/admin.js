@@ -380,10 +380,15 @@ router.post('/seed-masterdsa', verifyToken, verifyAdmin, async (req, res) => {
 
 // Simple password gate for the panel itself (extra layer)
 router.post('/panel-login', verifyToken, verifyAdmin, async (req, res) => {
-  const { password } = req.body;
-  if (password !== 'adminbhavya') {
-    return res.status(401).json({ message: 'Wrong password' });
-  }
+  // Password ab code mein nahi hai — Railway ke environment variable ADMIN_PANEL_PASSWORD se aata hai.
+  // Galat password pe 401 nahi bhejte (frontend 401 pe user ko logout kar deta hai), isliye 403.
+  const expected = process.env.ADMIN_PANEL_PASSWORD;
+  if (!expected)
+    return res.status(503).json({ message: 'Admin panel password server pe set nahi hai (ADMIN_PANEL_PASSWORD).' });
+  const a = Buffer.from(String((req.body && req.body.password) || ''));
+  const b = Buffer.from(expected);
+  if (a.length !== b.length || !require('crypto').timingSafeEqual(a, b))
+    return res.status(403).json({ message: 'Wrong password' });
   res.json({ ok: true });
 });
 
@@ -392,13 +397,7 @@ router.post('/panel-login', verifyToken, verifyAdmin, async (req, res) => {
 // verifyAdmin middleware already exists hoga — wahi use karo
 
 // Simple password gate for the panel itself (extra layer)
-router.post('/panel-login', verifyToken, verifyAdmin, async (req, res) => {
-  const { password } = req.body;
-  if (password !== 'adminbhavya') {
-    return res.status(401).json({ message: 'Wrong password' });
-  }
-  res.json({ ok: true });
-});
+// (duplicate /panel-login route hata diya — upar wala hi chalta hai)
 
 // MAIN STATS — totals, overlaps, growth
 // ── SITE VISITS (apna khud ka lightweight visitor counter — Google Analytics ka wait
