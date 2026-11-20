@@ -18,8 +18,13 @@ function getDevice(req) {
 }
 const crypto = require('crypto');
 
-function makeToken(user, existingSid) {
+// Har login ke 24 ghante baad session khatam — /me refresh se ye time aage nahi badhta (lat = login ka asli time)
+const SESSION_MAX_MS = 24 * 60 * 60 * 1000;
+
+function makeToken(user, existingSid, existingLat) {
   const sessionId = existingSid || crypto.randomUUID();
+  const lat = existingLat || Date.now();                       // lat = login at (purane tokens mein nahi hota, to refresh pe se shuru)
+  const secondsLeft = Math.max(60, Math.floor((lat + SESSION_MAX_MS - Date.now()) / 1000));
   const token = jwt.sign(
     {
       id:      user._id,
@@ -28,10 +33,11 @@ function makeToken(user, existingSid) {
       isPaid:  user.isPaid,
       isAdmin: user.isAdmin,
       sid:     sessionId,
+      lat,
       sv:      user.sessionVersion || 0
     },
     process.env.JWT_SECRET,
-    { expiresIn: '7d' }
+    { expiresIn: secondsLeft }
   );
   return { token, sessionId };
 }
@@ -131,14 +137,12 @@ router.post('/login', async (req, res) => {
     if (!user)
       return res.status(400).json({ message: 'Invalid credentials' });
 
-    // Google se jude account (naya Google signup, ya Google se verify ho chuka purana user) — password login band.
-    // Sirf wo accounts bachte hain jinpe isGoogleReq: false hai (unka password login chalta rahega)
+    // Rule sirf 2 hain: isGoogleReq: false wale accounts ka password login chalta hai,
+    // baaki sab ko Google se hi login karna hai (verified account ka password login band).
     if (user.googleId && user.isGoogleReq !== false)
       return res.status(400).json({
         code: 'GOOGLE_ONLY',
-        message: user.password
-          ? 'Your account is verified with Google. Please log in with Google.'
-          : 'You signed up using Google. Please log in with Google.'
+        message: 'You are now verified with Google. Please login using Google.'
       });
 
     // Google se signup hua account — isme password hai hi nahi, to password login nahi chalega
@@ -205,7 +209,7 @@ router.get('/me', verifyToken, async (req, res) => {
     const user = await User.findById(req.user.id).select('-password -sessions');
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-     const { token: newToken } = makeToken(user, req.user.sid);
+     const { token: newToken } = makeToken(user, req.user.sid, req.user.lat);
 
  const resumePlan = user.resume150 ? '150' : user.resume99 ? '99' : user.resume49 ? '49' : '';
    res.json({
